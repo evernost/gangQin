@@ -3,22 +3,21 @@
 # Module name     : gangQin
 # File name       : gangQin.py
 # Purpose         : projet gangQin
-# Author          : Quentin Biache
+# Author          : Quentin Biache (nitrogenium@hotmail.com)
 # Creation date   : September 1st, 2023
 # =============================================================================
 
-# TODO, par ordre décroissant de priorité :
-# 1. cette version force à relâcher les touches avant de jouer les suivantes,
-#   alors que parfois il faut les maintenir
-# 2. permettre de faire une avance rapide
-# 3. afficher un pianoroll pour savoir où on en est et connaître la durée des 
-#    notes
-# 4. ajouter un slider pour naviguer dans une partition longue 
-#    (un vieux cercle qu'on drag&drop le long d'une droite suffit amplement)
-# 5. ajouter des marqueurs et des boutons/raccourcis pour naviguer de l'un à 
-#    l'autre
+# TODO, with decreasing priority:
+# 1. allow the user to play the requested notes while sustaining the previous
+#    ones
+# 2. handle properly the case of no MIDI interface selected (navigation mode)
+# 3. draw the pianoroll
+# 4. add a slider to make the navigation in the MIDI file easier 
+# 5. add "bookmarks", allow to play a section on repeat
+# 6. complete the font library (fontUtils.py)
 
-
+# Done:
+# X. add a fast forward option
 
 # =============================================================================
 # Imports 
@@ -74,9 +73,9 @@ pianoRoll = ku.PianoRoll((10,300))
 backgroundRGB = (80, 120, 150)
 
 # Read the MIDI file
-#pianoRoll.loadPianoRollArray("Rachmaninoff_Piano_Concerto_No2_Op18.mid")
-#pianoRoll.loadPianoRollArray("Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid")
-pianoRoll.loadPianoRollArray("12_Etudes_Op.8__Alexander_Scriabin__tude_in_A_Major_-_Op._8_No._6.mid")
+#pianoRoll.loadPianoRollArray("./midi/Rachmaninoff_Piano_Concerto_No2_Op18.mid")
+#pianoRoll.loadPianoRollArray("./midi/Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid")
+pianoRoll.loadPianoRollArray("./midi/12_Etudes_Op.8__Alexander_Scriabin__tude_in_A_Major_-_Op._8_No._6.mid")
 
 
 
@@ -193,27 +192,6 @@ while running:
     if (midiTeacher == midiCurr) :
       currTime += 1
       print(f"currTime = {currTime}")
-
-
-
-  # Handle keypresses
-  # keys = pygame.key.get_pressed()
-  
-  # if (keys[pygame.K_LEFT]) :
-  #   if (currTime > 0) :
-  #     currTime -= 1
-  #     print(currTime)
-
-  # if (keys[pygame.K_RIGHT]) :
-  #   if ((currTime+1) < (len(timeCodes)-1)) :
-  #     currTime += 1
-  #     print(currTime)
-
-  # if (keys[pygame.K_q]) :
-  #   midiPort.close()
-  #   pygame.quit()
-
-
 
 
 

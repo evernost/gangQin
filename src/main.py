@@ -7,24 +7,40 @@
 # Creation date   : September 1st, 2023
 # =============================================================================
 
-# TODO:
-# 1. allow the user to play the requested notes while sustaining the previous
-#    ones
-# 2. handle properly the case of no MIDI interface selected (navigation mode)
-# 3. add a slider to make the navigation in the MIDI file easier 
-# 4. add "bookmarks", allow to play a section on repeat
-# 5. complete the font library (fontUtils.py)
-# 6. patch the bad exit behavior upon pressing "q"
-# 7. add shortcut to jump to the first / last note
-# 8. add "if __main__" in all libs
-# 9. in <drawPianoRoll>, compute polygons once for all. Don't recompute them
-#     if time code hasn't changed
-# 10. during MIDI import: ask the user which tracks to use (there might be more than 2)
-# 11. allow the user to edit note properties (fingering, hand)
+# =============================================================================
+# TODO
+# =============================================================================
+
+# Mandatory:
+# - import/export the piano roll and all the metadata
+# - allow the user to play the requested notes while sustaining the previous ones
+# - allow the user to edit note properties (fingering, hand)
+# - repeat feature between 2 bookmarks
+# - allow the user to practice hands separately
+# - patch the bad exit behavior upon pressing "q"
+# - add "if __main__" in all libs
+# - <drawPianoRoll>: compute polygons once for all. Don't recompute them if time code hasn't changed
+# - during MIDI import: ask the user which tracks to use (there might be more than 2)
+# - allow the user to add some comments that spans one to several timecodes
+# - a dropdown list with all .mid/.pr files found instead of changing manually the variable
+
+# Nice to have:
+# - if a note is played on the keyboard, the note is correct but isn't enough to progress in 
+#   the song (eg another note is missing) the colors overlap.
+#   It would be great to handle this overlapping properly
+# - patch the obscure variable names in keyboardUtils
+
+# Later:
+# - change the framework, use pyqt instead
+# - complete the font library (fontUtils.py)
 
 # Done:
-# X. add a fast forward option
-# X. draw the pianoroll
+# - add a fast forward option
+# - draw the piano roll
+# - handle properly the case of no MIDI interface selected (navigation mode)
+# - add shortcut to jump to the first / last note
+
+
 
 # =============================================================================
 # Imports 
@@ -38,6 +54,10 @@ import fontUtils as fu
 # For MIDI
 import mido
 import rtmidi
+
+# For import/export
+import json
+import os
 
 
 
@@ -81,9 +101,12 @@ pianoRoll = ku.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
 backgroundRGB = (146, 186, 209)
 
 # Read the MIDI file
-#pianoRoll.loadPianoRollArray("./midi/Rachmaninoff_Piano_Concerto_No2_Op18.mid")
-pianoRoll.loadPianoRollArray("./midi/Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid")
-#pianoRoll.loadPianoRollArray("./midi/12_Etudes_Op.8__Alexander_Scriabin__tude_in_A_Major_-_Op._8_No._6.mid")
+#midiFile = "./midi/Rachmaninoff_Piano_Concerto_No2_Op18.mid"
+midiFile = "./midi/Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid"
+#midiFile = "./midi/12_Etudes_Op.8__Alexander_Scriabin__tude_in_A_Major_-_Op._8_No._6.mid"
+
+pianoRoll.loadPianoRollArray(midiFile)
+
 
 
 
@@ -209,9 +232,9 @@ while running:
         else :
           print(f"[NOTE] No bookmark!")
 
-      # ----------------------------------
-      # "l"
-      # ----------------------------------
+      # ---------------------------------
+      # "l": enable/disable the left hand
+      # ---------------------------------
       if (keys[pygame.K_l]) :
         if (activeHands[0] == "L") :
           activeHands = " " + activeHands[1]
@@ -219,7 +242,7 @@ while running:
           activeHands = "L" + activeHands[1]
 
       # ----------------------------------
-      # "r"
+      # "r": enable/disable the right hand
       # ----------------------------------
       if (keys[pygame.K_r]) :
         if (activeHands[1] == "R") :
@@ -227,11 +250,24 @@ while running:
         else :
           activeHands = activeHands[0] + "R"
 
+      # ----------------------------------
+      # "s": export/save
+      # ----------------------------------
+      if (keys[pygame.K_s]) :
+        print("[NOTE] Exporting piano roll")
+        (midiDir, oldName) = os.path.split(midiFile)
+        (midiFileName, _) = os.path.splitext(oldName)
+        newName = midiDir + '/' + midiFileName + ".pr"
+        print(newName)
+        pianoRoll.exportPianoRoll(newName)
+
+
 
   # Clear the screen
   screen.fill(backgroundRGB)
 
   # Draw the keyboard on screen
+  keyboard.reset()
   keyboard.drawKeys(screen)
   
   # Draw the piano roll on screen
@@ -239,22 +275,37 @@ while running:
   pianoRoll.drawPianoRoll(screen, pianoRoll.noteOnTimecodesMerged[currTime])
 
   # Show the current key pressed on the MIDI keyboard
-  for i in range(21, 108+1) :
-    if (midiCurr[i] == 1) :
-      keyboard.keyPress(screen, i, hand = "neutral") 
+  for pitch in range(21, 108+1) :
+    if (midiCurr[pitch] == 1) :
+      keyboard.keyPress(screen, pitch, hand = "neutral") 
 
   # Build the list of current expected notes to be played at that time
   midiTeacher = [0 for _ in range(128)]
   for pitch in range(21, 108+1) :
-    for track in range(pianoRoll.nTracks) :
+    if (activeHands == "LR") :
+      for track in range(pianoRoll.nTracks) :
+        for evt in pianoRoll.noteArray[track][pitch] :
+          if (evt.startTime == pianoRoll.noteOnTimecodesMerged[currTime]) :
+            midiTeacher[pitch] = 1
+            if (track == 0) :
+              keyboard.keyPress(screen, pitch, hand = "left", finger = 1)
+            
+            if (track == 1) :
+              keyboard.keyPress(screen, pitch, hand = "right", finger = 2) 
+
+    if (activeHands == " R") :
+      track = 1
       for evt in pianoRoll.noteArray[track][pitch] :
-        if (evt.startTime == pianoRoll.noteOnTimecodesMerged[currTime]) :
-          midiTeacher[pitch] = 1
-          if (track == 0) :
-            keyboard.keyPress(screen, pitch, hand = "left", finger = 1) 
-          
-          if (track == 1) :
+          if (evt.startTime == pianoRoll.noteOnTimecodes[track][currTime]) :
+            midiTeacher[pitch] = 1
             keyboard.keyPress(screen, pitch, hand = "right", finger = 2) 
+
+    if (activeHands == "L ") :
+      track = 0
+      for evt in pianoRoll.noteArray[track][pitch] :
+          if (evt.startTime == pianoRoll.noteOnTimecodes[track][currTime]) :
+            midiTeacher[pitch] = 1
+            keyboard.keyPress(screen, pitch, hand = "left", finger = 1)
 
   # Decide whether to move forward in the score depending on the user input
   if (playComparisonMode.lower() == "exact") :

@@ -36,7 +36,6 @@ def noteName(midiCode) :
 
 
 
-
 # =============================================================================
 # Class: Vector2D 
 # =============================================================================
@@ -139,6 +138,7 @@ class Keyboard :
   def __init__(self, loc) :
     self.loc = loc
     self.keyboardPolygons = []
+    self.activeNotes = []
     
     # Color scheme
     self.whiteNoteRGB = (255, 255, 255)
@@ -327,7 +327,7 @@ class Keyboard :
   # Highlights a note on the keyboard, eventually indicating the hand and the 
   # finger.
   # ---------------------------------------------------------------------------
-  def keyPress(self, screenInst, note, hand = None, finger = None) :
+  def keyPress(self, screenInst, pitch, hand = None, finger = None) :
     
     sqWhiteNoteLeftRGB = (0, 200, 10)
     sqBlackNoteLeftRGB = (0, 200, 10)
@@ -336,26 +336,17 @@ class Keyboard :
     sqBlackNoteRightRGB = (200, 10, 0)
 
     sqWhiteNoteNeutralRGB = (195, 195, 195)
-    sqBlackNoteNeutralRGB = (195, 195, 195)
+    sqBlackNoteNeutralRGB = (155, 155, 155)
 
-    alpha = 0.7
-    sqWhiteNoteNeutralRGBAlpha = (
-      alpha*(self.whiteNoteRGB[0]-sqWhiteNoteNeutralRGB[0]) + sqWhiteNoteNeutralRGB[0],
-      alpha*(self.whiteNoteRGB[1]-sqWhiteNoteNeutralRGB[1]) + sqWhiteNoteNeutralRGB[1],
-      alpha*(self.whiteNoteRGB[2]-sqWhiteNoteNeutralRGB[2]) + sqWhiteNoteNeutralRGB[2]
-    )
-    alpha = 0.1
-    sqBlackNoteNeutralRGBAlpha = (
-      alpha*(self.blackNoteRGB[0]-sqBlackNoteNeutralRGB[0]) + sqBlackNoteNeutralRGB[0],
-      alpha*(self.blackNoteRGB[1]-sqBlackNoteNeutralRGB[1]) + sqBlackNoteNeutralRGB[1],
-      alpha*(self.blackNoteRGB[2]-sqBlackNoteNeutralRGB[2]) + sqBlackNoteNeutralRGB[2]
-    )
-                                  
+    # Overlapping colors 
+    sqWhiteNoteOverlapRGB = (195, 195, 195)
+    sqBlackNoteOverlapRGB = (155, 155, 155)
+    
 
     # Black note drawing
-    if ((note % 12) in [1,3,6,8,10]) :
+    if ((pitch % 12) in [1,3,6,8,10]) :
       eps = 3
-      u = [x[0] for x in self.keyboardPolygons[note]]
+      u = [x[0] for x in self.keyboardPolygons[pitch]]
       x0 = min(u); y0 = self.loc[1] + 50
       h = self.c - self.e - (2*eps) - 50
       w = self.d - (2*self.e) - (2*eps)
@@ -366,12 +357,17 @@ class Keyboard :
 
       if (hand.lower() == "left") :
         pygame.draw.polygon(screenInst, sqBlackNoteLeftRGB, sq)
+        self.activeNotes.append(pitch)
 
       if (hand.lower() == "right") :
         pygame.draw.polygon(screenInst, sqBlackNoteRightRGB, sq)
+        self.activeNotes.append(pitch)
 
       if (hand.lower() == "neutral") :
-        pygame.draw.polygon(screenInst, sqBlackNoteNeutralRGBAlpha, sq)
+        if (pitch in self.activeNotes) :
+          pygame.draw.polygon(screenInst, sqBlackNoteOverlapRGB, sq)
+        else :
+          pygame.draw.polygon(screenInst, sqBlackNoteNeutralRGB, sq)
 
       # Show fingering
       if (finger in [1,2,3,4,5]) :
@@ -380,7 +376,7 @@ class Keyboard :
     # White note drawing
     else :
       eps = 3
-      u = [x[0] for x in self.keyboardPolygons[note]]
+      u = [x[0] for x in self.keyboardPolygons[pitch]]
       x0 = min(u); y0 = self.loc[1] + self.c + self.e
       h = self.a - (self.c + self.e) - (2*eps)
       w = self.b - (2*self.e) - (2*eps)
@@ -391,17 +387,31 @@ class Keyboard :
       
       if (hand.lower() == "left") :
         pygame.draw.polygon(screenInst, sqWhiteNoteLeftRGB, sq)
+        self.activeNotes.append(pitch)
       
       if (hand.lower() == "right") :
         pygame.draw.polygon(screenInst, sqWhiteNoteRightRGB, sq)
+        self.activeNotes.append(pitch)
 
       if (hand.lower() == "neutral") :
-        pygame.draw.polygon(screenInst, sqWhiteNoteNeutralRGBAlpha, sq)
+        if (pitch in self.activeNotes) :
+          pygame.draw.polygon(screenInst, sqWhiteNoteOverlapRGB, sq)
+        else :
+          pygame.draw.polygon(screenInst, sqWhiteNoteNeutralRGB, sq)
 
       # Show fingering
       if (finger in [1,2,3,4,5]) :
         fu.render(screenInst, str(finger), (x0+10,y0+23), 1, (240,240,240))
 
+
+  # ---------------------------------------------------------------------------
+  # Method <reset>
+  # The object keeps track of all calls to <keyPress>.
+  # This function resets all notes stored.
+  # Useful for the note overlapping detection.
+  # ---------------------------------------------------------------------------
+  def reset(self) :
+    self.activeNotes = []
 
 
 # =============================================================================
@@ -413,17 +423,20 @@ class PianoRoll :
   # Constructor
   # ---------------------------------------------------------------------------
   def __init__(self, x, yTop, yBottom) :
+    # Drawing localisation
     self.x = x
     self.yTop = yTop
     self.yBottom = yBottom
-    self.noteArray = [[] for _ in range(128)]
+
     self.nTracks = 0
+    self.noteArray = [[] for _ in range(128)]
     self.noteOnTimecodes = []
     self.noteOnTimecodesMerged = []
     self.avgNoteDuration = 0
     
     # Color scheme
     self.keyLineRGB = (80, 140, 140)
+    self.noteOutlineRGB = (10, 10, 10)
 
     self.b = 25
     self.d = 12
@@ -527,15 +540,6 @@ class PianoRoll :
 
 
   # ---------------------------------------------------------------------------
-  # Method <exportPianoRollArray>
-  # TODO
-  # ---------------------------------------------------------------------------
-  def exportPianoRollArray(self, pianoRollFile) :
-    print("TODO")
-
-
-
-  # ---------------------------------------------------------------------------
   # Method <drawKeyLines>
   # Draw the lines leading to each key
   # ---------------------------------------------------------------------------
@@ -614,6 +618,12 @@ class PianoRoll :
                   (self.xLines[pitch+1-21]-2, rectBottom)
                 ]
             
+            # Draw the note outline
+            pygame.draw.line(screenInst, self.noteOutlineRGB, sq[0], sq[1], 3)
+            pygame.draw.line(screenInst, self.noteOutlineRGB, sq[1], sq[2], 3)
+            pygame.draw.line(screenInst, self.noteOutlineRGB, sq[2], sq[3], 3)
+            pygame.draw.line(screenInst, self.noteOutlineRGB, sq[3], sq[0], 3)
+            
             if (track == 0) :
               pygame.draw.polygon(screenInst, (165, 250, 200), sq)
             
@@ -622,4 +632,10 @@ class PianoRoll :
 
 
 
+  # ---------------------------------------------------------------------------
+  # Method <exportPianoRoll>
+  # Export the piano roll and all metadata (finger, hand, comments etc.)
+  # ---------------------------------------------------------------------------
+  def exportPianoRoll(self, pianoRollFile) :
+    print("TODO")
 

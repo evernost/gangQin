@@ -98,15 +98,14 @@ keyboard = ku.Keyboard((10, 300))
 pianoRoll = ku.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
 
 # Set the background color
-backgroundRGB = (146, 186, 209)
+backgroundRGB = (180, 177, 226)
 
 # Read the MIDI file
-#midiFile = "./midi/Rachmaninoff_Piano_Concerto_No2_Op18.mid"
-midiFile = "./midi/Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid"
+midiFile = "./midi/Rachmaninoff_Piano_Concerto_No2_Op18.mid"
+#midiFile = "./midi/Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid"
 #midiFile = "./midi/12_Etudes_Op.8__Alexander_Scriabin__tude_in_A_Major_-_Op._8_No._6.mid"
 
 pianoRoll.loadPianoRollArray(midiFile)
-
 
 
 

@@ -140,9 +140,22 @@ class Keyboard :
     self.keyboardPolygons = []
     self.activeNotes = []
     
-    # Color scheme
+    # Color palette
     self.whiteNoteRGB = (255, 255, 255)
     self.blackNoteRGB = (0, 0, 0)
+    self.fingeringFontRGB = (240, 240, 240)
+
+    self.sqWhiteNoteLeftRGB = (0, 200, 10)
+    self.sqBlackNoteLeftRGB = (0, 200, 10)
+
+    self.sqWhiteNoteRightRGB = (200, 10, 0)
+    self.sqBlackNoteRightRGB = (200, 10, 0)
+
+    self.sqWhiteNoteNeutralRGB = (195, 195, 195)
+    self.sqBlackNoteNeutralRGB = (155, 155, 155)
+
+    self.sqWhiteNoteOverlapRGB = (195, 195, 195)
+    self.sqBlackNoteOverlapRGB = (155, 155, 155)
 
     # Define the size of the keys
     self.a = 150; self.b = 25
@@ -329,22 +342,10 @@ class Keyboard :
   # ---------------------------------------------------------------------------
   def keyPress(self, screenInst, pitch, hand = None, finger = None) :
     
-    sqWhiteNoteLeftRGB = (0, 200, 10)
-    sqBlackNoteLeftRGB = (0, 200, 10)
-
-    sqWhiteNoteRightRGB = (200, 10, 0)
-    sqBlackNoteRightRGB = (200, 10, 0)
-
-    sqWhiteNoteNeutralRGB = (195, 195, 195)
-    sqBlackNoteNeutralRGB = (155, 155, 155)
-
-    # Overlapping colors 
-    sqWhiteNoteOverlapRGB = (195, 195, 195)
-    sqBlackNoteOverlapRGB = (155, 155, 155)
-    
-
+    # ------------------
     # Black note drawing
-    if ((pitch % 12) in [1,3,6,8,10]) :
+    # ------------------
+    if ((pitch % 12) in [1, 3, 6, 8, 10]) :
       eps = 3
       u = [x[0] for x in self.keyboardPolygons[pitch]]
       x0 = min(u); y0 = self.loc[1] + 50
@@ -355,25 +356,31 @@ class Keyboard :
       sq += Vector2D(w,0)
       sq += Vector2D(0,-h)
 
+      # Note: function is called to plot the keypress from keyboard first. 
+      # Then for the notes in MIDI file.
+      # This has an impact on overlap handling
       if (hand.lower() == "left") :
-        pygame.draw.polygon(screenInst, sqBlackNoteLeftRGB, sq)
-        self.activeNotes.append(pitch)
+        if (pitch in self.activeNotes) :
+          pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapRGB, sq)
+        else :
+          pygame.draw.polygon(screenInst, self.sqBlackNoteLeftRGB, sq)
 
       if (hand.lower() == "right") :
-        pygame.draw.polygon(screenInst, sqBlackNoteRightRGB, sq)
-        self.activeNotes.append(pitch)
+        if (pitch in self.activeNotes) :
+          pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapRGB, sq)
+        else :
+          pygame.draw.polygon(screenInst, self.sqBlackNoteRightRGB, sq)
 
       if (hand.lower() == "neutral") :
-        if (pitch in self.activeNotes) :
-          pygame.draw.polygon(screenInst, sqBlackNoteOverlapRGB, sq)
-        else :
-          pygame.draw.polygon(screenInst, sqBlackNoteNeutralRGB, sq)
+        pygame.draw.polygon(screenInst, self.sqBlackNoteNeutralRGB, sq)
 
       # Show fingering
       if (finger in [1,2,3,4,5]) :
-        fu.render(screenInst, str(finger), (x0+3,y0+23), 1, (240,240,240))
+        fu.render(screenInst, str(finger), (x0+3, y0+23), 1, (240, 240, 240))
     
+    # ------------------
     # White note drawing
+    # ------------------
     else :
       eps = 3
       u = [x[0] for x in self.keyboardPolygons[pitch]]
@@ -386,23 +393,26 @@ class Keyboard :
       sq += Vector2D(0,-h)
       
       if (hand.lower() == "left") :
-        pygame.draw.polygon(screenInst, sqWhiteNoteLeftRGB, sq)
-        self.activeNotes.append(pitch)
+        if (pitch in self.activeNotes) :
+          pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapRGB, sq)
+        else :
+          pygame.draw.polygon(screenInst, self.sqWhiteNoteLeftRGB, sq)
       
       if (hand.lower() == "right") :
-        pygame.draw.polygon(screenInst, sqWhiteNoteRightRGB, sq)
-        self.activeNotes.append(pitch)
+        if (pitch in self.activeNotes) :
+          pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapRGB, sq)
+        else :
+          pygame.draw.polygon(screenInst, self.sqWhiteNoteRightRGB, sq)
 
       if (hand.lower() == "neutral") :
-        if (pitch in self.activeNotes) :
-          pygame.draw.polygon(screenInst, sqWhiteNoteOverlapRGB, sq)
-        else :
-          pygame.draw.polygon(screenInst, sqWhiteNoteNeutralRGB, sq)
+        pygame.draw.polygon(screenInst, self.sqWhiteNoteNeutralRGB, sq)
 
       # Show fingering
       if (finger in [1,2,3,4,5]) :
-        fu.render(screenInst, str(finger), (x0+10,y0+23), 1, (240,240,240))
+        fu.render(screenInst, str(finger), (x0+10,y0+23), 1, self.fingeringFontRGB)
 
+    # Register this keypress for note overlap management
+    self.activeNotes.append(pitch)
 
   # ---------------------------------------------------------------------------
   # Method <reset>

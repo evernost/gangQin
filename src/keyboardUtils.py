@@ -335,8 +335,8 @@ class Keyboard :
     sqWhiteNoteRightRGB = (200, 10, 0)
     sqBlackNoteRightRGB = (200, 10, 0)
 
-    sqWhiteNoteNeutralRGB = (0, 10, 200)
-    sqBlackNoteNeutralRGB = (0, 10, 200)
+    sqWhiteNoteNeutralRGB = (195, 195, 195)
+    sqBlackNoteNeutralRGB = (195, 195, 195)
 
     alpha = 0.7
     sqWhiteNoteNeutralRGBAlpha = (

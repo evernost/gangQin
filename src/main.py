@@ -11,20 +11,20 @@
 # 1. allow the user to play the requested notes while sustaining the previous
 #    ones
 # 2. handle properly the case of no MIDI interface selected (navigation mode)
-# 3. draw the pianoroll
-# 4. add a slider to make the navigation in the MIDI file easier 
-# 5. add "bookmarks", allow to play a section on repeat
-# 6. complete the font library (fontUtils.py)
-# 7. patch the bad exit behavior upon pressing "q"
-# 8. add shortcut to jump to the first / last note
-# 9. add "if __main__" in all libs
-# 10. in <drawPianoRoll>, compute polygons once for all. Don't recompute them
+# 3. add a slider to make the navigation in the MIDI file easier 
+# 4. add "bookmarks", allow to play a section on repeat
+# 5. complete the font library (fontUtils.py)
+# 6. patch the bad exit behavior upon pressing "q"
+# 7. add shortcut to jump to the first / last note
+# 8. add "if __main__" in all libs
+# 9. in <drawPianoRoll>, compute polygons once for all. Don't recompute them
 #     if time code hasn't changed
-# 11. during MIDI import: ask the user which tracks to use (there might be more than 2)
-# 12. allow the user to edit note properties (fingering, hand)
+# 10. during MIDI import: ask the user which tracks to use (there might be more than 2)
+# 11. allow the user to edit note properties (fingering, hand)
 
 # Done:
 # X. add a fast forward option
+# X. draw the pianoroll
 
 # =============================================================================
 # Imports 
@@ -113,6 +113,7 @@ running = True
 currTime = 0
 
 bookmarks = []
+activeHands = "LR"
 
 while running:
   for event in pygame.event.get() :
@@ -182,14 +183,49 @@ while running:
           bookmarks.append(currTime)
           bookmarks.sort()
 
-      # -----------------------------------------
-      # Alt + left: jump to the previous bookmark
-      # -----------------------------------------
-      if (keys[pygame.K_LALT] and keys[pygame.K_LEFT]) :
+      # -----------------------------------
+      # Down: jump to the previous bookmark
+      # -----------------------------------
+      if (keys[pygame.K_DOWN]) :
         if (len(bookmarks) > 0) :
-          tmp = [x for x in bookmarks if (x <= currTime)]
+          tmp = [x for x in bookmarks if (x < currTime)]
           if (len(tmp) > 0) :
             currTime = tmp[-1]
+          else :
+            print(f"[NOTE] First bookmark reached")
+        else :
+          print(f"[NOTE] No bookmark!")
+
+      # -----------------------------
+      # Up: jump to the next bookmark
+      # -----------------------------
+      if (keys[pygame.K_UP]) :
+        if (len(bookmarks) > 0) :
+          tmp = [x for x in bookmarks if (x > currTime)]
+          if (len(tmp) > 0) :
+            currTime = tmp[0]
+          else :
+            print(f"[NOTE] Last bookmark reached")
+        else :
+          print(f"[NOTE] No bookmark!")
+
+      # ----------------------------------
+      # "l"
+      # ----------------------------------
+      if (keys[pygame.K_l]) :
+        if (activeHands[0] == "L") :
+          activeHands = " " + activeHands[1]
+        else :
+          activeHands = "L" + activeHands[1]
+
+      # ----------------------------------
+      # "r"
+      # ----------------------------------
+      if (keys[pygame.K_r]) :
+        if (activeHands[1] == "R") :
+          activeHands = activeHands[0] + " "
+        else :
+          activeHands = activeHands[0] + "R"
 
 
   # Clear the screen
@@ -226,13 +262,18 @@ while running:
       currTime += 1
       print(f"currTime = {currTime}")
 
-  if (playComparisonMode.lower() == "allowSustain") :
+  if (playComparisonMode.lower() == "allowsustain") :
     if (midiTeacher == midiCurr) :
       currTime += 1
       print(f"currTime = {currTime}")
 
   if (currTime in bookmarks) :
     fu.render(screen, f"BOOKMARK #{bookmarks.index(currTime)+1}", (10, 470), 2, (41, 67, 241))
+
+
+  # Show the current active hands
+  fu.render(screen, activeHands, (1288, 470), 2, (10, 10, 10))
+
 
   clock.tick(FPS)
 

@@ -641,6 +641,21 @@ class PianoRoll :
               pygame.draw.polygon(screenInst, (250, 165, 165), sq)
 
 
+  # ---------------------------------------------------------------------------
+  # Method <getCurrentNotes>
+  # Build the list of current expected notes to be played at that time
+  # ---------------------------------------------------------------------------
+  def getCurrentNotes(self, currTime) :
+    
+    activeNotes = [0 for _ in range(128)]
+    for pitch in range(21, 108+1) :
+      for track in range(self.nTracks) :
+        for evt in self.noteArray[track][pitch] :
+          if (evt.startTime == self.noteOnTimecodesMerged[currTime]) :
+            activeNotes[pitch] += 1
+
+    return activeNotes
+
 
   # ---------------------------------------------------------------------------
   # Method <exportPianoRoll>

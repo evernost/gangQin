@@ -2,7 +2,7 @@
 # =============================================================================
 # Module name     : gangQin
 # File name       : gangQin.py
-# Purpose         : projet gangQin
+# Purpose         : piano learning app
 # Author          : Quentin Biache (nitrogenium@hotmail.com)
 # Creation date   : September 1st, 2023
 # =============================================================================
@@ -15,7 +15,7 @@
 # - import/export the piano roll and all the metadata
 # - allow the user to play the requested notes while sustaining the previous ones
 # - allow the user to edit note properties (fingering, hand)
-# - repeat feature between 2 bookmarks
+# - loop feature between 2 bookmarks
 # - allow the user to practice hands separately
 # - patch the bad exit behavior upon pressing "q"
 # - add "if __main__" in all libs
@@ -25,8 +25,6 @@
 # - a dropdown list with all .mid/.pr files found instead of changing manually the variable
 
 # Nice to have:
-# - if a note is played on the keyboard, the note is correct but isn't enough to progress in 
-#   the song (eg another note is missing) the colors overlap.
 #   It would be great to handle this overlapping properly
 # - patch the obscure variable names in keyboardUtils
 
@@ -39,6 +37,8 @@
 # - draw the piano roll
 # - handle properly the case of no MIDI interface selected (navigation mode)
 # - add shortcut to jump to the first / last note
+# - if a note is played on the keyboard, the note is correct but isn't enough to progress in 
+#   the song (eg another note is missing) the colors overlap.
 
 
 
@@ -67,7 +67,7 @@ import os
 # Defines the criteria to decide when to move onto the next notes
 # - "exact": won't go further until the expected notes only are pressed, nothing else
 # - "allowSustain": accepts that the last valid notes are sustained
-playComparisonMode = "exact"
+playComparisonMode = "allowSustain"
 
 
 
@@ -101,8 +101,8 @@ pianoRoll = ku.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
 backgroundRGB = (180, 177, 226)
 
 # Read the MIDI file
-midiFile = "./midi/Rachmaninoff_Piano_Concerto_No2_Op18.mid"
-#midiFile = "./midi/Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid"
+#midiFile = "./midi/Rachmaninoff_Piano_Concerto_No2_Op18.mid"
+midiFile = "./midi/Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid"
 #midiFile = "./midi/12_Etudes_Op.8__Alexander_Scriabin__tude_in_A_Major_-_Op._8_No._6.mid"
 
 pianoRoll.loadPianoRollArray(midiFile)
@@ -113,6 +113,7 @@ pianoRoll.loadPianoRollArray(midiFile)
 # Open MIDI keyboard interface
 # =============================================================================
 midiCurr = [0 for _ in range(128)]
+midiSustained = [0 for _ in range(128)]
 
 def midiCallback(message) :
   if (message.type == 'note_on') :
@@ -121,6 +122,7 @@ def midiCallback(message) :
   elif (message.type == 'note_off') :
     print(f"Note Off: Note={message.note}, Velocity={message.velocity}")
     midiCurr[message.note] = 0
+    midiSustained[message.note] = 0 # this not cannot be considered as sustained anymore
 
 if mu.selectedDevice :
   midiPort = mido.open_input(mu.selectedDevice, callback = midiCallback)
@@ -273,12 +275,19 @@ while running:
   pianoRoll.drawKeyLines(screen)
   pianoRoll.drawPianoRoll(screen, pianoRoll.noteOnTimecodesMerged[currTime])
 
+  # -------------------------------------------------
   # Show the current key pressed on the MIDI keyboard
+  # -------------------------------------------------
   for pitch in range(21, 108+1) :
     if (midiCurr[pitch] == 1) :
       keyboard.keyPress(screen, pitch, hand = "neutral") 
 
+
+
+  # ------------------------------------------------------------------
   # Build the list of current expected notes to be played at that time
+  # ------------------------------------------------------------------
+  # TODO: make it a function
   midiTeacher = [0 for _ in range(128)]
   for pitch in range(21, 108+1) :
     if (activeHands == "LR") :
@@ -306,22 +315,51 @@ while running:
             midiTeacher[pitch] = 1
             keyboard.keyPress(screen, pitch, hand = "left", finger = 1)
 
+
+
+  # -----------------------------------------------------------------------
   # Decide whether to move forward in the score depending on the user input
-  if (playComparisonMode.lower() == "exact") :
+  # -----------------------------------------------------------------------
+  if (playComparisonMode == "exact") :
     if (midiTeacher == midiCurr) :
       currTime += 1
       print(f"currTime = {currTime}")
 
-  if (playComparisonMode.lower() == "allowsustain") :
-    if (midiTeacher == midiCurr) :
+  # A sustained note is not taken into account to decide whether to move
+  # forward or not. It will not block progress if sustained and not expected.
+  # But it will not be treated as a pressed note: user needs to release and press it again.
+  if (playComparisonMode == "allowSustain") :
+    allowProgress = True
+    for pitch in range(128) :
+      
+      # Key pressed, but is actually an "old" key press (note is sustained)
+      if ((midiTeacher[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 1)) :
+        allowProgress = False
+
+      if ((midiTeacher[pitch] == 1) and (midiCurr[pitch] == 0) and (midiSustained[pitch] == 0)) :
+        allowProgress = False
+
+      if ((midiTeacher[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
+        allowProgress = False
+  
+    if allowProgress :
       currTime += 1
       print(f"currTime = {currTime}")
 
+      # Take snapshot
+      for pitch in range(128) :
+        if ((midiTeacher[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
+          midiSustained[pitch] = 1
+
+
+  # --------------------------------------------
+  # Print some info relative to the current time
+  # --------------------------------------------
+  # Bookmark
   if (currTime in bookmarks) :
     fu.render(screen, f"BOOKMARK #{bookmarks.index(currTime)+1}", (10, 470), 2, (41, 67, 241))
 
-
-  # Show the current active hands
+  # Current active hands
   fu.render(screen, activeHands, (1288, 470), 2, (10, 10, 10))
 
 
@@ -329,6 +367,8 @@ while running:
 
   # Update the display
   pygame.display.flip()
+
+
 
 # Quit Pygame
 pygame.quit()

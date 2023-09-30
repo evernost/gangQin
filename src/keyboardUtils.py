@@ -329,11 +329,11 @@ class Keyboard :
   # ---------------------------------------------------------------------------
   def keyPress(self, screenInst, note, hand = None, finger = None) :
     
-    sqWhiteNoteLeftRGB = (200, 10, 0)
-    sqBlackNoteLeftRGB = (200, 10, 0)
+    sqWhiteNoteLeftRGB = (0, 200, 10)
+    sqBlackNoteLeftRGB = (0, 200, 10)
 
-    sqWhiteNoteRightRGB = (0, 200, 10)
-    sqBlackNoteRightRGB = (0, 200, 10)
+    sqWhiteNoteRightRGB = (200, 10, 0)
+    sqBlackNoteRightRGB = (200, 10, 0)
 
     sqWhiteNoteNeutralRGB = (0, 10, 200)
     sqBlackNoteNeutralRGB = (0, 10, 200)
@@ -412,11 +412,15 @@ class PianoRoll :
   # ---------------------------------------------------------------------------
   # Constructor
   # ---------------------------------------------------------------------------
-  def __init__(self, loc) :
-    self.loc = loc
+  def __init__(self, x, yTop, yBottom) :
+    self.x = x
+    self.yTop = yTop
+    self.yBottom = yBottom
     self.noteArray = [[] for _ in range(128)]
     self.nTracks = 0
-    self.eventTimeCodes = []
+    self.noteOnTimecodes = []
+    self.noteOnTimecodesMerged = []
+    self.avgNoteDuration = 0
     
     # Color scheme
     self.keyLineRGB = (80, 140, 140)
@@ -429,18 +433,24 @@ class PianoRoll :
 
   # ---------------------------------------------------------------------------
   # Method <loadPianoRollArray>
-  # Converts a MIDI file to a piano roll i.e. a 128-elements array.
+  # Builds the piano roll (i.e. a 128-elements array) from a MIDI file.
+  # 
   # Input:
-  # The MIDI file to read
+  # The MIDI file to read.
   #
-  # Output:
-  # Fills the noteArray attribute of the object.
+  # Outputs:
+  # - pianoRoll.noteArray
+  # - pianoRoll.noteOnTimecodes
+  # - pianoRoll.avgNoteDuration
   #
-  # pianoRollArray[60] = [note0, note1, ...]
-  # noteXXX = instance of note() class
-  # A note class has:
+  # pianoRoll.noteArray[t][p] = [note0, note1, ...]
+  # is the list of all notes played on track <t>, on pitch <p>. 
+  # Each element of the list is an instance of the Note() class.
+  # A Note() class has attributes:
   # - noteXXX.start/.end (integer) : timestamp of its beginning/end
-  # - noteXXX.hand (string: "l", "r" or ""): hand used to play the note
+  # - noteXXX.hand (string: "l", "r" or ""): hand used to play the note.
+  #
+  # pianoRoll.noteOnTimecodes[t] = [t0, t1, ...]
   # ---------------------------------------------------------------------------
   def loadPianoRollArray(self, midiFile) :
 
@@ -451,8 +461,11 @@ class PianoRoll :
 
     # Allocate outputs
     self.noteArray = [[[] for _ in range(128)] for _ in range(self.nTracks)]
-    self.eventTimeCodes = [[] for _ in range(self.nTracks)]
+    self.noteOnTimecodes = [[] for _ in range(self.nTracks)]
 
+    nNotes = 0; noteDuration = 0
+
+    # Loop on the tracks
     for (trackID, track) in enumerate(mid.tracks) :
 
       currTime = 0
@@ -461,8 +474,6 @@ class PianoRoll :
         # Update the current date ---------------------------------------------
         currTime += msg.time
         
-
-
         # Keypress event ------------------------------------------------------
         if (msg.type == 'note_on') and (msg.velocity > 0) :
           
@@ -474,36 +485,44 @@ class PianoRoll :
               
             self.noteArray[trackID][msg.note].append(Note(currTime, -1))
             
-            if not(currTime in self.eventTimeCodes[trackID]) : 
-              self.eventTimeCodes[trackID].append(currTime)
+            if not(currTime in self.noteOnTimecodes[trackID]) : 
+              self.noteOnTimecodes[trackID].append(currTime)
           
           # New note
           else :
             # Its duration is unknown for now, so set its endtime to "-1"
             self.noteArray[trackID][msg.note].append(Note(currTime, -1))
             
-            if not(currTime in self.eventTimeCodes[trackID]) : 
-              self.eventTimeCodes[trackID].append(currTime)
-
-
+            if not(currTime in self.noteOnTimecodes[trackID]) : 
+              self.noteOnTimecodes[trackID].append(currTime)
 
         # Keyrelease event ----------------------------------------------------
         if ((msg.type == 'note_off') or ((msg.type == 'note_on') and (msg.velocity == 0))) :
           
           # Take the latest event in the piano roll for this note
-          noteObj = self.noteArray[trackID][msg.note][-1]
+          # noteObj = self.noteArray[trackID][msg.note][-1]
           
           # Close it
           self.noteArray[trackID][msg.note][-1].stopTime = currTime
+          noteDuration += (self.noteArray[trackID][msg.note][-1].stopTime - self.noteArray[trackID][msg.note][-1].startTime)
+          nNotes += 1.0
 
           # if (noteObj.startTime == noteObj.stopTime) :
           #   print(f"[WARNING] MIDI note {msg.note} ({noteName(msg.note)}): ignoring note with null duration (start time = stop time = {noteObj.startTime})")
           #   self.noteArray[msg.note].pop()
 
-
-
         # Others --------------------------------------------------------------
         # Other MIDI events are ignored.
+
+    
+    # Merge note ON time codes of tracks
+    timecodesMerged = [item for sublist in self.noteOnTimecodes for item in sublist]
+    timecodesMerged = list(set(timecodesMerged))
+    self.noteOnTimecodesMerged = sorted(timecodesMerged)
+
+    # Estimate average note duration
+    self.avgNoteDuration = noteDuration/nNotes
+    print(f"[NOTE] Average note duration = {self.avgNoteDuration}")
 
 
 
@@ -516,7 +535,6 @@ class PianoRoll :
 
 
 
-
   # ---------------------------------------------------------------------------
   # Method <drawKeyLines>
   # Draw the lines leading to each key
@@ -524,11 +542,11 @@ class PianoRoll :
   def drawKeyLines(self, screenInst) :
 
     # Some shortcuts
-    x0 = self.loc[0]; y0 = self.loc[1]
+    x0 = self.x
     b = self.b
     d = self.d
 
-    xLines = [
+    self.xLines = [
       x0,                 # begin(A0)
       x0+(1*b)-(d//3),    # begin(Bb0)
       x0+(1*b)+(2*d//3),  # begin(B0)
@@ -536,7 +554,7 @@ class PianoRoll :
     x0 = x0+(2*b)         # end(B0) = begin(C0)
     
     for oct in range(7) :
-      xLines += [
+      self.xLines += [
         x0,
         x0+(1*b)-(2*d//3),
         x0+(1*b)+(d//3),
@@ -553,16 +571,17 @@ class PianoRoll :
 
       x0 += 7*b
 
-    xLines += [
+    self.xLines += [
       x0,
       x0+(1*b)
     ]
 
     # Draw the lines
-    for x in xLines :
-      pygame.draw.line(screenInst, self.keyLineRGB, (x,100), (x,y0-5), 1)
+    for x in self.xLines :
+      pygame.draw.line(screenInst, self.keyLineRGB, (x, self.yTop), (x, self.yBottom), 1)
 
-    pygame.draw.line(screenInst, self.keyLineRGB, (xLines[0],100), (xLines[-1],100), 1)
+    # Close the rectangle
+    pygame.draw.line(screenInst, self.keyLineRGB, (self.xLines[0], self.yTop), (self.xLines[-1], self.yTop), 1)
 
 
 
@@ -571,8 +590,35 @@ class PianoRoll :
   # Draw the piano roll
   # ---------------------------------------------------------------------------
   def drawPianoRoll(self, screenInst, startTimeCode) :
-    print("todo")
+    
+    for track in range(self.nTracks) :
+      for pitch in range(21, 108+1) :
+        for note in self.noteArray[track][pitch] :
+          a = startTimeCode; b = startTimeCode + (5*self.avgNoteDuration)
+          c = note.startTime; d = note.stopTime
+        
+          # Does the note span intersect the current view window?
+          if (((c >= a) and (c < b)) or ((d >= a) and (d < b)) or ((c <= a) and (d >= b))) :
+            
+            # Convert the size measured in "time" to a size in pixels
+            rectBottom = -((self.yBottom-self.yTop)*(c-b)/(b-a)) + self.yTop
+            rectTop = -((self.yBottom-self.yTop)*(d-b)/(b-a)) + self.yTop
+            
+            # Trim the rectangle representing the note to the current view
+            rectBottom = max([rectBottom, self.yTop]); rectBottom = min([rectBottom, self.yBottom])
+            rectTop = max([rectTop, self.yTop]); rectTop = min([rectTop, self.yBottom])
 
+            sq = [(self.xLines[pitch-21]+2, rectBottom),
+                  (self.xLines[pitch-21]+2, rectTop),
+                  (self.xLines[pitch+1-21]-2, rectTop),
+                  (self.xLines[pitch+1-21]-2, rectBottom)
+                ]
+            
+            if (track == 0) :
+              pygame.draw.polygon(screenInst, (165, 250, 200), sq)
+            
+            if (track == 1) :
+              pygame.draw.polygon(screenInst, (250, 165, 165), sq)
 
 
 

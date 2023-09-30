@@ -7,7 +7,7 @@
 # Creation date   : September 1st, 2023
 # =============================================================================
 
-# TODO, with decreasing priority:
+# TODO:
 # 1. allow the user to play the requested notes while sustaining the previous
 #    ones
 # 2. handle properly the case of no MIDI interface selected (navigation mode)
@@ -15,6 +15,13 @@
 # 4. add a slider to make the navigation in the MIDI file easier 
 # 5. add "bookmarks", allow to play a section on repeat
 # 6. complete the font library (fontUtils.py)
+# 7. patch the bad exit behavior upon pressing "q"
+# 8. add shortcut to jump to the first / last note
+# 9. add "if __main__" in all libs
+# 10. in <drawPianoRoll>, compute polygons once for all. Don't recompute them
+#     if time code hasn't changed
+# 11. during MIDI import: ask the user which tracks to use (there might be more than 2)
+# 12. allow the user to edit note properties (fingering, hand)
 
 # Done:
 # X. add a fast forward option
@@ -26,6 +33,7 @@
 import pygame
 import keyboardUtils as ku
 import midiUtils as mu
+import fontUtils as fu
 
 # For MIDI
 import mido
@@ -37,8 +45,8 @@ import rtmidi
 # Settings
 # =============================================================================
 # Defines the criteria to decide when to move onto the next notes
-# - exact: won't go further until the expected notes only are pressed, nothing else
-# - allowSustain: accepts that the last valid notes are sustained
+# - "exact": won't go further until the expected notes only are pressed, nothing else
+# - "allowSustain": accepts that the last valid notes are sustained
 playComparisonMode = "exact"
 
 
@@ -60,22 +68,22 @@ FPS = 60
 
 # Create window
 screen = pygame.display.set_mode((screenWidth, screenHeight))
-pygame.display.set_caption("gangQin v1.0")
+pygame.display.set_caption("gangQin App - v0.2 (Sept. 2023)")
 
 # Time management
 clock = pygame.time.Clock()
 
 # Create objects
-keyboard = ku.Keyboard((10,300))
-pianoRoll = ku.PianoRoll((10,300))
+keyboard = ku.Keyboard((10, 300))
+pianoRoll = ku.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
 
 # Set the background color
-backgroundRGB = (80, 120, 150)
+backgroundRGB = (146, 186, 209)
 
 # Read the MIDI file
 #pianoRoll.loadPianoRollArray("./midi/Rachmaninoff_Piano_Concerto_No2_Op18.mid")
-#pianoRoll.loadPianoRollArray("./midi/Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid")
-pianoRoll.loadPianoRollArray("./midi/12_Etudes_Op.8__Alexander_Scriabin__tude_in_A_Major_-_Op._8_No._6.mid")
+pianoRoll.loadPianoRollArray("./midi/Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid")
+#pianoRoll.loadPianoRollArray("./midi/12_Etudes_Op.8__Alexander_Scriabin__tude_in_A_Major_-_Op._8_No._6.mid")
 
 
 
@@ -92,8 +100,10 @@ def midiCallback(message) :
     print(f"Note Off: Note={message.note}, Velocity={message.velocity}")
     midiCurr[message.note] = 0
 
-midiPort = mido.open_input(mu.selectedDevice, callback = midiCallback)
-
+if mu.selectedDevice :
+  midiPort = mido.open_input(mu.selectedDevice, callback = midiCallback)
+else :
+  print("[NOTE] No MIDI interface selected: running in navigation mode.")
 
 
 # =============================================================================
@@ -101,9 +111,8 @@ midiPort = mido.open_input(mu.selectedDevice, callback = midiCallback)
 # =============================================================================
 running = True
 currTime = 0
-timeCodes = [item for sublist in pianoRoll.eventTimeCodes for item in sublist]
-timeCodes = list(set(timeCodes))
-timeCodes.sort() 
+
+bookmarks = []
 
 while running:
   for event in pygame.event.get() :
@@ -111,53 +120,76 @@ while running:
       running = False
 
     if (event.type == pygame.KEYDOWN) :
-      # if (event.key == pygame.K_q) :
-      #   midiPort.close()
-      #   pygame.quit()
-
-      # # Rewind, 1 step
-      # if (event.key == pygame.K_LEFT) :
-      #   if (currTime > 0) :
-      #     currTime -= 1
-      #     print(currTime)
-
-      # # Forward, 1 step
-      # if (event.key == pygame.K_RIGHT) :
-      #   if ((currTime+1) < (len(timeCodes)-1)) :
-      #     currTime += 1
-      #     print(currTime)
-
       keys = pygame.key.get_pressed()
 
+      # -----------------
+      # "q": exit the app
+      # -----------------
       if keys[pygame.K_q] :
         midiPort.close()
         pygame.quit()
 
-      # Jump backward: 1 step
+      # ----------------------------------
+      # Left arrow: jump backward (1 step)
+      # ----------------------------------
       if (keys[pygame.K_LEFT] and not(keys[pygame.K_LCTRL])) :
         if (currTime > 0) :
           currTime -= 1
           print(f"Cursor: {currTime}")
 
-      # Fast rewind: 10 steps
+      # ---------------------------------------
+      # CTRL + Left arrow: fast rewind (1 step)
+      # ---------------------------------------
       if (keys[pygame.K_LEFT] and keys[pygame.K_LCTRL]) :
         if (currTime > 10) :
           currTime -= 10
           print(f"Cursor: {currTime}")
 
-      # Jump forward: 1 step
+      # ----------------------------------
+      # Right arrow: jump forward (1 step)
+      # ----------------------------------
       if (keys[pygame.K_RIGHT] and not(keys[pygame.K_LCTRL])) :
-        if ((currTime+1) < (len(timeCodes)-1)) :
+        if ((currTime+1) < (len(pianoRoll.noteOnTimecodesMerged)-1)) :
           currTime += 1
           print(f"Cursor: {currTime}")
 
-      # Fast forward: 10 steps
+      # -----------------------------------------
+      # CTRL + right arrow: fast forward (1 step)
+      # -----------------------------------------
       if (keys[pygame.K_RIGHT] and keys[pygame.K_LCTRL]) :
-        if ((currTime+10) < (len(timeCodes)-1)) :
+        if ((currTime+10) < (len(pianoRoll.noteOnTimecodesMerged)-1)) :
           currTime += 10
           print(f"Cursor: {currTime}")
 
       # TODO: auto-increase the step size if CTRL+left/right is hit multiple times in a row 
+
+      # ---------------------------------------------------
+      # CTRL + HOME: jump to the beginning of the MIDI file
+      # ---------------------------------------------------
+      if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_HOME]) :
+        currTime = 0
+        print(f"Cursor: {currTime}")
+
+      # ----------------------------------------
+      # "b": toggle a bookmark on this timestamp
+      # ----------------------------------------
+      if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_b]) :
+        if currTime in bookmarks :
+          bookmarks = [x for x in bookmarks if (x != currTime)]
+          print(f"[NOTE] Bookmark removed at time {currTime}")
+        else :
+          print(f"[NOTE] Bookmark added at time {currTime}")
+          bookmarks.append(currTime)
+          bookmarks.sort()
+
+      # -----------------------------------------
+      # Alt + left: jump to the previous bookmark
+      # -----------------------------------------
+      if (keys[pygame.K_LALT] and keys[pygame.K_LEFT]) :
+        if (len(bookmarks) > 0) :
+          tmp = [x for x in bookmarks if (x <= currTime)]
+          if (len(tmp) > 0) :
+            currTime = tmp[-1]
 
 
   # Clear the screen
@@ -168,32 +200,39 @@ while running:
   
   # Draw the piano roll on screen
   pianoRoll.drawKeyLines(screen)
+  pianoRoll.drawPianoRoll(screen, pianoRoll.noteOnTimecodesMerged[currTime])
 
-
-  midiTeacher = [0 for _ in range(128)]
-  for i in range(21, 108+1) :
-    for trackID in range(pianoRoll.nTracks) :
-      for evt in pianoRoll.noteArray[trackID][i] :
-        if (evt.startTime == timeCodes[currTime]) :
-          midiTeacher[i] = 1
-          if (trackID == 0) :
-            keyboard.keyPress(screen, i, hand = "left", finger = 1) 
-          
-          if (trackID == 1) :
-            keyboard.keyPress(screen, i, hand = "right", finger = 2) 
-
-
+  # Show the current key pressed on the MIDI keyboard
   for i in range(21, 108+1) :
     if (midiCurr[i] == 1) :
       keyboard.keyPress(screen, i, hand = "neutral") 
-  
 
-  if (playComparisonMode == "exact") :
+  # Build the list of current expected notes to be played at that time
+  midiTeacher = [0 for _ in range(128)]
+  for pitch in range(21, 108+1) :
+    for track in range(pianoRoll.nTracks) :
+      for evt in pianoRoll.noteArray[track][pitch] :
+        if (evt.startTime == pianoRoll.noteOnTimecodesMerged[currTime]) :
+          midiTeacher[pitch] = 1
+          if (track == 0) :
+            keyboard.keyPress(screen, pitch, hand = "left", finger = 1) 
+          
+          if (track == 1) :
+            keyboard.keyPress(screen, pitch, hand = "right", finger = 2) 
+
+  # Decide whether to move forward in the score depending on the user input
+  if (playComparisonMode.lower() == "exact") :
     if (midiTeacher == midiCurr) :
       currTime += 1
       print(f"currTime = {currTime}")
 
+  if (playComparisonMode.lower() == "allowSustain") :
+    if (midiTeacher == midiCurr) :
+      currTime += 1
+      print(f"currTime = {currTime}")
 
+  if (currTime in bookmarks) :
+    fu.render(screen, f"BOOKMARK #{bookmarks.index(currTime)+1}", (10, 470), 2, (41, 67, 241))
 
   clock.tick(FPS)
 

@@ -17,7 +17,25 @@ import mido
 import fontUtils as fu
 import json
 
+# For point in polygon test
+from shapely.geometry import Point, Polygon
 
+
+
+# =============================================================================
+# Constants pool
+# =============================================================================
+LOW_KEY_MIDI_CODE = 21
+HIGH_KEY_MIDI_CODE = 108
+
+LEFT_HAND = 0
+RIGHT_HAND = 1
+UNDEFINED_HAND = 2
+
+
+# =============================================================================
+# Utilities
+# =============================================================================
 def noteName(midiCode) :
     
     if ((midiCode > 0) and (midiCode < 128)) :
@@ -115,7 +133,7 @@ class Vector2D :
 
 
 # =============================================================================
-# Class: Note
+# NOTE
 # =============================================================================
 class Note :
 
@@ -128,7 +146,7 @@ class Note :
   
 
 # =============================================================================
-# Class: keyboard 
+# KEYBOARD
 # =============================================================================
 class Keyboard :
 
@@ -154,8 +172,13 @@ class Keyboard :
     self.sqWhiteNoteNeutralRGB = (195, 195, 195)
     self.sqBlackNoteNeutralRGB = (155, 155, 155)
 
-    self.sqWhiteNoteOverlapRGB = (195, 195, 195)
-    self.sqBlackNoteOverlapRGB = (155, 155, 155)
+    self.sqWhiteNoteOverlapLeftRGB = (140, 255, 146)
+    self.sqBlackNoteOverlapLeftRGB = (140, 255, 146)
+
+    self.sqWhiteNoteOverlapRightRGB = (255, 138, 132)
+    self.sqBlackNoteOverlapRightRGB = (255, 138, 132)
+
+    self.litKeysPolygons = []
 
     # Define the size of the keys
     self.a = 150; self.b = 25
@@ -326,8 +349,7 @@ class Keyboard :
 
     # Draw keys from MIDI code 21 (A0) to MIDI code 108 (C8)
     # aka the span of a grand piano.
-    for i in range(21, 108+1) :
-    
+    for i in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
       if ((i % 12) in [1,3,6,8,10]) :
         pygame.draw.polygon(screenInst, self.blackNoteRGB, self.keyboardPolygons[i])
       else :
@@ -359,19 +381,19 @@ class Keyboard :
       # Note: function is called to plot the keypress from keyboard first. 
       # Then for the notes in MIDI file.
       # This has an impact on overlap handling
-      if (hand.lower() == "left") :
+      if (hand == LEFT_HAND) :
         if (pitch in self.activeNotes) :
-          pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapRGB, sq)
+          pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapLeftRGB, sq)
         else :
           pygame.draw.polygon(screenInst, self.sqBlackNoteLeftRGB, sq)
 
-      if (hand.lower() == "right") :
+      if (hand == RIGHT_HAND) :
         if (pitch in self.activeNotes) :
-          pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapRGB, sq)
+          pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapRightRGB, sq)
         else :
           pygame.draw.polygon(screenInst, self.sqBlackNoteRightRGB, sq)
 
-      if (hand.lower() == "neutral") :
+      if (hand == UNDEFINED_HAND) :
         pygame.draw.polygon(screenInst, self.sqBlackNoteNeutralRGB, sq)
 
       # Show fingering
@@ -392,19 +414,19 @@ class Keyboard :
       sq += Vector2D(w,0)
       sq += Vector2D(0,-h)
       
-      if (hand.lower() == "left") :
+      if (hand == LEFT_HAND) :
         if (pitch in self.activeNotes) :
-          pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapRGB, sq)
+          pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapLeftRGB, sq)
         else :
           pygame.draw.polygon(screenInst, self.sqWhiteNoteLeftRGB, sq)
       
-      if (hand.lower() == "right") :
+      if (hand == RIGHT_HAND) :
         if (pitch in self.activeNotes) :
-          pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapRGB, sq)
+          pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapRightRGB, sq)
         else :
           pygame.draw.polygon(screenInst, self.sqWhiteNoteRightRGB, sq)
 
-      if (hand.lower() == "neutral") :
+      if (hand == UNDEFINED_HAND) :
         pygame.draw.polygon(screenInst, self.sqWhiteNoteNeutralRGB, sq)
 
       # Show fingering
@@ -413,6 +435,9 @@ class Keyboard :
 
     # Register this keypress for note overlap management
     self.activeNotes.append(pitch)
+    
+    if ((hand == LEFT_HAND) or (hand == RIGHT_HAND)) :
+      self.litKeysPolygons.append((sq, pitch))
 
   # ---------------------------------------------------------------------------
   # Method <reset>
@@ -422,10 +447,12 @@ class Keyboard :
   # ---------------------------------------------------------------------------
   def reset(self) :
     self.activeNotes = []
+    self.litKeysPolygons = []
+
 
 
 # =============================================================================
-# Class: pianoRoll 
+# PIANOROLL
 # =============================================================================
 class PianoRoll :
 
@@ -446,6 +473,10 @@ class PianoRoll :
 
     self.bookmarks = []
     
+    self.teacherNotes = []
+    self.teacherNotesPolygons = []
+    self.teacherMidi = []
+
     # Color scheme
     self.keyLineRGB = (80, 140, 140)
     self.noteOutlineRGB = (10, 10, 10)
@@ -608,7 +639,7 @@ class PianoRoll :
   def drawPianoRoll(self, screenInst, startTimeCode) :
     
     for track in range(self.nTracks) :
-      for pitch in range(21, 108+1) :
+      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
         for note in self.noteArray[track][pitch] :
           a = startTimeCode; b = startTimeCode + (5*self.avgNoteDuration)
           c = note.startTime; d = note.stopTime
@@ -644,19 +675,53 @@ class PianoRoll :
 
 
   # ---------------------------------------------------------------------------
-  # Method <getCurrentNotes>
-  # Build the list of current expected notes to be played at that time
+  # Method <getTeacherNotes>
+  # Build the list (<teacherNotes>) of current expected notes to be played at that time
   # ---------------------------------------------------------------------------
-  def getCurrentNotes(self, currTime) :
+  def getTeacherNotes(self, currTime, activeHands) :
     
-    activeNotes = [0 for _ in range(128)]
-    for pitch in range(21, 108+1) :
-      for track in range(self.nTracks) :
-        for evt in self.noteArray[track][pitch] :
-          if (evt.startTime == self.noteOnTimecodesMerged[currTime]) :
-            activeNotes[pitch] += 1
+    self.teacherNotes = []
+    self.teacherMidi = [0 for _ in range(128)]    # same information as teacherNotes but different structure
+    
+    # Two hands mode
+    if (activeHands == "LR") :
+      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+        for track in range(self.nTracks) :
+          for (noteIndex, noteObj) in enumerate(self.noteArray[track][pitch]) :
+            if (noteObj.startTime == self.noteOnTimecodesMerged[currTime]) :
+              self.teacherNotes.append((track, pitch, noteIndex))
+              self.teacherMidi[pitch] = 1
 
-    return activeNotes
+    # Left hand practice
+    if (activeHands == "L ") :
+      track = 0
+      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+        for (noteIndex, noteObj) in enumerate(self.noteArray[track][pitch]) :
+          if (noteObj.startTime == self.noteOnTimecodes[track][currTime]) :
+            self.teacherNotes.append((track, pitch, noteIndex))
+            self.teacherMidi[pitch] = 1
+
+    # Right hand practice
+    if (activeHands == " R") :
+      track = 1
+      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+        for (noteIndex, noteObj) in enumerate(self.noteArray[track][pitch]) :
+          if (noteObj.startTime == self.noteOnTimecodes[track][currTime]) :
+            self.teacherNotes.append((track, pitch, noteIndex))
+            self.teacherMidi[pitch] = 1
+
+
+
+  # ---------------------------------------------------------------------------
+  # Method <showTeacherNotes>
+  # Build the polygons to show the note and display the note
+  # ---------------------------------------------------------------------------
+  def showTeacherNotes(self, screen, keyboardObj) :
+    
+    for noteObj in self.teacherNotes :
+      (track, pitch, noteIndex) = noteObj
+      keyboardObj.keyPress(screen, pitch, hand = track, finger = self.noteArray[track][pitch][noteIndex].finger)
+
 
 
   # ---------------------------------------------------------------------------
@@ -709,3 +774,20 @@ class PianoRoll :
     print(f"[NOTE] {pianoRollFile} successfully loaded!")
     
 
+
+
+  def isNoteClicked(self, clickX, clickY, litKeysPolygons) :
+
+    for (sq, pitchCurr) in litKeysPolygons :
+      pol = Polygon(sq)
+      p = Point(clickX, clickY)
+
+      # Intersection!
+      if p.within(pol) :
+
+        # Find the corresponding note in pianoRoll
+        for (track, pitch, noteIndex) in self.teacherNotes :
+          if (pitch == pitchCurr) :
+            print(f"You try to edit the following note in pianoRoll:")
+            print(f"- startTime = {self.noteArray[track][pitch][noteIndex].startTime}")
+            print(f"- stopTime = {self.noteArray[track][pitch][noteIndex].stopTime}")

@@ -12,25 +12,29 @@
 # =============================================================================
 
 # Mandatory:
-# - import/export the piano roll and all the metadata
+# - note select for an edit shall have a hitbox that spans the entire key. Not only the lit part.
 # - allow the user to edit note properties (fingering, hand)
-# - allow the user to add some comments that spans one to several timecodes
-# - loop feature between 2 bookmarks
 # - allow the user to practice hands separately
-# - add "if __main__" in all libs
-# - <drawPianoRoll>: compute polygons once for all. Don't recompute them if time code hasn't changed
+# - loop feature between 2 bookmarks
+# - allow the user to add some comments that can span on one to several timecodes
+#   Comments can be guidelines on the way to play, any notes really.
 # - during MIDI import: ask the user which tracks to use (there might be more than 2)
-# - a dropdown list with all .mid/.pr files found instead of changing manually the variable
 # - patch the keypress management in the code (combinations of CTRL+... are buggy)
-# - issue: some notes from the teacher are show in grey.
+# - issue: some notes from the teacher are shown in grey.
 
 # Nice to have:
 # - patch the obscure variable names in keyboardUtils
 # - add a play button to hear some sections
+# - <drawPianoRoll>: compute polygons once for all. Don't recompute them if time code hasn't changed
+# - add "if __main__" in all libs
+# - add autosave feature (save snapshot every 2 minutes)
+# - show a "*" in the title of the window in case there are unsaved edits
 
 # Later:
 # - change the framework, use pyqt instead
 # - complete the font library (fontUtils.py)
+# - a dropdown list with all .mid/.pr files found instead of changing manually the variable
+# - <midiCallback>: handle MIDI keyboards that send <noteON> messages with 0 velocity as a <noteOFF>
 
 # Done:
 # - add a fast forward option
@@ -41,6 +45,7 @@
 #   the song (eg another note is missing) the colors overlap.
 # - allow the user to play the requested notes while sustaining the previous ones
 # - patch the bad exit behavior upon pressing "q"
+# - import/export the piano roll and all the metadata
 
 
 
@@ -60,20 +65,19 @@ import rtmidi
 # For import/export
 import os
 
-# For point in polygon test
-from shapely.geometry import Point, Polygon
 
 
 # =============================================================================
 # Constants pool
 # =============================================================================
 REV_MAJOR = 0
-REV_MINOR = 3
+REV_MINOR = 4
 REV_YEAR = 2023
 REV_MONTH = "Oct"
 
 FSM_NORMAL = 0
 FSM_LOOP_INPUT = 1
+
 
 
 # =============================================================================
@@ -92,7 +96,6 @@ playComparisonMode = "allowSustain"
 
 # Open the MIDI interface selection GUI
 selectedDevice = mu.midiInterfaceGUI()
-print(selectedDevice)
 
 pygame.init()
 
@@ -136,10 +139,10 @@ midiSustained = [0 for _ in range(128)]
 
 def midiCallback(message) :
   if (message.type == 'note_on') :
-    print(f"Note On: Note = {message.note}, Velocity = {message.velocity}")
+    #print(f"Note On: Note = {message.note}, Velocity = {message.velocity}")
     midiCurr[message.note] = 1
   elif (message.type == 'note_off') :
-    print(f"Note Off: Note = {message.note}, Velocity = {message.velocity}")
+    #print(f"Note Off: Note = {message.note}, Velocity = {message.velocity}")
     midiCurr[message.note] = 0
     midiSustained[message.note] = 0 # this not cannot be considered as sustained anymore
 
@@ -163,6 +166,8 @@ loopStartTimecode = -1
 loopEndTimecode = -1
 
 fsmState = FSM_NORMAL
+
+clickMsg = False
 
 while running:
   for event in pygame.event.get() :
@@ -194,7 +199,7 @@ while running:
       # ---------------------------------------
       # CTRL + Left arrow: fast rewind (1 step)
       # ---------------------------------------
-      if (keys[pygame.K_LEFT] and keys[pygame.K_LCTRL]) :
+      if (keys[pygame.K_LEFT] and (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL])) :
         if (currTime > 10) :
           currTime -= 10
           print(f"Cursor: {currTime}")
@@ -210,7 +215,7 @@ while running:
       # -----------------------------------------
       # CTRL + right arrow: fast forward (1 step)
       # -----------------------------------------
-      if (keys[pygame.K_RIGHT] and keys[pygame.K_LCTRL]) :
+      if (keys[pygame.K_RIGHT] and (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL])) :
         if ((currTime+10) < (len(pianoRoll.noteOnTimecodesMerged)-1)) :
           currTime += 10
           print(f"Cursor: {currTime}")
@@ -300,8 +305,8 @@ while running:
         (midiDir, oldName) = os.path.split(midiFile)
         (midiFileName, _) = os.path.splitext(oldName)
         newName = midiDir + '/' + midiFileName + ".pr"
-        print(newName)
         pianoRoll.exportPianoRoll(newName)
+        pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - {midiFileName}.pr")
 
       # ----------------------------------
       # "p": loop
@@ -314,7 +319,9 @@ while running:
     # Mouse click handling
     # --------------------
     if (event.type == pygame.MOUSEBUTTONDOWN) :
-      click_x, click_y = pygame.mouse.get_pos()
+      clickMsg = True
+      clickX, clickY = pygame.mouse.get_pos()
+      print(f"Click click {clickX}, {clickY}")
 
 
   # Clear the screen
@@ -331,50 +338,24 @@ while running:
   # -------------------------------------------------
   # Show the current key pressed on the MIDI keyboard
   # -------------------------------------------------
-  for pitch in range(21, 108+1) :
+  for pitch in range(ku.LOW_KEY_MIDI_CODE, ku.HIGH_KEY_MIDI_CODE+1) :
     if (midiCurr[pitch] == 1) :
-      keyboard.keyPress(screen, pitch, hand = "neutral") 
+      keyboard.keyPress(screen, pitch, hand = ku.UNDEFINED_HAND) 
 
 
 
   # ------------------------------------------------------------------
   # Build the list of current expected notes to be played at that time
   # ------------------------------------------------------------------
-  # TODO: make it a function
-  midiTeacher = [0 for _ in range(128)]
-  for pitch in range(21, 108+1) :
-    if (activeHands == "LR") :
-      for track in range(pianoRoll.nTracks) :
-        for evt in pianoRoll.noteArray[track][pitch] :
-          if (evt.startTime == pianoRoll.noteOnTimecodesMerged[currTime]) :
-            midiTeacher[pitch] = 1
-            if (track == 0) :
-              keyboard.keyPress(screen, pitch, hand = "left", finger = 1)
-            
-            if (track == 1) :
-              keyboard.keyPress(screen, pitch, hand = "right", finger = 2) 
-
-    if (activeHands == " R") :
-      track = 1
-      for evt in pianoRoll.noteArray[track][pitch] :
-          if (evt.startTime == pianoRoll.noteOnTimecodes[track][currTime]) :
-            midiTeacher[pitch] = 1
-            keyboard.keyPress(screen, pitch, hand = "right", finger = 2) 
-
-    if (activeHands == "L ") :
-      track = 0
-      for evt in pianoRoll.noteArray[track][pitch] :
-          if (evt.startTime == pianoRoll.noteOnTimecodes[track][currTime]) :
-            midiTeacher[pitch] = 1
-            keyboard.keyPress(screen, pitch, hand = "left", finger = 1)
-
+  pianoRoll.getTeacherNotes(currTime, activeHands)
+  pianoRoll.showTeacherNotes(screen, keyboard)
 
 
   # -----------------------------------------------------------------------
   # Decide whether to move forward in the score depending on the user input
   # -----------------------------------------------------------------------
   if (playComparisonMode == "exact") :
-    if (midiTeacher == midiCurr) :
+    if (pianoRoll.teacherMidi == midiCurr) :
       currTime += 1
       print(f"currTime = {currTime}")
 
@@ -386,13 +367,13 @@ while running:
     for pitch in range(128) :
       
       # Key pressed, but is actually an "old" key press (note is sustained)
-      if ((midiTeacher[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 1)) :
+      if ((pianoRoll.teacherMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 1)) :
         allowProgress = False
 
-      if ((midiTeacher[pitch] == 1) and (midiCurr[pitch] == 0) and (midiSustained[pitch] == 0)) :
+      if ((pianoRoll.teacherMidi[pitch] == 1) and (midiCurr[pitch] == 0) and (midiSustained[pitch] == 0)) :
         allowProgress = False
 
-      if ((midiTeacher[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
+      if ((pianoRoll.teacherMidi[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
         allowProgress = False
   
     if allowProgress :
@@ -401,24 +382,30 @@ while running:
 
       # Take snapshot
       for pitch in range(128) :
-        if ((midiTeacher[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
+        if ((pianoRoll.teacherMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
           midiSustained[pitch] = 1
 
+  # -----------------------
+  # Note properties edition
+  # -----------------------
+  if clickMsg :
+    pianoRoll.isNoteClicked(clickX, clickY, keyboard.litKeysPolygons)
+    clickMsg = False
 
   # --------------------------------------------
   # Print some info relative to the current time
   # --------------------------------------------
   # Bookmark
   if (currTime in pianoRoll.bookmarks) :
-    fu.render(screen, f"BOOKMARK #{pianoRoll.bookmarks.index(currTime)+1}", (10, 470), 2, (41, 67, 241))
+    fu.render(screen, f"BOOKMARK #{pianoRoll.bookmarks.index(currTime)+1}", (10, 470), 2, (41, 67, 132))
 
   # Current active hands
-  fu.render(screen, activeHands, (1288, 470), 2, (10, 10, 10))
+  fu.render(screen, activeHands, (1288, 470), 2, (41, 67, 132))
 
   # Loop
   
   if loopEnable :
-    fu.render(screen, "LOOP ACTIVE: 1/?", (500, 470), 2, (10, 10, 10))
+    fu.render(screen, "LOOP ACTIVE: 1/?", (500, 470), 2, (41, 67, 132))
 
 
   clock.tick(FPS)

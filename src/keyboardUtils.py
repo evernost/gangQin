@@ -15,7 +15,7 @@
 import pygame
 import mido
 import fontUtils as fu
-
+import json
 
 
 def noteName(midiCode) :
@@ -125,7 +125,7 @@ class Note :
     self.hand = hand
     self.finger = finger
     
-
+  
 
 # =============================================================================
 # Class: keyboard 
@@ -443,6 +443,8 @@ class PianoRoll :
     self.noteOnTimecodes = []
     self.noteOnTimecodesMerged = []
     self.avgNoteDuration = 0
+
+    self.bookmarks = []
     
     # Color scheme
     self.keyLineRGB = (80, 140, 140)
@@ -662,5 +664,48 @@ class PianoRoll :
   # Export the piano roll and all metadata (finger, hand, comments etc.)
   # ---------------------------------------------------------------------------
   def exportPianoRoll(self, pianoRollFile) :
-    print("TODO")
+    
+    # Create the dictionnary containing all the things we want to save
+    exportDict = {}
+
+    # Export "manually" elements of the PianoRoll object to the export dictionary.
+    # Not ideal but does the job for now as there aren't too many properties.
+    exportDict["nTracks"] = self.nTracks
+    exportDict["noteOnTimecodes"] = self.noteOnTimecodes
+    exportDict["noteOnTimecodesMerged"] = self.noteOnTimecodesMerged
+    exportDict["avgNoteDuration"] = self.avgNoteDuration
+    exportDict["bookmarks"] = self.bookmarks
+
+    # Convert the Note() objects to a dictionnary before pushing them in the export dict
+    exportDict["noteArray"] = [[[noteObj.__dict__ for noteObj in noteList] for noteList in trackList] for trackList in self.noteArray]
+
+    with open(pianoRollFile, "w") as fileHandler :
+      json.dump(exportDict, fileHandler)
+
+    print(f"[NOTE] Saved to {pianoRollFile}!")
+
+
+  # ---------------------------------------------------------------------------
+  # Method <importPianoRoll>
+  # Import the piano roll and all metadata (finger, hand, comments etc.)
+  # And restore them to the current session
+  # ---------------------------------------------------------------------------
+  def importPianoRoll(self, pianoRollFile) :
+    
+    with open(pianoRollFile, "r") as fileHandler :
+      importDict = json.load(fileHandler)
+
+    # Import "manually" elements of the PianoRoll object to the export dictionary.
+    # Not ideal but does the job for now as there aren't too many properties.
+    self.nTracks = importDict["nTracks"]
+    self.noteOnTimecodes = importDict["noteOnTimecodes"]
+    self.noteOnTimecodesMerged = importDict["noteOnTimecodesMerged"]
+    self.avgNoteDuration = importDict["avgNoteDuration"]
+    self.bookmarks = importDict["bookmarks"]
+
+    # Convert the Note() objects to a dictionnary before pushing them in the export dict
+    self.noteArray = [[[Note(**noteDict) for noteDict in noteList] for noteList in trackList] for trackList in importDict["noteArray"]]
+
+    print(f"[NOTE] {pianoRollFile} successfully loaded!")
+    
 

@@ -56,8 +56,11 @@ def midiInterfaceGUI() :
   deviceCombo.pack(pady = 5)
 
   # Create a button to select the device
-  select_button = tk.Button(root, text = "Select", command = selectMidiDevice)
-  select_button.pack(pady=10)
+  selectButton = tk.Button(root, text = "Select", command = selectMidiDevice)
+  selectButton.pack(pady=10)
+
+  # Set the select button as the "default" button
+  root.bind("<Return>", lambda event = None : selectButton.invoke())
 
   root.mainloop()
   

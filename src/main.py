@@ -13,20 +13,20 @@
 
 # Mandatory:
 # - import/export the piano roll and all the metadata
-# - allow the user to play the requested notes while sustaining the previous ones
 # - allow the user to edit note properties (fingering, hand)
+# - allow the user to add some comments that spans one to several timecodes
 # - loop feature between 2 bookmarks
 # - allow the user to practice hands separately
-# - patch the bad exit behavior upon pressing "q"
 # - add "if __main__" in all libs
 # - <drawPianoRoll>: compute polygons once for all. Don't recompute them if time code hasn't changed
 # - during MIDI import: ask the user which tracks to use (there might be more than 2)
-# - allow the user to add some comments that spans one to several timecodes
 # - a dropdown list with all .mid/.pr files found instead of changing manually the variable
+# - patch the keypress management in the code (combinations of CTRL+... are buggy)
+# - issue: some notes from the teacher are show in grey.
 
 # Nice to have:
-#   It would be great to handle this overlapping properly
 # - patch the obscure variable names in keyboardUtils
+# - add a play button to hear some sections
 
 # Later:
 # - change the framework, use pyqt instead
@@ -39,6 +39,8 @@
 # - add shortcut to jump to the first / last note
 # - if a note is played on the keyboard, the note is correct but isn't enough to progress in 
 #   the song (eg another note is missing) the colors overlap.
+# - allow the user to play the requested notes while sustaining the previous ones
+# - patch the bad exit behavior upon pressing "q"
 
 
 
@@ -56,9 +58,22 @@ import mido
 import rtmidi
 
 # For import/export
-import json
 import os
 
+# For point in polygon test
+from shapely.geometry import Point, Polygon
+
+
+# =============================================================================
+# Constants pool
+# =============================================================================
+REV_MAJOR = 0
+REV_MINOR = 3
+REV_YEAR = 2023
+REV_MONTH = "Oct"
+
+FSM_NORMAL = 0
+FSM_LOOP_INPUT = 1
 
 
 # =============================================================================
@@ -88,7 +103,7 @@ FPS = 60
 
 # Create window
 screen = pygame.display.set_mode((screenWidth, screenHeight))
-pygame.display.set_caption("gangQin App - v0.2 (Sept. 2023)")
+pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR})")
 
 # Time management
 clock = pygame.time.Clock()
@@ -100,12 +115,16 @@ pianoRoll = ku.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
 # Set the background color
 backgroundRGB = (180, 177, 226)
 
+pianoRoll.importPianoRoll("./midi/Prelude_in_D_Minor_Opus_23_No._3__Sergei_Rachmaninoff.pr")
+
 # Read the MIDI file
 #midiFile = "./midi/Rachmaninoff_Piano_Concerto_No2_Op18.mid"
-midiFile = "./midi/Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid"
+#midiFile = "./midi/Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid"
 #midiFile = "./midi/12_Etudes_Op.8__Alexander_Scriabin__tude_in_A_Major_-_Op._8_No._6.mid"
+midiFile = "./midi/Prelude_in_D_Minor_Opus_23_No._3__Sergei_Rachmaninoff.mid"
 
-pianoRoll.loadPianoRollArray(midiFile)
+#pianoRoll.loadPianoRollArray(midiFile)
+
 
 
 
@@ -117,10 +136,10 @@ midiSustained = [0 for _ in range(128)]
 
 def midiCallback(message) :
   if (message.type == 'note_on') :
-    print(f"Note On: Note={message.note}, Velocity={message.velocity}")
+    print(f"Note On: Note = {message.note}, Velocity = {message.velocity}")
     midiCurr[message.note] = 1
   elif (message.type == 'note_off') :
-    print(f"Note Off: Note={message.note}, Velocity={message.velocity}")
+    print(f"Note Off: Note = {message.note}, Velocity = {message.velocity}")
     midiCurr[message.note] = 0
     midiSustained[message.note] = 0 # this not cannot be considered as sustained anymore
 
@@ -128,6 +147,7 @@ if mu.selectedDevice :
   midiPort = mido.open_input(mu.selectedDevice, callback = midiCallback)
 else :
   print("[NOTE] No MIDI interface selected: running in navigation mode.")
+  midiPort = None
 
 
 # =============================================================================
@@ -136,8 +156,13 @@ else :
 running = True
 currTime = 0
 
-bookmarks = []
 activeHands = "LR"
+
+loopEnable = False
+loopStartTimecode = -1
+loopEndTimecode = -1
+
+fsmState = FSM_NORMAL
 
 while running:
   for event in pygame.event.get() :
@@ -151,8 +176,12 @@ while running:
       # "q": exit the app
       # -----------------
       if keys[pygame.K_q] :
-        midiPort.close()
+        if (midiPort != None) :
+          midiPort.close()
+        
+        print("See you!")
         pygame.quit()
+        raise SystemExit(0)
 
       # ----------------------------------
       # Left arrow: jump backward (1 step)
@@ -199,20 +228,32 @@ while running:
       # "b": toggle a bookmark on this timestamp
       # ----------------------------------------
       if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_b]) :
-        if currTime in bookmarks :
-          bookmarks = [x for x in bookmarks if (x != currTime)]
+        if currTime in pianoRoll.bookmarks :
+          pianoRoll.bookmarks = [x for x in pianoRoll.bookmarks if (x != currTime)]
           print(f"[NOTE] Bookmark removed at time {currTime}")
         else :
           print(f"[NOTE] Bookmark added at time {currTime}")
-          bookmarks.append(currTime)
-          bookmarks.sort()
+          pianoRoll.bookmarks.append(currTime)
+          pianoRoll.bookmarks.sort()
+
+      # -------------------------------------
+      # "f": define finger on a selected note
+      # -------------------------------------
+      if (keys[pygame.K_f]) :
+        print("[NOTE] TODO")
+
+      # -----------------------------------
+      # "h": define hand on a selected note
+      # -----------------------------------
+      if (keys[pygame.K_h]) :
+        print("[NOTE] TODO")
 
       # -----------------------------------
       # Down: jump to the previous bookmark
       # -----------------------------------
       if (keys[pygame.K_DOWN]) :
-        if (len(bookmarks) > 0) :
-          tmp = [x for x in bookmarks if (x < currTime)]
+        if (len(pianoRoll.bookmarks) > 0) :
+          tmp = [x for x in pianoRoll.bookmarks if (x < currTime)]
           if (len(tmp) > 0) :
             currTime = tmp[-1]
           else :
@@ -224,8 +265,8 @@ while running:
       # Up: jump to the next bookmark
       # -----------------------------
       if (keys[pygame.K_UP]) :
-        if (len(bookmarks) > 0) :
-          tmp = [x for x in bookmarks if (x > currTime)]
+        if (len(pianoRoll.bookmarks) > 0) :
+          tmp = [x for x in pianoRoll.bookmarks if (x > currTime)]
           if (len(tmp) > 0) :
             currTime = tmp[0]
           else :
@@ -255,13 +296,25 @@ while running:
       # "s": export/save
       # ----------------------------------
       if (keys[pygame.K_s]) :
-        print("[NOTE] Exporting piano roll")
+        print("[NOTE] Exporting piano roll...")
         (midiDir, oldName) = os.path.split(midiFile)
         (midiFileName, _) = os.path.splitext(oldName)
         newName = midiDir + '/' + midiFileName + ".pr"
         print(newName)
         pianoRoll.exportPianoRoll(newName)
 
+      # ----------------------------------
+      # "p": loop
+      # ----------------------------------
+      if (keys[pygame.K_p]) :
+        loopEnable = not(loopEnable)
+        print("[NOTE] TODO")
+
+    # --------------------
+    # Mouse click handling
+    # --------------------
+    if (event.type == pygame.MOUSEBUTTONDOWN) :
+      click_x, click_y = pygame.mouse.get_pos()
 
 
   # Clear the screen
@@ -356,11 +409,16 @@ while running:
   # Print some info relative to the current time
   # --------------------------------------------
   # Bookmark
-  if (currTime in bookmarks) :
-    fu.render(screen, f"BOOKMARK #{bookmarks.index(currTime)+1}", (10, 470), 2, (41, 67, 241))
+  if (currTime in pianoRoll.bookmarks) :
+    fu.render(screen, f"BOOKMARK #{pianoRoll.bookmarks.index(currTime)+1}", (10, 470), 2, (41, 67, 241))
 
   # Current active hands
   fu.render(screen, activeHands, (1288, 470), 2, (10, 10, 10))
+
+  # Loop
+  
+  if loopEnable :
+    fu.render(screen, "LOOP ACTIVE: 1/?", (500, 470), 2, (10, 10, 10))
 
 
   clock.tick(FPS)

@@ -33,6 +33,15 @@ RIGHT_HAND = 1
 UNDEFINED_HAND = 2
 
 
+
+# =============================================================================
+# Guards
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[WARNING] This library is not intended to be called as a main.")
+
+
+
 # =============================================================================
 # Utilities
 # =============================================================================
@@ -137,11 +146,13 @@ class Vector2D :
 # =============================================================================
 class Note :
 
-  def __init__(self, startTime, stopTime, hand = "", finger = 0) :
+  def __init__(self, startTime, stopTime, pitch, noteIndex, hand = UNDEFINED_HAND, finger = 0) :
     self.startTime = startTime
     self.stopTime = stopTime
     self.hand = hand
     self.finger = finger
+    self.pitch = pitch
+    self.noteIndex = noteIndex
     
   
 
@@ -436,8 +447,13 @@ class Keyboard :
     # Register this keypress for note overlap management
     self.activeNotes.append(pitch)
     
+    # Store the polygons that are lit
     if ((hand == LEFT_HAND) or (hand == RIGHT_HAND)) :
-      self.litKeysPolygons.append((sq, pitch))
+      # This makes the hitbox for click on the lit part of the key only
+      #self.litKeysPolygons.append((sq, pitch))
+
+      # This makes the hitbox for click on the entire key
+      self.litKeysPolygons.append((self.keyboardPolygons[pitch], pitch))
 
   # ---------------------------------------------------------------------------
   # Method <reset>
@@ -477,9 +493,11 @@ class PianoRoll :
     self.teacherNotesPolygons = []
     self.teacherMidi = []
 
+    self.activeNoteClicked = ()
+
     # Color scheme
-    self.keyLineRGB = (80, 140, 140)
-    self.noteOutlineRGB = (10, 10, 10)
+    self.keyLineRGB = (100, 100, 100)
+    self.noteOutlineRGB = (0, 0, 0)
 
     self.b = 25
     self.d = 12
@@ -538,8 +556,9 @@ class PianoRoll :
             for i in self.noteArray[trackID][msg.note] :
               if (i.stopTime < 0) :
                 print(f"[ERROR] MIDI note {msg.note}: key is pressed again while a previous one is pending.")
-              
-            self.noteArray[trackID][msg.note].append(Note(currTime, -1))
+
+            l = len(self.noteArray[trackID][msg.note])
+            self.noteArray[trackID][msg.note].append(Note(currTime, -1, hand = trackID, pitch = msg.note, noteIndex = l))
             
             if not(currTime in self.noteOnTimecodes[trackID]) : 
               self.noteOnTimecodes[trackID].append(currTime)
@@ -547,7 +566,8 @@ class PianoRoll :
           # New note
           else :
             # Its duration is unknown for now, so set its endtime to "-1"
-            self.noteArray[trackID][msg.note].append(Note(currTime, -1))
+            l = len(self.noteArray[trackID][msg.note])
+            self.noteArray[trackID][msg.note].append(Note(currTime, -1, hand = trackID, pitch = msg.note, noteIndex = l))
             
             if not(currTime in self.noteOnTimecodes[trackID]) : 
               self.noteOnTimecodes[trackID].append(currTime)
@@ -775,8 +795,11 @@ class PianoRoll :
     
 
 
-
-  def isNoteClicked(self, clickX, clickY, litKeysPolygons) :
+  # Based on a click coordinates, indicate whether it is a key that is lit or not
+  # Return value: True or False
+  # Updates the attribute <activeNoteClicked> with the info about the note
+  # that has been clicked.
+  def isActiveNoteClicked(self, clickX, clickY, litKeysPolygons) :
 
     for (sq, pitchCurr) in litKeysPolygons :
       pol = Polygon(sq)
@@ -791,3 +814,19 @@ class PianoRoll :
             print(f"You try to edit the following note in pianoRoll:")
             print(f"- startTime = {self.noteArray[track][pitch][noteIndex].startTime}")
             print(f"- stopTime = {self.noteArray[track][pitch][noteIndex].stopTime}")
+            self.activeNoteClicked = self.noteArray[track][pitch][noteIndex]
+            return True
+
+    return False
+  
+
+
+  def getActiveNoteClicked(self) :
+    return self.activeNoteClicked
+  
+
+
+  def updateNoteProperties(self, note) :
+    self.noteArray[note.hand][note.pitch][note.noteIndex].finger = note.finger
+
+    

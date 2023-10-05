@@ -5,6 +5,8 @@
 # Purpose         : piano learning app
 # Author          : Quentin Biache (nitrogenium@hotmail.com)
 # Creation date   : September 1st, 2023
+# -----------------------------------------------------------------------------
+# Best viewed with space indentation (2 spaces)
 # =============================================================================
 
 # =============================================================================
@@ -12,8 +14,8 @@
 # =============================================================================
 
 # Mandatory:
-# - note select for an edit shall have a hitbox that spans the entire key. Not only the lit part.
-# - allow the user to edit note properties (fingering, hand)
+# - allow the user to transfer a hand from one hand to the other
+#   That involves inserting a note in <noteOnTimecodes>
 # - allow the user to practice hands separately
 # - loop feature between 2 bookmarks
 # - allow the user to add some comments that can span on one to several timecodes
@@ -21,6 +23,9 @@
 # - during MIDI import: ask the user which tracks to use (there might be more than 2)
 # - patch the keypress management in the code (combinations of CTRL+... are buggy)
 # - issue: some notes from the teacher are shown in grey.
+# - investigate the origin of the empty lists in the .pr file
+#   Is it normal?
+#
 
 # Nice to have:
 # - patch the obscure variable names in keyboardUtils
@@ -28,7 +33,7 @@
 # - <drawPianoRoll>: compute polygons once for all. Don't recompute them if time code hasn't changed
 # - add "if __main__" in all libs
 # - add autosave feature (save snapshot every 2 minutes)
-# - show a "*" in the title of the window in case there are unsaved edits
+# - show a "*" in the title bar as soon as there are unsaved changes in the pianoRoll object
 
 # Later:
 # - change the framework, use pyqt instead
@@ -46,6 +51,8 @@
 # - allow the user to play the requested notes while sustaining the previous ones
 # - patch the bad exit behavior upon pressing "q"
 # - import/export the piano roll and all the metadata
+# - note select for an edit shall have a hitbox that spans the entire key. Not only the lit part.
+# - allow the user to edit note properties (finger)
 
 
 
@@ -57,6 +64,7 @@ import pygame
 import keyboardUtils as ku
 import midiUtils as mu
 import fontUtils as fu
+from gui import *
 
 # For MIDI
 import mido
@@ -71,7 +79,7 @@ import os
 # Constants pool
 # =============================================================================
 REV_MAJOR = 0
-REV_MINOR = 4
+REV_MINOR = 5
 REV_YEAR = 2023
 REV_MONTH = "Oct"
 
@@ -118,16 +126,16 @@ pianoRoll = ku.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
 # Set the background color
 backgroundRGB = (180, 177, 226)
 
-pianoRoll.importPianoRoll("./midi/Prelude_in_D_Minor_Opus_23_No._3__Sergei_Rachmaninoff.pr")
+#pianoRoll.importPianoRoll("./midi/Rachmaninoff_-_Moment_Musical_Op._16__No._6.pr")
 
 # Read the MIDI file
 #midiFile = "./midi/Rachmaninoff_Piano_Concerto_No2_Op18.mid"
 #midiFile = "./midi/Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid"
 #midiFile = "./midi/12_Etudes_Op.8__Alexander_Scriabin__tude_in_A_Major_-_Op._8_No._6.mid"
-midiFile = "./midi/Prelude_in_D_Minor_Opus_23_No._3__Sergei_Rachmaninoff.mid"
+#midiFile = "./midi/Prelude_in_D_Minor_Opus_23_No._3__Sergei_Rachmaninoff.mid"
+midiFile = "./midi/Rachmaninoff_-_Moment_Musical_Op._16__No._6.mid"
 
-#pianoRoll.loadPianoRollArray(midiFile)
-
+pianoRoll.loadPianoRollArray(midiFile)
 
 
 
@@ -168,6 +176,8 @@ loopEndTimecode = -1
 fsmState = FSM_NORMAL
 
 clickMsg = False
+
+fingerSelGui = FingerSelector((500, 470))
 
 while running:
   for event in pygame.event.get() :
@@ -241,18 +251,6 @@ while running:
           pianoRoll.bookmarks.append(currTime)
           pianoRoll.bookmarks.sort()
 
-      # -------------------------------------
-      # "f": define finger on a selected note
-      # -------------------------------------
-      if (keys[pygame.K_f]) :
-        print("[NOTE] TODO")
-
-      # -----------------------------------
-      # "h": define hand on a selected note
-      # -----------------------------------
-      if (keys[pygame.K_h]) :
-        print("[NOTE] TODO")
-
       # -----------------------------------
       # Down: jump to the previous bookmark
       # -----------------------------------
@@ -315,13 +313,27 @@ while running:
         loopEnable = not(loopEnable)
         print("[NOTE] TODO")
 
+      fingerSelGui.visible = False
+
     # --------------------
     # Mouse click handling
     # --------------------
     if (event.type == pygame.MOUSEBUTTONDOWN) :
-      clickMsg = True
-      clickX, clickY = pygame.mouse.get_pos()
-      print(f"Click click {clickX}, {clickY}")
+      if (event.button == 1) :
+        clickMsg = True
+        clickX, clickY = pygame.mouse.get_pos()
+        print(f"Click here: x = {clickX}, y = {clickY}")
+      
+      # Scroll up
+      if (event.button == 4) :
+        if ((currTime+1) < (len(pianoRoll.noteOnTimecodesMerged)-1)) :
+          currTime += 1
+
+      # Scroll down
+      if (event.button == 5) :
+        if (currTime > 0) :
+          currTime -= 1
+
 
 
   # Clear the screen
@@ -389,7 +401,21 @@ while running:
   # Note properties edition
   # -----------------------
   if clickMsg :
-    pianoRoll.isNoteClicked(clickX, clickY, keyboard.litKeysPolygons)
+    
+    # Click on a note on the keyboard
+    if pianoRoll.isActiveNoteClicked(clickX, clickY, keyboard.litKeysPolygons) :
+      activeNote = pianoRoll.getActiveNoteClicked()
+      fingerSelGui.setNote(activeNote)
+      fingerSelGui.visible = True
+    
+    # Click on the finger selector
+    if fingerSelGui.visible :
+      ret = fingerSelGui.updateWithClick(clickX, clickY)
+
+      if (ret == FINGERSEL_CHANGED) :
+        pianoRoll.updateNoteProperties(fingerSelGui.getNote())
+
+
     clickMsg = False
 
   # --------------------------------------------
@@ -403,9 +429,12 @@ while running:
   fu.render(screen, activeHands, (1288, 470), 2, (41, 67, 132))
 
   # Loop
-  
   if loopEnable :
-    fu.render(screen, "LOOP ACTIVE: 1/?", (500, 470), 2, (41, 67, 132))
+    fu.render(screen, "LOOP ACTIVE: 1/?", (300, 470), 2, (41, 67, 132))
+
+  # Finger selection
+  fingerSelGui.show(screen)
+  
 
 
   clock.tick(FPS)

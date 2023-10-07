@@ -14,6 +14,8 @@
 # =============================================================================
 
 # Mandatory:
+# - when editing the finger of an unedited note, FingerSelector shall be set 
+#   on a default selector that matches with the hand of the note
 # - highlight the activeNote ie the note whose finger is currently being associated
 # - fingerSelGui should be visible and have focus 
 # - allow the user to transfer a hand from one hand to the other
@@ -81,7 +83,7 @@ import os
 # Constants pool
 # =============================================================================
 REV_MAJOR = 0
-REV_MINOR = 6
+REV_MINOR = 7
 REV_YEAR = 2023
 REV_MONTH = "Oct"
 
@@ -102,7 +104,10 @@ playComparisonMode = "allowSustain"
 # =============================================================================
 
 # Open the MIDI interface selection GUI
-selectedDevice = mu.midiInterfaceGUI()
+(selectedDevice, inputFile) = mu.midiInterfaceGUI()
+
+if (inputFile == "" or inputFile == "None") :
+  raise SystemExit(0)
 
 pygame.init()
 
@@ -125,18 +130,12 @@ pianoRoll = ku.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
 # Set the background color
 backgroundRGB = (180, 177, 226)
 
-#pianoRoll.importFromPrFile("./midi/Rachmaninoff_-_Moment_Musical_Op._16__No._6.pr")
+if (os.path.splitext(inputFile)[-1] == ".mid") :
+  pianoRoll.importFromMIDIFile(inputFile)
+else :
+  pianoRoll.importFromPrFile(inputFile)
 
-# Read the MIDI file
-#midiFile = "./midi/Rachmaninoff_Piano_Concerto_No2_Op18.mid"
-#midiFile = "./midi/Sergei_Rachmaninoff_-_Moments_Musicaux_Op._16_No._4_in_E_Minor.mid"
-#midiFile = "./midi/12_Etudes_Op.8__Alexander_Scriabin__tude_in_A_Major_-_Op._8_No._6.mid"
-#midiFile = "./midi/Prelude_in_D_Minor_Opus_23_No._3__Sergei_Rachmaninoff.mid"
-midiFile = "./midi/Rachmaninoff_-_Moment_Musical_Op._16__No._6.mid"
-
-pianoRoll.importFromMIDIFile(midiFile)
-
-
+pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - {inputFile}")
 
 # =============================================================================
 # Open MIDI keyboard interface
@@ -153,7 +152,7 @@ def midiCallback(message) :
     midiCurr[message.note] = 0
     midiSustained[message.note] = 0 # this not cannot be considered as sustained anymore
 
-if mu.selectedDevice :
+if (mu.selectedDevice != "None") :
   midiPort = mido.open_input(mu.selectedDevice, callback = midiCallback)
 else :
   print("[NOTE] No MIDI interface selected: running in navigation mode.")
@@ -275,9 +274,9 @@ while running:
           pianoRoll.bookmarks.append(currTime)
           pianoRoll.bookmarks.sort()
 
-      # ----------------------------------------
+      # ------------------
       # "c": add a comment
-      # ----------------------------------------
+      # ------------------
       if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_c]) :
         print("[NOTE] Adding comments will be available in a future release.")
 
@@ -290,9 +289,9 @@ while running:
         else :
           activeHands = "L" + activeHands[1]
 
-      # ----------------------------------
-      # "p": loop
-      # ----------------------------------
+      # -----------------------
+      # "p": loop practice mode
+      # -----------------------
       if (keys[pygame.K_p]) :
         loopEnable = not(loopEnable)
         print("[NOTE] Loop practice will be available in a future release.")
@@ -308,16 +307,22 @@ while running:
         else :
           activeHands = activeHands[0] + "R"
 
-      # ----------------------------------
+      # ----------------
       # "s": export/save
-      # ----------------------------------
+      # ----------------
       if (keys[pygame.K_s]) :
         print("[NOTE] Exporting piano roll...")
-        (midiDir, oldName) = os.path.split(midiFile)
+        (rootDir, oldName) = os.path.split(inputFile)
         (midiFileName, _) = os.path.splitext(oldName)
-        newName = midiDir + '/' + midiFileName + ".pr"
+        newName = rootDir + '/' + midiFileName + ".pr"
         pianoRoll.exportToPrFile(newName)
         pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - {midiFileName}.pr")
+
+      # -------------------------
+      # Space key: rehearsal mode
+      # -------------------------
+      if (keys[pygame.K_SPACE]) :
+        print("[NOTE] Rehearsal mode will be available in a future release.")
 
     # -------------------------------------------------------------------------
     # Mouse click event handling

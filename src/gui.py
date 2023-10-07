@@ -26,7 +26,9 @@ if (__name__ == "__main__") :
 
 
 
+# =============================================================================
 # Pool of constants
+# =============================================================================
 FINGERSEL_UNCHANGED = 0
 FINGERSEL_CHANGED = 1
 PROGRESSBAR_MODE_BAR = 0
@@ -50,6 +52,15 @@ class FingerSelector :
     self.textColorSelL = (244, 13, 0)
     self.textColorSelR = (0, 244, 13)
 
+    # - 0 = left hand, finger 5
+    # - 1 = left hand, finger 4
+    # ...
+    # - 4 = left hand, finger 1
+    # - 5 = left hand, finger undefined
+    # - 6 = right hand, finger undefined
+    # - 7 = right hand, finger 1
+    # ...
+    # - 11 = right hand, finger 5
     self.currentSel = 0
 
     self.visible = False

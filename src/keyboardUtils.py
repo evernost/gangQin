@@ -751,7 +751,8 @@ class PianoRoll :
 
 
   # ---------------------------------------------------------------------------
-  # Method <showTeacherNotes>
+  # METHOD <showTeacherNotes>
+  #
   # Build the polygons to show the note and display the note
   # ---------------------------------------------------------------------------
   def showTeacherNotes(self, screen, keyboardObj) :
@@ -764,6 +765,7 @@ class PianoRoll :
 
   # ---------------------------------------------------------------------------
   # METHOD <exportToPrFile>
+  #
   # Export the piano roll and all metadata (finger, hand, comments etc.) in 
   # a .pr file (JSON)
   # ---------------------------------------------------------------------------
@@ -792,6 +794,7 @@ class PianoRoll :
 
   # ---------------------------------------------------------------------------
   # METHOD <importFromPrFile>
+  #
   # Import the piano roll and all metadata (finger, hand, comments etc.)
   # from a .pr file (JSON) and restore them in the current session.
   # ---------------------------------------------------------------------------
@@ -815,10 +818,14 @@ class PianoRoll :
     
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD <isActiveNoteClicked>
+  #
   # Based on a click coordinates, indicate whether it is a key that is lit or not
   # Return value: True or False
   # Updates the attribute <activeNoteClicked> with the info about the note
   # that has been clicked.
+  # ---------------------------------------------------------------------------
   def isActiveNoteClicked(self, clickX, clickY, litKeysPolygons) :
 
     for (sq, pitchCurr) in litKeysPolygons :
@@ -831,9 +838,9 @@ class PianoRoll :
         # Find the corresponding note in pianoRoll
         for (track, pitch, noteIndex) in self.teacherNotes :
           if (pitch == pitchCurr) :
-            print(f"You try to edit the following note in pianoRoll:")
-            print(f"- startTime = {self.noteArray[track][pitch][noteIndex].startTime}")
-            print(f"- stopTime = {self.noteArray[track][pitch][noteIndex].stopTime}")
+            # print(f"You try to edit the following note in pianoRoll:")
+            # print(f"- startTime = {self.noteArray[track][pitch][noteIndex].startTime}")
+            # print(f"- stopTime = {self.noteArray[track][pitch][noteIndex].stopTime}")
             self.activeNoteClicked = self.noteArray[track][pitch][noteIndex]
             return True
 
@@ -841,11 +848,21 @@ class PianoRoll :
   
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD <getActiveNoteClicked>
+  #
+  # 
+  # ---------------------------------------------------------------------------
   def getActiveNoteClicked(self) :
     return self.activeNoteClicked
   
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD <updateNoteProperties>
+  #
+  # 
+  # ---------------------------------------------------------------------------
   def updateNoteProperties(self, note) :
     self.noteArray[note.hand][note.pitch][note.noteIndex].finger = note.finger
 

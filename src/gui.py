@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
-# Module name     : gui
-# File name       : gui.py
-# Purpose         : lib for the widgets on screen
-# Author          : Quentin Biache
-# Creation date   : September 22nd, 2023
+# Module name   : gui
+# File name     : gui.py
+# Purpose       : provides some widgets
+# Author        : QuBi (nitrogenium@hotmail.com)
+# Creation date : Friday, 22 Sept 2023
+# -----------------------------------------------------------------------------
+# Best viewed with space indentation (2 spaces)
 # =============================================================================
 
 # =============================================================================
-# Imports 
+# External libs
 # =============================================================================
 import fontUtils as fu
 import pygame
 import keyboardUtils as ku
+
+
 
 # =============================================================================
 # Guards
@@ -25,6 +29,9 @@ if (__name__ == "__main__") :
 # Pool of constants
 FINGERSEL_UNCHANGED = 0
 FINGERSEL_CHANGED = 1
+PROGRESSBAR_MODE_BAR = 0
+PROGRESSBAR_MODE_DOT = 1
+
 
 
 # =============================================================================
@@ -54,20 +61,20 @@ class FingerSelector :
       labels = ["5 ", "4 ", "3 ", "2 ", "1 ", "- ", "- ", "1 ", "2 ", "3 ", "4 ", "5 "]
       
       # Note: 96 = 8*10 + 8*2, i.e. 8 x char size + 8 x space in-between
-      fu.render(screen, f"FINGER: ", (self.locX, self.locY), 2, self.textColor)      
+      fu.renderText(screen, f"FINGER: ", (self.locX, self.locY), 2, self.textColor)      
       
       for i in range(12) :
         if (i <= 5) :          
           if (self.currentSel == i) :
-            fu.render(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelL)
+            fu.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelL)
           else :
-            fu.render(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorL)
+            fu.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorL)
 
         else :
           if (self.currentSel == i) :
-            fu.render(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelR)
+            fu.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelR)
           else :
-            fu.render(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorR)
+            fu.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorR)
 
       x0 = self.locX + 96 - 7
       yTop = self.locY + 3; yBottom = self.locY + 12
@@ -119,3 +126,14 @@ class FingerSelector :
       
     return FINGERSEL_UNCHANGED
   
+
+
+
+class ProgressBar :
+
+  def __init__(self, loc) :
+    (self.locX, self.locY) = loc
+    self.visible = False
+    self.mode = PROGRESSBAR_MODE_BAR
+
+

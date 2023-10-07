@@ -3,8 +3,8 @@
 # Module name   : keyboardUtils
 # File name     : keyboardUtils.py
 # Purpose       : keyboard drawing library
-# Author        : Quentin Biache
-# Creation date : Friday, September 15th
+# Author        : QuBi (nitrogenium@hotmail.com)
+# Creation date : Friday, 15 Sept 2023
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
@@ -409,7 +409,7 @@ class Keyboard :
 
       # Show fingering
       if (finger in [1,2,3,4,5]) :
-        fu.render(screenInst, str(finger), (x0+3, y0+23), 1, (240, 240, 240))
+        fu.renderText(screenInst, str(finger), (x0+3, y0+23), 1, (240, 240, 240))
     
     # ------------------
     # White note drawing
@@ -442,7 +442,8 @@ class Keyboard :
 
       # Show fingering
       if (finger in [1,2,3,4,5]) :
-        fu.render(screenInst, str(finger), (x0+10,y0+23), 1, self.fingeringFontRGB)
+        #fu.renderText(screenInst, str(finger), (x0+10,y0+23), 1, self.fingeringFontRGB)
+        fu.renderText(screenInst, str(finger), (x0+7,y0+19), 2, self.fingeringFontRGB)
 
     # Register this keypress for note overlap management
     self.activeNotes.append(pitch)
@@ -493,11 +494,15 @@ class PianoRoll :
     self.teacherNotesPolygons = []
     self.teacherMidi = []
 
+    # TODO: add comments to explain the meaning of this
     self.activeNoteClicked = ()
 
     # Color scheme
-    self.keyLineRGB = (100, 100, 100)
-    self.noteOutlineRGB = (0, 0, 0)
+    self.keyLineRGB = (50, 50, 50)        # Color of the lines separating each notes in the piano roll
+    self.noteOutlineRGB = (0, 0, 0)       # Border color for the notes in the piano roll
+    self.noteLeftRGB = (165, 250, 200)    # Color of a left hand note in piano roll
+    self.noteRightRGB = (250, 165, 165)   # Color of a left hand note in piano roll
+    self.backgroundRGB = (143, 140, 213)  # Background color for the piano roll
 
     self.b = 25
     self.d = 12
@@ -506,7 +511,8 @@ class PianoRoll :
 
 
   # ---------------------------------------------------------------------------
-  # Method <loadPianoRollArray>
+  # METHOD <importFromMIDIFile>
+  #
   # Builds the piano roll (i.e. a 128-elements array) from a MIDI file.
   # 
   # Input:
@@ -526,7 +532,7 @@ class PianoRoll :
   #
   # pianoRoll.noteOnTimecodes[t] = [t0, t1, ...]
   # ---------------------------------------------------------------------------
-  def loadPianoRollArray(self, midiFile) :
+  def importFromMIDIFile(self, midiFile) :
 
     mid = mido.MidiFile(midiFile)
 
@@ -598,15 +604,15 @@ class PianoRoll :
 
     # Estimate average note duration
     self.avgNoteDuration = noteDuration/nNotes
-    print(f"[NOTE] Average note duration = {self.avgNoteDuration}")
+    print(f"[NOTE] Average note duration = {self.avgNoteDuration:.2f}")
 
 
 
   # ---------------------------------------------------------------------------
-  # Method <drawKeyLines>
+  # Method <drawKeyLines> (private)
   # Draw the lines leading to each key
   # ---------------------------------------------------------------------------
-  def drawKeyLines(self, screenInst) :
+  def _drawKeyLines(self, screenInst) :
 
     # Some shortcuts
     x0 = self.x
@@ -643,6 +649,16 @@ class PianoRoll :
       x0+(1*b)
     ]
 
+    # Draw the background rectangle
+    backRect = [
+      (self.xLines[0], self.yBottom),
+      (self.xLines[-1], self.yBottom),
+      (self.xLines[-1], self.yTop),
+      (self.xLines[0], self.yTop)
+    ]
+    pygame.draw.polygon(screenInst, self.backgroundRGB, backRect)
+
+
     # Draw the lines
     for x in self.xLines :
       pygame.draw.line(screenInst, self.keyLineRGB, (x, self.yTop), (x, self.yBottom), 1)
@@ -658,6 +674,8 @@ class PianoRoll :
   # ---------------------------------------------------------------------------
   def drawPianoRoll(self, screenInst, startTimeCode) :
     
+    self._drawKeyLines(screenInst)
+
     for track in range(self.nTracks) :
       for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
         for note in self.noteArray[track][pitch] :
@@ -688,10 +706,10 @@ class PianoRoll :
             pygame.draw.line(screenInst, self.noteOutlineRGB, sq[3], sq[0], 3)
             
             if (track == 0) :
-              pygame.draw.polygon(screenInst, (165, 250, 200), sq)
+              pygame.draw.polygon(screenInst, self.noteLeftRGB, sq)
             
             if (track == 1) :
-              pygame.draw.polygon(screenInst, (250, 165, 165), sq)
+              pygame.draw.polygon(screenInst, self.noteRightRGB, sq)
 
 
   # ---------------------------------------------------------------------------
@@ -745,10 +763,11 @@ class PianoRoll :
 
 
   # ---------------------------------------------------------------------------
-  # Method <exportPianoRoll>
-  # Export the piano roll and all metadata (finger, hand, comments etc.)
+  # METHOD <exportToPrFile>
+  # Export the piano roll and all metadata (finger, hand, comments etc.) in 
+  # a .pr file (JSON)
   # ---------------------------------------------------------------------------
-  def exportPianoRoll(self, pianoRollFile) :
+  def exportToPrFile(self, pianoRollFile) :
     
     # Create the dictionnary containing all the things we want to save
     exportDict = {}
@@ -770,12 +789,13 @@ class PianoRoll :
     print(f"[NOTE] Saved to {pianoRollFile}!")
 
 
+
   # ---------------------------------------------------------------------------
-  # Method <importPianoRoll>
+  # METHOD <importFromPrFile>
   # Import the piano roll and all metadata (finger, hand, comments etc.)
-  # And restore them to the current session
+  # from a .pr file (JSON) and restore them in the current session.
   # ---------------------------------------------------------------------------
-  def importPianoRoll(self, pianoRollFile) :
+  def importFromPrFile(self, pianoRollFile) :
     
     with open(pianoRollFile, "r") as fileHandler :
       importDict = json.load(fileHandler)

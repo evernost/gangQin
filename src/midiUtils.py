@@ -3,8 +3,8 @@
 # Module name   : midiUtils
 # File name     : midiUtils.py
 # Purpose       : 
-# Author        : Quentin Biache
-# Creation date : Sunday, September 24th
+# Author        : QuBi (nitrogenium@hotmail.com)
+# Creation date : Sunday, 24 Sept 2023
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================

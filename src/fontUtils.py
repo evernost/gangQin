@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
-# Module name     : fontUtils
-# File name       : fontUtils.py
-# Purpose         : lib to show some fonts
-# Author          : Quentin Biache
-# Creation date   : September 22nd, 2023
+# Module name   : fontUtils
+# File name     : fontUtils.py
+# Purpose       : provides text printing features
+# Author        : QuBi (nitrogenium@hotmail.com)
+# Creation date : Friday, 22 Sept 2023
+# -----------------------------------------------------------------------------
+# Best viewed with space indentation (2 spaces)
 # =============================================================================
 
 # =============================================================================
-# Imports 
+# External libs
 # =============================================================================
 import pygame
 
@@ -473,9 +475,14 @@ charPolygons["-"] = [
 ]
 
 # -----------------------------------------------------------------------------
-# Print function
+# METHOD <renderText>
+# Prints a string on screen 
+# - <loc> = (x,y): coordinates of the first char
+# - <size> = int: each element of charPolygon is drawn as a square of pixel
+#   This arguments defines the size of each square (in pixels)
+# - <col> = (R,G,B): text color
 # -----------------------------------------------------------------------------
-def render(screenInst, string, loc, size, col = (40,50,60)) :
+def renderText(screenInst, string, loc, size, col = (40, 50, 60)) :
   x0 = loc[0]; y0 = loc[1]
   w = size; h = size
 

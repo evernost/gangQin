@@ -763,60 +763,6 @@ class PianoRoll :
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD <exportToPrFile>
-  #
-  # Export the piano roll and all metadata (finger, hand, comments etc.) in 
-  # a .pr file (JSON)
-  # ---------------------------------------------------------------------------
-  def exportToPrFile(self, pianoRollFile) :
-    
-    # Create the dictionnary containing all the things we want to save
-    exportDict = {}
-
-    # Export "manually" elements of the PianoRoll object to the export dictionary.
-    # Not ideal but does the job for now as there aren't too many properties.
-    exportDict["nTracks"] = self.nTracks
-    exportDict["noteOnTimecodes"] = self.noteOnTimecodes
-    exportDict["noteOnTimecodesMerged"] = self.noteOnTimecodesMerged
-    exportDict["avgNoteDuration"] = self.avgNoteDuration
-    exportDict["bookmarks"] = self.bookmarks
-
-    # Convert the Note() objects to a dictionnary before pushing them in the export dict
-    exportDict["noteArray"] = [[[noteObj.__dict__ for noteObj in noteList] for noteList in trackList] for trackList in self.noteArray]
-
-    with open(pianoRollFile, "w") as fileHandler :
-      json.dump(exportDict, fileHandler)
-
-    print(f"[NOTE] Saved to {pianoRollFile}!")
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD <importFromPrFile>
-  #
-  # Import the piano roll and all metadata (finger, hand, comments etc.)
-  # from a .pr file (JSON) and restore them in the current session.
-  # ---------------------------------------------------------------------------
-  def importFromPrFile(self, pianoRollFile) :
-    
-    with open(pianoRollFile, "r") as fileHandler :
-      importDict = json.load(fileHandler)
-
-    # Import "manually" elements of the PianoRoll object to the export dictionary.
-    # Not ideal but does the job for now as there aren't too many properties.
-    self.nTracks = importDict["nTracks"]
-    self.noteOnTimecodes = importDict["noteOnTimecodes"]
-    self.noteOnTimecodesMerged = importDict["noteOnTimecodesMerged"]
-    self.avgNoteDuration = importDict["avgNoteDuration"]
-    self.bookmarks = importDict["bookmarks"]
-
-    # Convert the Note() objects to a dictionnary before pushing them in the export dict
-    self.noteArray = [[[Note(**noteDict) for noteDict in noteList] for noteList in trackList] for trackList in importDict["noteArray"]]
-
-    print(f"[NOTE] {pianoRollFile} successfully loaded!")
-    
-
 
   # ---------------------------------------------------------------------------
   # METHOD <isActiveNoteClicked>

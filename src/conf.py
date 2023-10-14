@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
-# Module name   : midiUtils
-# File name     : midiUtils.py
-# Purpose       : 
+# Project       : gangQin
+# Module name   : conf
+# File name     : conf.py
+# Purpose       : provides GUI to configure the main gangQin app
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : Sunday, 24 Sept 2023
 # -----------------------------------------------------------------------------
@@ -42,12 +43,14 @@ def getFileList(folderPath, extension) :
 
 
 
-def midiInterfaceGUI() :
+def showSetupGUI() :
 
   global selectedDevice
   global selectedFile
   selectedDevice = ""
   selectedFile = ""
+
+
 
   def sendConf() :
     global selectedDevice
@@ -58,6 +61,8 @@ def midiInterfaceGUI() :
     print(f"Selected MIDI Device: {selectedDevice}")
     print(f"Selected file: {selectedFile}")
     root.destroy()
+
+
 
   def onRadioButtonChange():
     print(fileExt.get())
@@ -73,7 +78,24 @@ def midiInterfaceGUI() :
       comboFile["values"] = fileListName
       comboFile.set(fileListName[0])
       buttonOK["state"] = "normal"
-  
+
+
+
+  def centerWindow(container):
+    container.update_idletasks()  # Ensure widgets are updated before calculating size
+    w = container.winfo_reqwidth()
+    h = container.winfo_reqheight()
+
+    screen_width = container.winfo_screenwidth()
+    screen_height = container.winfo_screenheight()
+
+    x = (screen_width - w) // 2
+    y = (screen_height - h) // 2
+
+    container.geometry(f"{w}x{h}+{x}+{y}")
+
+
+
   fileList = getFileList("./midi/", ".mid")
   if not(fileList) :
     fileList = ["None"]
@@ -82,19 +104,6 @@ def midiInterfaceGUI() :
   root = tk.Tk()
   root.title("New learning session")
   root.resizable(0, 0)
-
-  # Get the screen width and height
-  screenWidth = root.winfo_screenwidth()
-  screenHeight = root.winfo_screenheight()
-
-  # Calculate the window's position to center it on the screen
-  windowWidth = 542
-  windowHeight = 170
-  x = (screenWidth - windowWidth) // 2
-  y = (screenHeight - windowHeight) // 2
-  root.geometry(f"{windowWidth}x{windowHeight}+{x}+{y}")
-
-
 
   # -----------------------------------------------------------------------------
   # MIDI interface selection
@@ -159,6 +168,7 @@ def midiInterfaceGUI() :
   # Set the select button as the "default" button
   root.bind("<Return>", lambda event = None : buttonOK.invoke())
 
+  centerWindow(root)
 
   root.mainloop()
   

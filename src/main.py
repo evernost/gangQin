@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
-# Module name   : gangQin
-# File name     : gangQin.py
-# Purpose       : piano learning app
+# Project       : gangQin
+# Module name   : main
+# File name     : main.py
+# Purpose       : application entry point
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : Friday, 1 Sept 2023
 # -----------------------------------------------------------------------------
@@ -14,6 +15,7 @@
 # =============================================================================
 
 # Mandatory:
+# - allow user to set the finger using numbers on the keypad
 # - when editing the finger of an unedited note, FingerSelector shall be set 
 #   on a default selector that matches with the hand of the note
 # - highlight the activeNote ie the note whose finger is currently being associated
@@ -32,6 +34,7 @@
 # - auto-increase the step size if CTRL+left/right is hit multiple times in a row 
 
 # Nice to have:
+# - inform the user somehow that he is not playing the expected note
 # - patch the obscure variable names in keyboardUtils
 # - add a play button to hear some sections
 # - <drawPianoRoll>: compute polygons once for all. Don't recompute them if time code hasn't changed
@@ -63,29 +66,38 @@
 # =============================================================================
 # External libs 
 # =============================================================================
+# Project specific constants
+from commons import *
+
 # For graphics
 import pygame
-import keyboardUtils as ku
-import midiUtils as mu
+
+# Widgets
+from widgets import keyboard
+from widgets import pianoRoll
+from widgets import fingerSelector
+
+
+
 import fontUtils as fu
-from gui import *
+import conf
+import score
 
 # For MIDI
 import mido
 import rtmidi
 
-# For import/export
+# For?
 import os
+
+
 
 
 
 # =============================================================================
 # Constants pool
 # =============================================================================
-REV_MAJOR = 0
-REV_MINOR = 7
-REV_YEAR = 2023
-REV_MONTH = "Oct"
+
 
 
 
@@ -103,10 +115,10 @@ playComparisonMode = "allowSustain"
 # Main code
 # =============================================================================
 
-# Open the MIDI interface selection GUI
-(selectedDevice, inputFile) = mu.midiInterfaceGUI()
+# Open the MIDI interface file selection GUI
+(selectedDevice, selectedFile) = conf.showSetupGUI()
 
-if (inputFile == "" or inputFile == "None") :
+if (selectedFile == "" or selectedFile == "None") :
   raise SystemExit(0)
 
 pygame.init()
@@ -114,28 +126,32 @@ pygame.init()
 # Define screen dimensions
 screenWidth = 1320
 screenHeight = 500
-FPS = 60
+screen = pygame.display.set_mode((screenWidth, screenHeight))
 
 # Create window
-screen = pygame.display.set_mode((screenWidth, screenHeight))
 pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR})")
 
 # Time management
+FPS = 60
 clock = pygame.time.Clock()
 
-# Create objects
-keyboard = ku.Keyboard((10, 300))
-pianoRoll = ku.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
+# Create widgets
+keyboardWidget = keyboard.Keyboard((10, 300))
+pianoRollWidget = pianoRoll.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
+fingerSelWidget = fingerSelector.FingerSelector((500, 470))
+
+# Game management object
+userScore = score.Score
 
 # Set the background color
 backgroundRGB = (180, 177, 226)
 
-if (os.path.splitext(inputFile)[-1] == ".mid") :
-  pianoRoll.importFromMIDIFile(inputFile)
-else :
-  pianoRoll.importFromPrFile(inputFile)
+# Read the input file
+userScore.importFromFile(selectedFile)
 
-pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - {inputFile}")
+pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - {os.path.basename(selectedFile)}")
+
+
 
 # =============================================================================
 # Open MIDI keyboard interface
@@ -143,20 +159,22 @@ pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}
 midiCurr = [0 for _ in range(128)]
 midiSustained = [0 for _ in range(128)]
 
+# Define the MIDI callback
 def midiCallback(message) :
   if (message.type == 'note_on') :
-    #print(f"Note On: Note = {message.note}, Velocity = {message.velocity}")
+    # print(f"[DEBUG] Note On: Note = {message.note}, Velocity = {message.velocity}")
     midiCurr[message.note] = 1
   elif (message.type == 'note_off') :
-    #print(f"Note Off: Note = {message.note}, Velocity = {message.velocity}")
+    # print(f"[DEBUG] Note Off: Note = {message.note}, Velocity = {message.velocity}")
     midiCurr[message.note] = 0
-    midiSustained[message.note] = 0 # this not cannot be considered as sustained anymore
+    midiSustained[message.note] = 0 # this note cannot be considered as sustained anymore
 
-if (mu.selectedDevice != "None") :
-  midiPort = mido.open_input(mu.selectedDevice, callback = midiCallback)
+if (conf.selectedDevice != "None") :
+  midiPort = mido.open_input(conf.selectedDevice, callback = midiCallback)
 else :
-  print("[NOTE] No MIDI interface selected: running in navigation mode.")
+  print("[WARNING] No MIDI interface selected: running in navigation mode.")
   midiPort = None
+
 
 
 # =============================================================================
@@ -165,17 +183,9 @@ else :
 running = True
 currTime = 0
 
-activeHands = "LR"
-
-loopEnable = False
-loopStartTimecode = -1
-loopEndTimecode = -1
-
 clickMsg = False
 
-fingerSelGui = FingerSelector((500, 470))
-
-while running:
+while running :
   for event in pygame.event.get() :
     if (event.type == pygame.QUIT) :
       running = False
@@ -201,147 +211,139 @@ while running:
       # Left arrow: jump backward (1 step)
       # ----------------------------------
       if (keys[pygame.K_LEFT] and not(keys[pygame.K_LCTRL])) :
-        if (currTime > 0) :
-          currTime -= 1
-          print(f"Cursor: {currTime}")
+        userScore.cursorStep(-1)
 
-      # ---------------------------------------
-      # CTRL + Left arrow: fast rewind (1 step)
-      # ---------------------------------------
+      # -----------------------------------------
+      # CTRL + Left arrow: fast rewind (10 steps)
+      # -----------------------------------------
       if (keys[pygame.K_LEFT] and (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL])) :
-        if (currTime > 10) :
-          currTime -= 10
-          print(f"Cursor: {currTime}")
+        userScore.cursorStep(-10)
 
       # ----------------------------------
       # Right arrow: jump forward (1 step)
       # ----------------------------------
       if (keys[pygame.K_RIGHT] and not(keys[pygame.K_LCTRL])) :
-        if ((currTime+1) < (len(pianoRoll.noteOnTimecodesMerged)-1)) :
-          currTime += 1
-          print(f"Cursor: {currTime}")
+        userScore.cursorStep(1)
 
-      # -----------------------------------------
-      # CTRL + right arrow: fast forward (1 step)
-      # -----------------------------------------
+      # -------------------------------------------
+      # CTRL + right arrow: fast forward (10 steps)
+      # -------------------------------------------
       if (keys[pygame.K_RIGHT] and (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL])) :
-        if ((currTime+10) < (len(pianoRoll.noteOnTimecodesMerged)-1)) :
-          currTime += 10
-          print(f"Cursor: {currTime}")
+        userScore.cursorStep(10)
 
-      # ---------------------------------------------------
-      # CTRL + HOME: jump to the beginning of the MIDI file
-      # ---------------------------------------------------
+      # ----------------------------------------------
+      # CTRL + HOME: jump to the beginning of the file
+      # ----------------------------------------------
       if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_HOME]) :
-        currTime = 0
-        print(f"Cursor: {currTime}")
+        userScore.cursorReset()
+
+      # ---------------------------------------
+      # CTRL + END: jump to the end of the file
+      # ---------------------------------------
+      if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_END]) :
+        print("[INFO] Supported in a future release")
 
       # -----------------------------------
       # Down: jump to the previous bookmark
       # -----------------------------------
       if (keys[pygame.K_DOWN]) :
-        if (len(pianoRoll.bookmarks) > 0) :
-          tmp = [x for x in pianoRoll.bookmarks if (x < currTime)]
-          if (len(tmp) > 0) :
-            currTime = tmp[-1]
-          else :
-            print(f"[NOTE] First bookmark reached")
-        else :
-          print(f"[NOTE] No bookmark!")
+        userScore.gotoPreviousBookmark()
 
       # -----------------------------
       # Up: jump to the next bookmark
       # -----------------------------
       if (keys[pygame.K_UP]) :
-        if (len(pianoRoll.bookmarks) > 0) :
-          tmp = [x for x in pianoRoll.bookmarks if (x > currTime)]
-          if (len(tmp) > 0) :
-            currTime = tmp[0]
-          else :
-            print(f"[NOTE] Last bookmark reached")
-        else :
-          print(f"[NOTE] No bookmark!")
+        userScore.gotoNextBookmark()
 
+      # -----------------------------------------------
+      # Keypad 1 to 5: assign finger to a selected note
+      # -----------------------------------------------
+      if (keys[pygame.K_KP1] or keys[pygame.K_KP2] or keys[pygame.K_KP3] or keys[pygame.K_KP4] or keys[pygame.K_KP5]) :
+        print("[INFO] Supported in a future release")
+      
       # ----------------------------------------
       # "b": toggle a bookmark on this timestamp
       # ----------------------------------------
       if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_b]) :
-        if currTime in pianoRoll.bookmarks :
-          pianoRoll.bookmarks = [x for x in pianoRoll.bookmarks if (x != currTime)]
-          print(f"[NOTE] Bookmark removed at time {currTime}")
-        else :
-          print(f"[NOTE] Bookmark added at time {currTime}")
-          pianoRoll.bookmarks.append(currTime)
-          pianoRoll.bookmarks.sort()
-
+        userScore.toggleBookmark()
+      
       # ------------------
       # "c": add a comment
       # ------------------
       if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_c]) :
         print("[NOTE] Adding comments will be available in a future release.")
 
+      # ----------------------------
+      # "h": (Hear) toggle play mode
+      # ----------------------------
+      if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_h]) :
+        print("[NOTE] Playing the song feature will be added in a future release.")
+
+      # ---------------------------------------------
+      # "k": toggle display of the notes in the scale
+      # ---------------------------------------------
+      if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_k]) :
+        print("[NOTE] Displaying the notes in the scale will be added in a future release.")
+
+      # ------------------------------------
+      # CTRL + k: set the key the song is in
+      # ------------------------------------
+      if (keys[pygame.K_LCTRL] and keys[pygame.K_k]) :
+        print("[NOTE] Setting the key of the song will be added in a future release.")
+
       # ---------------------------------
       # "l": enable/disable the left hand
       # ---------------------------------
-      if (keys[pygame.K_l]) :
-        if (activeHands[0] == "L") :
-          activeHands = " " + activeHands[1]
-        else :
-          activeHands = "L" + activeHands[1]
+      if (keys[pygame.K_l]) :  
+        userScore.toggleLeftHand()
 
       # -----------------------
       # "p": loop practice mode
       # -----------------------
       if (keys[pygame.K_p]) :
-        loopEnable = not(loopEnable)
-        print("[NOTE] Loop practice will be available in a future release.")
-
-      fingerSelGui.visible = False
+        userScore.toggleLoopMode()
 
       # ----------------------------------
       # "r": enable/disable the right hand
       # ----------------------------------
       if (keys[pygame.K_r]) :
-        if (activeHands[1] == "R") :
-          activeHands = activeHands[0] + " "
-        else :
-          activeHands = activeHands[0] + "R"
+        userScore.toggleRightHand()
 
       # ----------------
       # "s": export/save
       # ----------------
       if (keys[pygame.K_s]) :
         print("[NOTE] Exporting piano roll...")
-        (rootDir, oldName) = os.path.split(inputFile)
-        (midiFileName, _) = os.path.splitext(oldName)
-        newName = rootDir + '/' + midiFileName + ".pr"
-        pianoRoll.exportToPrFile(newName)
-        pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - {midiFileName}.pr")
+        (rootDir, rootNameExt) = os.path.split(selectedFile)
+        (rootName, _) = os.path.splitext(rootNameExt)
+        newName = rootDir + '/' + rootName + ".pr"
+        userScore.exportToPrFile(newName)
+        pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - {rootName}.pr")
 
       # -------------------------
       # Space key: rehearsal mode
       # -------------------------
       if (keys[pygame.K_SPACE]) :
-        print("[NOTE] Rehearsal mode will be available in a future release.")
+        userScore.toggleRehearsalMode()
 
     # -------------------------------------------------------------------------
     # Mouse click event handling
     # -------------------------------------------------------------------------
     if (event.type == pygame.MOUSEBUTTONDOWN) :
-      if (event.button == 1) :
+      
+      # Left click
+      if (event.button == MOUSE_LEFT_CLICK) :
         clickMsg = True
         clickX, clickY = pygame.mouse.get_pos()
-        print(f"Click here: x = {clickX}, y = {clickY}")
+        print(f"[DEBUG] Click here: x = {clickX}, y = {clickY}")
       
       # Scroll up
-      if (event.button == 4) :
-        if ((currTime+1) < (len(pianoRoll.noteOnTimecodesMerged)-1)) :
-          currTime += 1
+      if (event.button == MOUSE_SCROLL_UP) :
+        userScore.cursorStep(1)
 
       # Scroll down
-      if (event.button == 5) :
-        if (currTime > 0) :
-          currTime -= 1
+      if (event.button == MOUSE_SCROLL_DOWN) :
+        userScore.cursorStep(-1)
 
 
 
@@ -358,9 +360,9 @@ while running:
   # -------------------------------------------------
   # Show the current key pressed on the MIDI keyboard
   # -------------------------------------------------
-  for pitch in range(ku.LOW_KEY_MIDI_CODE, ku.HIGH_KEY_MIDI_CODE+1) :
+  for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
     if (midiCurr[pitch] == 1) :
-      keyboard.keyPress(screen, pitch, hand = ku.UNDEFINED_HAND) 
+      keyboard.keyPress(screen, pitch, hand = UNDEFINED_HAND) 
 
       # Idealy:
       # noteObj = ku.Note(pitch, ku.UNDEF_HAND)
@@ -418,15 +420,15 @@ while running:
     # Click on a note on the keyboard
     if pianoRoll.isActiveNoteClicked(clickX, clickY, keyboard.litKeysPolygons) :
       clickedNote = pianoRoll.getActiveNoteClicked()
-      fingerSelGui.setNote(clickedNote)
-      fingerSelGui.visible = True
+      fingerSelWidget.setNote(clickedNote)
+      fingerSelWidget.visible = True
     
     # Click on the finger selector
-    if fingerSelGui.visible :
-      ret = fingerSelGui.updateWithClick(clickX, clickY)
+    if fingerSelWidget.visible :
+      ret = fingerSelWidget.updateWithClick(clickX, clickY)
 
-      if (ret == FINGERSEL_CHANGED) :
-        pianoRoll.updateNoteProperties(fingerSelGui.getNote())
+      if (ret == fingerSelector.FINGERSEL_CHANGED) :
+        pianoRoll.updateNoteProperties(fingerSelWidget.getNote())
 
 
     clickMsg = False
@@ -446,7 +448,7 @@ while running:
     fu.renderText(screen, "LOOP ACTIVE: 1/?", (300, 470), 2, (41, 67, 132))
 
   # Finger selection
-  fingerSelGui.show(screen)
+  fingerSelWidget.show(screen)
   
 
 

@@ -43,6 +43,9 @@ BLACK_NOTE_WIDTH = 12
 NOTE_CHANFER = 2
 NOTE_SPACING = 1
 
+# Piano roll settings
+PIANOROLL_VIEW_SPAN = 5
+
 # Pygame click codes
 MOUSE_LEFT_CLICK = 1
 MOUSE_SCROLL_UP = 4

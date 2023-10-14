@@ -56,8 +56,8 @@ class Score :
     self.cursor = 0
     self.pianoRoll = []
 
-    self.timecodes = [[]]       # List of all <noteON> timecodes, one for each staff
-    self.timecodesMerged = []   # Merge of <self.timecodes> on all staves
+    self.noteOntimecodes = [[]]       # List of all <noteON> timecodes, one for each staff
+    self.noteOntimecodesMerged = []   # Merge of <self.timecodes> on all staves
     
     self.bookmarks = []         # List of all bookmarked timecodes (integers)
     
@@ -280,12 +280,12 @@ class Score :
     # But in general MIDI files might contain more than that.
     # And in general, the user might want to map specific tracks to the staffs
     # and not only track 0 and 1.
-    print(f"[NOTE] Tracks found: {len(mid.tracks)}")
+    print(f"[NOTE] [MIDI import] Tracks found: {len(mid.tracks)}")
     self.nStaffs = len(mid.tracks)
     
     # Allocate outputs
     self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
-    self.timecodes = [[] for _ in range(self.nStaffs)]
+    self.noteOntimecodes = [[] for _ in range(self.nStaffs)]
 
     nNotes = 0; noteDuration = 0
 
@@ -305,28 +305,30 @@ class Score :
           
           # There was a note before this one. Is it done?
           if (len(self.pianoRoll[trackNumber][pitch]) > 0) :
-            for i in self.pianoRoll[trackNumber][pitch] :
-              if (i.stopTime < 0) :
-                print(f"[ERROR] MIDI note {pitch}: key is pressed again while a previous one is pending.")
+            for currNote in self.pianoRoll[trackNumber][pitch] :
+              if (currNote.stopTime < 0) :
+                print(f"[WARNING] [MIDI import] MIDI note {pitch}: a keypress overlaps a note that is already being pressed.")
 
             l = len(self.pianoRoll[trackNumber][pitch])
-            self.pianoRoll[trackNumber][pitch].append(utils.Note(currTime, -1, hand = trackNumber, pitch = pitch, noteIndex = l))
+            self.pianoRoll[trackNumber][pitch].append(utils.Note(pitch, hand = trackNumber, noteIndex = l, startTime = currTime, stopTime = -1))
             
-            if not(currTime in self.timecodes[trackNumber]) : 
-              self.timecodes[trackNumber].append(currTime)
+            if not(currTime in self.noteOntimecodes[trackNumber]) : 
+              self.noteOntimecodes[trackNumber].append(currTime)
           
           # New note
           else :
             # Its duration is unknown for now, so set its endtime to "-1"
             l = len(self.pianoRoll[trackNumber][pitch])
-            self.pianoRoll[trackNumber][pitch].append(utils.Note(currTime, -1, hand = trackNumber, pitch = pitch, noteIndex = l))
+            self.pianoRoll[trackNumber][pitch].append(utils.Note(pitch, hand = trackNumber, noteIndex = l, startTime = currTime, stopTime = -1))
             
-            if not(currTime in self.timecodes[trackNumber]) : 
-              self.timecodes[trackNumber].append(currTime)
+            if not(currTime in self.noteOntimecodes[trackNumber]) : 
+              self.noteOntimecodes[trackNumber].append(currTime)
 
         # Keyrelease event ----------------------------------------------------
         if ((msg.type == 'note_off') or ((msg.type == 'note_on') and (msg.velocity == 0))) :
           
+          pitch = msg.note
+
           # Take the latest event in the piano roll for this note
           # noteObj = self.pianoRoll[trackID][pitch][-1]
           
@@ -336,21 +338,22 @@ class Score :
           nNotes += 1.0
 
           # if (noteObj.startTime == noteObj.stopTime) :
-          #   print(f"[WARNING] MIDI note {pitch} ({noteName(pitche)}): ignoring note with null duration (start time = stop time = {noteObj.startTime})")
+          #   print(f"[WARNING] MIDI note {pitch} ({noteName(pitch)}): ignoring note with null duration (start time = stop time = {noteObj.startTime})")
           #   self.pianoRoll[pitch].pop()
 
         # Others --------------------------------------------------------------
         # Other MIDI events are ignored.
 
     
+
     # Merge note ON time codes from both staves
-    timecodesMerged = [item for sublist in self.timecodes for item in sublist]
+    timecodesMerged = [item for sublist in self.noteOntimecodes for item in sublist]
     timecodesMerged = list(set(timecodesMerged))
-    self.timecodesMerged = sorted(timecodesMerged)
+    self.noteOntimecodesMerged = sorted(timecodesMerged)
 
     # Estimate average note duration
     self.avgNoteDuration = noteDuration/nNotes
-    print(f"[NOTE] Average note duration = {self.avgNoteDuration:.1f}")
+    print(f"[NOTE] [MIDI import] Average note duration = {self.avgNoteDuration:.1f} ticks")
 
   # ---------------------------------------------------------------------------
   # METHOD <exportToPrFile>
@@ -367,8 +370,8 @@ class Score :
     # Not ideal but does the job for now as there aren't too many properties.
     exportDict["revision"] = f"v{REV_MAJOR}.{REV_MINOR}"
     exportDict["nStaffs"] = self.nStaffs
-    exportDict["timecodes"] = self.timecodes
-    exportDict["timecodesMerged"] = self.timecodesMerged
+    exportDict["noteOntimecodes"] = self.noteOntimecodes
+    exportDict["noteOntimecodesMerged"] = self.noteOntimecodesMerged
     exportDict["avgNoteDuration"] = self.avgNoteDuration
     exportDict["bookmarks"] = self.bookmarks
 
@@ -392,7 +395,7 @@ class Score :
       importDict = json.load(fileHandler)
 
     if (f"v{REV_MAJOR}.{REV_MINOR}" != importDict["revision"]) :
-      print(f"[WARNING] Loading piano roll file from {importDict['revision']}. Current version is v{REV_MAJOR}.{REV_MINOR}")
+      print(f"[WARNING] [.pr import] Loading piano roll file from {importDict['revision']}. Current version is v{REV_MAJOR}.{REV_MINOR}")
 
     # TODO: check here that all fields exist. Previous versions might not have them
     # if ...
@@ -401,11 +404,11 @@ class Score :
 
     # Import "manually" elements of the PianoRoll object to the export dictionary.
     # Not ideal but does the job for now as there aren't too many properties.
-    self.nStaffs          = importDict["nStaffs"]
-    self.timecodes        = importDict["timecodes"]
-    self.timecodesMerged  = importDict["timecodesMerged"]
-    self.avgNoteDuration  = importDict["avgNoteDuration"]
-    self.bookmarks        = importDict["bookmarks"]
+    self.nStaffs                = importDict["nStaffs"]
+    self.noteOntimecodes        = importDict["noteOntimecodes"]
+    self.noteOntimecodesMerged  = importDict["noteOntimecodesMerged"]
+    self.avgNoteDuration        = importDict["avgNoteDuration"]
+    self.bookmarks              = importDict["bookmarks"]
 
     # Note() objects were converted to a dictionary. Convert them back to a Note object
     self.pianoRoll = [[[utils.Note(**noteDict) for noteDict in noteList] for noteList in trackList] for trackList in importDict["pianoRoll"]]

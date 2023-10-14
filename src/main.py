@@ -81,7 +81,9 @@ from widgets import fingerSelector
 
 import fontUtils as fu
 import conf
+import utils
 import score
+
 
 # For MIDI
 import mido
@@ -128,9 +130,6 @@ screenWidth = 1320
 screenHeight = 500
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 
-# Create window
-pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR})")
-
 # Time management
 FPS = 60
 clock = pygame.time.Clock()
@@ -140,16 +139,19 @@ keyboardWidget = keyboard.Keyboard((10, 300))
 pianoRollWidget = pianoRoll.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
 fingerSelWidget = fingerSelector.FingerSelector((500, 470))
 
-# Game management object
-userScore = score.Score
+# Create score and import file
+userScore = score.Score()
+userScore.importFromFile(selectedFile)
+
+# Ajust the piano roll view
+pianoRollWidget.importPianoRoll(userScore.pianoRoll)
+pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
 
 # Set the background color
 backgroundRGB = (180, 177, 226)
 
-# Read the input file
-userScore.importFromFile(selectedFile)
-
-pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - {os.path.basename(selectedFile)}")
+# Create window
+pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - <{os.path.basename(selectedFile)}>")
 
 
 
@@ -351,30 +353,25 @@ while running :
   screen.fill(backgroundRGB)
 
   # Draw the keyboard on screen
-  keyboard.reset()
-  keyboard.drawKeys(screen)
+  keyboardWidget.reset()
+  keyboardWidget.drawKeys(screen)
   
   # Draw the piano roll on screen
-  pianoRoll.drawPianoRoll(screen, pianoRoll.noteOnTimecodesMerged[currTime])
+  pianoRollWidget.drawPianoRoll(screen, pianoRollWidget.noteOnTimecodesMerged[currTime])
 
   # -------------------------------------------------
   # Show the current key pressed on the MIDI keyboard
   # -------------------------------------------------
   for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
     if (midiCurr[pitch] == 1) :
-      keyboard.keyPress(screen, pitch, hand = UNDEFINED_HAND) 
-
-      # Idealy:
-      # noteObj = ku.Note(pitch, ku.UNDEF_HAND)
-      # keyboard.keyPress(screen, [noteObj])
-
+      #keyboardWidget.keyPress(screen, pitch, hand = UNDEFINED_HAND) 
+      keyboardWidget.keyPress(screen, [utils.Note(pitch, hand = UNDEFINED_HAND)])
 
   # ------------------------------------------------------------------
   # Build the list of current expected notes to be played at that time
   # ------------------------------------------------------------------
-  pianoRoll.getTeacherNotes(currTime, activeHands)
-  pianoRoll.showTeacherNotes(screen, keyboard)
-
+  pianoRollWidget.getTeacherNotes(currTime, activeHands)
+  pianoRollWidget.showTeacherNotes(screen, keyboard)
 
   # -----------------------------------------------------------------------
   # Decide whether to move forward in the score depending on the user input

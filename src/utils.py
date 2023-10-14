@@ -144,15 +144,20 @@ class Vector2D :
 # =============================================================================
 class Note :
 
-  def __init__(self, startTime, stopTime, pitch, noteIndex, hand = UNDEFINED_HAND, finger = 0) :
-    self.startTime = startTime
-    self.stopTime = stopTime
+  def __init__(self, pitch, hand = UNDEFINED_HAND, finger = 0, noteIndex = 0, startTime = 0, stopTime = 0) :
+    
+    # General common attributes of a note
+    self.pitch = pitch
     self.hand = hand
     self.finger = finger
-    self.pitch = pitch
-    self.noteIndex = noteIndex
     
-  
+    # Info relative to the pianoroll
+    self.noteIndex = noteIndex
+    self.startTime = startTime
+    self.stopTime = stopTime
+    self.mustPlay = True
+
+
 
 # =============================================================================
 # Keystrokes handling function

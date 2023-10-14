@@ -52,13 +52,11 @@ class PianoRoll :
     self.yTop = yTop
     self.yBottom = yBottom
 
-    # self.nTracks = 0
-    # self.noteArray = [[] for _ in range(128)]
-    # self.noteOnTimecodes = []
-    # self.noteOnTimecodesMerged = []
-    # self.avgNoteDuration = 0
+    # Defines the amount of notes shown in the piano roll view
+    # Units are in timecodes. Use <avgNoteDuration> to use it conveniently
+    self.viewSpan = 1000
 
-    # self.bookmarks = []
+    self.noteArray = [[] for _ in range(128)]
     
     self.teacherNotes = []
     self.teacherNotesPolygons = []
@@ -83,7 +81,8 @@ class PianoRoll :
 
   # ---------------------------------------------------------------------------
   # Method <drawKeyLines> (private)
-  # Draw the lines leading to each key
+  #
+  # Draw the thin lines in-between each note
   # ---------------------------------------------------------------------------
   def _drawKeyLines(self, screenInst) :
 
@@ -143,7 +142,8 @@ class PianoRoll :
 
   # ---------------------------------------------------------------------------
   # Method <drawPianoRoll>
-  # Draw the piano roll
+  #
+  # Draw the note content of the piano roll at the current time
   # ---------------------------------------------------------------------------
   def drawPianoRoll(self, screenInst, startTimeCode) :
     
@@ -152,7 +152,7 @@ class PianoRoll :
     for track in range(self.nTracks) :
       for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
         for note in self.noteArray[track][pitch] :
-          a = startTimeCode; b = startTimeCode + (5*self.avgNoteDuration)
+          a = startTimeCode; b = startTimeCode + (self.viewSpan*self.avgNoteDuration)
           c = note.startTime; d = note.stopTime
         
           # Does the note span intersect the current view window?
@@ -183,6 +183,7 @@ class PianoRoll :
             
             if (track == 1) :
               pygame.draw.polygon(screenInst, self.noteRightRGB, sq)
+
 
 
   # ---------------------------------------------------------------------------
@@ -270,7 +271,7 @@ class PianoRoll :
   # ---------------------------------------------------------------------------
   # METHOD <getActiveNoteClicked>
   #
-  # 
+  # TODO
   # ---------------------------------------------------------------------------
   def getActiveNoteClicked(self) :
     return self.activeNoteClicked
@@ -280,11 +281,21 @@ class PianoRoll :
   # ---------------------------------------------------------------------------
   # METHOD <updateNoteProperties>
   #
-  # 
+  # TODO
   # ---------------------------------------------------------------------------
   def updateNoteProperties(self, note) :
     self.noteArray[note.hand][note.pitch][note.noteIndex].finger = note.finger
 
     
+  # ---------------------------------------------------------------------------
+  # METHOD <importPianoRoll>
+  #
+  # TODO
+  # ---------------------------------------------------------------------------
+  def importPianoRoll(self, noteArray) :
+    
+    # Use .copy instead of direct assign for safety 
+    # (we don't want the pianoroll widget to mess with the real score)
+    self.noteArray = noteArray.copy()
 
 

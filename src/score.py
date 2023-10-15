@@ -63,6 +63,11 @@ class Score :
     
     self.activeHands = "LR"
     
+    self.teacherNotes = []
+    self.teacherNotesMidi = [0 for _ in range(128)]
+
+
+
     self.progressEnable = True
     self.fsmState = FSM_STATE_NORMAL 
 
@@ -75,11 +80,19 @@ class Score :
 
 
 
+  def getCursor(self) :
+    return self.cursor
+
+
+
+  def getCurrentTimecode(self) :
+    return self.noteOntimecodesMerged[self.cursor]
+
 
 
   
   def setTimecodes(self, timecodes) :
-    self.timecodes = timecodes
+    self.noteOntimecodes = timecodes
 
     # Update <cursor> too as it might not be valid anymore
     # ...
@@ -89,22 +102,22 @@ class Score :
 
     if (self.fsmState == FSM_STATE_NORMAL) :
       if (delta > 0) :
-        if ((self.timeIndex + delta) < (len(self.timecodes)-1)) :
-          self.timeIndex += delta
-          print(f"[INFO] Cursor: {self.timeIndex}")
+        if ((self.cursor + delta) < (len(self.noteOntimecodesMerged)-1)) :
+          self.cursor += delta
+          print(f"[INFO] Cursor: {self.cursor}")
 
       else :
-        if ((self.timeIndex < delta) >= 0) :
-          self.timeIndex -= delta
-          print(f"[INFO] Cursor: {self.timeIndex}")
+        if ((self.cursor + delta) >= 0) :
+          self.cursor += delta
+          print(f"[INFO] Cursor: {self.cursor}")
 
 
   
 
   def cursorReset(self) :
+    self.cursor = 0
+    # if (self.fsmState == FSM_STATE_NORMAL) :
     
-    if (self.fsmState == FSM_STATE_NORMAL) :
-      self.timeIndex = 0
 
 
 
@@ -205,6 +218,45 @@ class Score :
     else :
       self.activeHands = self.activeHands[0] + "R"
       # oracle.setTimecodesDB = pianoRoll.noteOnTimecodesMerged
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD <updateTeacherNotes>
+  #
+  # Build the list (<teacherNotes>) of current expected notes to be played at 
+  # that time.
+  # ---------------------------------------------------------------------------
+  def updateTeacherNotes(self) :
+    
+    self.teacherNotes = []
+    self.teacherNotesMidi = [0 for _ in range(128)]    # same information as <teacherNotes> but different structure
+    
+    # Two hands mode
+    if (self.activeHands == "LR") :
+      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+        for (staffIndex, _) in enumerate(self.pianoRoll) :
+          for noteObj in self.pianoRoll[staffIndex][pitch] :
+            if (noteObj.startTime == self.getCurrentTimecode()) :
+              self.teacherNotes.append(noteObj)
+              self.teacherNotesMidi[pitch] = 1
+
+    # Left hand practice
+    if (self.activeHands == "L ") :
+      staffIndex = 0
+      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+        for noteObj in self.pianoRoll[staffIndex][pitch] :
+          if (noteObj.startTime == self.getCurrentTimecode()) :
+            self.teacherNotes.append(noteObj)
+            self.teacherNotesMidi[pitch] = 1
+
+    # Right hand practice
+    if (self.activeHands == " R") :
+      staffIndex = 1
+      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+        for noteObj in self.pianoRoll[staffIndex][pitch] :
+          if (noteObj.startTime == self.getCurrentTimecode()) :
+            self.teacherNotes.append(noteObj)
+            self.teacherNotesMidi[pitch] = 1
 
 
 
@@ -415,3 +467,18 @@ class Score :
 
     print(f"[NOTE] {pianoRollFile} successfully loaded!")
     
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD <_checkForChanges> (private)
+  #
+  # Detect if there are any unsaved changes and updates the attribute
+  # <hasUnsavedChanges>
+  # ---------------------------------------------------------------------------
+  def _checkForChanges(self) :
+    print("TODO")
+    
+
+
+  def isBookmarkedTimecode(self) :
+    return (self.cursor in self.bookmarks)

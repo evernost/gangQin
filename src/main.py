@@ -24,6 +24,8 @@
 #   That involves inserting a note in <noteOnTimecodes>
 # - allow the user to practice hands separately
 # - loop feature between 2 bookmarks
+# - loop feature: "color memory game". Increase the size of the loop as the user
+#   plays it without any mistakes and more quickly
 # - allow the user to add some comments that can span on one to several timecodes
 #   Comments can be guidelines on the way to play, any notes really.
 # - during MIDI import: ask the user which tracks to use (there might be more than 2)
@@ -143,8 +145,8 @@ fingerSelWidget = fingerSelector.FingerSelector((500, 470))
 userScore = score.Score()
 userScore.importFromFile(selectedFile)
 
-# Ajust the piano roll view
-pianoRollWidget.importPianoRoll(userScore.pianoRoll)
+# Load score and adjust the piano roll view
+pianoRollWidget.loadPianoRoll(userScore.pianoRoll)
 pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
 
 # Set the background color
@@ -357,21 +359,24 @@ while running :
   keyboardWidget.drawKeys(screen)
   
   # Draw the piano roll on screen
-  pianoRollWidget.drawPianoRoll(screen, pianoRollWidget.noteOnTimecodesMerged[currTime])
+  pianoRollWidget.drawPianoRoll(screen, userScore.getCurrentTimecode())
 
   # -------------------------------------------------
   # Show the current key pressed on the MIDI keyboard
   # -------------------------------------------------
+  # TODO: list in comprehension might do a better job here
+  midiNoteList = []
   for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
     if (midiCurr[pitch] == 1) :
-      #keyboardWidget.keyPress(screen, pitch, hand = UNDEFINED_HAND) 
-      keyboardWidget.keyPress(screen, [utils.Note(pitch, hand = UNDEFINED_HAND)])
+      midiNoteList.append(utils.Note(pitch, hand = UNDEFINED_HAND))
+  
+  keyboardWidget.keyPress(screen, midiNoteList)
 
   # ------------------------------------------------------------------
   # Build the list of current expected notes to be played at that time
   # ------------------------------------------------------------------
-  pianoRollWidget.getTeacherNotes(currTime, activeHands)
-  pianoRollWidget.showTeacherNotes(screen, keyboard)
+  userScore.updateTeacherNotes()
+  keyboardWidget.keyPress(screen, userScore.teacherNotes)
 
   # -----------------------------------------------------------------------
   # Decide whether to move forward in the score depending on the user input
@@ -379,9 +384,9 @@ while running :
   
   # Exact mode
   if (playComparisonMode == "exact") :
-    if (pianoRoll.teacherMidi == midiCurr) :
-      currTime += 1
-      print(f"currTime = {currTime}")
+    if (userScore.teacherNotesMidi == midiCurr) :
+      userScore.cursorStep(1)
+      print(f"currTime = {userScore.cursor}")
 
   # Sustain mode
   # Sustained note are tolerated to proceed forward.
@@ -391,13 +396,13 @@ while running :
     for pitch in range(128) :
       
       # Key is pressed, but is actually an "old" key press (sustained note)
-      if ((pianoRoll.teacherMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 1)) :
+      if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 1)) :
         allowProgress = False
 
-      if ((pianoRoll.teacherMidi[pitch] == 1) and (midiCurr[pitch] == 0) and (midiSustained[pitch] == 0)) :
+      if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 0) and (midiSustained[pitch] == 0)) :
         allowProgress = False
 
-      if ((pianoRoll.teacherMidi[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
+      if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
         allowProgress = False
   
     if allowProgress :
@@ -406,7 +411,7 @@ while running :
 
       # Take snapshot
       for pitch in range(128) :
-        if ((pianoRoll.teacherMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
+        if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
           midiSustained[pitch] = 1
 
   # -----------------------
@@ -434,20 +439,19 @@ while running :
   # Print some info relative to the current time
   # --------------------------------------------
   # Bookmark
-  if (currTime in pianoRoll.bookmarks) :
+  if userScore.isBookmarkedTimecode() :
     fu.renderText(screen, f"BOOKMARK #{pianoRoll.bookmarks.index(currTime)+1}", (10, 470), 2, (41, 67, 132))
 
   # Current active hands
-  fu.renderText(screen, activeHands, (1288, 470), 2, (41, 67, 132))
+  fu.renderText(screen, userScore.activeHands, (1288, 470), 2, (41, 67, 132))
 
   # Loop
-  if loopEnable :
+  if userScore.loopEnable :
     fu.renderText(screen, "LOOP ACTIVE: 1/?", (300, 470), 2, (41, 67, 132))
 
   # Finger selection
   fingerSelWidget.show(screen)
   
-
 
   clock.tick(FPS)
 

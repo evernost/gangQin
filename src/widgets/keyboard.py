@@ -391,6 +391,7 @@ class Keyboard :
 
   # ---------------------------------------------------------------------------
   # Method <reset>
+  #
   # The object keeps track of all calls to <keyPress>.
   # This function resets all notes stored.
   # Useful for the note overlapping detection.

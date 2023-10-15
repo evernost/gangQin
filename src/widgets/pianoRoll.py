@@ -57,6 +57,7 @@ class PianoRoll :
     self.viewSpan = 1000
 
     self.noteArray = [[] for _ in range(128)]
+    self.nStaffs = 0
     
     self.teacherNotes = []
     self.teacherNotesPolygons = []
@@ -80,7 +81,7 @@ class PianoRoll :
 
 
   # ---------------------------------------------------------------------------
-  # Method <drawKeyLines> (private)
+  # METHOD <_drawKeyLines> (private)
   #
   # Draw the thin lines in-between each note
   # ---------------------------------------------------------------------------
@@ -141,18 +142,20 @@ class PianoRoll :
 
 
   # ---------------------------------------------------------------------------
-  # Method <drawPianoRoll>
+  # METHOD <drawPianoRoll>
   #
   # Draw the note content of the piano roll at the current time
   # ---------------------------------------------------------------------------
   def drawPianoRoll(self, screenInst, startTimeCode) :
     
+    # Draw the background and inner components
     self._drawKeyLines(screenInst)
 
-    for track in range(self.nTracks) :
+    # Draw the notes
+    for (staffIndex, _) in enumerate(self.noteArray) :
       for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
-        for note in self.noteArray[track][pitch] :
-          a = startTimeCode; b = startTimeCode + (self.viewSpan*self.avgNoteDuration)
+        for note in self.noteArray[staffIndex][pitch] :
+          a = startTimeCode; b = startTimeCode + self.viewSpan
           c = note.startTime; d = note.stopTime
         
           # Does the note span intersect the current view window?
@@ -178,63 +181,11 @@ class PianoRoll :
             pygame.draw.line(screenInst, self.noteOutlineRGB, sq[2], sq[3], 3)
             pygame.draw.line(screenInst, self.noteOutlineRGB, sq[3], sq[0], 3)
             
-            if (track == 0) :
+            if (staffIndex == 0) :
               pygame.draw.polygon(screenInst, self.noteLeftRGB, sq)
             
-            if (track == 1) :
+            if (staffIndex == 1) :
               pygame.draw.polygon(screenInst, self.noteRightRGB, sq)
-
-
-
-  # ---------------------------------------------------------------------------
-  # Method <getTeacherNotes>
-  # Build the list (<teacherNotes>) of current expected notes to be played at that time
-  # ---------------------------------------------------------------------------
-  def getTeacherNotes(self, currTime, activeHands) :
-    
-    self.teacherNotes = []
-    self.teacherMidi = [0 for _ in range(128)]    # same information as teacherNotes but different structure
-    
-    # Two hands mode
-    if (activeHands == "LR") :
-      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
-        for track in range(self.nTracks) :
-          for (noteIndex, noteObj) in enumerate(self.noteArray[track][pitch]) :
-            if (noteObj.startTime == self.noteOnTimecodesMerged[currTime]) :
-              self.teacherNotes.append((track, pitch, noteIndex))
-              self.teacherMidi[pitch] = 1
-
-    # Left hand practice
-    if (activeHands == "L ") :
-      track = 0
-      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
-        for (noteIndex, noteObj) in enumerate(self.noteArray[track][pitch]) :
-          if (noteObj.startTime == self.noteOnTimecodes[track][currTime]) :
-            self.teacherNotes.append((track, pitch, noteIndex))
-            self.teacherMidi[pitch] = 1
-
-    # Right hand practice
-    if (activeHands == " R") :
-      track = 1
-      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
-        for (noteIndex, noteObj) in enumerate(self.noteArray[track][pitch]) :
-          if (noteObj.startTime == self.noteOnTimecodes[track][currTime]) :
-            self.teacherNotes.append((track, pitch, noteIndex))
-            self.teacherMidi[pitch] = 1
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD <showTeacherNotes>
-  #
-  # Build the polygons to show the note and display the note
-  # ---------------------------------------------------------------------------
-  def showTeacherNotes(self, screen, keyboardObj) :
-    
-    for noteObj in self.teacherNotes :
-      (track, pitch, noteIndex) = noteObj
-      keyboardObj.keyPress(screen, pitch, hand = track, finger = self.noteArray[track][pitch][noteIndex].finger)
-
 
 
 
@@ -287,12 +238,13 @@ class PianoRoll :
     self.noteArray[note.hand][note.pitch][note.noteIndex].finger = note.finger
 
     
+    
   # ---------------------------------------------------------------------------
   # METHOD <importPianoRoll>
   #
   # TODO
   # ---------------------------------------------------------------------------
-  def importPianoRoll(self, noteArray) :
+  def loadPianoRoll(self, noteArray) :
     
     # Use .copy instead of direct assign for safety 
     # (we don't want the pianoroll widget to mess with the real score)

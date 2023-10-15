@@ -67,11 +67,12 @@ class PianoRoll :
     self.activeNoteClicked = ()
 
     # Color scheme
-    self.backgroundRGB = (143, 140, 213)  # Background color for the piano roll
-    self.keyLineRGB = (50, 50, 50)        # Color of the lines separating each notes in the piano roll
-    self.noteOutlineRGB = (0, 0, 0)       # Border color for the notes in the piano roll
-    self.noteLeftRGB = (165, 250, 200)    # Color of a left hand note in piano roll
-    self.noteRightRGB = (250, 165, 165)   # Color of a right hand note in piano roll
+    self.backgroundRGB = (80, 80, 80)         # Background color for the piano roll
+    self.keyLineRGB = (50, 50, 50)            # Color of the lines separating each notes in the piano roll
+    self.leftNoteOutlineRGB = (35, 243, 118)  # Border color for the notes in the piano roll
+    self.rightNoteOutlineRGB = (243, 35, 35)       
+    self.leftNoteRGB = (165, 250, 200)        # Color of a left hand note in piano roll
+    self.rightNoteRGB = (250, 165, 165)       # Color of a right hand note in piano roll
     
     # Shortcuts for the key sizes
     self.b = WHITE_NOTE_WIDTH
@@ -176,16 +177,21 @@ class PianoRoll :
                 ]
             
             # Draw the note outline
-            pygame.draw.line(screenInst, self.noteOutlineRGB, sq[0], sq[1], 3)
-            pygame.draw.line(screenInst, self.noteOutlineRGB, sq[1], sq[2], 3)
-            pygame.draw.line(screenInst, self.noteOutlineRGB, sq[2], sq[3], 3)
-            pygame.draw.line(screenInst, self.noteOutlineRGB, sq[3], sq[0], 3)
+            if (staffIndex == LEFT_HAND) :
+              color = self.leftNoteOutlineRGB
+            else :
+              color = self.rightNoteOutlineRGB
+
+            pygame.draw.line(screenInst, color, sq[0], sq[1], 3)
+            pygame.draw.line(screenInst, color, sq[1], sq[2], 3)
+            pygame.draw.line(screenInst, color, sq[2], sq[3], 3)
+            pygame.draw.line(screenInst, color, sq[3], sq[0], 3)
             
             if (staffIndex == 0) :
-              pygame.draw.polygon(screenInst, self.noteLeftRGB, sq)
+              pygame.draw.polygon(screenInst, self.leftNoteRGB, sq)
             
             if (staffIndex == 1) :
-              pygame.draw.polygon(screenInst, self.noteRightRGB, sq)
+              pygame.draw.polygon(screenInst, self.rightNoteRGB, sq)
 
 
 
@@ -238,7 +244,7 @@ class PianoRoll :
     self.noteArray[note.hand][note.pitch][note.noteIndex].finger = note.finger
 
     
-    
+
   # ---------------------------------------------------------------------------
   # METHOD <importPianoRoll>
   #

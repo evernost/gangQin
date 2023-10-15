@@ -178,7 +178,7 @@ class Score :
     
     # New bookmark
     else :
-      print(f"[NOTE] Bookmark added at time {self.cursor}")
+      print(f"[NOTE] Bookmark added at cursor {self.getCursor()} (timecode = {self.getCurrentTimecode()})")
       self.bookmarks.append(self.cursor)
       self.bookmarks.sort()
 
@@ -221,12 +221,12 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <updateTeacherNotes>
+  # METHOD <_updateTeacherNotes> (private)
   #
   # Build the list (<teacherNotes>) of current expected notes to be played at 
   # that time.
   # ---------------------------------------------------------------------------
-  def updateTeacherNotes(self) :
+  def _updateTeacherNotes(self) :
     
     self.teacherNotes = []
     self.teacherNotesMidi = [0 for _ in range(128)]    # same information as <teacherNotes> but different structure
@@ -261,6 +261,18 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD <getTeacherNotes>
+  #
+  # Return the list of all notes that must be pressed at the current cursor
+  # location in the score
+  # ---------------------------------------------------------------------------
+  def getTeacherNotes(self) :
+    self._updateTeacherNotes()
+    return self.teacherNotes
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD <toggleRehearsalMode>
   #
   # Turns ON/OFF the rehearsal mode (ie progress in the score is halted no 
@@ -280,13 +292,6 @@ class Score :
 
 
 
-
-
-
-
-
-
-
   # ---------------------------------------------------------------------------
   # METHOD <importFromFile>
   #
@@ -298,7 +303,6 @@ class Score :
     else :
       self._importFromPrFile(inputFile)
 
-    self.bookmarks = []
     self.hasUnsavedChanges = False
 
   # ---------------------------------------------------------------------------
@@ -447,7 +451,7 @@ class Score :
       importDict = json.load(fileHandler)
 
     if (f"v{REV_MAJOR}.{REV_MINOR}" != importDict["revision"]) :
-      print(f"[WARNING] [.pr import] Loading piano roll file from {importDict['revision']}. Current version is v{REV_MAJOR}.{REV_MINOR}")
+      print(f"[WARNING] [.pr import] Piano roll file was made in version v{importDict['revision']}. Current version is v{REV_MAJOR}.{REV_MINOR}")
 
     # TODO: check here that all fields exist. Previous versions might not have them
     # if ...

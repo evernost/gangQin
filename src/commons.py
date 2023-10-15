@@ -51,6 +51,8 @@ MOUSE_LEFT_CLICK = 1
 MOUSE_SCROLL_UP = 4
 MOUSE_SCROLL_DOWN = 5
 
+# Theme 
+UI_TEXT_COLOR = (200, 200, 250)
 
 # =============================================================================
 # Guards

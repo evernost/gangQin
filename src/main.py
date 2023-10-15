@@ -24,6 +24,7 @@
 #   That involves inserting a note in <noteOnTimecodes>
 # - allow the user to practice hands separately
 # - loop feature between 2 bookmarks
+# - CTRL + mouse scroll has step 10 instead of 1
 # - loop feature: "color memory game". Increase the size of the loop as the user
 #   plays it without any mistakes and more quickly
 # - allow the user to add some comments that can span on one to several timecodes
@@ -43,6 +44,7 @@
 # - add "if __main__" in all libs
 # - add autosave feature (save snapshot every 2 minutes)
 # - show a "*" in the title bar as soon as there are unsaved changes in the pianoRoll object
+# - pretty print the JSON (.pr file)
 
 # Later:
 # - change the framework, use pyqt instead
@@ -150,7 +152,7 @@ pianoRollWidget.loadPianoRoll(userScore.pianoRoll)
 pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
 
 # Set the background color
-backgroundRGB = (180, 177, 226)
+backgroundRGB = (50, 50, 80)
 
 # Create window
 pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - <{os.path.basename(selectedFile)}>")
@@ -322,7 +324,7 @@ while running :
         (rootName, _) = os.path.splitext(rootNameExt)
         newName = rootDir + '/' + rootName + ".pr"
         userScore.exportToPrFile(newName)
-        pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - {rootName}.pr")
+        pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - <{rootName}.pr>")
 
       # -------------------------
       # Space key: rehearsal mode
@@ -344,6 +346,10 @@ while running :
       # Scroll up
       if (event.button == MOUSE_SCROLL_UP) :
         userScore.cursorStep(1)
+        # if keys[pygame.K_LCTRL] :
+        #   userScore.cursorStep(10)
+        # else :
+        #   userScore.cursorStep(1)
 
       # Scroll down
       if (event.button == MOUSE_SCROLL_DOWN) :
@@ -372,11 +378,10 @@ while running :
   
   keyboardWidget.keyPress(screen, midiNoteList)
 
-  # ------------------------------------------------------------------
-  # Build the list of current expected notes to be played at that time
-  # ------------------------------------------------------------------
-  userScore.updateTeacherNotes()
-  keyboardWidget.keyPress(screen, userScore.teacherNotes)
+  # -------------------------------------------------
+  # Show the notes expected to be played at that time
+  # -------------------------------------------------
+  keyboardWidget.keyPress(screen, userScore.getTeacherNotes())
 
   # -----------------------------------------------------------------------
   # Decide whether to move forward in the score depending on the user input
@@ -440,14 +445,15 @@ while running :
   # --------------------------------------------
   # Bookmark
   if userScore.isBookmarkedTimecode() :
-    fu.renderText(screen, f"BOOKMARK #{pianoRoll.bookmarks.index(currTime)+1}", (10, 470), 2, (41, 67, 132))
+    # Note: "+1" because a bookmark number starting at 0 is not very user friendly
+    fu.renderText(screen, f"BOOKMARK #{userScore.bookmarks.index(userScore.getCursor())+1}", (10, 470), 2, UI_TEXT_COLOR)
 
   # Current active hands
-  fu.renderText(screen, userScore.activeHands, (1288, 470), 2, (41, 67, 132))
+  fu.renderText(screen, userScore.activeHands, (1288, 470), 2, UI_TEXT_COLOR)
 
   # Loop
   if userScore.loopEnable :
-    fu.renderText(screen, "LOOP ACTIVE: 1/?", (300, 470), 2, (41, 67, 132))
+    fu.renderText(screen, "LOOP ACTIVE: 1/?", (300, 470), 2, UI_TEXT_COLOR)
 
   # Finger selection
   fingerSelWidget.show(screen)

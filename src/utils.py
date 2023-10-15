@@ -144,7 +144,7 @@ class Vector2D :
 # =============================================================================
 class Note :
 
-  def __init__(self, pitch, hand = UNDEFINED_HAND, finger = 0, noteIndex = 0, startTime = 0, stopTime = 0) :
+  def __init__(self, pitch, hand = UNDEFINED_HAND, finger = 0, noteIndex = 0, startTime = 0, stopTime = 0, mustPlay = True) :
     
     # General common attributes of a note
     self.pitch = pitch
@@ -155,7 +155,7 @@ class Note :
     self.noteIndex = noteIndex
     self.startTime = startTime
     self.stopTime = stopTime
-    self.mustPlay = True
+    self.mustPlay = mustPlay
 
 
 

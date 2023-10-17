@@ -52,6 +52,7 @@ MOUSE_SCROLL_UP = 4
 MOUSE_SCROLL_DOWN = 5
 
 # Theme 
+BACKGROUND_COLOR = (50, 50, 80)
 UI_TEXT_COLOR = (200, 200, 250)
 
 # =============================================================================

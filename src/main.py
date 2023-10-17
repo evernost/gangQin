@@ -20,20 +20,18 @@
 #   on a default selector that matches with the hand of the note
 # - highlight the activeNote ie the note whose finger is currently being associated
 # - fingerSelGui should be visible and have focus 
-# - allow the user to transfer a hand from one hand to the other
+# - allow the user to transfer a note from one hand to the other
 #   That involves inserting a note in <noteOnTimecodes>
 # - allow the user to practice hands separately
 # - loop feature between 2 bookmarks
 # - CTRL + mouse scroll has step 10 instead of 1
 # - loop feature: "color memory game". Increase the size of the loop as the user
 #   plays it without any mistakes and more quickly
-# - allow the user to add some comments that can span on one to several timecodes
-#   Comments can be guidelines on the way to play, any notes really.
+# - allow the user to add some comments. Comments should span one to several timecodes.
+#   Comments can be guidelines, info on the way to play, ... any notes, really.
 # - during MIDI import: ask the user which tracks to use (there might be more than 2)
 # - patch the keypress management in the code (combinations of CTRL+... are buggy)
 # - issue: some notes from the teacher are shown in grey.
-# - investigate the origin of the empty lists in the .pr file
-#   Is it normal?
 # - auto-increase the step size if CTRL+left/right is hit multiple times in a row 
 
 # Nice to have:
@@ -45,6 +43,8 @@
 # - add autosave feature (save snapshot every 2 minutes)
 # - show a "*" in the title bar as soon as there are unsaved changes in the pianoRoll object
 # - pretty print the JSON (.pr file)
+# - show arrows on the keyboard to give some guidance about where the "center of gravity"
+#   of the hand is heading to
 
 # Later:
 # - change the framework, use pyqt instead
@@ -150,9 +150,6 @@ userScore.importFromFile(selectedFile)
 # Load score and adjust the piano roll view
 pianoRollWidget.loadPianoRoll(userScore.pianoRoll)
 pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
-
-# Set the background color
-backgroundRGB = (50, 50, 80)
 
 # Create window
 pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - <{os.path.basename(selectedFile)}>")
@@ -340,7 +337,7 @@ while running :
       # Left click
       if (event.button == MOUSE_LEFT_CLICK) :
         clickMsg = True
-        clickX, clickY = pygame.mouse.get_pos()
+        (clickX, clickY) = pygame.mouse.get_pos()
         print(f"[DEBUG] Click here: x = {clickX}, y = {clickY}")
       
       # Scroll up
@@ -358,7 +355,7 @@ while running :
 
 
   # Clear the screen
-  screen.fill(backgroundRGB)
+  screen.fill(BACKGROUND_COLOR)
 
   # Draw the keyboard on screen
   keyboardWidget.reset()
@@ -387,13 +384,12 @@ while running :
   # Decide whether to move forward in the score depending on the user input
   # -----------------------------------------------------------------------
   
-  # Exact mode
+  # *** Exact mode ***
   if (playComparisonMode == "exact") :
     if (userScore.teacherNotesMidi == midiCurr) :
       userScore.cursorStep(1)
-      print(f"currTime = {userScore.cursor}")
 
-  # Sustain mode
+  # *** Sustain mode ***
   # Sustained note are tolerated to proceed forward.
   # But they are not be treated as a pressed note: user needs to release and press it again.
   if (playComparisonMode == "allowSustain") :
@@ -411,8 +407,7 @@ while running :
         allowProgress = False
   
     if allowProgress :
-      currTime += 1
-      print(f"currTime = {currTime}")
+      userScore.cursorStep(1)
 
       # Take snapshot
       for pitch in range(128) :
@@ -425,8 +420,10 @@ while running :
   if clickMsg :
     
     # Click on a note on the keyboard
-    if pianoRoll.isActiveNoteClicked(clickX, clickY, keyboard.litKeysPolygons) :
-      clickedNote = pianoRoll.getActiveNoteClicked()
+    clickedNote = keyboardWidget.isActiveNoteClicked(clickX, clickY)
+    if clickedNote :
+      print(f"[DEBUG] Clicked note: pitch={clickedNote.pitch}, index={clickedNote.noteIndex}")
+      
       fingerSelWidget.setNote(clickedNote)
       fingerSelWidget.visible = True
     
@@ -436,7 +433,6 @@ while running :
 
       if (ret == fingerSelector.FINGERSEL_CHANGED) :
         pianoRoll.updateNoteProperties(fingerSelWidget.getNote())
-
 
     clickMsg = False
 

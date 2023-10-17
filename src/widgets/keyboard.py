@@ -19,6 +19,9 @@ from commons import *
 import pygame
 import fontUtils as fu
 
+# For point in polygon test
+from shapely.geometry import Point, Polygon
+
 import utils
 
 
@@ -49,7 +52,6 @@ class Keyboard :
   # ---------------------------------------------------------------------------
   def __init__(self, loc) :
     (self.x, self.y) = loc
-    self.activeNotes = []
     
     # -------------
     # Color palette
@@ -99,6 +101,8 @@ class Keyboard :
     self.keyboardPolygons = []
     self.makeKeyboardPolygons()
 
+    # List of notes currently pressed
+    self.activeNotes = []
 
 
   # ---------------------------------------------------------------------------
@@ -267,7 +271,7 @@ class Keyboard :
 
 
   # ---------------------------------------------------------------------------
-  # Method <keyPress>
+  # METHOD <keyPress>
   #
   # Highlight the given list of notes on the the keyboard
   # Indicate the hand to be used and the required finger if the information is 
@@ -294,13 +298,13 @@ class Keyboard :
         sq += utils.Vector2D(0,-h)
         
         if (noteObj.hand == LEFT_HAND) :
-          if (noteObj.pitch in self.activeNotes) :
+          if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
             pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapLeftRGB, sq)
           else :
             pygame.draw.polygon(screenInst, self.sqWhiteNoteLeftRGB, sq)
         
         if (noteObj.hand == RIGHT_HAND) :
-          if (noteObj.pitch in self.activeNotes) :
+          if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
             pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapRightRGB, sq)
           else :
             pygame.draw.polygon(screenInst, self.sqWhiteNoteRightRGB, sq)
@@ -316,21 +320,9 @@ class Keyboard :
           # Font size 2
           fu.renderText(screenInst, str(noteObj.finger), (x0+7, y0+19), 2, self.fingerFontWhiteNoteRGB)
 
-      # Register this keypress for note overlap management
-      self.activeNotes.append(noteObj.pitch)
-      
-      # Store the polygons that are lit
-      if ((noteObj.hand == LEFT_HAND) or (noteObj.hand == RIGHT_HAND)) :
-        # This makes the hitbox for click on the lit part of the key only
-        #self.litKeysPolygons.append((sq, pitch))
-
-        # This makes the hitbox for click on the entire key
-        self.litKeysPolygons.append((self.keyboardPolygons[noteObj.pitch], noteObj.pitch))
-
-
-      # ------------------
-      # Black note drawing
-      # ------------------
+      # -----------------------
+      # Black note highlighting
+      # -----------------------
       if ((noteObj.pitch % 12) in [1, 3, 6, 8, 10]) :
         
         # Build the rectangle that will be drawn on top of the note
@@ -348,13 +340,13 @@ class Keyboard :
         # Then for the notes in MIDI file.
         # This has an impact on overlap handling
         if (noteObj.hand == LEFT_HAND) :
-          if (noteObj.pitch in self.activeNotes) :
+          if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
             pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapLeftRGB, sq)
           else :
             pygame.draw.polygon(screenInst, self.sqBlackNoteLeftRGB, sq)
 
         if (noteObj.hand == RIGHT_HAND) :
-          if (noteObj.pitch in self.activeNotes) :
+          if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
             pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapRightRGB, sq)
           else :
             pygame.draw.polygon(screenInst, self.sqBlackNoteRightRGB, sq)
@@ -370,7 +362,46 @@ class Keyboard :
           # Font size 2
           #fu.renderText(screenInst, str(finger), (x0+7, y0+19), 2, self.fingerFontBlackNoteRGB)
 
+
+      # Register this keypress for note overlap management
+      self.activeNotes.append(noteObj)
       
+      # ------------------------------
+      # Note click detection materials
+      # ------------------------------
+      # Store the polygons associated to the "teacher notes"
+      if ((noteObj.hand == LEFT_HAND) or (noteObj.hand == RIGHT_HAND)) :
+        # This makes the hitbox for click on the lit part of the key only:
+        #self.litKeysPolygons.append((sq, pitch))
+
+        # This makes the hitbox for click on the entire key:
+        self.litKeysPolygons.append((self.keyboardPolygons[noteObj.pitch], noteObj))
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD <isActiveNoteClicked>
+  #
+  # Given a click coordinates, indicate whether it is an active key (a "lit" key)
+  # that has been clicked.
+  # ---------------------------------------------------------------------------
+  def isActiveNoteClicked(self, clickX, clickY) :
+    for (currLitNotePolygon, currNote) in self.litKeysPolygons :
+
+      # Intersection!
+      if Point(clickX, clickY).within(Polygon(currLitNotePolygon)) :
+        return currNote
+
+        # Find the corresponding note in pianoRoll
+        # for (track, pitch, noteIndex) in self.teacherNotes :
+        #   if (pitch == currLitNotePolygon.pitch) :
+        #     # print(f"You try to edit the following note in pianoRoll:")
+        #     # print(f"- startTime = {self.noteArray[track][pitch][noteIndex].startTime}")
+        #     # print(f"- stopTime = {self.noteArray[track][pitch][noteIndex].stopTime}")
+        #     self.activeNoteClicked = self.noteArray[track][pitch][noteIndex]
+        #     return True
+
+    return None
 
 
 

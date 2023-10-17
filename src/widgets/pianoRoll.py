@@ -16,9 +16,6 @@
 # Project specific constants
 from commons import *
 
-# For point in polygon test
-from shapely.geometry import Point, Polygon
-
 import pygame
 
 
@@ -196,42 +193,12 @@ class PianoRoll :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <isActiveNoteClicked>
-  #
-  # Based on a click coordinates, indicate whether it is a key that is lit or not
-  # Return value: True or False
-  # Updates the attribute <activeNoteClicked> with the info about the note
-  # that has been clicked.
-  # ---------------------------------------------------------------------------
-  def isActiveNoteClicked(self, clickX, clickY, litKeysPolygons) :
-
-    for (sq, pitchCurr) in litKeysPolygons :
-      pol = Polygon(sq)
-      p = Point(clickX, clickY)
-
-      # Intersection!
-      if p.within(pol) :
-
-        # Find the corresponding note in pianoRoll
-        for (track, pitch, noteIndex) in self.teacherNotes :
-          if (pitch == pitchCurr) :
-            # print(f"You try to edit the following note in pianoRoll:")
-            # print(f"- startTime = {self.noteArray[track][pitch][noteIndex].startTime}")
-            # print(f"- stopTime = {self.noteArray[track][pitch][noteIndex].stopTime}")
-            self.activeNoteClicked = self.noteArray[track][pitch][noteIndex]
-            return True
-
-    return False
-  
-
-
-  # ---------------------------------------------------------------------------
   # METHOD <getActiveNoteClicked>
   #
   # TODO
   # ---------------------------------------------------------------------------
-  def getActiveNoteClicked(self) :
-    return self.activeNoteClicked
+  # def getActiveNoteClicked(self) :
+  #   return self.activeNoteClicked
   
 
 
@@ -240,8 +207,8 @@ class PianoRoll :
   #
   # TODO
   # ---------------------------------------------------------------------------
-  def updateNoteProperties(self, note) :
-    self.noteArray[note.hand][note.pitch][note.noteIndex].finger = note.finger
+  # def updateNoteProperties(self, note) :
+  #   self.noteArray[note.hand][note.pitch][note.noteIndex].finger = note.finger
 
     
 

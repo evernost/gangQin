@@ -124,7 +124,7 @@ playComparisonMode = "allowSustain"
 # Open the MIDI interface file selection GUI
 (selectedDevice, selectedFile) = conf.showSetupGUI()
 
-if (selectedFile == "" or selectedFile == "None") :
+if ((selectedFile == "") or (selectedFile == "None")) :
   raise SystemExit(0)
 
 pygame.init()
@@ -422,9 +422,9 @@ while running :
     # Click on a note on the keyboard
     clickedNote = keyboardWidget.isActiveNoteClicked(clickX, clickY)
     if clickedNote :
-      print(f"[DEBUG] Clicked note: pitch={clickedNote.pitch}, index={clickedNote.noteIndex}")
+      print(f"[DEBUG] Clicked note: pitch={clickedNote.pitch}, finger={clickedNote.finger}, index={clickedNote.noteIndex}")
       
-      fingerSelWidget.setNote(clickedNote)
+      fingerSelWidget.setEditedNote(clickedNote)
       fingerSelWidget.visible = True
     
     # Click on the finger selector
@@ -432,7 +432,7 @@ while running :
       ret = fingerSelWidget.updateWithClick(clickX, clickY)
 
       if (ret == fingerSelector.FINGERSEL_CHANGED) :
-        pianoRoll.updateNoteProperties(fingerSelWidget.getNote())
+        userScore.updateNoteProperties(fingerSelWidget.getEditedNote())
 
     clickMsg = False
 

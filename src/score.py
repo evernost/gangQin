@@ -66,7 +66,9 @@ class Score :
     self.teacherNotes = []
     self.teacherNotesMidi = [0 for _ in range(128)]
 
-
+    # Key scale
+    # List of tuples: (scaleObject, startTimeCode)
+    self.scale = []
 
     self.progressEnable = True
     self.fsmState = FSM_STATE_NORMAL 
@@ -273,6 +275,21 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD <updateNoteProperties>
+  #
+  # 
+  # ---------------------------------------------------------------------------
+  def updateNoteProperties(self, note) :
+    self.pianoRoll[note.hand][note.pitch][note.noteIndex].finger = note.finger
+
+
+
+
+
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD <toggleRehearsalMode>
   #
   # Turns ON/OFF the rehearsal mode (ie progress in the score is halted no 
@@ -280,7 +297,7 @@ class Score :
   # ---------------------------------------------------------------------------
   def toggleRehearsalMode(self) :
     self.progressEnable = not(self.progressEnable)
-    
+    print("[NOTE] Rehearsal mode will be available in a future release.")
 
 
 
@@ -486,3 +503,7 @@ class Score :
 
   def isBookmarkedTimecode(self) :
     return (self.cursor in self.bookmarks)
+  
+
+
+

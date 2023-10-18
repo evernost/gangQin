@@ -86,8 +86,8 @@ class Keyboard :
     self.sqBlackNoteOverlapRightRGB = (255, 138, 132)
 
     # Color of the font indicating the finger
-    #self.fingeringFontRGB = (240, 240, 240)
     self.fingerFontBlackNoteRGB = (240, 240, 240)
+    self.fingerFontWhiteNoteRGB = (240, 240, 240)
 
     self.litKeysPolygons = []
 

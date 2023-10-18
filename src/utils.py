@@ -140,7 +140,7 @@ class Vector2D :
 
 
 # =============================================================================
-# NOTE
+# NOTE object
 # =============================================================================
 class Note :
 
@@ -156,6 +156,34 @@ class Note :
     self.startTime = startTime
     self.stopTime = stopTime
     self.mustPlay = mustPlay
+
+
+# =============================================================================
+# SCALE object
+# =============================================================================
+# References: 
+# > https://music.stackexchange.com/questions/73110/what-are-the-interval-patterns-for-the-modes
+# > https://en.wikipedia.org/wiki/Minor_scale
+
+
+class Scale :
+
+  def __init__(self, key, mode) :
+    
+    self.key = key
+    self.mode = mode
+    
+    self.MAJOR_SCALE_MODE = [2, 2, 1, 2, 2, 2, 1]
+    self.MINOR_SCALE_MODE = [2, 1, 2, 2, 1, 2, 2]
+    self.C_KEY = 0
+    self.D_KEY = 2
+    self.E_KEY = 4
+    self.F_KEY = 5
+
+  def generateScale(self) :
+    print("TODO")
+
+
 
 
 

@@ -128,7 +128,7 @@ def showSetupGUI() :
   # File selection
   # -----------------------------------------------------------------------------
   lfFileSel = ttk.LabelFrame(root, text = 'File input')
-  lfFileSel.grid(row=0, column=1, padx = 10, pady = 5, sticky = "e")
+  lfFileSel.grid(row=0, column = 1, padx = 10, pady = 5, sticky = "e")
 
   label2 = tk.Label(lfFileSel, text = "Filter by:")
   label2.grid(row = 0, column = 0, padx = 3, pady = 1, sticky="w")
@@ -145,7 +145,7 @@ def showSetupGUI() :
 
   # Dropdown list for the file selection
   comboFile = ttk.Combobox(lfFileSel, values = [os.path.basename(file) for file in fileList], state = 'readonly')
-  comboFile["width"] = 50
+  comboFile["width"] = 80
   comboFile.set(comboFile["values"][0])
   comboFile.grid(row = 3, column = 0, columnspan = 3, padx = 3, pady = 5, sticky = "e")
 

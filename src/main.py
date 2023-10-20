@@ -422,7 +422,7 @@ while running :
     # Click on a note on the keyboard
     clickedNote = keyboardWidget.isActiveNoteClicked(clickX, clickY)
     if clickedNote :
-      print(f"[DEBUG] Clicked note: pitch={clickedNote.pitch}, finger={clickedNote.finger}, index={clickedNote.noteIndex}")
+      print(f"[DEBUG] Clicked note: pitch={clickedNote.pitch}, hand={clickedNote.hand}, finger={clickedNote.finger}, index={clickedNote.noteIndex}")
       
       fingerSelWidget.setEditedNote(clickedNote)
       fingerSelWidget.visible = True

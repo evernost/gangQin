@@ -357,10 +357,10 @@ class Keyboard :
         # Show finger number
         if (noteObj.finger in [1,2,3,4,5]) :
           # Font size 1
-          fu.renderText(screenInst, str(noteObj.finger), (x0+10, y0+23), 1, self.fingerFontBlackNoteRGB)
+          #fu.renderText(screenInst, str(noteObj.finger), (x0+3, y0+23), 1, self.fingerFontBlackNoteRGB)
           
           # Font size 2
-          #fu.renderText(screenInst, str(finger), (x0+7, y0+19), 2, self.fingerFontBlackNoteRGB)
+          fu.renderText(screenInst, str(noteObj.finger), (x0+1, y0+19), 2, self.fingerFontBlackNoteRGB)
 
 
       # Register this keypress for note overlap management
@@ -391,15 +391,6 @@ class Keyboard :
       # Intersection!
       if Point(clickX, clickY).within(Polygon(currLitNotePolygon)) :
         return currNote
-
-        # Find the corresponding note in pianoRoll
-        # for (track, pitch, noteIndex) in self.teacherNotes :
-        #   if (pitch == currLitNotePolygon.pitch) :
-        #     # print(f"You try to edit the following note in pianoRoll:")
-        #     # print(f"- startTime = {self.noteArray[track][pitch][noteIndex].startTime}")
-        #     # print(f"- stopTime = {self.noteArray[track][pitch][noteIndex].stopTime}")
-        #     self.activeNoteClicked = self.noteArray[track][pitch][noteIndex]
-        #     return True
 
     return None
 

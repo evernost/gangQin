@@ -66,9 +66,9 @@ class Score :
     self.teacherNotes = []
     self.teacherNotesMidi = [0 for _ in range(128)]
 
-    # Key scale
+    # Key scales used throughout the song
     # List of tuples: (scaleObject, startTimeCode)
-    self.scale = []
+    self.scales = []
 
     self.progressEnable = True
     self.fsmState = FSM_STATE_NORMAL 
@@ -304,6 +304,18 @@ class Score :
 
   def toggleLoopMode(self) :
     print("[NOTE] Loop practice will be available in a future release.")
+
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD <toggleRehearsalMode>
+  #
+  # Return the current scale of the song based on the cursor.
+  # ---------------------------------------------------------------------------
+  def getCurrentScale(self) :
+    print("[NOTE] Showing the current scale will be available in a future release.")
 
 
 

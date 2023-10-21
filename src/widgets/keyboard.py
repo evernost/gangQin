@@ -62,12 +62,12 @@ class Keyboard :
     self.blackNoteRGB = (0, 0, 0)
     
     # Rectangle indicating a note to play by left hand
-    self.sqWhiteNoteLeftRGB = (0, 200, 10)
-    self.sqBlackNoteLeftRGB = (0, 200, 10)
+    self.sqWhiteNoteLeftRGB = (200, 10, 0)
+    self.sqBlackNoteLeftRGB = (200, 10, 0)
 
     # Rectangle indicating a note to play by right hand
-    self.sqWhiteNoteRightRGB = (200, 10, 0)
-    self.sqBlackNoteRightRGB = (200, 10, 0)
+    self.sqWhiteNoteRightRGB = (0, 200, 10)
+    self.sqBlackNoteRightRGB = (0, 200, 10)
 
     # Rectangle indicating a note currently played by the MIDI input
     self.sqWhiteNoteNeutralRGB = (195, 195, 195)
@@ -76,14 +76,14 @@ class Keyboard :
     # Rectangle of a note being played by both 
     # - a note to play by left hand
     # - the current MIDI input
-    self.sqWhiteNoteOverlapLeftRGB = (140, 255, 146)
-    self.sqBlackNoteOverlapLeftRGB = (140, 255, 146)
+    self.sqWhiteNoteOverlapLeftRGB = (255, 138, 132)
+    self.sqBlackNoteOverlapLeftRGB = (255, 138, 132)
 
     # Rectangle of a note being played by both 
     # - a note to play by right hand
     # - the current MIDI input
-    self.sqWhiteNoteOverlapRightRGB = (255, 138, 132)
-    self.sqBlackNoteOverlapRightRGB = (255, 138, 132)
+    self.sqWhiteNoteOverlapRightRGB = (140, 255, 146)
+    self.sqBlackNoteOverlapRightRGB = (140, 255, 146)
 
     # Color of the font indicating the finger
     self.fingerFontBlackNoteRGB = (240, 240, 240)

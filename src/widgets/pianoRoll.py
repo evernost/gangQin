@@ -66,10 +66,10 @@ class PianoRoll :
     # Color scheme
     self.backgroundRGB = (80, 80, 80)         # Background color for the piano roll
     self.keyLineRGB = (50, 50, 50)            # Color of the lines separating each notes in the piano roll
-    self.leftNoteOutlineRGB = (35, 243, 118)  # Border color for the notes in the piano roll
-    self.rightNoteOutlineRGB = (243, 35, 35)       
-    self.leftNoteRGB = (165, 250, 200)        # Color of a left hand note in piano roll
-    self.rightNoteRGB = (250, 165, 165)       # Color of a right hand note in piano roll
+    self.leftNoteOutlineRGB = (243, 35, 35)   # Border color for the notes in the piano roll
+    self.rightNoteOutlineRGB = (35, 243, 118)
+    self.leftNoteRGB = (250, 165, 165)        # Color of a left hand note in piano roll
+    self.rightNoteRGB = (165, 250, 200)       # Color of a right hand note in piano roll
     
     # Shortcuts for the key sizes
     self.b = WHITE_NOTE_WIDTH
@@ -176,7 +176,8 @@ class PianoRoll :
             # Draw the note outline
             if (staffIndex == LEFT_HAND) :
               color = self.leftNoteOutlineRGB
-            else :
+            
+            if (staffIndex == RIGHT_HAND) :
               color = self.rightNoteOutlineRGB
 
             pygame.draw.line(screenInst, color, sq[0], sq[1], 3)
@@ -184,10 +185,10 @@ class PianoRoll :
             pygame.draw.line(screenInst, color, sq[2], sq[3], 3)
             pygame.draw.line(screenInst, color, sq[3], sq[0], 3)
             
-            if (staffIndex == 0) :
+            if (staffIndex == LEFT_HAND) :
               pygame.draw.polygon(screenInst, self.leftNoteRGB, sq)
             
-            if (staffIndex == 1) :
+            if (staffIndex == RIGHT_HAND) :
               pygame.draw.polygon(screenInst, self.rightNoteRGB, sq)
 
 

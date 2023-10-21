@@ -68,7 +68,7 @@ class Score :
 
     # Key scales used throughout the song
     # List of tuples: (scaleObject, startTimeCode)
-    self.scales = []
+    self.scale = []
 
     self.progressEnable = True
     self.fsmState = FSM_STATE_NORMAL 
@@ -403,8 +403,8 @@ class Score :
           # New note
           else :
             # Its duration is unknown for now, so set its endtime to "-1"
-            l = len(self.pianoRoll[trackNumber][pitch])
-            self.pianoRoll[trackNumber][pitch].append(utils.Note(pitch, hand = trackNumber, noteIndex = l, startTime = currTime, stopTime = -1))
+            insertLoc = len(self.pianoRoll[trackNumber][pitch])
+            self.pianoRoll[trackNumber][pitch].append(utils.Note(pitch, hand = trackNumber, noteIndex = insertLoc, startTime = currTime, stopTime = -1))
             
             if not(currTime in self.noteOntimecodes[trackNumber]) : 
               self.noteOntimecodes[trackNumber].append(currTime)
@@ -459,6 +459,9 @@ class Score :
     exportDict["noteOntimecodesMerged"] = self.noteOntimecodesMerged
     exportDict["avgNoteDuration"] = self.avgNoteDuration
     exportDict["bookmarks"] = self.bookmarks
+
+    # TODO: export the scales
+    # exportDict["scale"] = self.scale
 
     # Convert the Note() objects to a dictionnary before pushing them in the export dict
     exportDict["pianoRoll"] = [[[noteObj.__dict__ for noteObj in noteList] for noteList in trackList] for trackList in self.pianoRoll]

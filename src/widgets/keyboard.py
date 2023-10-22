@@ -295,7 +295,7 @@ class Keyboard :
       
     for subList in noteListByPitch :
       
-      # Exactly two notes hit the same key
+      # A given key is hit exactly twice at the same time
       if (len(subList) == 2) :
         
         # One note is hit by one hand
@@ -310,6 +310,8 @@ class Keyboard :
             if ((noteObj.pitch % 12) in BLACK_NOTES_CODE_MOD12) :
               self._doubleHandBlackKeyPress(screenInst, noteObj)
 
+            # These notes are now displayed, we can remove them from the list
+            # and go on with the "normal" notes
             if subList[0][0] > subList[1][0] :
               del noteList[subList[0][0]]
               del noteList[subList[1][0]]
@@ -330,7 +332,6 @@ class Keyboard :
       # Black note highlighting
       if ((noteObj.pitch % 12) in BLACK_NOTES_CODE_MOD12) :
         self._singleHandBlackKeyPress(screenInst, noteObj)
-        
 
       # Register this keypress for note overlap management
       self.activeNotes.append(noteObj)
@@ -348,7 +349,6 @@ class Keyboard :
 
 
 
-
   # ---------------------------------------------------------------------------
   # METHOD <_singleHandWhiteKeyPress> (private)
   #
@@ -356,7 +356,6 @@ class Keyboard :
   # ---------------------------------------------------------------------------
   def _singleHandWhiteKeyPress(self, screenInst, noteObj) :
 
-    # Build the rectangle that will be drawn on top of the note
     eps = 3
     u = [x[0] for x in self.keyboardPolygons[noteObj.pitch]]
     x0 = min(u); y0 = self.y + self.c + self.e
@@ -370,12 +369,16 @@ class Keyboard :
     if (noteObj.hand == LEFT_HAND) :
       if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
         pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapLeftRGB, sq)
+      elif (noteObj.voice != VOICE_DEFAULT) :
+        pygame.draw.polygon(screenInst, VOICE_COLOR[noteObj.voice], sq)
       else :
         pygame.draw.polygon(screenInst, self.sqWhiteNoteLeftRGB, sq)
     
     if (noteObj.hand == RIGHT_HAND) :
       if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
         pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapRightRGB, sq)
+      elif (noteObj.voice != VOICE_DEFAULT) :
+        pygame.draw.polygon(screenInst, VOICE_COLOR[noteObj.voice], sq)
       else :
         pygame.draw.polygon(screenInst, self.sqWhiteNoteRightRGB, sq)
 
@@ -487,10 +490,6 @@ class Keyboard :
     x0 = min(u); y0 = self.y + 50
     h = self.c - self.e - (2*eps) - 50
     w = self.d - (2*self.e) - (2*eps)
-    # sq = [(x0 + eps, y0 + eps)]
-    # sq += utils.Vector2D(0, h)
-    # sq += utils.Vector2D(w,0)
-    # sq += utils.Vector2D(0,-h)
     
     rectLeft = [(x0 + eps, y0 + eps)]
     rectLeft += utils.Vector2D(0, h)

@@ -65,6 +65,7 @@ class Score :
     
     self.teacherNotes = []
     self.teacherNotesMidi = [0 for _ in range(128)]
+    self.sustainedNotes = []
 
     # Key scales used throughout the song
     # List of tuples: (scaleObject, startTimeCode)
@@ -187,6 +188,7 @@ class Score :
     self.hasUnsavedChanges = True
 
 
+
   # ---------------------------------------------------------------------------
   # METHOD <toggleLeftHand>
   #
@@ -199,10 +201,10 @@ class Score :
 
     if (self.activeHands[0] == "L") :
       self.activeHands = " " + self.activeHands[1]
-      # oracle.setTimecodesDB = pianoRoll.noteOnTimecodes[1]
     else :
       self.activeHands = "L" + self.activeHands[1]
-      # oracle.setTimecodesDB = pianoRoll.noteOnTimecodesMerged
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD <toggleRightHand>
@@ -271,6 +273,39 @@ class Score :
   def getTeacherNotes(self) :
     self._updateTeacherNotes()
     return self.teacherNotes
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD <_updateSustainedNotes> (private)
+  #
+  # See <getSustainedNotes>.
+  # ---------------------------------------------------------------------------
+  def _updateSustainedNotes(self) :
+    
+    self.sustainedNotes = []
+    
+    for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+      for (staffIndex, _) in enumerate(self.pianoRoll) :
+        for noteObj in self.pianoRoll[staffIndex][pitch] :
+          if ((self.getCurrentTimecode() > noteObj.startTime) and (self.getCurrentTimecode() <= noteObj.stopTime)) :
+            self.sustainedNotes.append(noteObj)
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD <getSustainedNotes>
+  #
+  # Return the list of all notes that are not pressed at the current cursor
+  # but still active (sustained)
+  # This list is purely used for display purposes (to show what notes are
+  # maintainted) / informative purposes
+  # These notes are not expected to be played by the user.
+  # ---------------------------------------------------------------------------
+  def getSustainedNotes(self) :
+    self._updateSustainedNotes()
+    return self.sustainedNotes
+
 
 
 
@@ -470,6 +505,8 @@ class Score :
       json.dump(exportDict, fileHandler)
 
     print(f"[NOTE] Saved to {pianoRollFile}!")
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD <importFromPrFile>

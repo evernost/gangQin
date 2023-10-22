@@ -35,6 +35,12 @@ LEFT_HAND = 1
 
 UNDEFINED_FINGER = 0
 
+VOICE_DEFAULT = 0
+VOICE_1 = 1
+VOICE_2 = 2
+VOICE_3 = 3
+VOICE_4 = 4
+
 REV_MAJOR = 0
 REV_MINOR = 8
 REV_YEAR = 2023
@@ -59,6 +65,8 @@ MOUSE_SCROLL_DOWN = 5
 # Theme 
 BACKGROUND_COLOR = (50, 50, 80)
 UI_TEXT_COLOR = (200, 200, 250)
+
+VOICE_COLOR = [(0, 0, 0), (0, 150, 200), (0, 200, 200), (200, 100, 0), (200, 200, 0)]
 
 # =============================================================================
 # Guards

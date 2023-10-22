@@ -154,6 +154,9 @@ pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
 # Create window
 pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - <{os.path.basename(selectedFile)}>")
 
+# Enable key repeats (500 ms delay, repeat every 50 ms)
+pygame.key.set_repeat(500, 50)
+
 
 
 # =============================================================================
@@ -184,9 +187,10 @@ else :
 # Main loop
 # =============================================================================
 running = True
-currTime = 0
+
 
 clickMsg = False
+ctrlKey = False
 
 while running :
   for event in pygame.event.get() :
@@ -196,8 +200,15 @@ while running :
     # -------------------------------------------------------------------------
     # Keyboard event handling
     # -------------------------------------------------------------------------
+    if (event.type == pygame.KEYUP) :
+      keys = pygame.key.get_pressed()
+      ctrlKey = event.mod & pygame.KMOD_CTRL
+    
     if (event.type == pygame.KEYDOWN) :
       keys = pygame.key.get_pressed()
+
+      
+      ctrlKey = event.mod & pygame.KMOD_CTRL
 
       # -----------------
       # "q": exit the app
@@ -213,37 +224,37 @@ while running :
       # ----------------------------------
       # Left arrow: jump backward (1 step)
       # ----------------------------------
-      if (keys[pygame.K_LEFT] and not(keys[pygame.K_LCTRL])) :
+      if (keys[pygame.K_LEFT] and not(ctrlKey)) :
         userScore.cursorStep(-1)
 
       # -----------------------------------------
       # CTRL + Left arrow: fast rewind (10 steps)
       # -----------------------------------------
-      if (keys[pygame.K_LEFT] and (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL])) :
+      if (keys[pygame.K_LEFT] and ctrlKey) :
         userScore.cursorStep(-10)
 
       # ----------------------------------
       # Right arrow: jump forward (1 step)
       # ----------------------------------
-      if (keys[pygame.K_RIGHT] and not(keys[pygame.K_LCTRL])) :
+      if (keys[pygame.K_RIGHT] and not(ctrlKey)) :
         userScore.cursorStep(1)
 
       # -------------------------------------------
       # CTRL + right arrow: fast forward (10 steps)
       # -------------------------------------------
-      if (keys[pygame.K_RIGHT] and (keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL])) :
+      if (keys[pygame.K_RIGHT] and ctrlKey) :
         userScore.cursorStep(10)
 
       # ----------------------------------------------
-      # CTRL + HOME: jump to the beginning of the file
+      # HOME: jump to the beginning of the file
       # ----------------------------------------------
-      if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_HOME]) :
+      if (keys[pygame.K_HOME]) :
         userScore.cursorReset()
 
       # ---------------------------------------
-      # CTRL + END: jump to the end of the file
+      # END: jump to the end of the file
       # ---------------------------------------
-      if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_END]) :
+      if (keys[pygame.K_END]) :
         print("[INFO] Supported in a future release")
 
       # -----------------------------------
@@ -262,7 +273,17 @@ while running :
       # Keypad 1 to 5: assign finger to a selected note
       # -----------------------------------------------
       if (keys[pygame.K_KP1] or keys[pygame.K_KP2] or keys[pygame.K_KP3] or keys[pygame.K_KP4] or keys[pygame.K_KP5]) :
-        print("[INFO] Supported in a future release")
+        if fingerSelWidget.visible :
+          t = [
+            (keys[pygame.K_KP1], 1), 
+            (keys[pygame.K_KP2], 2), 
+            (keys[pygame.K_KP3], 3),
+            (keys[pygame.K_KP4], 4),
+            (keys[pygame.K_KP5], 5)
+          ]
+          for (boolCurr, index) in t :
+            if boolCurr :
+              fingerSelWidget.setFinger(index)
       
       # ----------------------------------------
       # "b": toggle a bookmark on this timestamp
@@ -342,15 +363,17 @@ while running :
       
       # Scroll up
       if (event.button == MOUSE_SCROLL_UP) :
-        userScore.cursorStep(1)
-        # if keys[pygame.K_LCTRL] :
-        #   userScore.cursorStep(10)
-        # else :
-        #   userScore.cursorStep(1)
+        if ctrlKey :
+          userScore.cursorStep(10)
+        else :
+          userScore.cursorStep(1)
 
       # Scroll down
       if (event.button == MOUSE_SCROLL_DOWN) :
-        userScore.cursorStep(-1)
+        if ctrlKey :
+          userScore.cursorStep(-10)
+        else :
+          userScore.cursorStep(-1)
 
 
 
@@ -429,7 +452,7 @@ while running :
     
     # Click on the finger selector
     if fingerSelWidget.visible :
-      ret = fingerSelWidget.updateWithClick(clickX, clickY)
+      ret = fingerSelWidget.setFingerWithClick(clickX, clickY)
 
       if (ret == fingerSelector.FINGERSEL_CHANGED) :
         userScore.updateNoteProperties(fingerSelWidget.getEditedNote())

@@ -190,8 +190,6 @@ class Scale :
 # =============================================================================
 # Keystrokes handling function
 # =============================================================================
-# When testing if a given key is pressed, we want to assume implicitely that
-# all other keys are not hit
-# The usual method of doing it in pygame does not do that
-def keystrokeProcess() :
+# Function takes as argument the list of key pressed (as indicated by pygame)
+def keystrokeTest(keyStatus, *args) :
   print("TODO")

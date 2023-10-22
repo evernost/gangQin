@@ -108,7 +108,7 @@ class FingerSelector :
   # Define the note whose properties are shown in the finger selector.
   # ---------------------------------------------------------------------------
   def setEditedNote(self, noteObj) :
-    print(f"[DEBUG] Set note: pitch={noteObj.pitch}, finger={noteObj.finger}, index={noteObj.noteIndex}")
+    #print(f"[DEBUG] Set note: pitch={noteObj.pitch}, finger={noteObj.finger}, index={noteObj.noteIndex}")
     self._setCurrentSel(noteObj.finger, noteObj.hand)
     self.editedNote = noteObj
 
@@ -125,18 +125,19 @@ class FingerSelector :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <updateWithClick>
+  # METHOD <setFingerWithClick>
   #
-  # Update the finger selector with the click coordinates, return if anything
-  # changed in the widget or not.
+  # Update the finger associated to the note being edited using a click on the 
+  # widget.
   #
-  # Input: coordinates of the click 
-  # Output: const indicating if the hit box of the finger selector was hit or not
+  # The function returns if the click actually hit something relevant on the 
+  # widget and it got updated, or the click occured outside the scope and 
+  # nothing changed.
   # ---------------------------------------------------------------------------
-  def updateWithClick(self, clickX, clickY) :
+  def setFingerWithClick(self, clickX, clickY) :
     
     if (self.editedNote == None) :
-      print("[WARNING] Attempted to edit the properties of an void note (internal error)")
+      print("[WARNING] Attempted to edit the properties of a void note (internal error)")
 
     x0 = self.locX + 96 - 7
     yTop = self.locY + 3; yBottom = self.locY + 12
@@ -148,27 +149,37 @@ class FingerSelector :
       yMin = yTop - 6
       yMax = yBottom + 4
 
+      # If the click is in this current hit box
       if ((clickX >= xMin) and (clickX <= xMax) and (clickY >= yMin) and (clickY <= yMax)) :
+        
         self.currentSel = i
+        (hand, finger) = self._getFingerfromSel()
         
-        if (i == 5) :
-          self.editedNote.finger = 0
-          # self.editedNote.hand = ku.LEFT_HAND  => not supported yet
-        
-        if (i == 6) :
-          self.editedNote.finger = 0
-          # self.editedNote.hand = ku.RIGHT_HAND  => not supported yet
-        
-        if (i <= 4) :
-          self.editedNote.finger = 5-i
-
-        if (i >= 7) :
-          self.editedNote.finger = i-6
+        self.editedNote.finger = finger
+        # self.editedNote.hand = ...  => switching a note from one hand to the other is not supported yet
         
         return FINGERSEL_CHANGED
       
     return FINGERSEL_UNCHANGED
   
+
+  # ---------------------------------------------------------------------------
+  # METHOD <setFinger>
+  #
+  # Update the finger associated to the note being edited by passing the 
+  # finger number directly.
+  #
+  # This will also update the widget
+  # ---------------------------------------------------------------------------
+  def setFinger(self, finger) :
+    
+    if (self.editedNote == None) :
+      print("[WARNING] Attempted to edit the properties of a void note (internal error)")
+
+    if finger in [1,2,3,4,5] :
+      self.editedNote.finger = finger
+      self._setCurrentSel(finger, self.editedNote.hand)
+
 
 
   # ---------------------------------------------------------------------------
@@ -188,3 +199,25 @@ class FingerSelector :
       if (finger in [1,2,3,4,5]) :
         self.currentSel = finger+6
     
+  # ---------------------------------------------------------------------------
+  # METHOD <_getFingerfromSel> (private)
+  #
+  # TODO
+  # ---------------------------------------------------------------------------
+  def _getFingerfromSel(self) :
+        
+    if (self.currentSel <= 4) :
+      return (LEFT_HAND, 5-self.currentSel)
+
+    if (self.currentSel == 5) :
+      return (LEFT_HAND, UNDEFINED_FINGER)
+      # self.editedNote.hand = ku.LEFT_HAND  => not supported yet
+    
+    if (self.currentSel == 6) :
+      return (RIGHT_HAND, UNDEFINED_FINGER)
+      # self.editedNote.hand = ku.RIGHT_HAND  => not supported yet
+    
+    if (self.currentSel >= 7) :
+      return (RIGHT_HAND, self.currentSel-6)
+    
+    return (UNDEFINED_FINGER, UNDEFINED_HAND)

@@ -299,16 +299,17 @@ class Keyboard :
       if (len(subList) == 2) :
         
         # One note is hit by one hand
-        if ((subList[0][1].hand != UNDEFINED_HAND) and (subList[1][1].hand != UNDEFINED_HAND)) :
-          if (subList[0][1].hand != subList[1][1].hand) :
+        noteObj1 = subList[0][1]; noteObj2 = subList[1][1]
+        if ((noteObj1.hand != UNDEFINED_HAND) and (noteObj2.hand != UNDEFINED_HAND)) :
+          if (noteObj1.hand != noteObj2.hand) :
           
             # White note highlighting
-            if ((noteObj.pitch % 12) in WHITE_NOTES_CODE_MOD12) :
-              self._doubleHandWhiteKeyPress(screenInst, noteObj)
+            if ((noteObj1.pitch % 12) in WHITE_NOTES_CODE_MOD12) :
+              self._doubleHandWhiteKeyPress(screenInst, noteObj1)
 
             # Black note highlighting
-            if ((noteObj.pitch % 12) in BLACK_NOTES_CODE_MOD12) :
-              self._doubleHandBlackKeyPress(screenInst, noteObj)
+            if ((noteObj1.pitch % 12) in BLACK_NOTES_CODE_MOD12) :
+              self._doubleHandBlackKeyPress(screenInst, noteObj1)
 
             # These notes are now displayed, we can remove them from the list
             # and go on with the "normal" notes
@@ -318,6 +319,10 @@ class Keyboard :
             else :
               del noteList[subList[1][0]]
               del noteList[subList[0][0]]
+
+          # The key is hit twice with the same hand
+          else :
+            del noteList[subList[0][0]]
 
       if (len(subList) >= 3) :
         print("[WARNING] Odd score: that's a lot of fingers to press one single note *questionning emoji*")

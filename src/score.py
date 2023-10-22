@@ -78,8 +78,8 @@ class Score :
 
     # Loop practice feature
     self.loopEnable = False
-    self.loopStart = 0
-    self.loopEnd = 0
+    self.loopStart = -1
+    self.loopEnd = -1
 
 
 
@@ -222,6 +222,14 @@ class Score :
     else :
       self.activeHands = self.activeHands[0] + "R"
       # oracle.setTimecodesDB = pianoRoll.noteOnTimecodesMerged
+
+
+
+  def setLoopStart(self) :
+    if not(self.loopEnable) :
+      print("not available yet")
+
+
 
 
   # ---------------------------------------------------------------------------

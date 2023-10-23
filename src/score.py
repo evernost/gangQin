@@ -101,11 +101,14 @@ class Score :
     # ...
 
 
-  def cursorStep(self, delta) :
+  # If force=True, the cursor will step even if it exceeds a boudary 
+  # defined by the loop
+  def cursorStep(self, delta, force = True) :
 
-    if (self.fsmState == FSM_STATE_NORMAL) :
+    
+    if force :
       if (delta > 0) :
-        if ((self.cursor + delta) < (len(self.noteOntimecodesMerged)-1)) :
+        if ((self.cursor + delta) < len(self.noteOntimecodesMerged)-1) :
           self.cursor += delta
           print(f"[INFO] Cursor: {self.cursor}")
 
@@ -114,7 +117,33 @@ class Score :
           self.cursor += delta
           print(f"[INFO] Cursor: {self.cursor}")
 
+    else :
+      if (delta > 0) :
+        if ((self.cursor + delta) <= self.loopEnd) :
+          self.cursor += delta
+          print(f"[INFO] Cursor: {self.cursor}")
+        else :
+          self.cursor = self.loopStart
+          print(f"[INFO] Cursor: {self.cursor}")
 
+      else :
+        if ((self.cursor + delta) >= self.loopStart) :
+          self.cursor += delta
+          print(f"[INFO] Cursor: {self.cursor}")
+        else :
+          self.cursor = self.loopEnd
+          print(f"[INFO] Cursor: {self.cursor}")
+
+
+    # if (force or (not(force) and (self.loopEnd == -1))) :
+    #   upperLimit = len(self.noteOntimecodesMerged)-1
+    # else :
+    #   upperLimit = self.loopEnd+1
+
+    # if (force or (not(force) and (self.loopEnd == -1))) :
+    #   upperLimit = len(self.noteOntimecodesMerged)-1
+    # else :
+    #   upperLimit = self.loopEnd+1
   
 
   def cursorReset(self) :
@@ -225,11 +254,44 @@ class Score :
 
 
 
+
+
+
   def setLoopStart(self) :
-    if not(self.loopEnable) :
-      print("not available yet")
+    
+    # Loop end is not yet defined
+    if (self.loopEnd == -1) :
+      self.loopStart = self.getCursor()
+      print(f"[NOTE] Start of loop set at {self.loopStart}")
+
+    else :
+      if (self.getCursor() < self.loopEnd) :
+        self.loopStart = self.getCursor()
+        self.loopEnable = True
+        print(f"[NOTE] Loop set: start = {self.loopStart} / end = {self.loopEnd}")
 
 
+
+
+  def setLoopEnd(self) :
+    
+    # Loop start is not yet defined
+    if (self.loopStart == -1) :
+      self.loopEnd = self.getCursor()
+      print(f"[NOTE] End of loop set at {self.loopEnd}")
+
+    else :
+      if (self.getCursor() > self.loopStart) :
+        self.loopEnd = self.getCursor()
+        self.loopEnable = True
+        print(f"[NOTE] Loop set: start = {self.loopStart} / end = {self.loopEnd}")
+    
+
+  def clearLoop(self) :
+    self.loopStart = -1
+    self.loopEnd = -1
+    self.loopEnable = False
+    print("[NOTE] Loop cleared.")
 
 
   # ---------------------------------------------------------------------------

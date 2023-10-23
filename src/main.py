@@ -269,6 +269,24 @@ while running :
       if (keys[pygame.K_UP]) :
         userScore.gotoNextBookmark()
 
+      # ---------------------------
+      # F9: set the start of a loop
+      # ---------------------------
+      if (keys[pygame.K_F9]) :
+        userScore.setLoopStart()
+
+      # --------------------------
+      # F10: set the end of a loop
+      # --------------------------
+      if (keys[pygame.K_F10]) :
+        userScore.setLoopEnd()
+
+      # -------------------
+      # F11: clear the loop
+      # -------------------
+      if (keys[pygame.K_F11]) :
+        userScore.clearLoop()
+
       # -----------------------------------------------
       # Keypad 1 to 5: assign finger to a selected note
       # -----------------------------------------------
@@ -430,7 +448,7 @@ while running :
         allowProgress = False
   
     if allowProgress :
-      userScore.cursorStep(1)
+      userScore.cursorStep(1, force = False)
 
       # Take snapshot
       for pitch in range(128) :
@@ -472,7 +490,14 @@ while running :
 
   # Loop
   if userScore.loopEnable :
-    fu.renderText(screen, "LOOP ACTIVE: 1/?", (300, 470), 2, UI_TEXT_COLOR)
+    fu.renderText(screen, f"LOOP: {userScore.loopStart}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
+  else :
+    if (userScore.loopStart >= 0) :
+      fu.renderText(screen, f"LOOP: {userScore.loopStart}/_", (250, 470), 2, UI_TEXT_COLOR)
+
+    if (userScore.loopEnd >= 0) :
+      fu.renderText(screen, f"LOOP: _/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
+    
 
   # Finger selection
   fingerSelWidget.show(screen)

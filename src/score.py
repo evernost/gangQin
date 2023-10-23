@@ -103,36 +103,33 @@ class Score :
 
   # If force=True, the cursor will step even if it exceeds a boudary 
   # defined by the loop
-  def cursorStep(self, delta, force = True) :
-
-    
-    if force :
-      if (delta > 0) :
-        if ((self.cursor + delta) < len(self.noteOntimecodesMerged)-1) :
-          self.cursor += delta
-          print(f"[INFO] Cursor: {self.cursor}")
-
-      else :
-        if ((self.cursor + delta) >= 0) :
-          self.cursor += delta
-          print(f"[INFO] Cursor: {self.cursor}")
+  def cursorStep(self, delta) :    
+  
+    if (delta > 0) :
+      if ((self.cursor + delta) < len(self.noteOntimecodesMerged)-1) :
+        self.cursor += delta
+        print(f"[INFO] Cursor: {self.cursor}")
 
     else :
-      if (delta > 0) :
-        if ((self.cursor + delta) <= self.loopEnd) :
-          self.cursor += delta
-          print(f"[INFO] Cursor: {self.cursor}")
-        else :
-          self.cursor = self.loopStart
-          print(f"[INFO] Cursor: {self.cursor}")
+      if ((self.cursor + delta) >= 0) :
+        self.cursor += delta
+        print(f"[INFO] Cursor: {self.cursor}")
 
-      else :
-        if ((self.cursor + delta) >= self.loopStart) :
-          self.cursor += delta
-          print(f"[INFO] Cursor: {self.cursor}")
-        else :
-          self.cursor = self.loopEnd
-          print(f"[INFO] Cursor: {self.cursor}")
+
+
+
+  def cursorNext(self) :
+
+    if self.loopEnable :
+      if ((self.cursor + 1) < self.loopEnd) :
+        self.cursor += 1
+      else : 
+        self.cursor = self.loopStart
+      
+      print(f"[INFO] Cursor: {self.cursor}")
+
+    else :
+      self.cursorStep(1)
 
 
     # if (force or (not(force) and (self.loopEnd == -1))) :

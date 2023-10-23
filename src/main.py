@@ -448,7 +448,7 @@ while running :
         allowProgress = False
   
     if allowProgress :
-      userScore.cursorStep(1, force = False)
+      userScore.cursorNext()
 
       # Take snapshot
       for pitch in range(128) :
@@ -493,10 +493,18 @@ while running :
     fu.renderText(screen, f"LOOP: {userScore.loopStart}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
   else :
     if (userScore.loopStart >= 0) :
-      fu.renderText(screen, f"LOOP: {userScore.loopStart}/_", (250, 470), 2, UI_TEXT_COLOR)
+      if (userScore.getCursor() >= userScore.loopStart) :
+        fu.renderText(screen, f"LOOP: {userScore.loopStart}/{userScore.getCursor()}", (250, 470), 2, UI_TEXT_COLOR)
+      else :
+        fu.renderText(screen, f"LOOP: {userScore.loopStart}/_", (250, 470), 2, UI_TEXT_COLOR)
 
     if (userScore.loopEnd >= 0) :
-      fu.renderText(screen, f"LOOP: _/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
+      if (userScore.getCursor() <= userScore.loopEnd) :
+        fu.renderText(screen, f"LOOP: {userScore.getCursor()}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
+      else :
+        fu.renderText(screen, f"LOOP: _/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
+      
+      
     
 
   # Finger selection

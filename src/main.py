@@ -490,19 +490,19 @@ while running :
 
   # Loop
   if userScore.loopEnable :
-    fu.renderText(screen, f"LOOP: {userScore.loopStart}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
+    fu.renderText(screen, f"LOOP: {userScore.loopStart}/{userScore.getCursor()}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
   else :
     if (userScore.loopStart >= 0) :
       if (userScore.getCursor() >= userScore.loopStart) :
-        fu.renderText(screen, f"LOOP: {userScore.loopStart}/{userScore.getCursor()}", (250, 470), 2, UI_TEXT_COLOR)
+        fu.renderText(screen, f"LOOP: {userScore.loopStart}/{userScore.getCursor()}/{userScore.getCursor()}", (250, 470), 2, UI_TEXT_COLOR)
       else :
-        fu.renderText(screen, f"LOOP: {userScore.loopStart}/_", (250, 470), 2, UI_TEXT_COLOR)
+        fu.renderText(screen, f"LOOP: {userScore.loopStart}/{userScore.getCursor()}/_", (250, 470), 2, UI_TEXT_COLOR)
 
     if (userScore.loopEnd >= 0) :
       if (userScore.getCursor() <= userScore.loopEnd) :
-        fu.renderText(screen, f"LOOP: {userScore.getCursor()}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
+        fu.renderText(screen, f"LOOP: {userScore.getCursor()}/{userScore.getCursor()}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
       else :
-        fu.renderText(screen, f"LOOP: _/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
+        fu.renderText(screen, f"LOOP: _/{userScore.getCursor()}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
       
       
     

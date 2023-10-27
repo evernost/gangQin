@@ -15,6 +15,9 @@
 # =============================================================================
 
 # Mandatory:
+# - bug fix: allow to play again the last note
+# - during MIDI import: ask the user which tracks to use (there might be more than 2)
+# - funky animation everytime the right notes are played
 # - allow user to set the finger using numbers on the keypad
 # - when editing the finger of an unedited note, FingerSelector shall be set 
 #   on a default selector that matches with the hand of the note
@@ -23,13 +26,10 @@
 # - allow the user to transfer a note from one hand to the other
 #   That involves inserting a note in <noteOnTimecodes>
 # - allow the user to practice hands separately
-# - loop feature between 2 bookmarks
-# - CTRL + mouse scroll has step 10 instead of 1
-# - loop feature: "color memory game". Increase the size of the loop as the user
-#   plays it without any mistakes and more quickly
+# - loop timer: as soon as the first note of the loop is played, start a timer
+#   and show a "fluidity" score
 # - allow the user to add some comments. Comments should span one to several timecodes.
 #   Comments can be guidelines, info on the way to play, ... any notes, really.
-# - during MIDI import: ask the user which tracks to use (there might be more than 2)
 # - patch the keypress management in the code (combinations of CTRL+... are buggy)
 # - issue: some notes from the teacher are shown in grey.
 # - auto-increase the step size if CTRL+left/right is hit multiple times in a row 
@@ -45,6 +45,8 @@
 # - pretty print the JSON (.pr file)
 # - show arrows on the keyboard to give some guidance about where the "center of gravity"
 #   of the hand is heading to
+# - loop feature: "color memory game". Increase the size of the loop as the user
+#   plays it without any mistakes and more quickly
 
 # Later:
 # - change the framework, use pyqt instead
@@ -53,6 +55,8 @@
 # - <midiCallback>: handle MIDI keyboards that send <noteON> messages with 0 velocity as a <noteOFF>
 
 # Done:
+# - CTRL + mouse scroll has step 10 instead of 1
+# - loop feature between 2 bookmarks
 # - add a fast forward option
 # - draw the piano roll
 # - handle properly the case of no MIDI interface selected (navigation mode)

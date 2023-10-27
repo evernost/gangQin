@@ -110,7 +110,11 @@ class FingerSelector :
   def setEditedNote(self, noteObj) :
     #print(f"[DEBUG] Set note: pitch={noteObj.pitch}, finger={noteObj.finger}, index={noteObj.noteIndex}")
     self._setCurrentSel(noteObj.finger, noteObj.hand)
+    if (self.editedNote != None) :
+      self.editedNote.highlight = False
+    
     self.editedNote = noteObj
+    noteObj.highlight = True
 
 
 

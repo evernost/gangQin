@@ -121,7 +121,7 @@ class Score :
   def cursorNext(self) :
 
     if self.loopEnable :
-      if ((self.cursor + 1) < self.loopEnd) :
+      if ((self.cursor + 1) <= self.loopEnd) :
         self.cursor += 1
       else : 
         self.cursor = self.loopStart
@@ -131,23 +131,16 @@ class Score :
     else :
       self.cursorStep(1)
 
-
-    # if (force or (not(force) and (self.loopEnd == -1))) :
-    #   upperLimit = len(self.noteOntimecodesMerged)-1
-    # else :
-    #   upperLimit = self.loopEnd+1
-
-    # if (force or (not(force) and (self.loopEnd == -1))) :
-    #   upperLimit = len(self.noteOntimecodesMerged)-1
-    # else :
-    #   upperLimit = self.loopEnd+1
   
 
   def cursorReset(self) :
-    self.cursor = 0
-    # if (self.fsmState == FSM_STATE_NORMAL) :
     
+    if self.loopEnable :
+      self.cursor = self.loopStart
+    else :
+      self.cursor = 0
 
+    
 
 
   # ---------------------------------------------------------------------------
@@ -475,6 +468,7 @@ class Score :
     self.noteOntimecodes = [[] for _ in range(self.nStaffs)]
 
     nNotes = 0; noteDuration = 0
+    id = 0
 
     # Loop on the tracks
     for (trackNumber, track) in enumerate(mid.tracks) :
@@ -522,7 +516,9 @@ class Score :
           # Close it
           self.pianoRoll[trackNumber][pitch][-1].stopTime = currTime
           noteDuration += (self.pianoRoll[trackNumber][pitch][-1].stopTime - self.pianoRoll[trackNumber][pitch][-1].startTime)
+          self.pianoRoll[trackNumber][pitch][-1].id = id
           nNotes += 1.0
+          id += 1
 
           # if (noteObj.startTime == noteObj.stopTime) :
           #   print(f"[WARNING] MIDI note {pitch} ({noteName(pitch)}): ignoring note with null duration (start time = stop time = {noteObj.startTime})")

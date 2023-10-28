@@ -101,9 +101,9 @@ class Score :
     # ...
 
 
-  # If force=True, the cursor will step even if it exceeds a boudary 
-  # defined by the loop
-  def cursorStep(self, delta) :    
+  # Increase / decrease the cursor value of a given step (positive or negative)
+  # The cursor 
+  def cursorStep(self, delta) :
   
     if (delta > 0) :
       if ((self.cursor + delta) < len(self.noteOntimecodesMerged)-1) :
@@ -135,12 +135,20 @@ class Score :
 
   def cursorReset(self) :
     
-    if self.loopEnable :
+    if (self.loopEnable and (self.cursor >= self.loopStart)) :
       self.cursor = self.loopStart
     else :
       self.cursor = 0
 
+
+
+  def cursorEnd(self) :
     
+    if (self.loopEnable and (self.cursor <= self.loopEnd)) :
+      self.cursor = self.loopEnd
+    
+
+
 
 
   # ---------------------------------------------------------------------------
@@ -328,7 +336,9 @@ class Score :
   # METHOD <getTeacherNotes>
   #
   # Return the list of all notes that must be pressed at the current cursor
-  # location in the score
+  # location in the score.
+  # Note: notes that were pressed before and held up to the current cursor are
+  #       not included. To list them, use <getSustainedNotes>.
   # ---------------------------------------------------------------------------
   def getTeacherNotes(self) :
     self._updateTeacherNotes()

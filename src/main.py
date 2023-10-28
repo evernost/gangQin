@@ -259,7 +259,7 @@ while running :
       # END: jump to the end of the file
       # ---------------------------------------
       if (keys[pygame.K_END]) :
-        print("[INFO] Supported in a future release")
+        userScore.cursorEnd()
 
       # -----------------------------------
       # Down: jump to the previous bookmark
@@ -419,6 +419,11 @@ while running :
       midiNoteList.append(utils.Note(pitch, hand = UNDEFINED_HAND))
   
   keyboardWidget.keyPress(screen, midiNoteList)
+
+  # -------------------------------------------------
+  # Show the sustained notes at that time (info only)
+  # -------------------------------------------------
+  # keyboardWidget.keySustain(screen, userScore.getSustainedNotes())
 
   # -------------------------------------------------
   # Show the notes expected to be played at that time

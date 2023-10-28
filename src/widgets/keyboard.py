@@ -104,6 +104,7 @@ class Keyboard :
     self.activeNotes = []
 
 
+
   # ---------------------------------------------------------------------------
   # Method <makeKeyboardPolygons>
   # Generates the polygons depicting all the notes of a MIDI keyboard (128 notes)

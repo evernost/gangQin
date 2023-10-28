@@ -38,6 +38,7 @@ def getFileList(folderPath, extension) :
     if filename.endswith(extension):
       fileList.append(os.path.join(folderPath, filename))
 
+  fileList.sort()
   return fileList
 
 
@@ -150,7 +151,7 @@ def showSetupGUI() :
   comboFile.grid(row = 3, column = 0, columnspan = 3, padx = 3, pady = 5, sticky = "e")
 
 
-  buttonOK = tk.Button(root, text = "OK", command = sendConf)
+  buttonOK = tk.Button(root, text = "Open", command = sendConf)
   buttonOK.grid(row=1, column = 1, padx = 10, pady = 20, sticky = "e")
   buttonOK["width"] = 20
   if (len(fileList) == 1 and fileList[0] == "None") :

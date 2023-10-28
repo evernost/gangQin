@@ -484,11 +484,19 @@ class Score :
           
           pitch = msg.note
           
-          # There was a note before this one. Is it done?
+          # There is a note with the same pitch before this one
           if (len(self.pianoRoll[trackNumber][pitch]) > 0) :
+            
+            # Detect if a note is pressed while a previous one was not released
             for currNote in self.pianoRoll[trackNumber][pitch] :
               if (currNote.stopTime < 0) :
-                print(f"[WARNING] [MIDI import] MIDI note {pitch}: a keypress overlaps a note that is already being pressed.")
+                print(f"[WARNING] [MIDI import] Ambiguous note {utils.noteName(pitch)}: a keypress overlaps a note that is already being pressed.")
+
+                # Close the previous note
+                # That is one strategy, but it might be wrong. It depends on the song.
+                # User should decide here.
+                currNote.stopTime = currTime
+
 
             l = len(self.pianoRoll[trackNumber][pitch])
             self.pianoRoll[trackNumber][pitch].append(utils.Note(pitch, hand = trackNumber, noteIndex = l, startTime = currTime, stopTime = -1))

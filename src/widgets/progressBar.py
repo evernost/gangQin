@@ -69,3 +69,13 @@ class CursorProgressBar(ProgressBar) :
 
 
 
+class LoopProgressBar(ProgressBar) :
+
+  def __init__(self, loc, size, thickness = 2) :
+    super().__init__(loc, size, thickness)
+    
+
+    self.loopStartCursor = -1
+    self.loopEndCursor = -1
+
+

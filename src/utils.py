@@ -162,9 +162,13 @@ class Note :
     
 
   def __str__(self) :
+    noteNameStr = noteName(self.pitch)
+    if (self.hand == RIGHT_HAND) : handStr = "R"
+    if (self.hand == LEFT_HAND) : handStr = "L"
+
     ret = f"""Note object properties
-    - pitch:     {self.pitch}
-    - hand:      {self.hand}
+    - pitch:     {self.pitch} ({noteNameStr})
+    - hand:      {self.hand} ({handStr})
     - finger:    {self.finger}
     - index:     {self.noteIndex}
     - start:     {self.startTime}

@@ -24,8 +24,7 @@ import fontUtils as fu
 # =============================================================================
 # Constants pool
 # =============================================================================
-PROGRESSBAR_MODE_BAR = 0
-PROGRESSBAR_MODE_DOT = 1
+
 
 
 
@@ -41,31 +40,15 @@ if (__name__ == "__main__") :
 # Main code
 # =============================================================================
 
-class ProgressBar :
+class Clef :
 
-  def __init__(self, loc, size, thickness = 2) :
+  def __init__(self, loc) :
     (self.locX, self.locY) = loc
-    (self.sizeX, self.sizeY) = size
     self.visible = False
     
-    self.mode = PROGRESSBAR_MODE_BAR
-    
-    self.thickness = thickness
 
-
-
-
-class CursorProgressBar(ProgressBar) :
-
-  def __init__(self, loc, size, thickness = 2) :
-    super().__init__(loc, size, thickness)
-    
-
-    self.showMarker = True
-    self.showBookmarks = True
-    self.showLoop = False
-    
-    self.bookmarks = []
-
+# --------------------------
+# /!\ UNDER CONSTRUCTION /!\
+# --------------------------
 
 

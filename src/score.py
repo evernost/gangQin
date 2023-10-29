@@ -300,6 +300,13 @@ class Score :
   # ---------------------------------------------------------------------------
   def _updateTeacherNotes(self) :
     
+    # Reset the play attributes of the previous notes
+    if len(self.teacherNotes) > 0 :
+      for noteObj in self.teacherNotes :
+        noteObj.visible = False
+        noteObj.sustained = False
+
+
     self.teacherNotes = []
     self.teacherNotesMidi = [0 for _ in range(128)]    # same information as <teacherNotes> but different structure
     
@@ -309,8 +316,13 @@ class Score :
         for (staffIndex, _) in enumerate(self.pianoRoll) :
           for noteObj in self.pianoRoll[staffIndex][pitch] :
             if (noteObj.startTime == self.getCurrentTimecode()) :
+              noteObj.visible = True
               self.teacherNotes.append(noteObj)
               self.teacherNotesMidi[pitch] = 1
+
+            if ((self.getCurrentTimecode() > noteObj.startTime) and (self.getCurrentTimecode() <= noteObj.stopTime)) :
+              noteObj.sustained = True
+              self.teacherNotes.append(noteObj)
 
     # Left hand practice
     if (self.activeHands == "L ") :

@@ -292,7 +292,8 @@ class Keyboard :
     # special processing to be done. 
     noteListByPitch = [[] for x in range(128)]
     for (index, noteObj) in enumerate(noteList) :
-      noteListByPitch[noteObj.pitch].append([index, noteObj])
+      if not(noteObj.sustained) :
+        noteListByPitch[noteObj.pitch].append([index, noteObj])
       
     for subList in noteListByPitch :
       
@@ -340,7 +341,8 @@ class Keyboard :
         self._singleHandBlackKeyPress(screenInst, noteObj)
 
       # Register this keypress for note overlap management
-      self.activeNotes.append(noteObj)
+      if not(noteObj.sustained) :
+        self.activeNotes.append(noteObj)
       
       # ------------------------------
       # Note click detection materials
@@ -378,7 +380,10 @@ class Keyboard :
       elif (noteObj.voice != VOICE_DEFAULT) :
         pygame.draw.polygon(screenInst, VOICE_COLOR[noteObj.voice], sq)
       else :
-        pygame.draw.polygon(screenInst, self.sqWhiteNoteLeftRGB, sq)
+        if (noteObj.sustained) :
+          pygame.draw.polygon(screenInst, (255, 223, 221), sq)
+        else :
+          pygame.draw.polygon(screenInst, self.sqWhiteNoteLeftRGB, sq)
     
     if (noteObj.hand == RIGHT_HAND) :
       if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
@@ -386,11 +391,18 @@ class Keyboard :
       elif (noteObj.voice != VOICE_DEFAULT) :
         pygame.draw.polygon(screenInst, VOICE_COLOR[noteObj.voice], sq)
       else :
-        pygame.draw.polygon(screenInst, self.sqWhiteNoteRightRGB, sq)
+        if (noteObj.sustained) :
+          pygame.draw.polygon(screenInst, (221, 255, 223), sq)
+        else :
+          pygame.draw.polygon(screenInst, self.sqWhiteNoteRightRGB, sq)
 
     if (noteObj.hand == UNDEFINED_HAND) :
       pygame.draw.polygon(screenInst, self.sqWhiteNoteNeutralRGB, sq)
 
+    # Rectangle outline
+    for i in range(4) :
+      pygame.draw.line(screenInst, (10, 10, 10), (sq[i][0], sq[i][1]), (sq[(i+1) % 4][0], sq[(i+1) % 4][1]), 1)
+    
     # Show finger number
     if (noteObj.finger in [1,2,3,4,5]) :
       # Font size 1
@@ -409,7 +421,7 @@ class Keyboard :
   def _singleHandBlackKeyPress(self, screenInst, noteObj) :
 
     # Build the rectangle that will be drawn on top of the note
-    eps = 3
+    eps = 2
     u = [x[0] for x in self.keyboardPolygons[noteObj.pitch]]
     x0 = min(u); y0 = self.y + 50
     h = self.c - self.e - (2*eps) - 50
@@ -419,22 +431,34 @@ class Keyboard :
     sq += utils.Vector2D(w,0)
     sq += utils.Vector2D(0,-h)
 
-    # Note: function is called to show the MIDI input first, then the MIDI file notes.
-    # This has an impact on overlap handling
     if (noteObj.hand == LEFT_HAND) :
       if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
         pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapLeftRGB, sq)
       else :
-        pygame.draw.polygon(screenInst, self.sqBlackNoteLeftRGB, sq)
+        if (noteObj.sustained) :
+          pygame.draw.polygon(screenInst, (100, 5, 0), sq)
+        else :
+          pygame.draw.polygon(screenInst, self.sqBlackNoteLeftRGB, sq)
+
+
 
     if (noteObj.hand == RIGHT_HAND) :
       if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
         pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapRightRGB, sq)
       else :
-        pygame.draw.polygon(screenInst, self.sqBlackNoteRightRGB, sq)
+        if (noteObj.sustained) :
+          pygame.draw.polygon(screenInst, (0, 100, 5), sq)
+        else :
+          pygame.draw.polygon(screenInst, self.sqBlackNoteRightRGB, sq)
+
+
 
     if (noteObj.hand == UNDEFINED_HAND) :
       pygame.draw.polygon(screenInst, self.sqBlackNoteNeutralRGB, sq)
+
+    # Rectangle outline
+    for i in range(4) :
+      pygame.draw.line(screenInst, (80, 80, 80), (sq[i][0], sq[i][1]), (sq[(i+1) % 4][0], sq[(i+1) % 4][1]), 1)
 
     # Show finger number
     if (noteObj.finger in [1,2,3,4,5]) :

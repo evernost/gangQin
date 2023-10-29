@@ -157,14 +157,16 @@ class Note :
     self.stopTime = stopTime
     self.voice = voice
     self.highlight = highlight
-    self.mustPlay = False
+    self.mustPlay = True
+    self.visible = False
+    self.sustained = False
     self.id = -1
     
 
   def __str__(self) :
     noteNameStr = noteName(self.pitch)
-    if (self.hand == RIGHT_HAND) : handStr = "R"
-    if (self.hand == LEFT_HAND) : handStr = "L"
+    if (self.hand == RIGHT_HAND) : handStr = "right hand"
+    if (self.hand == LEFT_HAND) : handStr = "left hand"
 
     ret = f"""Note object properties
     - pitch:     {self.pitch} ({noteNameStr})
@@ -173,6 +175,8 @@ class Note :
     - index:     {self.noteIndex}
     - start:     {self.startTime}
     - stop:      {self.stopTime}
+    - visible:   {self.visible}
+    - sustained: {self.sustained}
     - highlight: {self.highlight}
     - id:        {self.id}
     """

@@ -341,8 +341,8 @@ class Keyboard :
         self._singleHandBlackKeyPress(screenInst, noteObj)
 
       # Register this keypress for note overlap management
-      if not(noteObj.sustained) :
-        self.activeNotes.append(noteObj)
+      # if not(noteObj.sustained) :
+      #   self.activeNotes.append(noteObj)
       
       # ------------------------------
       # Note click detection materials
@@ -397,11 +397,13 @@ class Keyboard :
           pygame.draw.polygon(screenInst, self.sqWhiteNoteRightRGB, sq)
 
     if (noteObj.hand == UNDEFINED_HAND) :
-      pygame.draw.polygon(screenInst, self.sqWhiteNoteNeutralRGB, sq)
+      #pygame.draw.polygon(screenInst, self.sqWhiteNoteNeutralRGB, sq)
+      pygame.draw.circle(screenInst, (10, 10, 10), (x0 + 4 + w/2, y0 + 5 + h/2), 5)
 
     # Rectangle outline
-    for i in range(4) :
-      pygame.draw.line(screenInst, (10, 10, 10), (sq[i][0], sq[i][1]), (sq[(i+1) % 4][0], sq[(i+1) % 4][1]), 1)
+    if (noteObj.hand != UNDEFINED_HAND) :
+      for i in range(4) :
+        pygame.draw.line(screenInst, (10, 10, 10), (sq[i][0], sq[i][1]), (sq[(i+1) % 4][0], sq[(i+1) % 4][1]), 1)
     
     # Show finger number
     if (noteObj.finger in [1,2,3,4,5]) :
@@ -454,11 +456,13 @@ class Keyboard :
 
 
     if (noteObj.hand == UNDEFINED_HAND) :
-      pygame.draw.polygon(screenInst, self.sqBlackNoteNeutralRGB, sq)
+      # pygame.draw.polygon(screenInst, self.sqBlackNoteNeutralRGB, sq)
+      pygame.draw.circle(screenInst, (200, 200, 200), (x0 + 2 + w/2, y0 + 1 + h/2), 5)
 
     # Rectangle outline
-    for i in range(4) :
-      pygame.draw.line(screenInst, (80, 80, 80), (sq[i][0], sq[i][1]), (sq[(i+1) % 4][0], sq[(i+1) % 4][1]), 1)
+    if (noteObj.hand != UNDEFINED_HAND) :
+      for i in range(4) :
+        pygame.draw.line(screenInst, (80, 80, 80), (sq[i][0], sq[i][1]), (sq[(i+1) % 4][0], sq[(i+1) % 4][1]), 1)
 
     # Show finger number
     if (noteObj.finger in [1,2,3,4,5]) :

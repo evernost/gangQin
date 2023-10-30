@@ -410,6 +410,11 @@ while running :
   pianoRollWidget.drawPianoRoll(screen, userScore.getCurrentTimecode())
 
   # -------------------------------------------------
+  # Show the notes expected to be played at that time
+  # -------------------------------------------------
+  keyboardWidget.keyPress(screen, userScore.getTeacherNotes())
+
+  # -------------------------------------------------
   # Show the current key pressed on the MIDI keyboard
   # -------------------------------------------------
   # TODO: list in comprehension might do a better job here
@@ -419,16 +424,6 @@ while running :
       midiNoteList.append(utils.Note(pitch, hand = UNDEFINED_HAND))
   
   keyboardWidget.keyPress(screen, midiNoteList)
-
-  # -------------------------------------------------
-  # Show the sustained notes at that time (info only)
-  # -------------------------------------------------
-  # keyboardWidget.keySustain(screen, userScore.getSustainedNotes())
-
-  # -------------------------------------------------
-  # Show the notes expected to be played at that time
-  # -------------------------------------------------
-  keyboardWidget.keyPress(screen, userScore.getTeacherNotes())
 
   # -----------------------------------------------------------------------
   # Decide whether to move forward in the score depending on the user input

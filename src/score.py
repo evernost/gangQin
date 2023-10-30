@@ -300,7 +300,7 @@ class Score :
   # ---------------------------------------------------------------------------
   def _updateTeacherNotes(self) :
     
-    # Reset the play attributes of the previous notes
+    # Reset the play attributes of the previous notes before deleting them
     if len(self.teacherNotes) > 0 :
       for noteObj in self.teacherNotes :
         noteObj.visible = False

@@ -339,10 +339,6 @@ class Keyboard :
       # Black note highlighting
       if ((noteObj.pitch % 12) in BLACK_NOTES_CODE_MOD12) :
         self._singleHandBlackKeyPress(screenInst, noteObj)
-
-      # Register this keypress for note overlap management
-      # if not(noteObj.sustained) :
-      #   self.activeNotes.append(noteObj)
       
       # ------------------------------
       # Note click detection materials
@@ -375,10 +371,23 @@ class Keyboard :
     sq += utils.Vector2D(0,-h)
     
     if (noteObj.hand == LEFT_HAND) :
+      
+      # (Obsolete)
       if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
         pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapLeftRGB, sq)
+      
+      # Specific voice color
       elif (noteObj.voice != VOICE_DEFAULT) :
         pygame.draw.polygon(screenInst, VOICE_COLOR[noteObj.voice], sq)
+      
+      # Inactive note (because of single hand practice mode)
+      elif (noteObj.inactive) :
+        pygame.draw.polygon(screenInst, (255, 223, 221), sq)
+
+      # Note from a scale (TODO)
+      # elif (noteObj.fromScale) :
+      #   TODO
+
       else :
         if (noteObj.sustained) :
           pygame.draw.polygon(screenInst, (255, 223, 221), sq)
@@ -553,10 +562,11 @@ class Keyboard :
   # Given a click coordinates, indicate whether it is an active key (a "lit" key)
   # that has been clicked.
   # ---------------------------------------------------------------------------
-  def isActiveNoteClicked(self, clickX, clickY) :
+  def isActiveNoteClicked(self, clickCoord) :
     for (currLitNotePolygon, currNote) in self.litKeysPolygons :
 
       # Intersection!
+      (clickX, clickY) = clickCoord
       if Point(clickX, clickY).within(Polygon(currLitNotePolygon)) :
         return currNote
 

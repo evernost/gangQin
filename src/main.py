@@ -15,31 +15,25 @@
 # =============================================================================
 
 # Mandatory:
+# - allow the user to practice hands separately
+# - highlight the activeNote ie the note whose finger is currently being associated
 # - bug fix: allow to play again the last note
 # - during MIDI import: ask the user which tracks to use (there might be more than 2)
 # - funky animation everytime the right notes are played
-# - allow user to set the finger using numbers on the keypad
-# - when editing the finger of an unedited note, FingerSelector shall be set 
-#   on a default selector that matches with the hand of the note
-# - highlight the activeNote ie the note whose finger is currently being associated
 # - fingerSelGui should be visible and have focus 
 # - allow the user to transfer a note from one hand to the other
 #   That involves inserting a note in <noteOnTimecodes>
-# - allow the user to practice hands separately
 # - loop timer: as soon as the first note of the loop is played, start a timer
 #   and show a "fluidity" score
 # - allow the user to add some comments. Comments should span one to several timecodes.
 #   Comments can be guidelines, info on the way to play, ... any notes, really.
 # - patch the keypress management in the code (combinations of CTRL+... are buggy)
-# - issue: some notes from the teacher are shown in grey.
-# - auto-increase the step size if CTRL+left/right is hit multiple times in a row 
 
 # Nice to have:
 # - inform the user somehow that he is not playing the expected note
 # - patch the obscure variable names in keyboardUtils
 # - add a play button to hear some sections
 # - <drawPianoRoll>: compute polygons once for all. Don't recompute them if time code hasn't changed
-# - add "if __main__" in all libs
 # - add autosave feature (save snapshot every 2 minutes)
 # - show a "*" in the title bar as soon as there are unsaved changes in the pianoRoll object
 # - pretty print the JSON (.pr file)
@@ -47,6 +41,7 @@
 #   of the hand is heading to
 # - loop feature: "color memory game". Increase the size of the loop as the user
 #   plays it without any mistakes and more quickly
+# - auto-increase the step size if CTRL+left/right is hit multiple times in a row
 
 # Later:
 # - change the framework, use pyqt instead
@@ -55,6 +50,7 @@
 # - <midiCallback>: handle MIDI keyboards that send <noteON> messages with 0 velocity as a <noteOFF>
 
 # Done:
+# - allow user to set the finger using numbers on the keypad
 # - CTRL + mouse scroll has step 10 instead of 1
 # - loop feature between 2 bookmarks
 # - add a fast forward option
@@ -68,8 +64,10 @@
 # - import/export the piano roll and all the metadata
 # - note select for an edit shall have a hitbox that spans the entire key. Not only the lit part.
 # - allow the user to edit note properties (finger)
-
-
+# - when editing the finger of an unedited note, FingerSelector shall be set 
+#   on a default selector that matches with the hand of the note
+# - issue: some notes from the teacher are shown in grey.
+# - add "if __main__" in all libs
 
 # =============================================================================
 # External libs 
@@ -210,8 +208,6 @@ while running :
     
     if (event.type == pygame.KEYDOWN) :
       keys = pygame.key.get_pressed()
-
-      
       ctrlKey = event.mod & pygame.KMOD_CTRL
 
       # -----------------
@@ -253,7 +249,7 @@ while running :
       # HOME: jump to the beginning of the file
       # ----------------------------------------------
       if (keys[pygame.K_HOME]) :
-        userScore.cursorReset()
+        userScore.cursorBegin()
 
       # ---------------------------------------
       # END: jump to the end of the file
@@ -337,9 +333,9 @@ while running :
       if (keys[pygame.K_LCTRL] and keys[pygame.K_k]) :
         print("[NOTE] Setting the key of the song will be added in a future release.")
 
-      # ---------------------------------
-      # "l": enable/disable the left hand
-      # ---------------------------------
+      # ------------------------------
+      # "l": toggle left hand practice
+      # ------------------------------
       if (keys[pygame.K_l]) :  
         userScore.toggleLeftHand()
 
@@ -349,9 +345,9 @@ while running :
       if (keys[pygame.K_p]) :
         userScore.toggleLoopMode()
 
-      # ----------------------------------
-      # "r": enable/disable the right hand
-      # ----------------------------------
+      # -------------------------------
+      # "r": toggle right hand practice
+      # -------------------------------
       if (keys[pygame.K_r]) :
         userScore.toggleRightHand()
 
@@ -380,8 +376,8 @@ while running :
       # Left click
       if (event.button == MOUSE_LEFT_CLICK) :
         clickMsg = True
-        (clickX, clickY) = pygame.mouse.get_pos()
-        print(f"[DEBUG] Click here: x = {clickX}, y = {clickY}")
+        clickCoord = pygame.mouse.get_pos()
+        print(f"[DEBUG] Click here: x = {clickCoord[0]}, y = {clickCoord[1]}")
       
       # Scroll up
       if (event.button == MOUSE_SCROLL_UP) :
@@ -432,7 +428,7 @@ while running :
   # *** Exact mode ***
   if (playComparisonMode == "exact") :
     if (userScore.teacherNotesMidi == midiCurr) :
-      userScore.cursorStep(1)
+      userScore.cursorNext()
 
   # *** Sustain mode ***
   # Sustained note are tolerated to proceed forward.
@@ -465,7 +461,7 @@ while running :
   if clickMsg :
     
     # Click on a note on the keyboard
-    clickedNote = keyboardWidget.isActiveNoteClicked(clickX, clickY)
+    clickedNote = keyboardWidget.isActiveNoteClicked(clickCoord)
     if clickedNote :
       print(f"[DEBUG] Clicked note: {clickedNote}")
       
@@ -474,7 +470,7 @@ while running :
     
     # Click on the finger selector
     if fingerSelWidget.visible :
-      ret = fingerSelWidget.setFingerWithClick(clickX, clickY)
+      ret = fingerSelWidget.setFingerWithClick(clickCoord)
 
       if (ret == fingerSelector.FINGERSEL_CHANGED) :
         userScore.updateNoteProperties(fingerSelWidget.getEditedNote())

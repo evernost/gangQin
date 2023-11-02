@@ -58,7 +58,9 @@ class Score :
 
     self.noteOntimecodes = [[]]       # List of all <noteON> timecodes, one for each staff
     self.noteOntimecodesMerged = []   # Merge of <self.timecodes> on all staves
-    
+    self.cursorsLeft = []
+    self.cursorsRight = []
+
     self.bookmarks = []         # List of all bookmarked timecodes (integers)
     
     self.activeHands = "LR"
@@ -82,12 +84,21 @@ class Score :
     self.loopEnd = -1
 
 
-
+  # ---------------------------------------------------------------------------
+  # METHOD <getCursor>
+  #
+  # Return the current cursor position. 
+  # ---------------------------------------------------------------------------
   def getCursor(self) :
     return self.cursor
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD <getCurrentTimecode>
+  #
+  # TODO for the single hand practice
+  # ---------------------------------------------------------------------------
   def getCurrentTimecode(self) :
     return self.noteOntimecodesMerged[self.cursor]
 
@@ -101,28 +112,85 @@ class Score :
     # ...
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD <cursorStep>
+  #
   # Increase / decrease the cursor value of a given step (positive or negative)
-  # The cursor 
+  # Notes: 
+  # - the cursor jumps regardless of the loop mode.
+  #   Use <cursorNext> to take the loop info into account and wrap accordingly
+  # - the cursor moves depending on the current hand practice mode. 
+  #   So the cursor might jump non linearly in single hand mode.
+  # ---------------------------------------------------------------------------
   def cursorStep(self, delta) :
   
     if (delta > 0) :
-      if ((self.cursor + delta) < len(self.noteOntimecodesMerged)-1) :
-        self.cursor += delta
-        print(f"[INFO] Cursor: {self.cursor}")
+
+      if (self.activeHands == ACTIVE_HANDS_BOTH) :
+        if ((self.cursor + delta) <= (len(self.noteOntimecodesMerged)-1)) :
+          self.cursor += delta
+          print(f"[INFO] Cursor: {self.cursor}")
+
+      if (self.activeHands == ACTIVE_HANDS_LEFT) :
+        try :
+          index = self.cursorsLeft.index(self.cursor)
+        except :
+          print("[DEBUG] The current cursor is not aligned to browse the left hand.")
+          
+        if ((index + delta) <= (len(self.cursorsLeft)-1)) :
+          self.cursor = self.cursorsLeft[index + delta]
+          print(f"[INFO] Cursor: {self.cursor}")
+
+      if (self.activeHands == ACTIVE_HANDS_RIGHT) :
+        try :
+          index = self.cursorsRight.index(self.cursor)
+        except :
+          print("[DEBUG] The current cursor is not aligned to browse the right hand.")
+          
+        if ((index + delta) <= (len(self.cursorsRight)-1)) :
+          self.cursor = self.cursorsRight[index + delta]
+          print(f"[INFO] Cursor: {self.cursor}")
 
     else :
-      if ((self.cursor + delta) >= 0) :
-        self.cursor += delta
-        print(f"[INFO] Cursor: {self.cursor}")
+
+      if (self.activeHands == ACTIVE_HANDS_BOTH) :
+        if ((self.cursor + delta) >= 0) :
+          self.cursor += delta
+          print(f"[INFO] Cursor: {self.cursor}")
+
+      if (self.activeHands == ACTIVE_HANDS_LEFT) :
+        try :
+          index = self.cursorsLeft.index(self.cursor)
+        except :
+          print("[DEBUG] The current cursor is not aligned to browse the left hand.")
+          
+        if ((index + delta) >= 0) :
+          self.cursor = self.cursorsLeft[index + delta]
+          print(f"[INFO] Cursor: {self.cursor}")
+
+      if (self.activeHands == ACTIVE_HANDS_RIGHT) :
+        try :
+          index = self.cursorsRight.index(self.cursor)
+        except :
+          print("[DEBUG] The current cursor is not aligned to browse the right hand.")
+          
+        if (index + delta >= 0) :
+          self.cursor = self.cursorsRight[index + delta]
+          print(f"[INFO] Cursor: {self.cursor}")
 
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD <cursorNext>
+  #
+  # Increase the cursor value of +1 step, with wrapping if loop mode is enabled
+  # ---------------------------------------------------------------------------
   def cursorNext(self) :
 
     if self.loopEnable :
       if ((self.cursor + 1) <= self.loopEnd) :
-        self.cursor += 1
+        self.cursorStep(1)
       else : 
         self.cursor = self.loopStart
       
@@ -131,24 +199,99 @@ class Score :
     else :
       self.cursorStep(1)
 
-  
 
-  def cursorReset(self) :
+
+  # ---------------------------------------------------------------------------
+  # METHOD <cursorAlignToHand>
+  #
+  # Return the first compatible value right after the current location.
+  # ---------------------------------------------------------------------------
+  def cursorAlignToHand(self, hand, direction = 0) :
     
+    if (hand == LEFT_HAND) :
+    
+      if (direction > 0) : 
+        subList = [x >= self.cursor for x in self.cursorsLeft]
+        self.cursor = subList[0]
+
+      if (direction < 0) : 
+        subList = [x <= self.cursor for x in self.cursorsLeft]
+        self.cursor = subList[-1]
+
+      if (direction == 0) : 
+        minIndex = 0
+        dist = abs(self.cursor - self.cursorsLeft[0])
+        for (index, cursorLeft) in enumerate(self.cursorsLeft[1:]) :
+          if (abs(self.cursor - cursorLeft) < dist) :
+            dist = abs(self.cursor - cursorLeft)
+            minIndex = index+1
+          
+        self.cursor = self.cursorsLeft[minIndex]
+
+
+    if (hand == RIGHT_HAND) :
+    
+      if (direction > 0) : 
+        subList = [x >= self.cursor for x in self.cursorsRight]
+        self.cursor = subList[0]
+
+      if (direction < 0) : 
+        subList = [x <= self.cursor for x in self.cursorsRight]
+        self.cursor = subList[-1]
+
+      if (direction == 0) : 
+        minIndex = 0
+        dist = abs(self.cursor - self.cursorsRight[0])
+        for (index, cursorRight) in enumerate(self.cursorsRight[1:]) :
+          if (abs(self.cursor - cursorRight) < dist) :
+            dist = abs(self.cursor - cursorRight)
+            minIndex = index+1
+          
+        self.cursor = self.cursorsRight[minIndex]
+      
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD <cursorBegin>
+  #
+  # Set the cursor to the beginning of the score
+  # ---------------------------------------------------------------------------
+  def cursorBegin(self) :
+    
+    # If the loop mode is enabled, we want to go back to the beginning of the loop
     if (self.loopEnable and (self.cursor >= self.loopStart)) :
       self.cursor = self.loopStart
+    
+    # Otherwise just set the cursor home
     else :
-      self.cursor = 0
+      if (self.activeHands == ACTIVE_HANDS_RIGHT) :
+        self.cursor = self.cursorsRight[0]
+      elif (self.activeHands == ACTIVE_HANDS_LEFT) :
+        self.cursor = self.cursorsLeft[0]
+      else :
+        self.cursor = 0
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD <cursorEnd>
+  #
+  # Set the cursor to the end of the score
+  # ---------------------------------------------------------------------------
   def cursorEnd(self) :
     
     if (self.loopEnable and (self.cursor <= self.loopEnd)) :
       self.cursor = self.loopEnd
     
-
-
+    # Otherwise just set the cursor to the end
+    else :
+      if (self.activeHands == ACTIVE_HANDS_RIGHT) :
+        self.cursor = self.cursorsRight[-1]
+      elif (self.activeHands == ACTIVE_HANDS_LEFT) :
+        self.cursor = self.cursorsLeft[-1]
+      else :
+        self.cursor = len(self.noteOntimecodesMerged)-1
+    
 
 
   # ---------------------------------------------------------------------------
@@ -192,8 +335,6 @@ class Score :
 
 
 
-
-
   # ---------------------------------------------------------------------------
   # METHOD <toggleBookmark>
   #
@@ -219,17 +360,16 @@ class Score :
   # ---------------------------------------------------------------------------
   # METHOD <toggleLeftHand>
   #
-  # Turns ON/OFF the practice on left hand
+  # Turns ON/OFF the left hand practice
   # ---------------------------------------------------------------------------
   def toggleLeftHand(self) :
 
-    # TODO: update the timecode set we are working on!!
-    # TODO: update the current location
-
-    if (self.activeHands[0] == "L") :
-      self.activeHands = " " + self.activeHands[1]
+    if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_RIGHT)) :
+      self.activeHands = ACTIVE_HANDS_LEFT
+      self.cursorAlignToHand(LEFT_HAND)
+    
     else :
-      self.activeHands = "L" + self.activeHands[1]
+      self.activeHands = ACTIVE_HANDS_BOTH
 
 
 
@@ -243,13 +383,19 @@ class Score :
     # TODO: update the timecode set we are working on!!
     # TODO: update the current location
 
-    if (self.activeHands[1] == "R") :
-      self.activeHands = self.activeHands[0] + " "
-      # oracle.setTimecodesDB = pianoRoll.noteOnTimecodes[0]
+    # if (self.activeHands[1] == "R") :
+    #   self.activeHands = self.activeHands[0] + " "
+    #   self.cursorAlignToHand(RIGHT_HAND)
+    
+    # else :
+    #   self.activeHands = self.activeHands[0] + "R"
+      
+    if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_LEFT)) :
+      self.activeHands = ACTIVE_HANDS_RIGHT
+      self.cursorAlignToHand(RIGHT_HAND)
+    
     else :
-      self.activeHands = self.activeHands[0] + "R"
-      # oracle.setTimecodesDB = pianoRoll.noteOnTimecodesMerged
-
+      self.activeHands = ACTIVE_HANDS_BOTH
 
 
 
@@ -303,44 +449,36 @@ class Score :
     # Reset the play attributes of the previous notes before deleting them
     if len(self.teacherNotes) > 0 :
       for noteObj in self.teacherNotes :
-        noteObj.visible = False
+        noteObj.visible = True
         noteObj.sustained = False
-
+        noteObj.inactive = False
 
     self.teacherNotes = []
     self.teacherNotesMidi = [0 for _ in range(128)]    # same information as <teacherNotes> but different structure
     
-    # Two hands mode
-    if (self.activeHands == "LR") :
-      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
-        for (staffIndex, _) in enumerate(self.pianoRoll) :
-          for noteObj in self.pianoRoll[staffIndex][pitch] :
-            if (noteObj.startTime == self.getCurrentTimecode()) :
-              noteObj.visible = True
+    
+    for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+      for (staffIndex, _) in enumerate(self.pianoRoll) :
+        for noteObj in self.pianoRoll[staffIndex][pitch] :
+          
+          # Detect a note pressed at this timecode
+          if (noteObj.startTime == self.getCurrentTimecode()) :
+            
+            if ((self.activeHands == ACTIVE_HANDS_LEFT) and (staffIndex == RIGHT_HAND)) :
+              noteObj.inactive = True
+
+            elif ((self.activeHands == ACTIVE_HANDS_RIGHT) and (staffIndex == LEFT_HAND)) :
+              noteObj.inactive = True
+
+            else :
+              self.inactive = False
               self.teacherNotes.append(noteObj)
               self.teacherNotesMidi[pitch] = 1
 
-            if ((self.getCurrentTimecode() > noteObj.startTime) and (self.getCurrentTimecode() <= noteObj.stopTime)) :
-              noteObj.sustained = True
-              self.teacherNotes.append(noteObj)
-
-    # Left hand practice
-    if (self.activeHands == "L ") :
-      staffIndex = 0
-      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
-        for noteObj in self.pianoRoll[staffIndex][pitch] :
-          if (noteObj.startTime == self.getCurrentTimecode()) :
+          # Detect a note held at this timecode
+          if ((self.getCurrentTimecode() > noteObj.startTime) and (self.getCurrentTimecode() <= noteObj.stopTime)) :
+            noteObj.sustained = True
             self.teacherNotes.append(noteObj)
-            self.teacherNotesMidi[pitch] = 1
-
-    # Right hand practice
-    if (self.activeHands == " R") :
-      staffIndex = 1
-      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
-        for noteObj in self.pianoRoll[staffIndex][pitch] :
-          if (noteObj.startTime == self.getCurrentTimecode()) :
-            self.teacherNotes.append(noteObj)
-            self.teacherNotesMidi[pitch] = 1
 
 
 
@@ -355,39 +493,6 @@ class Score :
   def getTeacherNotes(self) :
     self._updateTeacherNotes()
     return self.teacherNotes
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD <_updateSustainedNotes> (private)
-  #
-  # See <getSustainedNotes>.
-  # ---------------------------------------------------------------------------
-  def _updateSustainedNotes(self) :
-    
-    self.sustainedNotes = []
-    
-    for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
-      for (staffIndex, _) in enumerate(self.pianoRoll) :
-        for noteObj in self.pianoRoll[staffIndex][pitch] :
-          if ((self.getCurrentTimecode() > noteObj.startTime) and (self.getCurrentTimecode() <= noteObj.stopTime)) :
-            self.sustainedNotes.append(noteObj)
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD <getSustainedNotes>
-  #
-  # Return the list of all notes that are not pressed at the current cursor
-  # but still active (sustained)
-  # This list is purely used for display purposes (to show what notes are
-  # maintainted) / informative purposes
-  # These notes are not expected to be played by the user.
-  # ---------------------------------------------------------------------------
-  def getSustainedNotes(self) :
-    self._updateSustainedNotes()
-    return self.sustainedNotes
-
 
 
 
@@ -506,34 +611,44 @@ class Score :
           
           pitch = msg.note
           
-          # There is a note with the same pitch before this one
+          # Inspect the previous notes with the same pitch
           if (len(self.pianoRoll[trackNumber][pitch]) > 0) :
             
-            # Detect if a note is pressed while a previous one was not released
+            # Detect if among these notes, one is still held
             for currNote in self.pianoRoll[trackNumber][pitch] :
               if (currNote.stopTime < 0) :
                 print(f"[WARNING] [MIDI import] Ambiguous note {utils.noteName(pitch)}: a keypress overlaps a note that is already being pressed.")
 
-                # Close the previous note
+                # New note detected: close the previous note.
                 # That is one strategy, but it might be wrong. It depends on the song.
                 # User should decide here.
                 currNote.stopTime = currTime
+                noteDuration += (currNote.stopTime - currNote.startTime)
+                nNotes += 1.0
+                id += 1
 
-
-            l = len(self.pianoRoll[trackNumber][pitch])
-            self.pianoRoll[trackNumber][pitch].append(utils.Note(pitch, hand = trackNumber, noteIndex = l, startTime = currTime, stopTime = -1))
+            # Append the new note to the list
+            # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
+            insertIndex = len(self.pianoRoll[trackNumber][pitch])
+            self.pianoRoll[trackNumber][pitch].append(utils.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
             
+            # Append the timecode of this keypress
             if not(currTime in self.noteOntimecodes[trackNumber]) : 
               self.noteOntimecodes[trackNumber].append(currTime)
           
-          # New note
+          # First note with this pitch
           else :
-            # Its duration is unknown for now, so set its endtime to "-1"
-            insertLoc = len(self.pianoRoll[trackNumber][pitch])
-            self.pianoRoll[trackNumber][pitch].append(utils.Note(pitch, hand = trackNumber, noteIndex = insertLoc, startTime = currTime, stopTime = -1))
             
+            # Append the new note to the list
+            # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
+            insertIndex = len(self.pianoRoll[trackNumber][pitch])
+            self.pianoRoll[trackNumber][pitch].append(utils.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
+            
+            # Append the timecode of this keypress
             if not(currTime in self.noteOntimecodes[trackNumber]) : 
               self.noteOntimecodes[trackNumber].append(currTime)
+
+
 
         # Keyrelease event ----------------------------------------------------
         if ((msg.type == 'note_off') or ((msg.type == 'note_on') and (msg.velocity == 0))) :
@@ -541,32 +656,50 @@ class Score :
           pitch = msg.note
 
           # Take the latest event in the piano roll for this note
-          # noteObj = self.pianoRoll[trackID][pitch][-1]
+          noteObj = self.pianoRoll[trackNumber][pitch][-1]
           
           # Close it
-          self.pianoRoll[trackNumber][pitch][-1].stopTime = currTime
-          noteDuration += (self.pianoRoll[trackNumber][pitch][-1].stopTime - self.pianoRoll[trackNumber][pitch][-1].startTime)
-          self.pianoRoll[trackNumber][pitch][-1].id = id
+          noteObj.stopTime = currTime
+          noteObj.id = id
+          
+          noteDuration += (noteObj.stopTime - noteObj.startTime)
           nNotes += 1.0
           id += 1
 
+          # Quite common apparently. Is that really an error case?
           # if (noteObj.startTime == noteObj.stopTime) :
-          #   print(f"[WARNING] MIDI note {pitch} ({noteName(pitch)}): ignoring note with null duration (start time = stop time = {noteObj.startTime})")
-          #   self.pianoRoll[pitch].pop()
+          #   print(f"[WARNING] [MIDI import] MIDI note {pitch} ({utils.noteName(pitch)}) has null duration (start time = stop time = {noteObj.startTime})")
+          #   self.pianoRoll[trackNumber][pitch].pop()
+
+
 
         # Others --------------------------------------------------------------
         # Other MIDI events are ignored.
 
-    
+
 
     # Merge note ON time codes from both staves
     timecodesMerged = [item for sublist in self.noteOntimecodes for item in sublist]
     timecodesMerged = list(set(timecodesMerged))
     self.noteOntimecodesMerged = sorted(timecodesMerged)
 
-    # Estimate average note duration
+    # The variable pointing in the <noteOntimecodesMerged> is called the "cursor" of the score.
+    # This section lists the values of the cursor for which a noteOn event occured 
+    # specifically on one hand or the other.
+    # This is needed for the single hand practice mode.
+    self.cursorsLeft = []; self.cursorsRight = []
+    for (cursor, timecode) in enumerate(self.noteOntimecodesMerged) :
+      if (timecode in self.noteOntimecodes[RIGHT_HAND]) :
+        self.cursorsRight.append(cursor)
+
+      if (timecode in self.noteOntimecodes[LEFT_HAND]) :
+        self.cursorsLeft.append(cursor)
+
+    # Estimate average note duration (needed for the piano roll display)
     self.avgNoteDuration = noteDuration/nNotes
     print(f"[NOTE] [MIDI import] Average note duration = {self.avgNoteDuration:.1f} ticks")
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD <exportToPrFile>
@@ -649,6 +782,5 @@ class Score :
   def isBookmarkedTimecode(self) :
     return (self.cursor in self.bookmarks)
   
-
 
 

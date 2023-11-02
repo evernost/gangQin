@@ -32,19 +32,23 @@ if (__name__ == "__main__") :
 
 
 
-
+# ---------------------------------------------------------------------------
+# FUNCTION <noteName>
+#
+# Converts a MIDI code (integer) to a human understandable note name
+# ---------------------------------------------------------------------------
 def noteName(midiCode) :
     
     if ((midiCode > 0) and (midiCode < 128)) :
       # List of note names
-      note_names = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
+      noteRefs = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
 
       # Calculate the octave and note index
       octave = (midiCode // 12) - 1
-      note_index = midiCode % 12
+      noteIndex = midiCode % 12
 
       # Create the note name
-      return f"{note_names[note_index]}{octave}"
+      return f"{noteRefs[noteIndex]}{octave}"
 
     else :
       return ""
@@ -52,7 +56,7 @@ def noteName(midiCode) :
 
 
 # =============================================================================
-# Class: Vector2D 
+# CLASS Vector2D 
 # 
 # Consider a list of (x,y) tuples representing 2D coordinates of a bunch of points.
 # Let's say we want to add a new point constructed from a vector translation 
@@ -155,14 +159,20 @@ class Note :
     self.noteIndex = noteIndex
     self.startTime = startTime
     self.stopTime = stopTime
+    self.visible = False            # TODO
+    self.sustained = False          # True if the note is held at a given time (note will be ignored by the arbiter)
+    self.highlight = highlight      # True if its fingersatz is being edited
+    self.inactive = False           # True if the note shall be ignored by the arbiter (single hand practice, unplayable note, etc.)
+    self.fromKeyboardInput = False  # True if it is a note played by the user from the MIDI input
     self.voice = voice
-    self.highlight = highlight
-    self.mustPlay = True
-    self.visible = False
-    self.sustained = False
+    
+    # Not used anymore?
+    
     self.id = -1
     
-
+  # ---------------------------------------------------------------------------
+  # print() function overloading
+  # ---------------------------------------------------------------------------
   def __str__(self) :
     noteNameStr = noteName(self.pitch)
     if (self.hand == RIGHT_HAND) : handStr = "right hand"
@@ -181,6 +191,7 @@ class Note :
     - id:        {self.id}
     """
     return ret
+
 
 
 # =============================================================================
@@ -218,3 +229,4 @@ class Scale :
 # Function takes as argument the list of key pressed (as indicated by pygame)
 def keystrokeTest(keyStatus, *args) :
   print("TODO")
+

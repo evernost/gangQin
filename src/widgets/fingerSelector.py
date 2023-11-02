@@ -138,11 +138,12 @@ class FingerSelector :
   # widget and it got updated, or the click occured outside the scope and 
   # nothing changed.
   # ---------------------------------------------------------------------------
-  def setFingerWithClick(self, clickX, clickY) :
+  def setFingerWithClick(self, clickCoord) :
     
     if (self.editedNote == None) :
       print("[WARNING] Attempted to edit the properties of a void note (internal error)")
 
+    (clickX, clickY) = clickCoord
     x0 = self.locX + 96 - 7
     yTop = self.locY + 3; yBottom = self.locY + 12
     

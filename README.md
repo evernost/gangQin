@@ -1,4 +1,4 @@
 # gangQin
 Piano learning app.
 
-![image](https://github.com/evernost/gangQin/assets/106398901/6d8d37e7-fc3b-4e51-a417-47481e00c1ec)
+![capture_v0 8](https://github.com/evernost/gangQin/assets/106398901/9a79448f-2bb6-45b3-94ae-05a80b2e2724)

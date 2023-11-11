@@ -69,6 +69,8 @@
 # - issue: some notes from the teacher are shown in grey.
 # - add "if __main__" in all libs
 
+
+
 # =============================================================================
 # External libs 
 # =============================================================================
@@ -83,29 +85,25 @@ from widgets import keyboard
 from widgets import pianoRoll
 from widgets import fingerSelector
 
-
-
+# Various utilities
 import fontUtils as fu
 import conf
 import utils
 import score
 
-
 # For MIDI
 import mido
 import rtmidi
 
-# For?
+# For file/path utilities
 import os
-
-
 
 
 
 # =============================================================================
 # Constants pool
 # =============================================================================
-
+# None.
 
 
 
@@ -156,8 +154,8 @@ pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
 # Create window
 pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - <{os.path.basename(selectedFile)}>")
 
-# Enable key repeats (500 ms delay, repeat every 50 ms)
-pygame.key.set_repeat(500, 50)
+# Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
+pygame.key.set_repeat(250, 50)
 
 
 
@@ -190,9 +188,11 @@ else :
 # =============================================================================
 running = True
 
-
 clickMsg = False
 ctrlKey = False
+
+comboCount = 0
+comboDrop = False
 
 while running :
   for event in pygame.event.get() :
@@ -505,7 +505,11 @@ while running :
         fu.renderText(screen, f"LOOP: _/{userScore.getCursor()}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
       
       
-    
+  # Combo display!
+  fu.renderText(screen, f"COMBO: {userScore.comboCount}", (12, 20), 2, UI_TEXT_COLOR)
+
+
+
 
   # Finger selection
   fingerSelWidget.show(screen)

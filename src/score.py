@@ -76,7 +76,10 @@ class Score :
     self.progressEnable = True
     self.fsmState = FSM_STATE_NORMAL 
 
-    
+    # Combo!
+    self.comboCount = 0
+    self.comboDrop = False
+    self.comboHighest = 0
 
     # Loop practice feature
     self.loopEnable = False
@@ -198,6 +201,8 @@ class Score :
 
     else :
       self.cursorStep(1)
+
+    self.comboCount += 1
 
 
 

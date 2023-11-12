@@ -337,7 +337,7 @@ class Keyboard :
         self._singleHandWhiteKeyPress(screenInst, noteObj)
 
       # Black note highlighting
-      if ((noteObj.pitch % 12) in BLACK_NOTES_CODE_MOD12) :
+      if (noteObj.keyColor == BLACK_KEY) :
         self._singleHandBlackKeyPress(screenInst, noteObj)
       
       # ------------------------------
@@ -368,32 +368,29 @@ class Keyboard :
     w = self.b - (2*self.e) - (2*eps)
     rect = [(x0 + eps, y0 + eps)]
     rect += utils.Vector2D(0, h)
-    rect += utils.Vector2D(w,0)
-    rect += utils.Vector2D(0,-h)
+    rect += utils.Vector2D(w, 0)
+    rect += utils.Vector2D(0, -h)
     
-    (rectColor, rectOutlineColor, pianoRollColor) = noteObj.getNoteColor()
-    pygame.draw.polygon(screenInst, rectColor, rect)
-
-    for i in range(4) :
-      pygame.draw.line(screenInst, rectOutlineColor, (rect[i][0], rect[i][1]), (rect[(i+1) % 4][0], rect[(i+1) % 4][1]), 1)
-
-    # NOTE: use self.fromKeyboardInput here
-    if (noteObj.hand == UNDEFINED_HAND) :
+    # Notes played from the MIDI keyboard have a different shape
+    if (noteObj.fromKeyboardInput) :
       #pygame.draw.polygon(screenInst, self.sqWhiteNoteNeutralRGB, sq)
       pygame.draw.circle(screenInst, (10, 10, 10), (x0 + 4 + w/2, y0 + 5 + h/2), 5)
 
-    # Rectangle outline
-    # if (noteObj.hand != UNDEFINED_HAND) :
-    #   for i in range(4) :
-    #     pygame.draw.line(screenInst, (10, 10, 10), (rect[i][0], rect[i][1]), (rect[(i+1) % 4][0], rect[(i+1) % 4][1]), 1)
-    
-    # Show finger number
-    if (noteObj.finger in [1,2,3,4,5]) :
-      # Font size 1
-      #fu.renderText(screenInst, str(finger), (x0+10,y0+23), 1, self.fingerFontWhiteNoteRGB)
-      
-      # Font size 2
-      fu.renderText(screenInst, str(noteObj.finger), (x0+7, y0+19), 2, self.fingerFontWhiteNoteRGB)
+    else :
+      (rectColor, rectOutlineColor, _) = noteObj.getNoteColor()
+      pygame.draw.polygon(screenInst, rectColor, rect)
+
+      # Draw the rectangle outline
+      for i in range(4) :
+        pygame.draw.line(screenInst, rectOutlineColor, (rect[i][0], rect[i][1]), (rect[(i+1) % 4][0], rect[(i+1) % 4][1]), 1)
+
+      # Show finger number
+      if (noteObj.finger in [1,2,3,4,5]) :
+        # Font size 1
+        #fu.renderText(screenInst, str(finger), (x0+10,y0+23), 1, self.fingerFontWhiteNoteRGB)
+        
+        # Font size 2
+        fu.renderText(screenInst, str(noteObj.finger), (x0+7, y0+19), 2, self.fingerFontWhiteNoteRGB)
 
 
 
@@ -415,47 +412,27 @@ class Keyboard :
     rect += utils.Vector2D(w,0)
     rect += utils.Vector2D(0,-h)
 
-    (rectColor, rectOutlineColor, pianoRollColor) = noteObj.getNoteColor()
-    pygame.draw.polygon(screenInst, rectColor, rect)
-
-    for i in range(4) :
-      pygame.draw.line(screenInst, rectOutlineColor, (rect[i][0], rect[i][1]), (rect[(i+1) % 4][0], rect[(i+1) % 4][1]), 1)
-
-
-    # if (noteObj.hand == LEFT_HAND) :
-    #   if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
-    #     pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapLeftRGB, sq)
-    #   else :
-    #     if (noteObj.sustained) :
-    #       pygame.draw.polygon(screenInst, (100, 5, 0), sq)
-    #     else :
-    #       pygame.draw.polygon(screenInst, self.sqBlackNoteLeftRGB, sq)
-
-
-
-    # if (noteObj.hand == RIGHT_HAND) :
-    #   if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
-    #     pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapRightRGB, sq)
-    #   else :
-    #     if (noteObj.sustained) :
-    #       pygame.draw.polygon(screenInst, (0, 100, 5), sq)
-    #     else :
-    #       pygame.draw.polygon(screenInst, self.sqBlackNoteRightRGB, sq)
-
-
-
-    if (noteObj.hand == UNDEFINED_HAND) :
-      # pygame.draw.polygon(screenInst, self.sqBlackNoteNeutralRGB, sq)
+    # Notes played from the MIDI keyboard have a different shape
+    if (noteObj.fromKeyboardInput) :
+      #pygame.draw.polygon(screenInst, self.sqWhiteNoteNeutralRGB, sq)
       pygame.draw.circle(screenInst, (200, 200, 200), (x0 + 2 + w/2, y0 + 1 + h/2), 5)
 
-    # Show finger number
-    if (noteObj.finger in [1,2,3,4,5]) :
-      # Font size 1
-      #fu.renderText(screenInst, str(noteObj.finger), (x0+3, y0+23), 1, self.fingerFontBlackNoteRGB)
-      
-      # Font size 2
-      fu.renderText(screenInst, str(noteObj.finger), (x0+1, y0+19), 2, self.fingerFontBlackNoteRGB)
-    
+    else :
+      (rectColor, rectOutlineColor, _) = noteObj.getNoteColor()
+      pygame.draw.polygon(screenInst, rectColor, rect)
+
+      # Draw the rectangle outline
+      for i in range(4) :
+        pygame.draw.line(screenInst, rectOutlineColor, (rect[i][0], rect[i][1]), (rect[(i+1) % 4][0], rect[(i+1) % 4][1]), 1)
+
+      # Show finger number
+      if (noteObj.finger in [1,2,3,4,5]) :
+        # Font size 1
+        #fu.renderText(screenInst, str(noteObj.finger), (x0+3, y0+23), 1, self.fingerFontBlackNoteRGB)
+        
+        # Font size 2
+        fu.renderText(screenInst, str(noteObj.finger), (x0+1, y0+19), 2, self.fingerFontBlackNoteRGB)
+
 
 
   # ---------------------------------------------------------------------------

@@ -170,10 +170,12 @@ def midiCallback(message) :
   if (message.type == 'note_on') :
     # print(f"[DEBUG] Note On: Note = {message.note}, Velocity = {message.velocity}")
     midiCurr[message.note] = 1
+
   elif (message.type == 'note_off') :
     # print(f"[DEBUG] Note Off: Note = {message.note}, Velocity = {message.velocity}")
     midiCurr[message.note] = 0
     midiSustained[message.note] = 0 # this note cannot be considered as sustained anymore
+
 
 if (conf.selectedDevice != "None") :
   midiPort = mido.open_input(conf.selectedDevice, callback = midiCallback)
@@ -381,14 +383,25 @@ while running :
       
       # Scroll up
       if (event.button == MOUSE_SCROLL_UP) :
-        if ctrlKey :
+        
+        # Find feature: go to the next cursor whose active notes match 
+        # the current notes being pressed.
+        # Note : use a copy of the MIDI notes list to prevent the 
+        #        MIDI callback to mess with the function.
+        if (max(midiCurr) == 1) :
+          userScore.cursorJumpToNextMatch(midiCurr.copy())
+        elif ctrlKey :
           userScore.cursorStep(10)
         else :
           userScore.cursorStep(1)
 
       # Scroll down
       if (event.button == MOUSE_SCROLL_DOWN) :
-        if ctrlKey :
+        
+        # Find feature
+        if (max(midiCurr) == 1) :
+          userScore.cursorJumpToNextMatch(midiCurr.copy(), direction = -1)
+        elif ctrlKey :
           userScore.cursorStep(-10)
         else :
           userScore.cursorStep(-1)
@@ -417,7 +430,11 @@ while running :
   midiNoteList = []
   for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
     if (midiCurr[pitch] == 1) :
-      midiNoteList.append(utils.Note(pitch, hand = UNDEFINED_HAND))
+      newMidiNote = utils.Note(pitch)
+      newMidiNote.fromKeyboardInput = True
+      newMidiNote.hand = UNDEFINED_HAND
+      newMidiNote.finger = 0
+      midiNoteList.append(newMidiNote)
   
   keyboardWidget.keyPress(screen, midiNoteList)
 
@@ -505,10 +522,11 @@ while running :
         fu.renderText(screen, f"LOOP: _/{userScore.getCursor()}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
       
       
-  # Combo display!
+  # Combo display
   fu.renderText(screen, f"COMBO: {userScore.comboCount}", (12, 20), 2, UI_TEXT_COLOR)
 
-
+  # Cursor display
+  fu.renderText(screen, f"CURSOR: {userScore.cursor+1}", (400, 20), 2, UI_TEXT_COLOR)
 
 
   # Finger selection

@@ -299,6 +299,64 @@ class Score :
     
 
 
+
+  def cursorJumpToNextMatch(self, noteList, direction = 1) :
+
+    if (direction >= 0) :
+      if (self.activeHands == ACTIVE_HANDS_RIGHT) :
+        timecodeSearchField = [x > self.cursor for x in self.cursorsRight]
+      elif (self.activeHands == ACTIVE_HANDS_LEFT) :
+        timecodeSearchField = [x > self.cursor for x in self.cursorsRight]
+      else :
+        timecodeSearchField = [x for x in range(self.cursor+1, len(self.noteOntimecodesMerged))]
+    
+    else :
+      if (self.activeHands == ACTIVE_HANDS_RIGHT) :
+        timecodeSearchField = [x < self.cursor for x in self.cursorsRight]
+      elif (self.activeHands == ACTIVE_HANDS_LEFT) :
+        timecodeSearchField = [x < self.cursor for x in self.cursorsRight]
+      else :
+        timecodeSearchField = [x for x in range(0, self.cursor)]
+
+      timecodeSearchField.sort(reverse = True)
+
+
+    pitchList = [index for (index, element) in enumerate(noteList) if element == 1]
+    found = False
+
+    # Loop on the notes of the score
+    for cursorTry in timecodeSearchField :
+      
+      foundPitch = []
+      
+      for pitch in pitchList :
+        for (staffIndex, _) in enumerate(self.pianoRoll) :
+          for noteObj in self.pianoRoll[staffIndex][pitch] :
+            
+            # Detect a note pressed at this timecode
+            if (noteObj.startTime == self.noteOntimecodesMerged[cursorTry]) :
+              foundPitch.append(noteObj.pitch)
+
+      if (len(foundPitch) > 0) :
+        isInList = True
+        
+        for x in pitchList :
+          if not(x in foundPitch) :
+            isInList = False
+            break
+        
+        if isInList :
+          print(f"[NOTE] Smartfind: note found at cursor = {cursorTry}")
+          found = True
+          foundCursor = cursorTry
+          break
+      
+    if found :
+      self.cursor = foundCursor
+    else :
+      print("[NOTE] Could not find the current MIDI notes in the score!")
+
+
   # ---------------------------------------------------------------------------
   # METHOD <gotoNextBookmark>
   #
@@ -461,7 +519,7 @@ class Score :
     self.teacherNotes = []
     self.teacherNotesMidi = [0 for _ in range(128)]    # same information as <teacherNotes> but different structure
     
-    
+    # Loop on the notes of the score
     for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
       for (staffIndex, _) in enumerate(self.pianoRoll) :
         for noteObj in self.pianoRoll[staffIndex][pitch] :
@@ -469,6 +527,8 @@ class Score :
           # Detect a note pressed at this timecode
           if (noteObj.startTime == self.getCurrentTimecode()) :
             
+            # Single hand practice mode: flag the notes of the other hand as "inactive"
+            # so that it is displayed with the appropriate color
             if ((self.activeHands == ACTIVE_HANDS_LEFT) and (staffIndex == RIGHT_HAND)) :
               noteObj.inactive = True
 

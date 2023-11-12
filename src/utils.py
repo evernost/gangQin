@@ -200,10 +200,10 @@ class Note :
         print("[ERROR] A disabled note cannot have a non-zero lookahead")
 
       if (self.keyColor == WHITE_KEY) :
-        (rectColor, rectOutlineColor, pianoRollColor) = ((250, 250, 250), (240, 240, 240), (0, 0, 0))
+        (rectColor, rectOutlineColor, pianoRollColor) = ((200, 200, 200), (170, 170, 170), (250, 250, 250))
       
       else :
-        (rectColor, rectOutlineColor, pianoRollColor) = ((120, 120, 120), (170, 170, 170), (0, 0, 0))
+        (rectColor, rectOutlineColor, pianoRollColor) = ((80, 80, 80), (100, 100, 100), (120, 120, 120))
         
     else :
 
@@ -236,10 +236,10 @@ class Note :
         if (self.sustained) :
 
           if (self.keyColor == WHITE_KEY) :
-            (rectColor, rectOutlineColor, pianoRollColor) = (adjustHSV(baseColor, 0, -60, 0), (10, 10, 10), adjustHSV(baseColor, 0, -60, 0))
+            (rectColor, rectOutlineColor, pianoRollColor) = (adjustHSV(baseColor, 0, -60, 0), (160, 160, 160), adjustHSV(baseColor, 0, -60, 0))
             
           else :
-            (rectColor, rectOutlineColor, pianoRollColor) = (adjustHSV(baseColor, 0, 0, -20), (80, 80, 80), adjustHSV(baseColor, 0, 0, -20))
+            (rectColor, rectOutlineColor, pianoRollColor) = (adjustHSV(baseColor, 0, 0, -30), (80, 80, 80), adjustHSV(baseColor, 0, 0, -30))
 
         # Normal note ---------------------------------------------------------
         else : 
@@ -322,28 +322,6 @@ def keystrokeTest(keyStatus, *args) :
 # =============================================================================
 # Color manipulation function
 # =============================================================================
-def rotateHue(rgbColor, hueAngle):
-  # Ensure that the hue_rotation value is within the range [0, 360]
-  hueAngle = hueAngle % 360
-  
-  # Convert RGB to normalized RGB (values between 0 and 1)
-  (R,G,B) = (x/255.0 for x in rgbColor)
-  
-  # Convert RGB to HSL
-  (H,L,S) = colorsys.rgb_to_hls(R, G, B)
-  
-  # Rotate the hue
-  H = (H + (hueAngle / 360.0)) % 1.0
-  
-  # Convert HSL back to RGB
-  (R,G,B) = colorsys.hls_to_rgb(H,L,S)
-  
-  # Convert RGB back to integer values in the range [0, 255]
-  (R,G,B) = (int(c * 255) for c in (R, G, B))
-  
-  return (R, G, B)
-
-
 
 def adjustHSV(rgbColor, deltaHue, deltaSat, deltaVal) :
 

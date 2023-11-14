@@ -74,7 +74,8 @@ class Score :
     self.scale = []
 
     self.progressEnable = True
-    self.fsmState = FSM_STATE_NORMAL 
+    self.arbiterSuspendReq = False
+    self.arbiterPitchListHold = []
 
     # Combo!
     self.comboCount = 0
@@ -180,7 +181,6 @@ class Score :
         if (index + delta >= 0) :
           self.cursor = self.cursorsRight[index + delta]
           print(f"[INFO] Cursor: {self.cursor}")
-
 
 
 
@@ -346,13 +346,20 @@ class Score :
             break
         
         if isInList :
-          print(f"[NOTE] Smartfind: note found at cursor = {cursorTry}")
+          print(f"[NOTE] Find: current input was found at cursor = {cursorTry}")
           found = True
           foundCursor = cursorTry
           break
       
     if found :
+      # TODO: that is not it.
+      # We must prevent the arbiter from taking this as a valid input
+      # and move on to the next cursor
+      # All notes must be released before moving on.
       self.cursor = foundCursor
+      self.arbiterSuspendReq = True
+      self.arbiterPitchListHold = pitchList.copy()
+    
     else :
       print("[NOTE] Could not find the current MIDI notes in the score!")
 
@@ -442,16 +449,6 @@ class Score :
   # Turns ON/OFF the practice on left hand
   # ---------------------------------------------------------------------------
   def toggleRightHand(self) :
-
-    # TODO: update the timecode set we are working on!!
-    # TODO: update the current location
-
-    # if (self.activeHands[1] == "R") :
-    #   self.activeHands = self.activeHands[0] + " "
-    #   self.cursorAlignToHand(RIGHT_HAND)
-    
-    # else :
-    #   self.activeHands = self.activeHands[0] + "R"
       
     if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_LEFT)) :
       self.activeHands = ACTIVE_HANDS_RIGHT

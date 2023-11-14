@@ -168,11 +168,9 @@ midiSustained = [0 for _ in range(128)]
 # Define the MIDI callback
 def midiCallback(message) :
   if (message.type == 'note_on') :
-    # print(f"[DEBUG] Note On: Note = {message.note}, Velocity = {message.velocity}")
     midiCurr[message.note] = 1
 
   elif (message.type == 'note_off') :
-    # print(f"[DEBUG] Note Off: Note = {message.note}, Velocity = {message.velocity}")
     midiCurr[message.note] = 0
     midiSustained[message.note] = 0 # this note cannot be considered as sustained anymore
 
@@ -453,7 +451,7 @@ while running :
   if (playComparisonMode == "allowSustain") :
     allowProgress = True
     for pitch in range(128) :
-      
+
       # Key is pressed, but is actually an "old" key press (sustained note)
       if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 1)) :
         allowProgress = False
@@ -463,10 +461,21 @@ while running :
 
       if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
         allowProgress = False
-  
+
+    if (userScore.arbiterSuspendReq) :
+      allDown = True
+      for x in userScore.arbiterPitchListHold :
+        if (midiCurr[x] == 1) :
+          allDown = False
+
+      if allDown :
+        userScore.arbiterSuspendReq = False
+      else :
+        allowProgress = False
+
     if allowProgress :
       userScore.cursorNext()
-
+      
       # Take snapshot
       for pitch in range(128) :
         if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :

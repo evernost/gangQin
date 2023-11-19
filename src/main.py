@@ -448,6 +448,8 @@ while running :
     if (userScore.teacherNotesMidi == midiCurr) :
       userScore.cursorNext()
 
+
+
   # *** Sustain mode ***
   # Sustained note are tolerated to proceed forward.
   # But they are not be treated as a pressed note: user needs to release and press it again.
@@ -486,6 +488,7 @@ while running :
           midiSustained[pitch] = 1
 
 
+
   # *** Permissive mode ***
   # Progress as long as the expected notes are pressed. 
   # The rest is ignored, but flagged as superfluous and will need
@@ -501,6 +504,10 @@ while running :
       # A requiered note is not pressed
       if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 0) and (midiSuperfluous[pitch] == 0)) :
         allowProgress = False
+
+
+      if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
+        userScore.comboCount = 0
 
     # Disable progression if we came here by a key search
     # Progress is allowed as soon as the notes are released
@@ -525,6 +532,8 @@ while running :
         if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1)) :
           midiSuperfluous[pitch] = 1
 
+        if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1)) :
+          midiSustained[pitch] = 1
 
 
   # -----------------------
@@ -580,7 +589,7 @@ while running :
   fu.renderText(screen, f"CURSOR: {userScore.cursor+1}", (12, 20), 2, UI_TEXT_COLOR)
 
   # Combo display
-  fu.renderText(screen, f"COMBO: {userScore.comboCount}", (1100, 20), 2, UI_TEXT_COLOR)
+  fu.renderText(screen, f"COMBO: {userScore.comboCount}", (1200, 20), 2, UI_TEXT_COLOR)
 
   # Finger selection
   fingerSelWidget.show(screen)

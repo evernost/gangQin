@@ -59,21 +59,21 @@ def showSetupGUI() :
     fileList = getFileList("./midi/", fileExt.get())
     selectedDevice = comboMidi.get()
     selectedFile = fileList[comboFile.current()]
-    print(f"Selected MIDI Device: {selectedDevice}")
-    print(f"Selected file: {selectedFile}")
     root.destroy()
 
 
 
   def onRadioButtonChange():
-    print(fileExt.get())
+    # print(fileExt.get())
     fileList = getFileList("./midi/", fileExt.get())
-    print(fileList)
+    # print(fileList)
+    
     if not(fileList) :
       fileList = ["None"]
       comboFile["values"] = fileList
       comboFile.set(fileList[0])
       buttonOK["state"] = "disabled"
+    
     else :      
       fileListName = [os.path.basename(file) for file in fileList]
       comboFile["values"] = fileListName
@@ -83,7 +83,10 @@ def showSetupGUI() :
 
 
   def centerWindow(container):
-    container.update_idletasks()  # Ensure widgets are updated before calculating size
+    
+    # Ensure widgets are updated before calculating size
+    container.update_idletasks()
+    
     w = container.winfo_reqwidth()
     h = container.winfo_reqheight()
 
@@ -110,17 +113,17 @@ def showSetupGUI() :
   # MIDI interface selection
   # -----------------------------------------------------------------------------
   lfMidi = ttk.LabelFrame(root, text = 'MIDI input')
-  lfMidi.grid(row=0, column=0, padx = 10, pady = 5, sticky = "w")
+  lfMidi.grid(row = 0, column = 0, padx = 10, pady = 5, sticky = "w")
 
   # Create a label
   label = tk.Label(lfMidi, text = "Select a MIDI device:")
-  label.grid(row=0, column=0, padx = 10, pady = 1, sticky="w")
+  label.grid(row = 0, column = 0, padx = 10, pady = 1, sticky="w")
 
   # Dropdown list for the MIDI selection
   midiDevices = mido.get_input_names()
   midiDevices.append("None")
   comboMidi = ttk.Combobox(lfMidi, values = midiDevices, state = 'readonly')
-  comboMidi.grid(row=1, column=0, padx=10, pady = 5, sticky = "w")
+  comboMidi.grid(row = 1, column = 0, padx = 10, pady = 5, sticky = "w")
   comboMidi.set("None")
 
 

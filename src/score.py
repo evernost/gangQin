@@ -58,10 +58,10 @@ class Score :
 
     self.noteOntimecodes = [[]]       # List of all <noteON> timecodes, one for each staff
     self.noteOntimecodesMerged = []   # Merge of <self.timecodes> on all staves
-    self.cursorsLeft = []
-    self.cursorsRight = []
+    self.cursorsLeft = []             # List of cursors values where a note is pressed on the left hand
+    self.cursorsRight = []            # List of cursors values where a note is pressed on the right hand
 
-    self.bookmarks = []         # List of all bookmarked timecodes (integers)
+    self.bookmarks = []               # List of all bookmarked timecodes (integers)
     
     self.activeHands = "LR"
     
@@ -83,9 +83,11 @@ class Score :
     self.comboHighest = 0
 
     # Loop practice feature
+    # TODO: allow to store several loops
     self.loopEnable = False
     self.loopStart = -1
     self.loopEnd = -1
+
 
 
   # ---------------------------------------------------------------------------
@@ -296,10 +298,16 @@ class Score :
         self.cursor = self.cursorsLeft[-1]
       else :
         self.cursor = len(self.noteOntimecodesMerged)-1
-    
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD <cursorJumpToNextMatch>
+  #
+  # Search feature: move the cursor to the next location where the given notes
+  # appear in the score.
+  # Direction of search can be specified.
+  # ---------------------------------------------------------------------------
   def cursorJumpToNextMatch(self, noteList, direction = 1) :
 
     if (direction >= 0) :
@@ -352,7 +360,7 @@ class Score :
           break
       
     if found :
-      # TODO: that is not it.
+      
       # We must prevent the arbiter from taking this as a valid input
       # and move on to the next cursor
       # All notes must be released before moving on.
@@ -362,6 +370,7 @@ class Score :
     
     else :
       print("[NOTE] Could not find the current MIDI notes in the score!")
+
 
 
   # ---------------------------------------------------------------------------
@@ -498,6 +507,7 @@ class Score :
     print("[NOTE] Loop cleared.")
 
 
+
   # ---------------------------------------------------------------------------
   # METHOD <_updateTeacherNotes> (private)
   #
@@ -559,17 +569,55 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <updateNoteProperties>
+  # METHOD <switchHand>
   #
-  # 
+  # Affects a given note to the other hand.
   # ---------------------------------------------------------------------------
-  def updateNoteProperties(self, note) :
-    self.pianoRoll[note.hand][note.pitch][note.noteIndex].finger = note.finger
+  def switchHand(self, note) :
 
+    if (note.hand == LEFT_HAND) :
+      sourceHand = LEFT_HAND
+      destHand = RIGHT_HAND
 
+      self.cursorsRight.append(self.cursor)
+      self.cursorsRight.sort()
+      self.cursorsLeft.remove(self.cursor)
 
+    else :
+      sourceHand = RIGHT_HAND
+      destHand = LEFT_HAND
 
+      self.cursorsLeft.append(self.cursor)
+      self.cursorsLeft.sort()
+      self.cursorsRight.remove(self.cursor)
 
+      
+    # Update the note property
+    note.hand = destHand
+    
+    # Move the note in the pianoroll
+    self.pianoRoll[destHand][note.pitch].append(note)
+    self.pianoRoll[destHand][note.pitch].sort(key = lambda x: x.startTime)
+    del self.pianoRoll[sourceHand][note.pitch][note.noteIndex]
+
+    if not(note.startTime in self.noteOntimecodes[destHand]) :
+      self.noteOntimecodes[destHand].append(note.startTime)
+      self.noteOntimecodes[destHand].sort()
+    
+    # Remove this timecode from the timecode list of the original hand
+    # unless there is another note that has the same startTime
+    # Quite an oddity but better take it into account.
+    doubleStart = False
+    for x in self.pianoRoll[sourceHand][note.pitch] :
+      if (x.startTime == note.startTime) :
+        doubleStart = True
+        break
+    
+    if not(doubleStart) :
+      self.noteOntimecodes[destHand].remove(note.startTime)
+
+    
+    
 
 
 
@@ -776,15 +824,29 @@ class Score :
 
     # Export "manually" elements of the PianoRoll object to the export dictionary.
     # Not ideal but does the job for now as there aren't too many properties.
-    exportDict["revision"] = f"v{REV_MAJOR}.{REV_MINOR}"
-    exportDict["nStaffs"] = self.nStaffs
-    exportDict["noteOntimecodes"] = self.noteOntimecodes
+    exportDict["revision"]              = f"v{REV_MAJOR}.{REV_MINOR}"
+
+    exportDict["nStaffs"]               = self.nStaffs
+    exportDict["avgNoteDuration"]       = self.avgNoteDuration
+    
+    exportDict["cursor"]                = self.cursor
+
+    exportDict["noteOntimecodes"]       = self.noteOntimecodes
     exportDict["noteOntimecodesMerged"] = self.noteOntimecodesMerged
-    exportDict["avgNoteDuration"] = self.avgNoteDuration
-    exportDict["bookmarks"] = self.bookmarks
+    exportDict["cursorsLeft"]           = self.cursorsLeft
+    exportDict["cursorsRight"]          = self.cursorsRight
+
+    exportDict["bookmarks"]             = self.bookmarks
+
+    exportDict["activeHands"]           = self.activeHands
 
     # TODO: export the scales
     # exportDict["scale"] = self.scale
+
+    # self.loopEnable = False
+    # self.loopStart = -1
+    # self.loopEnd = -1
+
 
     # Convert the Note() objects to a dictionnary before pushing them in the export dict
     exportDict["pianoRoll"] = [[[noteObj.__dict__ for noteObj in noteList] for noteList in trackList] for trackList in self.pianoRoll]
@@ -818,13 +880,40 @@ class Score :
     # Import "manually" elements of the PianoRoll object to the export dictionary.
     # Not ideal but does the job for now as there aren't too many properties.
     self.nStaffs                = importDict["nStaffs"]
+    self.avgNoteDuration        = importDict["avgNoteDuration"]
+
+    self.cursor                 = importDict["cursor"]
+
     self.noteOntimecodes        = importDict["noteOntimecodes"]
     self.noteOntimecodesMerged  = importDict["noteOntimecodesMerged"]
-    self.avgNoteDuration        = importDict["avgNoteDuration"]
+    self.cursorsLeft            = importDict["cursorsLeft"]
+    self.cursorsRight           = importDict["cursorsRight"]
+
     self.bookmarks              = importDict["bookmarks"]
 
+    self.activeHands            = importDict["activeHands"]
+
+    # TODO: import the scales
+    # TODO: import the loops
+
+    
+
     # Note() objects were converted to a dictionary. Convert them back to a Note object
-    self.pianoRoll = [[[utils.Note(**noteDict) for noteDict in noteList] for noteList in trackList] for trackList in importDict["pianoRoll"]]
+    # self.pianoRoll = [[[utils.Note(**noteDict) for noteDict in noteList] for noteList in trackList] for trackList in importDict["pianoRoll"]]
+    self.pianoRoll = [[[] for noteList in trackList] for trackList in importDict["pianoRoll"]]
+
+    for track in range(self.nStaffs) :
+      for pitch in GRAND_PIANO_MIDI_RANGE :
+        for noteDict in importDict["pianoRoll"][track][pitch] :
+          noteObj = utils.Note(noteDict['pitch'])
+          
+          for noteAttr in noteObj.__dict__ :
+            setattr(noteObj, noteAttr, noteDict[noteAttr])
+          
+          self.pianoRoll[track][pitch].append(noteObj)
+
+
+
 
     print(f"[NOTE] {pianoRollFile} successfully loaded!")
     

@@ -15,11 +15,7 @@
 # =============================================================================
 
 # Mandatory:
-# - allow the user to practice hands separately
-# - highlight the activeNote ie the note whose finger is currently being associated
-# - bug fix: allow to play again the last note
 # - during MIDI import: ask the user which tracks to use (there might be more than 2)
-# - funky animation everytime the right notes are played
 # - fingerSelGui should be visible and have focus 
 # - allow the user to transfer a note from one hand to the other
 #   That involves inserting a note in <noteOnTimecodes>
@@ -30,6 +26,7 @@
 # - patch the keypress management in the code (combinations of CTRL+... are buggy)
 
 # Nice to have:
+# - funky animation everytime the right notes are played
 # - inform the user somehow that he is not playing the expected note
 # - patch the obscure variable names in keyboardUtils
 # - add a play button to hear some sections
@@ -50,6 +47,9 @@
 # - <midiCallback>: handle MIDI keyboards that send <noteON> messages with 0 velocity as a <noteOFF>
 
 # Done:
+# - bug fix: allow to play again the last note
+# - highlight the activeNote ie the note whose finger is currently being associated
+# - allow the user to practice hands separately
 # - allow user to set the finger using numbers on the keypad
 # - CTRL + mouse scroll has step 10 instead of 1
 # - loop feature between 2 bookmarks
@@ -110,10 +110,11 @@ import os
 # =============================================================================
 # General settings
 # =============================================================================
-# Defines the criteria to decide when to move onto the next notes
+# Defines the criteria to allow moving forward in the score.
 # - "exact": won't go further until the expected notes only are pressed, nothing else
-# - "allowSustain": accepts that the last valid notes are sustained
-playComparisonMode = "allowSustain"
+# - "exactWithSustain": same as "exact", but tolerates the last valid notes to be sustained
+# - "permissive": anything else played alongside the expected notes is ignored
+playComparisonMode = "permissive"
 
 
 
@@ -164,6 +165,7 @@ pygame.key.set_repeat(250, 50)
 # =============================================================================
 midiCurr = [0 for _ in range(128)]
 midiSustained = [0 for _ in range(128)]
+midiSuperfluous = [0 for _ in range(128)]
 
 # Define the MIDI callback
 def midiCallback(message) :
@@ -173,6 +175,7 @@ def midiCallback(message) :
   elif (message.type == 'note_off') :
     midiCurr[message.note] = 0
     midiSustained[message.note] = 0 # this note cannot be considered as sustained anymore
+    midiSuperfluous[message.note] = 0
 
 
 if (conf.selectedDevice != "None") :
@@ -426,7 +429,7 @@ while running :
   # -------------------------------------------------
   # TODO: list in comprehension might do a better job here
   midiNoteList = []
-  for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+  for pitch in GRAND_PIANO_MIDI_RANGE :
     if (midiCurr[pitch] == 1) :
       newMidiNote = utils.Note(pitch)
       newMidiNote.fromKeyboardInput = True
@@ -448,9 +451,9 @@ while running :
   # *** Sustain mode ***
   # Sustained note are tolerated to proceed forward.
   # But they are not be treated as a pressed note: user needs to release and press it again.
-  if (playComparisonMode == "allowSustain") :
+  if (playComparisonMode == "exactWithSustain") :
     allowProgress = True
-    for pitch in range(128) :
+    for pitch in GRAND_PIANO_MIDI_RANGE :
 
       # Key is pressed, but is actually an "old" key press (sustained note)
       if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 1)) :
@@ -462,6 +465,7 @@ while running :
       if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
         allowProgress = False
 
+    # Disable progression 
     if (userScore.arbiterSuspendReq) :
       allDown = True
       for x in userScore.arbiterPitchListHold :
@@ -481,6 +485,48 @@ while running :
         if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
           midiSustained[pitch] = 1
 
+
+  # *** Permissive mode ***
+  # Progress as long as the expected notes are pressed. 
+  # The rest is ignored, but flagged as superfluous and will need
+  # to be released and pressed again if requiered by the teacher.
+  if (playComparisonMode == "permissive") :
+    allowProgress = True
+    for pitch in GRAND_PIANO_MIDI_RANGE :
+
+      # A superfluous note is not considered as pressed
+      if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSuperfluous[pitch] == 1)) :
+        allowProgress = False
+
+      # A requiered note is not pressed
+      if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 0) and (midiSuperfluous[pitch] == 0)) :
+        allowProgress = False
+
+    # Disable progression if we came here by a key search
+    # Progress is allowed as soon as the notes are released
+    if (userScore.arbiterSuspendReq) :
+      allDown = True
+      for x in userScore.arbiterPitchListHold :
+        if (midiCurr[x] == 1) :
+          allDown = False
+
+      if allDown :
+        userScore.arbiterSuspendReq = False
+      else :
+        allowProgress = False
+
+    if allowProgress :
+      userScore.cursorNext()
+      
+      # Register all superfluous notes
+      for pitch in GRAND_PIANO_MIDI_RANGE :
+        
+        # Is it a superfluous note?
+        if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1)) :
+          midiSuperfluous[pitch] = 1
+
+
+
   # -----------------------
   # Note properties edition
   # -----------------------
@@ -491,15 +537,15 @@ while running :
     if clickedNote :
       print(f"[DEBUG] Clicked note: {clickedNote}")
       
-      fingerSelWidget.setEditedNote(clickedNote)
+      fingerSelWidget.setEditedNote(clickedNote, userScore.getCursor())
       fingerSelWidget.visible = True
     
     # Click on the finger selector
     if fingerSelWidget.visible :
       ret = fingerSelWidget.setFingerWithClick(clickCoord)
 
-      if (ret == fingerSelector.FINGERSEL_CHANGED) :
-        userScore.updateNoteProperties(fingerSelWidget.getEditedNote())
+      if (ret == fingerSelector.FINGERSEL_HAND_CHANGE) :
+        userScore.switchHand(fingerSelWidget.getEditedNote())
 
     clickMsg = False
 
@@ -530,16 +576,17 @@ while running :
       else :
         fu.renderText(screen, f"LOOP: _/{userScore.getCursor()}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
       
-      
-  # Combo display
-  fu.renderText(screen, f"COMBO: {userScore.comboCount}", (12, 20), 2, UI_TEXT_COLOR)
-
   # Cursor display
-  fu.renderText(screen, f"CURSOR: {userScore.cursor+1}", (400, 20), 2, UI_TEXT_COLOR)
+  fu.renderText(screen, f"CURSOR: {userScore.cursor+1}", (12, 20), 2, UI_TEXT_COLOR)
 
+  # Combo display
+  fu.renderText(screen, f"COMBO: {userScore.comboCount}", (1100, 20), 2, UI_TEXT_COLOR)
 
   # Finger selection
   fingerSelWidget.show(screen)
+  if (fingerSelWidget.getEditedNote() != None) :
+    if (userScore.getCursor() != fingerSelWidget.editedCursor) :
+      fingerSelWidget.resetEditedNote()
   
 
   clock.tick(FPS)

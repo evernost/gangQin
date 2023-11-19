@@ -26,7 +26,7 @@ import fontUtils as fu
 # =============================================================================
 FINGERSEL_UNCHANGED = 0
 FINGERSEL_CHANGED = 1
-
+FINGERSEL_HAND_CHANGE = 3
 
 
 # =============================================================================
@@ -62,11 +62,14 @@ class FingerSelector :
     # - 7 = right hand, finger 1
     # ...
     # - 11 = right hand, finger 5
-    self.currentSel = 5
+    self.currentSel = -1
 
     self.visible = False
 
     self.editedNote = None
+    self.editedCursor = -1
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD <show>
@@ -106,14 +109,16 @@ class FingerSelector :
   # METHOD <setEditedNote>
   #
   # Define the note whose properties are shown in the finger selector.
+  # A cursor value can be stored along with the note so that it is easier to 
+  # show/hide the widget in a specific context.
   # ---------------------------------------------------------------------------
-  def setEditedNote(self, noteObj) :
-    #print(f"[DEBUG] Set note: pitch={noteObj.pitch}, finger={noteObj.finger}, index={noteObj.noteIndex}")
+  def setEditedNote(self, noteObj, cursor = -1) :
     self._setCurrentSel(noteObj.finger, noteObj.hand)
     if (self.editedNote != None) :
       self.editedNote.highlight = False
     
     self.editedNote = noteObj
+    self.editedCursor = cursor
     noteObj.highlight = True
 
 
@@ -129,6 +134,19 @@ class FingerSelector :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD <resetEditedNote>
+  #
+  # TODO
+  # ---------------------------------------------------------------------------
+  def resetEditedNote(self) :
+    self.editedNote.highlight = False
+    self.editedNote = None
+    self.editedCursor = -1
+    self.currentSel = -1
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD <setFingerWithClick>
   #
   # Update the finger associated to the note being edited using a click on the 
@@ -140,9 +158,6 @@ class FingerSelector :
   # ---------------------------------------------------------------------------
   def setFingerWithClick(self, clickCoord) :
     
-    if (self.editedNote == None) :
-      print("[WARNING] Attempted to edit the properties of a void note (internal error)")
-
     (clickX, clickY) = clickCoord
     x0 = self.locX + 96 - 7
     yTop = self.locY + 3; yBottom = self.locY + 12
@@ -160,10 +175,16 @@ class FingerSelector :
         self.currentSel = i
         (hand, finger) = self._getFingerfromSel()
         
-        self.editedNote.finger = finger
-        # self.editedNote.hand = ...  => switching a note from one hand to the other is not supported yet
-        
-        return FINGERSEL_CHANGED
+        if (self.editedNote == None) :
+          print("[WARNING] No note selected!")
+          
+        else :
+          self.editedNote.finger = finger
+          
+          if (hand != self.editedNote.hand) :
+            return FINGERSEL_HAND_CHANGE
+          
+          return FINGERSEL_CHANGED
       
     return FINGERSEL_UNCHANGED
   
@@ -197,12 +218,12 @@ class FingerSelector :
     if (hand == LEFT_HAND) :
       self.currentSel = 5
       if (finger in [1,2,3,4,5]) :
-        self.currentSel = 5-finger
+        self.currentSel = 5 - finger
     
     if (hand == RIGHT_HAND) :
       self.currentSel = 6
       if (finger in [1,2,3,4,5]) :
-        self.currentSel = finger+6
+        self.currentSel = finger + 6
     
   # ---------------------------------------------------------------------------
   # METHOD <_getFingerfromSel> (private)

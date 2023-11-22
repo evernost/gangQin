@@ -173,24 +173,21 @@ class PianoRoll :
                   (self.xLines[pitch+1-21]-2, rectBottom)
                 ]
             
-            # Draw the note outline
+            # TODO: replace with a call to getNoteColor()
             if (staffIndex == LEFT_HAND) :
               color = self.leftNoteOutlineRGB
             
             if (staffIndex == RIGHT_HAND) :
               color = self.rightNoteOutlineRGB
 
+            (rectColor, rectOutlineColor, pianoRollColor) = note.getNoteColor()
             pygame.draw.line(screenInst, color, sq[0], sq[1], 3)
             pygame.draw.line(screenInst, color, sq[1], sq[2], 3)
             pygame.draw.line(screenInst, color, sq[2], sq[3], 3)
             pygame.draw.line(screenInst, color, sq[3], sq[0], 3)
             
-            if (staffIndex == LEFT_HAND) :
-              pygame.draw.polygon(screenInst, self.leftNoteRGB, sq)
+            pygame.draw.polygon(screenInst, rectColor, sq)
             
-            if (staffIndex == RIGHT_HAND) :
-              pygame.draw.polygon(screenInst, self.rightNoteRGB, sq)
-
 
 
   # ---------------------------------------------------------------------------

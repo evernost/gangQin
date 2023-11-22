@@ -197,6 +197,8 @@ ctrlKey = False
 comboCount = 0
 comboDrop = False
 
+setFingersatzMsg = -1
+
 while running :
   for event in pygame.event.get() :
     if (event.type == pygame.QUIT) :
@@ -294,16 +296,24 @@ while running :
       # Keypad 1 to 5: assign finger to a selected note
       # -----------------------------------------------
       if (keys[pygame.K_KP1] or keys[pygame.K_KP2] or keys[pygame.K_KP3] or keys[pygame.K_KP4] or keys[pygame.K_KP5]) :
-        if fingerSelWidget.visible :
-          t = [
-            (keys[pygame.K_KP1], 1), 
-            (keys[pygame.K_KP2], 2), 
-            (keys[pygame.K_KP3], 3),
-            (keys[pygame.K_KP4], 4),
-            (keys[pygame.K_KP5], 5)
-          ]
-          for (boolCurr, index) in t :
-            if boolCurr :
+        t = [
+          (keys[pygame.K_KP1], 1), 
+          (keys[pygame.K_KP2], 2), 
+          (keys[pygame.K_KP3], 3),
+          (keys[pygame.K_KP4], 4),
+          (keys[pygame.K_KP5], 5)
+        ]
+        for (boolCurr, index) in t :
+          if boolCurr :
+            
+            # Implicit fingersatz edition
+            # No note is highlighted: highlight it automatically based on current context.
+            if (fingerSelWidget.getEditedNote() == None) :
+              setFingersatzMsg = index
+            
+            # Explicit fingersatz edition
+            # The note to edit was highlighted with a click beforehand.
+            else :
               fingerSelWidget.setFinger(index)
       
       # ----------------------------------------
@@ -317,6 +327,13 @@ while running :
       # ------------------
       if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_c]) :
         print("[NOTE] Adding comments will be available in a future release.")
+
+      # --------------------------------
+      # "d" + "-": shorten note duration
+      # --------------------------------
+      if (keys[pygame.K_d] and keys[pygame.K_KP_MINUS]) :
+        print("[NOTE] Note duration shortening will be added in a future release.")
+
 
       # ----------------------------
       # "h": (Hear) toggle play mode
@@ -505,7 +522,7 @@ while running :
       if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 0) and (midiSuperfluous[pitch] == 0)) :
         allowProgress = False
 
-
+      # A note that is neither expected nor sustained resets the combo counter
       if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
         userScore.comboCount = 0
 
@@ -589,7 +606,7 @@ while running :
   fu.renderText(screen, f"CURSOR: {userScore.cursor+1}", (12, 20), 2, UI_TEXT_COLOR)
 
   # Combo display
-  fu.renderText(screen, f"COMBO: {userScore.comboCount}", (1200, 20), 2, UI_TEXT_COLOR)
+  fu.renderText(screen, f"COMBO: {userScore.comboCount} (MAX: {userScore.comboHighestSession} / ALLTIME: {userScore.comboHighestAllTime})", (800, 20), 2, UI_TEXT_COLOR)
 
   # Finger selection
   fingerSelWidget.show(screen)
@@ -597,6 +614,15 @@ while running :
     if (userScore.getCursor() != fingerSelWidget.editedCursor) :
       fingerSelWidget.resetEditedNote()
   
+
+
+
+  # Request to edit the fingersatz with automatic note highlighting
+  if (setFingersatzMsg > 0) :
+    
+    fingerSelWidget.setFingerAutoHighlight(setFingersatzMsg, userScore.teacherNotes, userScore.activeHands)
+    setFingersatzMsg = -1
+
 
   clock.tick(FPS)
 

@@ -515,14 +515,27 @@ class Keyboard :
   # that has been clicked.
   # ---------------------------------------------------------------------------
   def isActiveNoteClicked(self, clickCoord) :
-    for (currLitNotePolygon, currNote) in self.litKeysPolygons :
+    
+    candidates = []
+    (clickX, clickY) = clickCoord
 
-      # Intersection!
-      (clickX, clickY) = clickCoord
-      if Point(clickX, clickY).within(Polygon(currLitNotePolygon)) :
-        return currNote
+    for (currLitNotePolygon, currNote) in self.litKeysPolygons :  
+      if Point(clickX, clickY).within(Polygon(currLitNotePolygon)) :        
+        candidates.append(currNote)
 
-    return None
+    # Multiple candidates: quite possibly one is pressed, the others are sustained
+    # Return the note that was pressed the most recently
+    if (len(candidates) > 1) :
+      candidates.sort(key = lambda x : -x.startTime)
+      return candidates[0]
+
+    # Only one candidate: return it
+    elif (len(candidates) == 1) :
+      return candidates[0]
+    
+    # This click hit none of the polygons shown
+    else :
+      return None
 
 
 

@@ -105,6 +105,7 @@ class FingerSelector :
           pygame.draw.line(screen, self.lineColor, (x0 + (i*23), yTop), (x0 + (i*23), yBottom), 1)
     
 
+
   # ---------------------------------------------------------------------------
   # METHOD <setEditedNote>
   #
@@ -189,6 +190,49 @@ class FingerSelector :
     return FINGERSEL_UNCHANGED
   
 
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD <setFingerAutoHighlight>
+  #
+  # TODO
+  # ---------------------------------------------------------------------------
+  def setFingerAutoHighlight(self, setFingersatzMsg, teacherNotes, activeHands) :
+    
+    # Sustained notes are not eligible to the note auto highlight
+    activeNotes = [x for x in teacherNotes if not(x.sustained)]
+
+    if (len(activeNotes) > 1) :
+      singleHandContent = True
+      for x in activeNotes[1:] :
+        if (x.hand != activeNotes[0].hand) :
+          singleHandContent = False
+          break    
+    
+    else :
+      singleHandContent = True
+    
+    if ((activeHands != "LR") or singleHandContent) :
+      
+      # Sort by ascending pitch
+      activeNotes.sort(key = lambda x: x.pitch)
+      
+      # Keep notes not yet assigned
+      tmp = [x for x in activeNotes if (x.finger == UNDEFINED_FINGER)]
+      
+      # Are all notes already assigned to a finger? -> start over
+      if (len(tmp) == 0) :
+        print("[DEBUG] Not handled yet.")
+      
+      else :
+        self.setEditedNote(tmp[0])
+        self.setFinger(setFingersatzMsg)
+        setFingersatzMsg = -1
+
+
+
+
+
   # ---------------------------------------------------------------------------
   # METHOD <setFinger>
   #
@@ -200,11 +244,12 @@ class FingerSelector :
   def setFinger(self, finger) :
     
     if (self.editedNote == None) :
-      print("[WARNING] Attempted to edit the properties of a void note (internal error)")
+      print("[WARNING] No note selected!")
 
-    if finger in [1,2,3,4,5] :
-      self.editedNote.finger = finger
-      self._setCurrentSel(finger, self.editedNote.hand)
+    else :
+      if finger in [1,2,3,4,5] :
+        self.editedNote.finger = finger
+        self._setCurrentSel(finger, self.editedNote.hand)
 
 
 
@@ -225,6 +270,8 @@ class FingerSelector :
       if (finger in [1,2,3,4,5]) :
         self.currentSel = finger + 6
     
+
+
   # ---------------------------------------------------------------------------
   # METHOD <_getFingerfromSel> (private)
   #
@@ -244,6 +291,8 @@ class FingerSelector :
       # self.editedNote.hand = ku.RIGHT_HAND  => not supported yet
     
     if (self.currentSel >= 7) :
-      return (RIGHT_HAND, self.currentSel-6)
+      return (RIGHT_HAND, self.currentSel - 6)
     
     return (UNDEFINED_FINGER, UNDEFINED_HAND)
+  
+

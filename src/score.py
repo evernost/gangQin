@@ -80,7 +80,8 @@ class Score :
     # Combo!
     self.comboCount = 0
     self.comboDrop = False
-    self.comboHighest = 0
+    self.comboHighestSession = 0
+    self.comboHighestAllTime = 0
 
     # Loop practice feature
     # TODO: allow to store several loops
@@ -135,7 +136,7 @@ class Score :
       if (self.activeHands == ACTIVE_HANDS_BOTH) :
         if ((self.cursor + delta) <= (len(self.noteOntimecodesMerged)-1)) :
           self.cursor += delta
-          print(f"[INFO] Cursor: {self.cursor}")
+          # print(f"[INFO] Cursor: {self.cursor}")
 
       if (self.activeHands == ACTIVE_HANDS_LEFT) :
         try :
@@ -145,7 +146,7 @@ class Score :
           
         if ((index + delta) <= (len(self.cursorsLeft)-1)) :
           self.cursor = self.cursorsLeft[index + delta]
-          print(f"[INFO] Cursor: {self.cursor}")
+          # print(f"[INFO] Cursor: {self.cursor}")
 
       if (self.activeHands == ACTIVE_HANDS_RIGHT) :
         try :
@@ -155,14 +156,14 @@ class Score :
           
         if ((index + delta) <= (len(self.cursorsRight)-1)) :
           self.cursor = self.cursorsRight[index + delta]
-          print(f"[INFO] Cursor: {self.cursor}")
+          # print(f"[INFO] Cursor: {self.cursor}")
 
     else :
 
       if (self.activeHands == ACTIVE_HANDS_BOTH) :
         if ((self.cursor + delta) >= 0) :
           self.cursor += delta
-          print(f"[INFO] Cursor: {self.cursor}")
+          # print(f"[INFO] Cursor: {self.cursor}")
 
       if (self.activeHands == ACTIVE_HANDS_LEFT) :
         try :
@@ -172,7 +173,7 @@ class Score :
           
         if ((index + delta) >= 0) :
           self.cursor = self.cursorsLeft[index + delta]
-          print(f"[INFO] Cursor: {self.cursor}")
+          # print(f"[INFO] Cursor: {self.cursor}")
 
       if (self.activeHands == ACTIVE_HANDS_RIGHT) :
         try :
@@ -182,7 +183,7 @@ class Score :
           
         if (index + delta >= 0) :
           self.cursor = self.cursorsRight[index + delta]
-          print(f"[INFO] Cursor: {self.cursor}")
+          # print(f"[INFO] Cursor: {self.cursor}")
 
 
 
@@ -205,7 +206,11 @@ class Score :
       self.cursorStep(1)
 
     self.comboCount += 1
+    if (self.comboCount > self.comboHighestSession) :
+      self.comboHighestSession = self.comboCount
 
+    if (self.comboCount > self.comboHighestAllTime) :
+      self.comboHighestAllTime = self.comboCount
 
 
   # ---------------------------------------------------------------------------
@@ -840,6 +845,8 @@ class Score :
 
     exportDict["activeHands"]           = self.activeHands
 
+    exportDict["comboHighestAllTime"]   = self.comboHighestAllTime
+
     # TODO: export the scales
     # exportDict["scale"] = self.scale
 
@@ -893,10 +900,10 @@ class Score :
 
     self.activeHands            = importDict["activeHands"]
 
+    self.comboHighestAllTime    = importDict["comboHighestAllTime"]
+
     # TODO: import the scales
     # TODO: import the loops
-
-    
 
     # Note() objects were converted to a dictionary. Convert them back to a Note object
     # self.pianoRoll = [[[utils.Note(**noteDict) for noteDict in noteList] for noteList in trackList] for trackList in importDict["pianoRoll"]]

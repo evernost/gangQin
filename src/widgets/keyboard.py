@@ -281,6 +281,10 @@ class Keyboard :
   # ---------------------------------------------------------------------------
   def keyPress(self, screenInst, noteList) :
     
+    # Preprocess the list so that the earliest notes are drawn first
+    # This avoids the sustained notes to be drawn on top.
+    noteList.sort(key = lambda x: x.startTime)
+
     # -----------------------------
     # Detect "doubly" pressed notes
     # -----------------------------

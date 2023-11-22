@@ -149,44 +149,63 @@ class PianoRoll :
     # Draw the background and inner components
     self._drawKeyLines(screenInst)
 
+    # List the notes that intersect the current window
+    notesInWindow = []
+
     # Draw the notes
+    # NOTE: some processing could be avoided here since the notes are sorted by startTime
+    # Once the notes start way after the end of the window, why bother exploring the rest?
     for (staffIndex, _) in enumerate(self.noteArray) :
-      for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+      for pitch in GRAND_PIANO_MIDI_RANGE :
         for note in self.noteArray[staffIndex][pitch] :
+          
+          # Shortcuts
           a = startTimeCode; b = startTimeCode + self.viewSpan
           c = note.startTime; d = note.stopTime
         
           # Does the note span intersect the current view window?
           if (((c >= a) and (c < b)) or ((d >= a) and (d < b)) or ((c <= a) and (d >= b))) :
-            
-            # Convert the size measured in "time" to a size in pixels
-            rectBottom = -((self.yBottom-self.yTop)*(c-b)/(b-a)) + self.yTop
-            rectTop = -((self.yBottom-self.yTop)*(d-b)/(b-a)) + self.yTop
-            
-            # Trim the rectangle representing the note to the current view
-            rectBottom = max([rectBottom, self.yTop]); rectBottom = min([rectBottom, self.yBottom])
-            rectTop = max([rectTop, self.yTop]); rectTop = min([rectTop, self.yBottom])
+            notesInWindow.append(note)
 
-            sq = [(self.xLines[pitch-21]+2, rectBottom),
-                  (self.xLines[pitch-21]+2, rectTop),
-                  (self.xLines[pitch+1-21]-2, rectTop),
-                  (self.xLines[pitch+1-21]-2, rectBottom)
-                ]
-            
-            # TODO: replace with a call to getNoteColor()
-            if (staffIndex == LEFT_HAND) :
-              color = self.leftNoteOutlineRGB
-            
-            if (staffIndex == RIGHT_HAND) :
-              color = self.rightNoteOutlineRGB
+    # Sort the notes to display them in a given order.
+    # Longest notes are displayed first
+    notesInWindow.sort(key = lambda x : -(x.stopTime-x.startTime))
 
-            (rectColor, rectOutlineColor, pianoRollColor) = note.getNoteColor()
-            pygame.draw.line(screenInst, color, sq[0], sq[1], 3)
-            pygame.draw.line(screenInst, color, sq[1], sq[2], 3)
-            pygame.draw.line(screenInst, color, sq[2], sq[3], 3)
-            pygame.draw.line(screenInst, color, sq[3], sq[0], 3)
-            
-            pygame.draw.polygon(screenInst, rectColor, sq)
+    # Draw the notes
+    for note in notesInWindow :
+
+      # Shortcuts
+      a = startTimeCode; b = startTimeCode + self.viewSpan
+      c = note.startTime; d = note.stopTime
+
+      # Convert the size measured in "time" to a size in pixels
+      rectBottom = -((self.yBottom-self.yTop)*(c-b)/(b-a)) + self.yTop
+      rectTop = -((self.yBottom-self.yTop)*(d-b)/(b-a)) + self.yTop
+      
+      # Trim the rectangle representing the note to the current view
+      rectBottom = max([rectBottom, self.yTop]); rectBottom = min([rectBottom, self.yBottom])
+      rectTop = max([rectTop, self.yTop]); rectTop = min([rectTop, self.yBottom])
+
+      sq = [(self.xLines[note.pitch-21]+2, rectBottom),
+            (self.xLines[note.pitch-21]+2, rectTop),
+            (self.xLines[note.pitch+1-21]-2, rectTop),
+            (self.xLines[note.pitch+1-21]-2, rectBottom)
+          ]
+      
+      # TODO: replace with a call to getNoteColor()
+      if (note.hand == LEFT_HAND) :
+        color = self.leftNoteOutlineRGB
+      
+      if (note.hand == RIGHT_HAND) :
+        color = self.rightNoteOutlineRGB
+
+      (rectColor, rectOutlineColor, pianoRollColor) = note.getNoteColor()
+      pygame.draw.line(screenInst, color, sq[0], sq[1], 3)
+      pygame.draw.line(screenInst, color, sq[1], sq[2], 3)
+      pygame.draw.line(screenInst, color, sq[2], sq[3], 3)
+      pygame.draw.line(screenInst, color, sq[3], sq[0], 3)
+      
+      pygame.draw.polygon(screenInst, rectColor, sq)
             
 
 

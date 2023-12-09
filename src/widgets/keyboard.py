@@ -69,10 +69,6 @@ class Keyboard :
     self.sqWhiteNoteRightRGB = (0, 200, 10)
     self.sqBlackNoteRightRGB = (0, 200, 10)
 
-    # Rectangle indicating a note currently played by the MIDI input
-    # self.sqWhiteNoteNeutralRGB = (195, 195, 195)
-    # self.sqBlackNoteNeutralRGB = (155, 155, 155)
-
     # Rectangle of a note being played by both 
     # - a note to play by left hand
     # - the current MIDI input
@@ -102,6 +98,9 @@ class Keyboard :
 
     # List of notes currently pressed
     self.activeNotes = []
+
+    # Define the current key the song is in
+    self.activeKey = []
 
 
 
@@ -264,11 +263,35 @@ class Keyboard :
   def drawKeys(self, screenInst) :
 
     # Draw keys from MIDI code 21 (A0) to MIDI code 108 (C8) ie notes of a grand piano.
-    for i in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
-      if ((i % 12) in [1,3,6,8,10]) :
-        pygame.draw.polygon(screenInst, self.blackNoteRGB, self.keyboardPolygons[i])
-      else :
-        pygame.draw.polygon(screenInst, self.whiteNoteRGB, self.keyboardPolygons[i])
+    
+    if (len(self.activeKey) > 0) :
+      for i in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+        if ((i % 12) in BLACK_NOTES_CODE_MOD12) :
+          if ((i % 12) in self.activeKey) :
+            pygame.draw.polygon(screenInst, self.blackNoteRGB, self.keyboardPolygons[i])
+          else :
+            pygame.draw.polygon(screenInst, (100, 100, 100), self.keyboardPolygons[i])
+        else :
+          if ((i % 12) in self.activeKey) :
+            pygame.draw.polygon(screenInst, self.whiteNoteRGB, self.keyboardPolygons[i])
+          else :
+            pygame.draw.polygon(screenInst, (220, 220, 220), self.keyboardPolygons[i])
+    
+    
+    else :
+      for i in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+        if ((i % 12) in [1, 3, 6, 8, 10]) :
+          pygame.draw.polygon(screenInst, self.blackNoteRGB, self.keyboardPolygons[i])
+        else :
+          pygame.draw.polygon(screenInst, self.whiteNoteRGB, self.keyboardPolygons[i])
+
+
+
+  def setKey(self, scaleObj) :
+    if (scaleObj != None) :
+      self.activeKey = scaleObj.activeNotes
+    else :
+      self.activeKey = []
 
 
 

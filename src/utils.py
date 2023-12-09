@@ -291,17 +291,65 @@ class Note :
 
 class Scale :
 
-  def __init__(self, key, mode) :
+  def __init__(self, root = "C", mode = "major", startTime = 0) :
     
-    self.key = key
+    self.startTime = startTime
+    self.root = root
     self.mode = mode
     
-    self.MAJOR_SCALE_MODE = [2, 2, 1, 2, 2, 2, 1]
-    self.MINOR_SCALE_MODE = [2, 1, 2, 2, 1, 2, 2]
-    self.C_KEY = 0
-    self.D_KEY = 2
-    self.E_KEY = 4
-    self.F_KEY = 5
+    self.MAJOR_INTERVALS = [2, 2, 1, 2, 2, 2, 1]
+    self.MINOR_INTERVALS = [2, 1, 2, 2, 1, 2, 2]
+    self.NOTE_NAMES = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
+
+    self.activeNotes = [0, 2, 4, 5, 7, 9, 11]  # Default is C maj
+    self.selector = 0
+
+
+
+  def _update(self) :
+    
+    # *** Selector = 0: no active scale ***
+    if (self.selector == SCALE_DISABLED) :
+      self.activeNotes = []
+    
+    # *** Selector = 1 ... 12: major scales ***
+    elif ((self.selector >= 1) and (self.selector <= 12)) :
+      self.root = self.NOTE_NAMES[self.selector-1]
+      self.mode = "major"
+      
+      # Generate the scale
+      scale = [self.selector-1]
+      for interval in self.MAJOR_INTERVALS :
+          scale.append((scale[-1] + interval) % 12)
+    
+      # Map the scale to integer codes
+      self.activeNotes = sorted(scale)
+    
+    # *** Selector = 13 ... 24: minor scales ***
+    else :
+      self.root = self.NOTE_NAMES[self.selector-13]
+      self.mode = "minor"
+      
+      # Generate the scale
+      scale = [self.selector-13]
+      for interval in self.MINOR_INTERVALS :
+          scale.append((scale[-1] + interval) % 12)
+    
+      # Map the scale to integer codes
+      self.activeNotes = sorted(scale)
+
+
+
+  def nextRoot(self) :
+    self.selector = (self.selector + 1) % 25
+    self._update()
+
+
+
+  def previousRoot(self) :
+    self.selector = (self.selector - 1) % 25
+    self._update()
+
 
 
 

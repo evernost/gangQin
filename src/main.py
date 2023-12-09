@@ -334,7 +334,6 @@ while running :
       if (keys[pygame.K_d] and keys[pygame.K_KP_MINUS]) :
         print("[NOTE] Note duration shortening will be added in a future release.")
 
-
       # ----------------------------
       # "h": (Hear) toggle play mode
       # ----------------------------
@@ -344,8 +343,26 @@ while running :
       # ---------------------------------------------
       # "k": toggle display of the notes in the scale
       # ---------------------------------------------
-      if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_k]) :
-        print("[NOTE] Displaying the notes in the scale will be added in a future release.")
+      if keys[pygame.K_k] :
+        
+        # A key has been defined starting from the current cursor
+        currKey = userScore.getCurrentKey()
+        
+        if (currKey != None) :
+          if (currKey.startTime == userScore.getCursor()) :
+            if keys[pygame.K_KP_PLUS] :
+              currKey.nextRoot()
+
+            elif keys[pygame.K_KP_MINUS] :
+              currKey.previousRoot()
+
+        # Otherwise: start a new key here
+        else :
+          
+          # TODO: do some stats and print the keys that are the most likely
+          # userScore.guessKey()
+          print("[DEBUG] New key added")
+          userScore.keyList.append(utils.Scale("C", "major", startTime = userScore.getCursor()))
 
       # ------------------------------------
       # CTRL + k: set the key the song is in
@@ -358,12 +375,6 @@ while running :
       # ------------------------------
       if (keys[pygame.K_l]) :  
         userScore.toggleLeftHand()
-
-      # -----------------------
-      # "p": loop practice mode
-      # -----------------------
-      if (keys[pygame.K_p]) :
-        userScore.toggleLoopMode()
 
       # -------------------------------
       # "r": toggle right hand practice
@@ -432,6 +443,11 @@ while running :
   # Draw the keyboard on screen
   keyboardWidget.reset()
   keyboardWidget.drawKeys(screen)
+  
+  currKey = userScore.getCurrentKey()
+  keyboardWidget.setKey(currKey)
+  if (currKey != None) :
+    fu.renderText(screen, f"KEY: {currKey.root.upper()} {currKey.mode.upper()}", (200, 20), 2, UI_TEXT_COLOR)
   
   # Draw the piano roll on screen
   pianoRollWidget.drawPianoRoll(screen, userScore.getCurrentTimecode())
@@ -588,19 +604,13 @@ while running :
 
   # Loop
   if userScore.loopEnable :
-    fu.renderText(screen, f"LOOP: {userScore.loopStart}/{userScore.getCursor()}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
+    fu.renderText(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (250, 470), 2, UI_TEXT_COLOR)
   else :
     if (userScore.loopStart >= 0) :
-      if (userScore.getCursor() >= userScore.loopStart) :
-        fu.renderText(screen, f"LOOP: {userScore.loopStart}/{userScore.getCursor()}/{userScore.getCursor()}", (250, 470), 2, UI_TEXT_COLOR)
-      else :
-        fu.renderText(screen, f"LOOP: {userScore.loopStart}/{userScore.getCursor()}/_", (250, 470), 2, UI_TEXT_COLOR)
+      fu.renderText(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... _]", (250, 470), 2, UI_TEXT_COLOR)
 
     if (userScore.loopEnd >= 0) :
-      if (userScore.getCursor() <= userScore.loopEnd) :
-        fu.renderText(screen, f"LOOP: {userScore.getCursor()}/{userScore.getCursor()}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
-      else :
-        fu.renderText(screen, f"LOOP: _/{userScore.getCursor()}/{userScore.loopEnd}", (250, 470), 2, UI_TEXT_COLOR)
+      fu.renderText(screen, f"LOOP: [_  ... {userScore.cursor+1} ... {userScore.loopEnd+1}", (250, 470), 2, UI_TEXT_COLOR)
       
   # Cursor display
   fu.renderText(screen, f"CURSOR: {userScore.cursor+1}", (12, 20), 2, UI_TEXT_COLOR)

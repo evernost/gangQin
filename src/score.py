@@ -71,7 +71,7 @@ class Score :
 
     # Key scales used throughout the song
     # List of tuples: (scaleObject, startTimeCode)
-    self.scale = []
+    self.keyList = []
 
     self.progressEnable = True
     self.arbiterSuspendReq = False
@@ -379,6 +379,24 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD <getCurrentKey>
+  #
+  # Return the current key the song is in, if any has been set.
+  # ---------------------------------------------------------------------------
+  def getCurrentKey(self) :
+    
+    # No key in the score
+    if (len(self.keyList) == 0) :
+      return None
+    
+    # Otherwise, return the latest key applied
+    else :
+      scalesBefore = [x for x in self.keyList if (x.startTime <= self.cursor)]
+      return scalesBefore[-1]
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD <gotoNextBookmark>
   #
   # Set the cursor to the next closest bookmark (if any, otherwise do nothing)
@@ -480,13 +498,13 @@ class Score :
     # Loop end is not yet defined
     if (self.loopEnd == -1) :
       self.loopStart = self.getCursor()
-      print(f"[NOTE] Start of loop set at {self.loopStart}")
+      print(f"[NOTE] Start of loop set at {self.loopStart+1}")
 
     else :
       if (self.getCursor() < self.loopEnd) :
         self.loopStart = self.getCursor()
         self.loopEnable = True
-        print(f"[NOTE] Loop set: start = {self.loopStart} / end = {self.loopEnd}")
+        print(f"[NOTE] Loop set: start = {self.loopStart+1} / end = {self.loopEnd+1}")
 
 
 
@@ -496,14 +514,17 @@ class Score :
     # Loop start is not yet defined
     if (self.loopStart == -1) :
       self.loopEnd = self.getCursor()
-      print(f"[NOTE] End of loop set at {self.loopEnd}")
+      print(f"[NOTE] End of loop set at {self.loopEnd+1}")
 
     else :
       if (self.getCursor() > self.loopStart) :
         self.loopEnd = self.getCursor()
         self.loopEnable = True
-        print(f"[NOTE] Loop set: start = {self.loopStart} / end = {self.loopEnd}")
-    
+        self.cursor = self.loopStart
+        print(f"[NOTE] Loop set: start = {self.loopStart+1} / end = {self.loopEnd+1}")
+  
+
+
 
   def clearLoop(self) :
     self.loopStart = -1
@@ -635,26 +656,6 @@ class Score :
   def toggleRehearsalMode(self) :
     self.progressEnable = not(self.progressEnable)
     print("[NOTE] Rehearsal mode will be available in a future release.")
-
-
-
-
-  def toggleLoopMode(self) :
-    print("[NOTE] Loop practice will be available in a future release.")
-
-
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD <toggleRehearsalMode>
-  #
-  # Return the current scale of the song based on the cursor.
-  # ---------------------------------------------------------------------------
-  def getCurrentScale(self) :
-    print("[NOTE] Showing the current scale will be available in a future release.")
-
-
 
 
 
@@ -877,36 +878,48 @@ class Score :
       importDict = json.load(fileHandler)
 
     if (f"v{REV_MAJOR}.{REV_MINOR}" != importDict["revision"]) :
-      print(f"[WARNING] [.pr import] Piano roll file was made in version v{importDict['revision']}. Current version is v{REV_MAJOR}.{REV_MINOR}")
+      print(f"[WARNING] [.pr import] Piano roll file was made in version {importDict['revision']}. Current version is v{REV_MAJOR}.{REV_MINOR}")
 
-    # TODO: check here that all fields exist. Previous versions might not have them
-    # if ...
-    # else :
-    #   raise SystemExit(0)
+    # Safe loading feature
+    safeDict = {
+      "revision"              : "v0.0",
+      "nStaffs"               : 2,
+      "avgNoteDuration"       : 100.0,
+      "cursor"                : 0,
+      "noteOntimecodes"       : [[0], [0]],
+      "noteOntimecodesMerged" : [0],
+      "cursorsLeft"           : [0],
+      "cursorsRight"          : [0],
+      "bookmarks"             : [0],
+      "activeHands"           : "LR",
+      "comboHighestAllTime"   : 0
+    }
+    for currKey in safeDict :
+      if currKey in importDict :
+        safeDict[currKey] = importDict[currKey]
 
     # Import "manually" elements of the PianoRoll object to the export dictionary.
     # Not ideal but does the job for now as there aren't too many properties.
-    self.nStaffs                = importDict["nStaffs"]
-    self.avgNoteDuration        = importDict["avgNoteDuration"]
+    self.nStaffs                = safeDict["nStaffs"]
+    self.avgNoteDuration        = safeDict["avgNoteDuration"]
 
-    self.cursor                 = importDict["cursor"]
+    self.cursor                 = safeDict["cursor"]
 
-    self.noteOntimecodes        = importDict["noteOntimecodes"]
-    self.noteOntimecodesMerged  = importDict["noteOntimecodesMerged"]
-    self.cursorsLeft            = importDict["cursorsLeft"]
-    self.cursorsRight           = importDict["cursorsRight"]
+    self.noteOntimecodes        = safeDict["noteOntimecodes"]
+    self.noteOntimecodesMerged  = safeDict["noteOntimecodesMerged"]
+    self.cursorsLeft            = safeDict["cursorsLeft"]
+    self.cursorsRight           = safeDict["cursorsRight"]
 
-    self.bookmarks              = importDict["bookmarks"]
+    self.bookmarks              = safeDict["bookmarks"]
 
-    self.activeHands            = importDict["activeHands"]
+    self.activeHands            = safeDict["activeHands"]
 
-    self.comboHighestAllTime    = importDict["comboHighestAllTime"]
+    self.comboHighestAllTime    = safeDict["comboHighestAllTime"]
 
     # TODO: import the scales
     # TODO: import the loops
 
     # Note() objects were converted to a dictionary. Convert them back to a Note object
-    # self.pianoRoll = [[[utils.Note(**noteDict) for noteDict in noteList] for noteList in trackList] for trackList in importDict["pianoRoll"]]
     self.pianoRoll = [[[] for noteList in trackList] for trackList in importDict["pianoRoll"]]
 
     for track in range(self.nStaffs) :
@@ -918,8 +931,6 @@ class Score :
             setattr(noteObj, noteAttr, noteDict[noteAttr])
           
           self.pianoRoll[track][pitch].append(noteObj)
-
-
 
 
     print(f"[NOTE] {pianoRollFile} successfully loaded!")
@@ -942,3 +953,9 @@ class Score :
   
 
 
+
+
+
+
+  def guessScale(self, startCursor, span = -1) :
+    print("TODO")

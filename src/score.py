@@ -22,6 +22,8 @@ import json   # for JSON database import/export
 import os     # for file manipulation
 import mido   # for MIDI file manipulation
 
+import datetime
+
 
 
 # =============================================================================
@@ -851,18 +853,14 @@ class Score :
     # TODO: export the scales
     # exportDict["scale"] = self.scale
 
-    # self.loopEnable = False
-    # self.loopStart = -1
-    # self.loopEnd = -1
-
-
     # Convert the Note() objects to a dictionnary before pushing them in the export dict
     exportDict["pianoRoll"] = [[[noteObj.__dict__ for noteObj in noteList] for noteList in trackList] for trackList in self.pianoRoll]
 
     with open(pianoRollFile, "w") as fileHandler :
       json.dump(exportDict, fileHandler)
 
-    print(f"[NOTE] Saved to {pianoRollFile}!")
+    currTime = datetime.datetime.now()
+    print(f"[NOTE] Saved to '{pianoRollFile}' at {currTime.strftime('%H:%M:%S')}")
 
 
 

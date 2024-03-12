@@ -142,7 +142,7 @@ clock = pygame.time.Clock()
 # Create widgets
 keyboardWidget = keyboard.Keyboard((10, 300))
 pianoRollWidget = pianoRoll.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
-fingerSelWidget = fingerSelector.FingerSelector((500, 470))
+fingerSelWidget = fingerSelector.FingerSelector((490, 470))
 
 # Create score and import file
 userScore = score.Score()
@@ -408,7 +408,7 @@ while running :
       if (event.button == MOUSE_LEFT_CLICK) :
         clickMsg = True
         clickCoord = pygame.mouse.get_pos()
-        print(f"[DEBUG] Click here: x = {clickCoord[0]}, y = {clickCoord[1]}")
+        #print(f"[DEBUG] Click here: x = {clickCoord[0]}, y = {clickCoord[1]}")
       
       # Scroll up
       if (event.button == MOUSE_SCROLL_UP) :
@@ -594,28 +594,27 @@ while running :
   # --------------------------------------------
   # Print some info relative to the current time
   # --------------------------------------------
-  # Bookmark
+  # Bookmark info
   if userScore.isBookmarkedTimecode() :
-    # Note: "+1" because a bookmark number starting at 0 is not very user friendly
-    fu.renderText(screen, f"BOOKMARK #{userScore.bookmarks.index(userScore.getCursor())+1}", (10, 470), 2, UI_TEXT_COLOR)
+    fu.renderText(screen, f"BOOKMARK #{userScore.bookmarks.index(userScore.getCursor()) + 1}", (10, 470), 2, UI_TEXT_COLOR)
 
-  # Current active hands
+  # Active hand info
   fu.renderText(screen, userScore.activeHands, (1288, 470), 2, UI_TEXT_COLOR)
 
-  # Loop
+  # Loop info
   if userScore.loopEnable :
-    fu.renderText(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (250, 470), 2, UI_TEXT_COLOR)
+    fu.renderText(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (300, 20), 2, UI_TEXT_COLOR)
   else :
     if (userScore.loopStart >= 0) :
-      fu.renderText(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... _]", (250, 470), 2, UI_TEXT_COLOR)
+      fu.renderText(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... _]", (300, 20), 2, UI_TEXT_COLOR)
 
     if (userScore.loopEnd >= 0) :
-      fu.renderText(screen, f"LOOP: [_  ... {userScore.cursor+1} ... {userScore.loopEnd+1}", (250, 470), 2, UI_TEXT_COLOR)
+      fu.renderText(screen, f"LOOP: [_  ... {userScore.cursor+1} ... {userScore.loopEnd+1}", (300, 20), 2, UI_TEXT_COLOR)
       
-  # Cursor display
+  # Cursor info
   fu.renderText(screen, f"CURSOR: {userScore.cursor+1}", (12, 20), 2, UI_TEXT_COLOR)
 
-  # Combo display
+  # Combo info
   fu.renderText(screen, f"COMBO: {userScore.comboCount} (MAX: {userScore.comboHighestSession} / ALLTIME: {userScore.comboHighestAllTime})", (800, 20), 2, UI_TEXT_COLOR)
 
   # Finger selection

@@ -53,9 +53,9 @@ ACTIVE_HANDS_LEFT  = "L "
 ACTIVE_HANDS_RIGHT = " R"
 
 REV_MAJOR = 0
-REV_MINOR = 11
+REV_MINOR = 12
 REV_YEAR = 2024
-REV_MONTH = "Jan"
+REV_MONTH = "Mar"
 
 # Size of the keys (in pixels)
 WHITE_NOTE_HEIGHT = 150
@@ -66,16 +66,18 @@ NOTE_CHANFER = 2
 NOTE_SPACING = 1
 
 # Piano roll settings
-PIANOROLL_VIEW_SPAN = 5
+# Defines the rough number of notes to be displayed ahead from the current cursor 
+# in the piano roll
+PIANOROLL_VIEW_SPAN = 25
 
-# Pygame click codes
+# [CONSTANTS] Pygame click codes
 MOUSE_LEFT_CLICK = 1
 MOUSE_SCROLL_UP = 4
 MOUSE_SCROLL_DOWN = 5
 
 # Theme 
 BACKGROUND_COLOR = (50, 50, 80)
-UI_TEXT_COLOR = (200, 200, 250)
+UI_TEXT_COLOR    = (200, 200, 250)
 
 #               Unused       Voice 1        Voice 2        Voice 3        Voice 4
 VOICE_COLOR = [(0, 0, 0), (0, 150, 200), (0, 200, 200), (200, 100, 0), (200, 200, 0)]

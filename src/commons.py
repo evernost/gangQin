@@ -53,9 +53,9 @@ ACTIVE_HANDS_LEFT  = "L "
 ACTIVE_HANDS_RIGHT = " R"
 
 REV_MAJOR = 0
-REV_MINOR = 12
+REV_MINOR = 13
 REV_YEAR = 2024
-REV_MONTH = "Mar"
+REV_MONTH = "Apr"
 
 # Size of the keys (in pixels)
 WHITE_NOTE_HEIGHT = 150

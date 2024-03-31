@@ -308,6 +308,18 @@ class Keyboard :
     # This avoids the sustained notes to be drawn on top.
     noteList.sort(key = lambda x: x.startTime)
 
+    # -------------------------------
+    # Filter notes with null duration
+    # -------------------------------
+    # A bit of an oddity. I am still unsure as of why that might happen.
+    newNoteList = []
+    for noteObj in noteList :
+      if (noteObj.startTime != noteObj.stopTime):
+        newNoteList.append(noteObj)
+      # else :
+      #   print("[WARNING] Null duration note detected")
+    noteList = newNoteList
+
     # -----------------------------
     # Detect "doubly" pressed notes
     # -----------------------------

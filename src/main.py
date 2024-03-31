@@ -250,15 +250,15 @@ while running :
       if (keys[pygame.K_RIGHT] and ctrlKey) :
         userScore.cursorStep(10)
 
-      # ----------------------------------------------
+      # ---------------------------------------
       # HOME: jump to the beginning of the file
-      # ----------------------------------------------
+      # ---------------------------------------
       if (keys[pygame.K_HOME]) :
         userScore.cursorBegin()
 
-      # ---------------------------------------
+      # --------------------------------
       # END: jump to the end of the file
-      # ---------------------------------------
+      # --------------------------------
       if (keys[pygame.K_END]) :
         userScore.cursorEnd()
 
@@ -447,7 +447,7 @@ while running :
   currKey = userScore.getCurrentKey()
   keyboardWidget.setKey(currKey)
   if (currKey != None) :
-    fu.renderText(screen, f"KEY: {currKey.root.upper()} {currKey.mode.upper()}", (200, 20), 2, UI_TEXT_COLOR)
+    fu.renderText(screen, f"KEY: {currKey.root.upper()} {currKey.mode.upper()}", (200, 470), 2, UI_TEXT_COLOR)
   
   # Draw the piano roll on screen
   pianoRollWidget.drawPianoRoll(screen, userScore.getCurrentTimecode())

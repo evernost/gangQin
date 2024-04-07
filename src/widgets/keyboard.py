@@ -314,10 +314,13 @@ class Keyboard :
     # A bit of an oddity. I am still unsure as of why that might happen.
     newNoteList = []
     for noteObj in noteList :
-      if (noteObj.startTime != noteObj.stopTime):
+      if not(noteObj.fromKeyboardInput) :
+        if (noteObj.startTime != noteObj.stopTime):
+          newNoteList.append(noteObj)
+        # else :
+        #   print("[WARNING] Null duration note detected")
+      else :
         newNoteList.append(noteObj)
-      # else :
-      #   print("[WARNING] Null duration note detected")
     noteList = newNoteList
 
     # -----------------------------

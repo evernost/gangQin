@@ -370,7 +370,6 @@ def keystrokeTest(keyStatus, *args) :
 # =============================================================================
 # Color manipulation function
 # =============================================================================
-
 def adjustHSV(rgbColor, deltaHue, deltaSat, deltaVal) :
 
   # Normalize input RGB

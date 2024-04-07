@@ -84,6 +84,7 @@ import pygame
 from widgets import keyboard
 from widgets import pianoRoll
 from widgets import fingerSelector
+from widgets import notify
 
 # Various utilities
 import fontUtils as fu
@@ -159,6 +160,7 @@ pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}
 pygame.key.set_repeat(250, 50)
 
 
+soundNotify = notify.Notify()
 
 # =============================================================================
 # Open MIDI keyboard interface
@@ -541,6 +543,7 @@ while running :
       # A note that is neither expected nor sustained resets the combo counter
       if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
         userScore.comboCount = 0
+        soundNotify.wrongNote()
 
     # Disable progression if we came here by a key search
     # Progress is allowed as soon as the notes are released
@@ -557,6 +560,13 @@ while running :
 
     if allowProgress :
       userScore.cursorNext()
+      
+      if (userScore.cursor == userScore.loopStart) :
+        soundNotify.loopPassed()
+      else :
+        soundNotify.loopPassedReset()
+      
+      soundNotify.wrongNoteReset()
       
       # Register all superfluous notes
       for pitch in GRAND_PIANO_MIDI_RANGE :
@@ -577,7 +587,7 @@ while running :
     # Click on a note on the keyboard
     clickedNote = keyboardWidget.isActiveNoteClicked(clickCoord)
     if clickedNote :
-      print(f"[DEBUG] Clicked note: {clickedNote}")
+      #print(f"[DEBUG] Clicked note: {clickedNote}")
       
       fingerSelWidget.setEditedNote(clickedNote, userScore.getCursor())
       fingerSelWidget.visible = True
@@ -609,7 +619,7 @@ while running :
       fu.renderText(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... _]", (300, 20), 2, UI_TEXT_COLOR)
 
     if (userScore.loopEnd >= 0) :
-      fu.renderText(screen, f"LOOP: [_  ... {userScore.cursor+1} ... {userScore.loopEnd+1}", (300, 20), 2, UI_TEXT_COLOR)
+      fu.renderText(screen, f"LOOP: [_  ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (300, 20), 2, UI_TEXT_COLOR)
       
   # Cursor info
   fu.renderText(screen, f"CURSOR: {userScore.cursor+1}", (12, 20), 2, UI_TEXT_COLOR)

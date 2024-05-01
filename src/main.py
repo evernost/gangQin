@@ -565,7 +565,7 @@ while running :
         userScore.comboCount = 0
         soundNotify.wrongNote()
 
-    # Case 5: progress disabled because the "note finding" feature is still active
+    # Case 4: progress disabled because the "note finding" feature is still active
     # Waiting for all notes to be released.
     if (userScore.arbiterSuspendReq) :
       allDown = True
@@ -605,12 +605,10 @@ while running :
         # of the same pitch)
         if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1)) :
           midiSustained[pitch] = 1
-
+          
+          # Get the ID of the correct note
+          # TODO: is it really always the first one that needs to be taken?
           q = [x for x in userScore.teacherNotes if (x.pitch == pitch)]
-          
-          if (len(q) != 1) :
-            print("[WARNING] Internal error!")
-          
           midiAssociatedID[pitch] = q[0].id
 
 

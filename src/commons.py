@@ -29,7 +29,7 @@
 # Customizable variables
 # ----------------------
 REV_MAJOR = 1
-REV_MINOR = 0
+REV_MINOR = 1
 REV_YEAR = 2024
 REV_MONTH = "May"
 
@@ -39,7 +39,7 @@ REV_MONTH = "May"
 PIANOROLL_VIEW_SPAN = 20
 
 # Theme 
-BACKGROUND_COLOR = (50, 50, 80)
+BACKGROUND_COLOR = (80, 50, 80)
 UI_TEXT_COLOR    = (200, 200, 250)
 
 #               Unused       Voice 1        Voice 2        Voice 3        Voice 4

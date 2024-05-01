@@ -22,6 +22,7 @@ import playsound
 import random
 
 
+
 # =============================================================================
 # Constants pool
 # =============================================================================
@@ -37,6 +38,8 @@ WRONG_SOUND_FILES = ["Science_critical_stop.wav",
 SUCCESS_SOUND_FILES = ["Travel_question.wav",
                        "Utopia_Asterisk.wav",
                        "Utopia_Exclamation.wav"]
+
+
 
 # =============================================================================
 # Guards

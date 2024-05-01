@@ -216,14 +216,12 @@ def showSetupGUI() :
   comboFile["width"] = 80
   comboFile.grid(row = 3, column = 0, columnspan = 3, padx = 3, pady = 5, sticky = "e")
 
+  fileList = getFileList("./midi/", fileExt.get())
+  comboFile["values"] = [os.path.basename(file) for file in fileList]
+
   # By default, set to the last song
   if "song" in configData["DEFAULT"] :
     if configData["DEFAULT"]["song"] in getFileList("./midi/", ".mid") + getFileList("./midi/", ".pr") :
-      
-      fileList = getFileList("./midi/", fileExt.get())
-      comboFile["values"] = [os.path.basename(file) for file in fileList]
-
-      # Update the current selection of the combolist
       comboFile.set(os.path.basename(configData["DEFAULT"]["song"]))
       
     else :
@@ -276,6 +274,10 @@ def showSetupGUI() :
     "midi_interface": selectedDevice,
     "song": selectedFile
     }
+
+  # Create the ./conf dir if it does not exist
+  if not os.path.exists("./conf"):
+    os.makedirs("./conf")
 
   with open("./conf/conf.ini", "w") as configfile :
     configData.write(configfile)

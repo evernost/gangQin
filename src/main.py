@@ -133,7 +133,7 @@ pygame.init()
 
 # Define screen dimensions
 screenWidth = 1320
-screenHeight = 500
+screenHeight = 600
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 
 # Time management
@@ -168,6 +168,7 @@ soundNotify = notify.Notify()
 midiCurr = [0 for _ in range(128)]
 midiSustained = [0 for _ in range(128)]
 midiSuperfluous = [0 for _ in range(128)]
+midiAssociatedID = [-1 for _ in range(128)]
 
 # Define the MIDI callback
 def midiCallback(message) :
@@ -178,6 +179,7 @@ def midiCallback(message) :
     midiCurr[message.note] = 0
     midiSustained[message.note] = 0 # this note cannot be considered as sustained anymore
     midiSuperfluous[message.note] = 0
+    midiAssociatedID[message.note] = -1
 
 
 if (conf.selectedDevice != "None") :
@@ -457,6 +459,7 @@ while running :
   # -------------------------------------------------
   # Show the notes expected to be played at that time
   # -------------------------------------------------
+  # TODO: <getTeacherNotes> must cache the teacher notes instead of building them at each call.
   keyboardWidget.keyPress(screen, userScore.getTeacherNotes())
 
   # -------------------------------------------------
@@ -492,17 +495,19 @@ while running :
     allowProgress = True
     for pitch in GRAND_PIANO_MIDI_RANGE :
 
-      # Key is pressed, but is actually an "old" key press (sustained note)
+      # Case 1: the right note is pressed, but is actually an "old" key press (sustained note)
       if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 1)) :
         allowProgress = False
 
+      # Case 2: a note is missing
       if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 0) and (midiSustained[pitch] == 0)) :
         allowProgress = False
-
+      
+      # Case 3: a wrong note is pressed 
       if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
         allowProgress = False
 
-    # Disable progression 
+    # Case 4: progress disabled because the "note finding" feature is still active
     if (userScore.arbiterSuspendReq) :
       allDown = True
       for x in userScore.arbiterPitchListHold :
@@ -526,27 +531,42 @@ while running :
 
   # *** Permissive mode ***
   # Progress as long as the expected notes are pressed. 
-  # The rest is ignored, but flagged as superfluous and will need
-  # to be released and pressed again if requiered by the teacher.
+  # The rest is ignored, but flagged as 'superfluous'.
+  # 'Superfluous' notes need to be released and pressed again to be accepted later on.
   if (playComparisonMode == "permissive") :
     allowProgress = True
     for pitch in GRAND_PIANO_MIDI_RANGE :
 
-      # A superfluous note is not considered as pressed
-      if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSuperfluous[pitch] == 1)) :
-        allowProgress = False
-
-      # A requiered note is not pressed
+      # Case 1: a note is missing
       if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 0) and (midiSuperfluous[pitch] == 0)) :
         allowProgress = False
 
-      # A note that is neither expected nor sustained resets the combo counter
+      # Case 2: the right note is played, but it was hit before expected and maintained since then
+      if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSuperfluous[pitch] == 1)) :
+        allowProgress = False
+
+      # Case 3: the note was played correctly, but has not been released yet
+      # Meanwhile, the score requires this note to be played again.
+      if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 1)) :
+        
+        # Read the ID of the current note
+        authorisedIDs = [x.id for x in userScore.teacherNotes if (x.pitch == pitch)]        
+        
+        # The IDs do not match: the note being played on the keyboard right now
+        # is a previous valid note being sustained.
+        # It cannot be used to trigger a new note of the same pitch.
+        if not(midiAssociatedID[pitch] in authorisedIDs) :
+          allowProgress = False
+        
+      # Other: a wrong note is pressed
+      # Since it is permissive, it does not block the progress.
+      # But it resets the combo counter and plays a notification.
       if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
         userScore.comboCount = 0
         soundNotify.wrongNote()
 
-    # Disable progression if we came here by a key search
-    # Progress is allowed as soon as the notes are released
+    # Case 5: progress disabled because the "note finding" feature is still active
+    # Waiting for all notes to be released.
     if (userScore.arbiterSuspendReq) :
       allDown = True
       for x in userScore.arbiterPitchListHold :
@@ -558,6 +578,11 @@ while running :
       else :
         allowProgress = False
 
+
+
+    # **********
+    # Conclusion
+    # **********
     if allowProgress :
       userScore.cursorNext()
       
@@ -568,15 +593,26 @@ while running :
       
       soundNotify.wrongNoteReset()
       
-      # Register all superfluous notes
+      # Update note status
       for pitch in GRAND_PIANO_MIDI_RANGE :
         
         # Is it a superfluous note?
         if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1)) :
           midiSuperfluous[pitch] = 1
 
+        # A valid note is now flagged as 'sustained'
+        # The ID of the associated teacher note is registered (this keypress cannot validate another note 
+        # of the same pitch)
         if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1)) :
           midiSustained[pitch] = 1
+
+          q = [x for x in userScore.teacherNotes if (x.pitch == pitch)]
+          
+          if (len(q) != 1) :
+            print("[WARNING] Internal error!")
+          
+          midiAssociatedID[pitch] = q[0].id
+
 
 
   # -----------------------
@@ -587,7 +623,7 @@ while running :
     # Click on a note on the keyboard
     clickedNote = keyboardWidget.isActiveNoteClicked(clickCoord)
     if clickedNote :
-      #print(f"[DEBUG] Clicked note: {clickedNote}")
+      print(f"[DEBUG] Clicked note: {clickedNote}")
       
       fingerSelWidget.setEditedNote(clickedNote, userScore.getCursor())
       fingerSelWidget.visible = True

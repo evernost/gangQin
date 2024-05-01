@@ -18,6 +18,7 @@ import tkinter as tk
 from tkinter import ttk
 import os
 
+import configparser
 
 
 # =============================================================================
@@ -44,44 +45,72 @@ def getFileList(folderPath, extension) :
 
 
 
+# -----------------------------------------------------------------------------
+# GUI entry point
+# -----------------------------------------------------------------------------
 def showSetupGUI() :
 
   global selectedDevice
   global selectedFile
   selectedDevice = ""
-  selectedFile = ""
+  selectedFile   = ""
+
+  # Try to load a configuration file
+  configData = configparser.ConfigParser()
+  if os.path.exists("./conf/conf.ini") :
+    configData.read("./conf/conf.ini")
 
 
 
+  # ---------------------------------------------------------------------------
+  # GUI exit point
+  # ---------------------------------------------------------------------------
+  # Commit the configuration 
   def sendConf() :
     global selectedDevice
     global selectedFile
+    
+    # Read the file
     fileList = getFileList("./midi/", fileExt.get())
-    selectedDevice = comboMidi.get()
     selectedFile = fileList[comboFile.current()]
+
+    # Read the device
+    selectedDevice = comboMidi.get()
+
     root.destroy()
 
 
 
+  # ---------------------------------------------------------------------------
+  # [GUI MANAGEMENT] React to a radio button change
+  # ---------------------------------------------------------------------------
   def onRadioButtonChange():
-    # print(fileExt.get())
+
+    # List files with this extension
     fileList = getFileList("./midi/", fileExt.get())
-    # print(fileList)
     
+    # No file found
     if not(fileList) :
       fileList = ["None"]
       comboFile["values"] = fileList
       comboFile.set(fileList[0])
+      
       buttonOK["state"] = "disabled"
     
-    else :      
-      fileListName = [os.path.basename(file) for file in fileList]
-      comboFile["values"] = fileListName
-      comboFile.set(fileListName[0])
+    else :
+      # Trim the path to the files
+      fileListNoPath = [os.path.basename(file) for file in fileList]
+      
+      comboFile["values"] = fileListNoPath
+      comboFile.set(fileListNoPath[0])
+      
       buttonOK["state"] = "normal"
 
 
 
+  # ---------------------------------------------------------------------------
+  # [GUI MANAGEMENT] Window centering
+  # ---------------------------------------------------------------------------
   def centerWindow(container):
     
     # Ensure widgets are updated before calculating size
@@ -104,58 +133,113 @@ def showSetupGUI() :
   if not(fileList) :
     fileList = ["None"]
 
-  # Create the main window
+
+
+  # -----------------------------------------------------------------------------
+  # [GUI DEFINITION] Create the main window
+  # -----------------------------------------------------------------------------
   root = tk.Tk()
   root.title("New learning session")
   root.resizable(0, 0)
 
+
+
   # -----------------------------------------------------------------------------
-  # MIDI interface selection
+  # [GUI DEFINITION] MIDI interface selection
   # -----------------------------------------------------------------------------
-  lfMidi = ttk.LabelFrame(root, text = 'MIDI input')
+  lfMidi = ttk.LabelFrame(root, text = "MIDI input")
   lfMidi.grid(row = 0, column = 0, padx = 10, pady = 5, sticky = "w")
 
   # Create a label
-  label = tk.Label(lfMidi, text = "Select a MIDI device:")
-  label.grid(row = 0, column = 0, padx = 10, pady = 1, sticky="w")
+  label = tk.Label(lfMidi, text = "Select the input device:")
+  label.grid(row = 0, column = 0, padx = 10, pady = 1, sticky = "w")
 
-  # Dropdown list for the MIDI selection
+  # List the MIDI devices, add a null MIDI interface
   midiDevices = mido.get_input_names()
   midiDevices.append("None")
-  comboMidi = ttk.Combobox(lfMidi, values = midiDevices, state = 'readonly')
+  
+  # Dropdown list for the MIDI selection
+  comboMidi = ttk.Combobox(lfMidi, values = midiDevices, state = "readonly")
   comboMidi.grid(row = 1, column = 0, padx = 10, pady = 5, sticky = "w")
-  comboMidi.set("None")
+  
+  # By default, set to the last used MIDI interface
+  if "midi_interface" in configData["DEFAULT"] :
+    if configData["DEFAULT"]["midi_interface"] in midiDevices :
+      comboMidi.set(configData["DEFAULT"]["midi_interface"])
+    else :
+      print(f"[INFO] The last used interface is not available ({configData['DEFAULT']['midi_interface']})")
+      comboMidi.set("None")
+
+  else :
+    comboMidi.set("None")
 
 
 
   # -----------------------------------------------------------------------------
-  # File selection
+  # [GUI DEFINITION] .mid/.pr file selection
   # -----------------------------------------------------------------------------
-  lfFileSel = ttk.LabelFrame(root, text = 'File input')
+  lfFileSel = ttk.LabelFrame(root, text = "File input")
   lfFileSel.grid(row=0, column = 1, padx = 10, pady = 5, sticky = "e")
 
   label2 = tk.Label(lfFileSel, text = "Filter by:")
-  label2.grid(row = 0, column = 0, padx = 3, pady = 1, sticky="w")
+  label2.grid(row = 0, column = 0, padx = 3, pady = 1, sticky = "w")
 
   fileExt = tk.StringVar()
-  r1 = ttk.Radiobutton(lfFileSel, text = ".mid file", value = ".mid", variable = fileExt, command = onRadioButtonChange)
-  r1.grid(row = 0, column = 1, padx = 1, pady = 1, sticky = "w")
-  r2 = ttk.Radiobutton(lfFileSel, text = ".pr file", value = ".pr", variable = fileExt, command = onRadioButtonChange)
-  r2.grid(row = 0, column = 2, padx = 1, pady = 1, sticky = "e")
-  fileExt.set(".mid")
+  radioButton_mid = ttk.Radiobutton(lfFileSel, text = ".mid file", value = ".mid", variable = fileExt, command = onRadioButtonChange)
+  radioButton_pr  = ttk.Radiobutton(lfFileSel, text = ".pr file" , value = ".pr" , variable = fileExt, command = onRadioButtonChange)
+  
+  radioButton_mid.grid(row = 0, column = 1, padx = 1, pady = 1, sticky = "w")
+  radioButton_pr.grid(row = 0, column = 2, padx = 1, pady = 1, sticky = "e")
 
+  # Read the last practiced song, set the .mid/.pr selection accordingly
+  if "song" in configData["DEFAULT"] :
+    if configData["DEFAULT"]["song"] in getFileList("./midi/", ".mid") + getFileList("./midi/", ".pr") :
+      (_, lastFileExt) = os.path.splitext(configData["DEFAULT"]["song"])
+
+      fileExt.set(lastFileExt)
+
+    else :
+      fileExt.set(".mid")
+
+  else :
+    fileExt.set(".mid")
+
+  
+
+  # -----------------------------------------------------------------------------
+  # [GUI DEFINITION] Dropdown list for the file selection
+  # -----------------------------------------------------------------------------
   label3 = tk.Label(lfFileSel, text = "Select a File:")
   label3.grid(row = 2, column = 0, padx = 3, pady = 1, sticky = "w")
 
-  # Dropdown list for the file selection
-  comboFile = ttk.Combobox(lfFileSel, values = [os.path.basename(file) for file in fileList], state = 'readonly')
+  comboFile = ttk.Combobox(lfFileSel, values = [], state = "readonly")
   comboFile["width"] = 80
-  comboFile.set(comboFile["values"][0])
   comboFile.grid(row = 3, column = 0, columnspan = 3, padx = 3, pady = 5, sticky = "e")
 
+  # By default, set to the last song
+  if "song" in configData["DEFAULT"] :
+    if configData["DEFAULT"]["song"] in getFileList("./midi/", ".mid") + getFileList("./midi/", ".pr") :
+      
+      fileList = getFileList("./midi/", fileExt.get())
+      comboFile["values"] = [os.path.basename(file) for file in fileList]
 
+      # Update the current selection of the combolist
+      comboFile.set(os.path.basename(configData["DEFAULT"]["song"]))
+      
+    else :
+      print(f"[INFO] The last practiced song is not available ({configData['DEFAULT']['song']})")
+      comboFile.set(comboFile["values"][0])
+
+  else :
+    comboFile.set(comboFile["values"][0])
+
+
+
+  # -----------------------------------------------------------------------------
+  # [GUI DEFINITION] OK button
+  # -----------------------------------------------------------------------------
   buttonOK = tk.Button(root, text = "Open", command = sendConf)
-  buttonOK.grid(row=1, column = 1, padx = 10, pady = 20, sticky = "e")
+  buttonOK.grid(row = 1, column = 1, padx = 10, pady = 20, sticky = "e")
   buttonOK["width"] = 20
   if (len(fileList) == 1 and fileList[0] == "None") :
     buttonOK.config(state = "disabled")
@@ -163,12 +247,20 @@ def showSetupGUI() :
     buttonOK.config(state = "normal")
 
 
+
+  # -----------------------------------------------------------------------------
+  # [GUI DEFINITION] Exit button
+  # -----------------------------------------------------------------------------
   buttonQuit = tk.Button(root, text = "Quit", command = lambda: exit(0))
   buttonQuit.grid(row=1, column = 0, padx = 10, pady = 20, sticky = "w")
   buttonQuit["width"] = 10
   buttonQuit.config(state = "normal")
 
+  
 
+  # ---------------
+  # Main event loop
+  # ---------------
   # Set the select button as the "default" button
   root.bind("<Return>", lambda event = None : buttonOK.invoke())
 
@@ -176,4 +268,16 @@ def showSetupGUI() :
 
   root.mainloop()
   
+
+  # ***** Code beyond this point is run after clicking "OK" *****
+
+  # Save conf to the .ini file  
+  configData["DEFAULT"] = {
+    "midi_interface": selectedDevice,
+    "song": selectedFile
+    }
+
+  with open("./conf/conf.ini", "w") as configfile :
+    configData.write(configfile)
+
   return (selectedDevice, selectedFile)

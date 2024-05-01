@@ -24,6 +24,8 @@ import mido   # for MIDI file manipulation
 
 import datetime
 
+import re
+
 
 
 # =============================================================================
@@ -558,7 +560,7 @@ class Score :
     for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
       for (staffIndex, _) in enumerate(self.pianoRoll) :
         for noteObj in self.pianoRoll[staffIndex][pitch] :
-          
+
           # Detect a note pressed at this timecode
           if (noteObj.startTime == self.getCurrentTimecode()) :
             
@@ -579,6 +581,9 @@ class Score :
           if ((self.getCurrentTimecode() > noteObj.startTime) and (self.getCurrentTimecode() <= noteObj.stopTime)) :
             noteObj.sustained = True
             self.teacherNotes.append(noteObj)
+
+    if (len(self.teacherNotes) == 0) :
+      print(f"[WARNING] Corrupted database: timecode is listed (t = {self.getCurrentTimecode()}), but no note was found starting at that moment.")
 
 
 
@@ -674,6 +679,8 @@ class Score :
 
     self.hasUnsavedChanges = False
 
+
+
   # ---------------------------------------------------------------------------
   # METHOD <importFromMIDIFile>
   #
@@ -698,6 +705,8 @@ class Score :
   # ---------------------------------------------------------------------------
   def _importFromMIDIFile(self, midiFile) :
 
+    print("[INFO] Processing .mid file... ", end = "")
+
     mid = mido.MidiFile(midiFile)
 
     # TODO: give more flexibility when opening MIDI files
@@ -705,7 +714,7 @@ class Score :
     # But in general MIDI files might contain more than that.
     # And in general, the user might want to map specific tracks to the staffs
     # and not only track 0 and 1.
-    print(f"[NOTE] [MIDI import] Tracks found: {len(mid.tracks)}")
+    # print(f"[NOTE] [MIDI import] Tracks found: {len(mid.tracks)}")
     self.nStaffs = len(mid.tracks)
     
     # Allocate outputs
@@ -735,7 +744,7 @@ class Score :
             # Detect if among these notes, one is still held
             for currNote in self.pianoRoll[trackNumber][pitch] :
               if (currNote.stopTime < 0) :
-                print(f"[WARNING] [MIDI import] Ambiguous note {utils.noteName(pitch)}: a keypress overlaps a note that is already being pressed.")
+                print(f"[WARNING] Ambiguous note at t = {currTime} ({utils.noteName(pitch)}): a keypress overlaps a hanging keypress on the same note.")
 
                 # New note detected: close the previous note.
                 # That is one strategy, but it might be wrong. It depends on the song.
@@ -815,7 +824,8 @@ class Score :
 
     # Estimate average note duration (needed for the piano roll display)
     self.avgNoteDuration = noteDuration/nNotes
-    print(f"[NOTE] [MIDI import] Average note duration = {self.avgNoteDuration:.1f} ticks")
+    
+    print("OK")
 
 
 
@@ -854,10 +864,20 @@ class Score :
     # exportDict["scale"] = self.scale
 
     # Convert the Note() objects to a dictionnary before pushing them in the export dict
-    exportDict["pianoRoll"] = [[[noteObj.__dict__ for noteObj in noteList] for noteList in trackList] for trackList in self.pianoRoll]
+    # exportDict["pianoRoll"] = [[[noteObj.__dict__ for noteObj in noteList] for noteList in trackList] for trackList in self.pianoRoll]
+
+    noteCount = 0
+    exportDict["pianoRoll"] = []
+    for notesInTrack in self.pianoRoll :
+      for notesInPitch in notesInTrack :
+        for noteObj in notesInPitch :
+          noteCount += 1
+          exportDict["pianoRoll"].append(noteObj.__dict__)
+
+    print(f"[DEBUG] {noteCount} notes written in .pr file.")
 
     with open(pianoRollFile, "w") as fileHandler :
-      json.dump(exportDict, fileHandler)
+      json.dump(exportDict, fileHandler, indent = 4)
 
     currTime = datetime.datetime.now()
     print(f"[NOTE] Saved to '{pianoRollFile}' at {currTime.strftime('%H:%M:%S')}")
@@ -875,8 +895,17 @@ class Score :
     with open(pianoRollFile, "r") as fileHandler :
       importDict = json.load(fileHandler)
 
-    if (f"v{REV_MAJOR}.{REV_MINOR}" != importDict["revision"]) :
-      print(f"[WARNING] [.pr import] Piano roll file was made in version {importDict['revision']}. Current version is v{REV_MAJOR}.{REV_MINOR}")
+    # Read the revision
+    versionMatch = re.match(r"^v(\d+)\.(\d+)$", importDict["revision"])
+    if versionMatch :
+      (majorRev, minorRev) = (int(versionMatch.group(1)), int(versionMatch.group(2)))
+
+    else :
+      print(f"[WARNING] No version could be read from the .pr file. Is it corrupted?")
+      # At that point, the rest of the parsing might fail.
+
+    # if (f"v{REV_MAJOR}.{REV_MINOR}" != importDict["revision"]) :
+    #   print(f"[WARNING] [.pr import] Piano roll file was made in version {importDict['revision']}. Current version is v{REV_MAJOR}.{REV_MINOR}")
 
     # Safe loading feature
     safeDict = {
@@ -917,18 +946,65 @@ class Score :
     # TODO: import the scales
     # TODO: import the loops
 
-    # Note() objects were converted to a dictionary. Convert them back to a Note object
-    self.pianoRoll = [[[] for noteList in trackList] for trackList in importDict["pianoRoll"]]
 
-    for track in range(self.nStaffs) :
-      for pitch in GRAND_PIANO_MIDI_RANGE :
-        for noteDict in importDict["pianoRoll"][track][pitch] :
-          noteObj = utils.Note(noteDict['pitch'])
+
+
+    # -----------------------------
+    # Pianoroll import - v0.X style
+    # -----------------------------
+    if (majorRev == 0) :
+      print("[INFO] Importing old school .pr file (v0.X versions)")
+
+      # Note() objects were converted to a dictionary. Convert them back to a Note object
+      self.pianoRoll = [[[] for noteList in trackList] for trackList in importDict["pianoRoll"]]
+
+      for track in range(self.nStaffs) :
+        for pitch in GRAND_PIANO_MIDI_RANGE :
+          for noteDict in importDict["pianoRoll"][track][pitch] :
+            noteObj = utils.Note(noteDict['pitch'])
+            
+            for noteAttr in noteObj.__dict__ :
+              setattr(noteObj, noteAttr, noteDict[noteAttr])
+            
+            self.pianoRoll[track][pitch].append(noteObj)
+
+
+
+    # ---------------------------------------
+    # Pianoroll import - v1.0 and above style
+    # ---------------------------------------
+    else :
+      # In version 1.0 and above, the pianoRoll is flattened.
+
+      self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
+
+      noteCount = 0
+      for noteObjDict in importDict["pianoRoll"] :
+        
+        noteObj = utils.Note(noteObjDict["pitch"])
+        
+        propDict = noteObj.__dict__.copy()
+        noteObj.id = noteObjDict["id"]; del propDict["id"]
+
+        for noteAttr in propDict :
           
-          for noteAttr in noteObj.__dict__ :
-            setattr(noteObj, noteAttr, noteDict[noteAttr])
+          # Attributes check - user might have changed them
+          if (noteAttr == "name") :
+            if (utils.noteName(noteObjDict["pitch"]) != noteObjDict["name"]) :
+              print(f"[WARNING] Note ID {noteObj.id}: MIDI pitch ({noteObjDict['pitch']}) and note name ({noteObjDict['name']}) do not agree. The pitch takes precedence, name will be overwritten to {utils.noteName(noteObjDict['pitch'])}.")
           
-          self.pianoRoll[track][pitch].append(noteObj)
+          setattr(noteObj, noteAttr, noteObjDict[noteAttr])
+
+        self.pianoRoll[noteObjDict["hand"]][noteObjDict["pitch"]].append(noteObj)
+        noteCount += 1
+
+
+
+      print(f"[DEBUG] {noteCount} notes read from .pr file.")
+
+
+
+
 
 
     print(f"[NOTE] {pianoRollFile} successfully loaded!")

@@ -23,6 +23,33 @@
 # Note: be cautious when adding variables here, as they will be exposed 
 #       everywhere else in the code without prefix ("from commons import *")
 
+
+
+# ----------------------
+# Customizable variables
+# ----------------------
+REV_MAJOR = 1
+REV_MINOR = 0
+REV_YEAR = 2024
+REV_MONTH = "May"
+
+# Piano roll settings
+# Defines roughly the number of notes to be displayed ahead from the current cursor 
+# in the piano roll
+PIANOROLL_VIEW_SPAN = 20
+
+# Theme 
+BACKGROUND_COLOR = (50, 50, 80)
+UI_TEXT_COLOR    = (200, 200, 250)
+
+#               Unused       Voice 1        Voice 2        Voice 3        Voice 4
+VOICE_COLOR = [(0, 0, 0), (0, 150, 200), (0, 200, 200), (200, 100, 0), (200, 200, 0)]
+
+# ---------------
+# Deeper settings
+# ---------------
+# These variables are linked to the app core. 
+# They should NOT be modified, unless you know what you are doing.
 LOW_KEY_MIDI_CODE = 21
 HIGH_KEY_MIDI_CODE = 108
 GRAND_PIANO_MIDI_RANGE = range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE + 1)
@@ -52,11 +79,6 @@ ACTIVE_HANDS_BOTH  = "LR"
 ACTIVE_HANDS_LEFT  = "L "
 ACTIVE_HANDS_RIGHT = " R"
 
-REV_MAJOR = 0
-REV_MINOR = 14
-REV_YEAR = 2024
-REV_MONTH = "Apr"
-
 # Size of the keys (in pixels)
 WHITE_NOTE_HEIGHT = 150
 WHITE_NOTE_WIDTH = 25
@@ -65,22 +87,12 @@ BLACK_NOTE_WIDTH = 12
 NOTE_CHANFER = 2
 NOTE_SPACING = 1
 
-# Piano roll settings
-# Defines the rough number of notes to be displayed ahead from the current cursor 
-# in the piano roll
-PIANOROLL_VIEW_SPAN = 25
-
-# [CONSTANTS] Pygame click codes
+# Pygame click codes
 MOUSE_LEFT_CLICK = 1
 MOUSE_SCROLL_UP = 4
 MOUSE_SCROLL_DOWN = 5
 
-# Theme 
-BACKGROUND_COLOR = (50, 50, 80)
-UI_TEXT_COLOR    = (200, 200, 250)
 
-#               Unused       Voice 1        Voice 2        Voice 3        Voice 4
-VOICE_COLOR = [(0, 0, 0), (0, 150, 200), (0, 200, 200), (200, 100, 0), (200, 200, 0)]
 
 # =============================================================================
 # Guards

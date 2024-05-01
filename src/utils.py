@@ -159,7 +159,7 @@ class Note :
     self.keyColor = WHITE_KEY if ((pitch % 12) in WHITE_NOTES_CODE_MOD12) else BLACK_KEY
     
     # Info relative to the pianoroll
-    self.noteIndex = noteIndex
+    self.noteIndex = noteIndex      # Index of the note in this pitch
     self.startTime = startTime
     self.stopTime = stopTime
     self.sustained = False          # True if the note is held at a given time (note will be ignored by the arbiter)

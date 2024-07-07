@@ -29,9 +29,9 @@
 # Customizable variables
 # ----------------------
 REV_MAJOR = 1
-REV_MINOR = 1
+REV_MINOR = 2
 REV_YEAR = 2024
-REV_MONTH = "May"
+REV_MONTH = "July"
 
 # Piano roll settings
 # Defines roughly the number of notes to be displayed ahead from the current cursor 

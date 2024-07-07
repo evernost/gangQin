@@ -46,7 +46,6 @@ FSM_STATE_NORMAL = 0
 # =============================================================================
 # Main code 
 # =============================================================================
-
 class Score :
 
   def __init__(self) :
@@ -140,7 +139,6 @@ class Score :
       if (self.activeHands == ACTIVE_HANDS_BOTH) :
         if ((self.cursor + delta) <= (len(self.noteOntimecodesMerged)-1)) :
           self.cursor += delta
-          # print(f"[INFO] Cursor: {self.cursor}")
 
       if (self.activeHands == ACTIVE_HANDS_LEFT) :
         try :
@@ -150,7 +148,6 @@ class Score :
           
         if ((index + delta) <= (len(self.cursorsLeft)-1)) :
           self.cursor = self.cursorsLeft[index + delta]
-          # print(f"[INFO] Cursor: {self.cursor}")
 
       if (self.activeHands == ACTIVE_HANDS_RIGHT) :
         try :
@@ -160,14 +157,12 @@ class Score :
           
         if ((index + delta) <= (len(self.cursorsRight)-1)) :
           self.cursor = self.cursorsRight[index + delta]
-          # print(f"[INFO] Cursor: {self.cursor}")
 
     else :
 
       if (self.activeHands == ACTIVE_HANDS_BOTH) :
         if ((self.cursor + delta) >= 0) :
           self.cursor += delta
-          # print(f"[INFO] Cursor: {self.cursor}")
 
       if (self.activeHands == ACTIVE_HANDS_LEFT) :
         try :
@@ -177,7 +172,6 @@ class Score :
           
         if ((index + delta) >= 0) :
           self.cursor = self.cursorsLeft[index + delta]
-          # print(f"[INFO] Cursor: {self.cursor}")
 
       if (self.activeHands == ACTIVE_HANDS_RIGHT) :
         try :
@@ -187,7 +181,6 @@ class Score :
           
         if (index + delta >= 0) :
           self.cursor = self.cursorsRight[index + delta]
-          # print(f"[INFO] Cursor: {self.cursor}")
 
 
 
@@ -215,6 +208,7 @@ class Score :
 
     if (self.comboCount > self.comboHighestAllTime) :
       self.comboHighestAllTime = self.comboCount
+
 
 
   # ---------------------------------------------------------------------------
@@ -496,7 +490,11 @@ class Score :
 
 
 
-
+  # ---------------------------------------------------------------------------
+  # METHOD <setLoopStart>
+  #
+  # Defines the cursor at which the loop shall start.
+  # ---------------------------------------------------------------------------
   def setLoopStart(self) :
     
     # Loop end is not yet defined
@@ -512,7 +510,11 @@ class Score :
 
 
 
-
+  # ---------------------------------------------------------------------------
+  # METHOD <setLoopEnd>
+  #
+  # Defines the cursor at which the loop shall end.
+  # ---------------------------------------------------------------------------
   def setLoopEnd(self) :
     
     # Loop start is not yet defined
@@ -527,7 +529,6 @@ class Score :
         self.cursor = self.loopStart
         print(f"[NOTE] Loop set: start = {self.loopStart+1} / end = {self.loopEnd+1}")
   
-
 
 
   def clearLoop(self) :
@@ -650,9 +651,6 @@ class Score :
       self.noteOntimecodes[destHand].remove(note.startTime)
 
     
-    
-
-
 
   # ---------------------------------------------------------------------------
   # METHOD <toggleRehearsalMode>
@@ -1001,11 +999,6 @@ class Score :
 
 
       print(f"[DEBUG] {noteCount} notes read from .pr file.")
-
-
-
-
-
 
     print(f"[NOTE] {pianoRollFile} successfully loaded!")
     

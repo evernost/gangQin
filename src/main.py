@@ -16,7 +16,6 @@
 
 # Mandatory:
 # - during MIDI import: ask the user which tracks to use (there might be more than 2)
-# - fingerSelGui should be visible and have focus 
 # - allow the user to transfer a note from one hand to the other
 #   That involves inserting a note in <noteOnTimecodes>
 # - loop timer: as soon as the first note of the loop is played, start a timer
@@ -27,7 +26,6 @@
 
 # Nice to have:
 # - funky animation everytime the right notes are played
-# - inform the user somehow that he is not playing the expected note
 # - patch the obscure variable names in keyboardUtils
 # - add a play button to hear some sections
 # - <drawPianoRoll>: compute polygons once for all. Don't recompute them if time code hasn't changed
@@ -43,31 +41,6 @@
 # Later:
 # - change the framework, use pyqt instead
 # - complete the font library (fontUtils.py)
-# - a dropdown list with all .mid/.pr files found instead of changing manually the variable
-# - <midiCallback>: handle MIDI keyboards that send <noteON> messages with 0 velocity as a <noteOFF>
-
-# Done:
-# - bug fix: allow to play again the last note
-# - highlight the activeNote ie the note whose finger is currently being associated
-# - allow the user to practice hands separately
-# - allow user to set the finger using numbers on the keypad
-# - CTRL + mouse scroll has step 10 instead of 1
-# - loop feature between 2 bookmarks
-# - add a fast forward option
-# - draw the piano roll
-# - handle properly the case of no MIDI interface selected (navigation mode)
-# - add shortcut to jump to the first / last note
-# - if a note is played on the keyboard, the note is correct but isn't enough to progress in 
-#   the song (eg another note is missing) the colors overlap.
-# - allow the user to play the requested notes while sustaining the previous ones
-# - patch the bad exit behavior upon pressing "q"
-# - import/export the piano roll and all the metadata
-# - note select for an edit shall have a hitbox that spans the entire key. Not only the lit part.
-# - allow the user to edit note properties (finger)
-# - when editing the finger of an unedited note, FingerSelector shall be set 
-#   on a default selector that matches with the hand of the note
-# - issue: some notes from the teacher are shown in grey.
-# - add "if __main__" in all libs
 
 
 
@@ -133,7 +106,7 @@ pygame.init()
 
 # Define screen dimensions
 screenWidth = 1320
-screenHeight = 600
+screenHeight = 500
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 
 # Time management
@@ -159,15 +132,22 @@ pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}
 # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
 pygame.key.set_repeat(250, 50)
 
-
+# Audio notifications widget
 soundNotify = notify.Notify()
+
+
 
 # =============================================================================
 # Open MIDI keyboard interface
 # =============================================================================
-midiCurr = [0 for _ in range(128)]
-midiSustained = [0 for _ in range(128)]
-midiSuperfluous = [0 for _ in range(128)]
+# - midiCurr     : state of all the notes on the MIDI keyboard
+# - midiSustained: '1' for all notes that were correct in the score, but have been 
+#                  sustained since then.
+# - midiSuperfluous: 
+# - midiAssociatedID: 
+midiCurr         = [0 for _ in range(128)]
+midiSustained    = [0 for _ in range(128)]
+midiSuperfluous  = [0 for _ in range(128)]
 midiAssociatedID = [-1 for _ in range(128)]
 
 # Define the MIDI callback
@@ -180,7 +160,6 @@ def midiCallback(message) :
     midiSustained[message.note] = 0 # this note cannot be considered as sustained anymore
     midiSuperfluous[message.note] = 0
     midiAssociatedID[message.note] = -1
-
 
 if (conf.selectedDevice != "None") :
   midiPort = mido.open_input(conf.selectedDevice, callback = midiCallback)
@@ -196,10 +175,11 @@ else :
 running = True
 
 clickMsg = False
-ctrlKey = False
+ctrlKey  = False
+altKey   = False
 
 comboCount = 0
-comboDrop = False
+comboDrop  = False
 
 setFingersatzMsg = -1
 
@@ -212,12 +192,14 @@ while running :
     # Keyboard event handling
     # -------------------------------------------------------------------------
     if (event.type == pygame.KEYUP) :
-      keys = pygame.key.get_pressed()
+      keys    = pygame.key.get_pressed()
       ctrlKey = event.mod & pygame.KMOD_CTRL
+      altKey  = event.mod & pygame.KMOD_ALT
     
     if (event.type == pygame.KEYDOWN) :
-      keys = pygame.key.get_pressed()
+      keys    = pygame.key.get_pressed()
       ctrlKey = event.mod & pygame.KMOD_CTRL
+      altKey  = event.mod & pygame.KMOD_ALT
 
       # -----------------
       # "q": exit the app
@@ -233,8 +215,14 @@ while running :
       # ----------------------------------
       # Left arrow: jump backward (1 step)
       # ----------------------------------
-      if (keys[pygame.K_LEFT] and not(ctrlKey)) :
+      if (keys[pygame.K_LEFT] and not(ctrlKey) and not(altKey)) :
         userScore.cursorStep(-1)
+
+      # ----------------------------------
+      # Right arrow: jump forward (1 step)
+      # ----------------------------------
+      if (keys[pygame.K_RIGHT] and not(ctrlKey) and not(altKey)) :
+        userScore.cursorStep(1)
 
       # -----------------------------------------
       # CTRL + Left arrow: fast rewind (10 steps)
@@ -242,17 +230,23 @@ while running :
       if (keys[pygame.K_LEFT] and ctrlKey) :
         userScore.cursorStep(-10)
 
-      # ----------------------------------
-      # Right arrow: jump forward (1 step)
-      # ----------------------------------
-      if (keys[pygame.K_RIGHT] and not(ctrlKey)) :
-        userScore.cursorStep(1)
-
       # -------------------------------------------
       # CTRL + right arrow: fast forward (10 steps)
       # -------------------------------------------
       if (keys[pygame.K_RIGHT] and ctrlKey) :
         userScore.cursorStep(10)
+
+      # ------------------------------------------
+      # ALT + Left arrow: highlight the note below
+      # ------------------------------------------
+      if (keys[pygame.K_LEFT] and altKey) :
+        print("[TODO]")
+
+      # -------------------------------------------
+      # ALT + Right arrow: highlight the note above
+      # -------------------------------------------
+      if (keys[pygame.K_LEFT] and altKey) :
+        print("[TODO]")
 
       # ---------------------------------------
       # HOME: jump to the beginning of the file
@@ -667,7 +661,6 @@ while running :
     if (userScore.getCursor() != fingerSelWidget.editedCursor) :
       fingerSelWidget.resetEditedNote()
   
-
 
 
   # Request to edit the fingersatz with automatic note highlighting

@@ -2,14 +2,15 @@
 Piano learning app, for those who can't read music scores.
 
 ## Features (current release)
-- Scores imported from MIDI files
-- Bookmarking: navigate from one section to the other
-- _fingersatz_ edition and display
-- Loop practice mode
-- Single hand practice mode
-- Keyboard dynamically highlights some of its notes based on the key of the current section
-- Annotated score with all user info can be saved/restored in a human readable file (JSON)
-- Combo counter: how many corrects notes in a row
+- **MIDI import**: scores can be imported from standard MIDI files
+- **Bookmarking**: navigate quickly from one section to the other without scrolling the entire song
+- **_fingersatz_**: edit and display the finger to use for each note
+- **Loop practice**: define the location of the complex section, play it on repeat
+- **Single hand practice**: practice the left or right hand only
+- **Key highlight**: highlight the notes associated to the current key of the song. Highlighting changes dynamically if there are key changes
+- **Readable work file**: annotated score, bookmarks, fingersatz, ... are saved in a human readable file (JSON)
+- **Combo counter**: keep track of the number of correct notes played in a row
+- **Quick find**: a given chord whose location is unknown can be found just pressing the query chord on the MIDI keyboard.
 
 ## Upcoming features
 - Note 'lookahead' display
@@ -24,11 +25,11 @@ Piano learning app, for those who can't read music scores.
 
 ## Requirements
 
-- pygame (tested with version 2.6)
-- shapely (tested with version 2.0.4)
-- playsound
+- **pygame** (tested with version 2.6)
+- **shapely** (tested with version 2.0.4)
+- **playsound**
   - pip install --upgrade setuptools wheel
   - pip install playsound
-- mido (tested with version 1.3.2)
-- rtmidi (tested with version 1.5.8)
+- **mido** (tested with version 1.3.2)
+- **rtmidi** (tested with version 1.5.8)
   - pip install python-rtmidi

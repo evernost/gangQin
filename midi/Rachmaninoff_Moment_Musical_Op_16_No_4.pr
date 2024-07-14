@@ -1,8 +1,8 @@
 {
-    "revision": "v1.1",
+    "revision": "v1.2",
     "nStaffs": 2,
     "avgNoteDuration": 141.67146367146367,
-    "cursor": 0,
+    "cursor": 302,
     "noteOntimecodes": [
         [
             3720,
@@ -6414,7 +6414,7 @@
         515
     ],
     "activeHands": "LR",
-    "comboHighestAllTime": 223,
+    "comboHighestAllTime": 253,
     "pianoRoll": [
         {
             "pitch": 30,
@@ -15487,7 +15487,7 @@
             "noteIndex": 22,
             "startTime": 23040,
             "stopTime": 23600,
-            "sustained": false,
+            "sustained": true,
             "highlight": false,
             "inactive": false,
             "disabled": false,
@@ -18964,7 +18964,7 @@
             "noteIndex": 3,
             "startTime": 23040,
             "stopTime": 23520,
-            "sustained": false,
+            "sustained": true,
             "highlight": false,
             "inactive": false,
             "disabled": false,

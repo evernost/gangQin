@@ -454,7 +454,8 @@ while running :
   # Show the notes expected to be played at that time
   # -------------------------------------------------
   # TODO: <getTeacherNotes> must cache the teacher notes instead of building them at each call.
-  keyboardWidget.keyPress(screen, userScore.getTeacherNotes())
+  teacherNotes = userScore.getTeacherNotes()
+  keyboardWidget.keyPress(screen, teacherNotes)
 
   # -------------------------------------------------
   # Show the current key pressed on the MIDI keyboard
@@ -650,7 +651,7 @@ while running :
       fu.renderText(screen, f"LOOP: [_  ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (300, 20), 2, UI_TEXT_COLOR)
       
   # Cursor info
-  fu.renderText(screen, f"CURSOR: {userScore.cursor+1}", (12, 20), 2, UI_TEXT_COLOR)
+  fu.renderText(screen, f"CURSOR: {userScore.cursor+1} / {userScore.cursorMax+1}", (12, 20), 2, UI_TEXT_COLOR)
 
   # Combo info
   fu.renderText(screen, f"COMBO: {userScore.comboCount} (MAX: {userScore.comboHighestSession} / ALLTIME: {userScore.comboHighestAllTime})", (800, 20), 2, UI_TEXT_COLOR)
@@ -665,7 +666,6 @@ while running :
 
   # Request to edit the fingersatz with automatic note highlighting
   if (setFingersatzMsg > 0) :
-    
     fingerSelWidget.setFingerAutoHighlight(setFingersatzMsg, userScore.teacherNotes, userScore.activeHands)
     setFingersatzMsg = -1
 

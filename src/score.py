@@ -445,11 +445,11 @@ class Score :
     # Is it an existing bookmark?
     if self.cursor in self.bookmarks :
       self.bookmarks = [x for x in self.bookmarks if (x != self.cursor)]
-      print(f"[NOTE] Bookmark removed at time {self.cursor}")
+      print(f"[NOTE] Bookmark removed at cursor {self.getCursor()+1}")
     
     # New bookmark
     else :
-      print(f"[NOTE] Bookmark added at cursor {self.getCursor()} (timecode = {self.getCurrentTimecode()})")
+      print(f"[NOTE] Bookmark added at cursor {self.getCursor()+1}")
       self.bookmarks.append(self.cursor)
       self.bookmarks.sort()
 
@@ -807,6 +807,7 @@ class Score :
     timecodesMerged = [item for sublist in self.noteOntimecodes for item in sublist]
     timecodesMerged = list(set(timecodesMerged))
     self.noteOntimecodesMerged = sorted(timecodesMerged)
+    self.cursorMax = len(self.noteOntimecodesMerged)-1
 
     # The variable pointing in the <noteOntimecodesMerged> is called the "cursor" of the score.
     # This section lists the values of the cursor for which a noteOn event occured 
@@ -940,6 +941,8 @@ class Score :
     self.activeHands            = safeDict["activeHands"]
 
     self.comboHighestAllTime    = safeDict["comboHighestAllTime"]
+
+    self.cursorMax = len(self.noteOntimecodesMerged)-1
 
     # TODO: import the scales
     # TODO: import the loops

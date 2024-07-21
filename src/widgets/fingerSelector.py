@@ -71,12 +71,11 @@ class FingerSelector :
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD <show>
-  #
-  # Show the finger selection widget.
-  # ---------------------------------------------------------------------------
   def show(self, screen) :
+    """
+    Render the finger selection widget on screen.
+    Screen object (in a Pygame sense) must be provided as argument.
+    """
     if (self.visible) :
       labels = ["5 ", "4 ", "3 ", "2 ", "1 ", "- ", "- ", "1 ", "2 ", "3 ", "4 ", "5 "]
       
@@ -106,14 +105,12 @@ class FingerSelector :
     
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD <setEditedNote>
-  #
-  # Define the note whose properties are shown in the finger selector.
-  # A cursor value can be stored along with the note so that it is easier to 
-  # show/hide the widget in a specific context.
-  # ---------------------------------------------------------------------------
   def setEditedNote(self, noteObj, cursor = -1) :
+    """
+    Defines the note whose properties are shown in the finger selector.
+    A cursor value can be stored along with the note so that it is easier to 
+    show/hide the widget in a specific context.
+    """
     self._setCurrentSel(noteObj.finger, noteObj.hand)
     if (self.editedNote != None) :
       self.editedNote.highlight = False
@@ -124,12 +121,10 @@ class FingerSelector :
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD <getEditedNote>
-  #
-  # TODO
-  # ---------------------------------------------------------------------------
   def getEditedNote(self) :
+    """
+    TODO
+    """
     return self.editedNote
 
 
@@ -190,24 +185,27 @@ class FingerSelector :
     return FINGERSEL_UNCHANGED
   
 
-
-
   # ---------------------------------------------------------------------------
-  # METHOD <setFingerAutoHighlight>
-  #
-  # TODO
+  # METHOD <FingerSelector.setFingerAutoHighlight>
   # ---------------------------------------------------------------------------
-  def setFingerAutoHighlight(self, setFingersatzMsg, teacherNotes, activeHands) :
+  def setFingerAutoHighlight(self, fingerNumber, teacherNotes, activeHands) :
+    """
+    Takes a finger index, the context. Assigns the finger index to the relevant
+    note.
     
+    
+    """
+
     # Sustained notes are not eligible to the note auto highlight
     activeNotes = [x for x in teacherNotes if not(x.sustained)]
 
+    # Find a note that does not have a finger assigned yet
     if (len(activeNotes) > 1) :
       singleHandContent = True
       for x in activeNotes[1:] :
         if (x.hand != activeNotes[0].hand) :
           singleHandContent = False
-          break    
+          break
     
     else :
       singleHandContent = True
@@ -226,8 +224,8 @@ class FingerSelector :
       
       else :
         self.setEditedNote(tmp[0])
-        self.setFinger(setFingersatzMsg)
-        setFingersatzMsg = -1
+        self.setFinger(fingerNumber)
+        fingerNumber = -1
 
 
 

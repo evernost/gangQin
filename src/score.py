@@ -3,7 +3,8 @@
 # Project       : gangQin
 # Module name   : score
 # File name     : score.py
-# Purpose       : provides an abstraction to a music score
+# File type     : Python script (Python 3)
+# Purpose       : provides the functions to interact with the music score
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : October 5th, 2023
 # -----------------------------------------------------------------------------
@@ -39,7 +40,7 @@ if (__name__ == "__main__") :
 # =============================================================================
 # Constants pool
 # =============================================================================
-FSM_STATE_NORMAL = 0
+# None.
 
 
 
@@ -50,7 +51,7 @@ class Score :
 
   def __init__(self) :
     
-    # Info about the score
+    # General information about the score
     self.nStaffs = 0
     self.avgNoteDuration = 0
     self.hasUnsavedChanges = False
@@ -58,6 +59,10 @@ class Score :
     # Current location in the score
     self.cursor = 0
     self.pianoRoll = []
+
+    self.scoreLength = 0              # TODO!
+    self.scoreLengthLeft = 0          # TODO!
+    self.scoreLengthRight = 0         # TODO!
 
     self.noteOntimecodes = [[]]       # List of all <noteON> timecodes, one for each staff
     self.noteOntimecodesMerged = []   # Merge of <self.timecodes> on all staves
@@ -81,6 +86,9 @@ class Score :
     self.arbiterPitchListHold = []
 
     # Combo!
+    # Resets every time a wrong note is played.
+    # Keeps track of the best scores achieved
+    # TODO: remove it from the Score class
     self.comboCount = 0
     self.comboDrop = False
     self.comboHighestSession = 0
@@ -95,56 +103,79 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <getCursor>
-  #
-  # Return the current cursor position. 
+  # METHOD Score.getCursor()
   # ---------------------------------------------------------------------------
   def getCursor(self) :
+    """
+    Returns the cursor of the current location in the score.
+    """
     return self.cursor
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <getCurrentTimecode>
-  #
-  # TODO for the single hand practice
+  # METHOD Score.getCurrentTimecode()
   # ---------------------------------------------------------------------------
   def getCurrentTimecode(self) :
+    """
+    Returns the MIDI timecode of the current location in the score.
+    """
+    
+    # TODO: incorrect for single hand practice mode!
     return self.noteOntimecodesMerged[self.cursor]
 
 
 
-  
+  # ---------------------------------------------------------------------------
+  # METHOD Score.setTimecodes()
+  # ---------------------------------------------------------------------------
   def setTimecodes(self, timecodes) :
+    """
+    TODO
+    """
+    
     self.noteOntimecodes = timecodes
 
-    # Update <cursor> too as it might not be valid anymore
+    # TODO: update <cursor> too as it might not be valid anymore
     # ...
 
 
+
   # ---------------------------------------------------------------------------
-  # METHOD <cursorStep>
-  #
-  # Increase / decrease the cursor value of a given step (positive or negative)
-  # Notes: 
-  # - the cursor jumps regardless of the loop mode.
-  #   Use <cursorNext> to take the loop info into account and wrap accordingly
-  # - the cursor moves depending on the current hand practice mode. 
-  #   So the cursor might jump non linearly in single hand mode.
+  # METHOD Score.cursorStep(delta)
   # ---------------------------------------------------------------------------
   def cursorStep(self, delta) :
-  
+    """
+    Increases / decreases the cursor value with a step (positive or negative)
+    
+    Cursor value clamps to the allowed range no matter the step given.
+    
+    NOTES
+    - The jump ignores any loop settings i.e. it does not wrap if the step
+      sets the cursor beyond the end of the loop.
+      Use <cursorNext> instead to take the loop into account and wrap accordingly.
+    - The cursor steps depending on the current hand practice mode. 
+      In single hand mode, the jump will not be linear!
+    """
+    
     if (delta > 0) :
 
       if (self.activeHands == ACTIVE_HANDS_BOTH) :
+        
+        # TODO: use <scoreLength> instead of "len(noteOntimecodesMerged)"
         if ((self.cursor + delta) <= (len(self.noteOntimecodesMerged)-1)) :
           self.cursor += delta
 
+
+      # SINGLE HAND PRACTICE
+      # Retrieve the index in the <cursorsLeft/Right> array that corresponds to 
+      # the current location.
+      # If it fails, something wrong has happened.
       if (self.activeHands == ACTIVE_HANDS_LEFT) :
         try :
           index = self.cursorsLeft.index(self.cursor)
         except :
-          print("[DEBUG] The current cursor is not aligned to browse the left hand.")
+          print("[INTERNAL ERROR] Left hand practice is active, but there is no event on the left hand at this cursor. Cannot browse from here!")
           
         if ((index + delta) <= (len(self.cursorsLeft)-1)) :
           self.cursor = self.cursorsLeft[index + delta]
@@ -153,7 +184,7 @@ class Score :
         try :
           index = self.cursorsRight.index(self.cursor)
         except :
-          print("[DEBUG] The current cursor is not aligned to browse the right hand.")
+          print("[INTERNAL ERROR] Right hand practice is active, but there is no event on the right hand at this cursor. Cannot browse from here!")
           
         if ((index + delta) <= (len(self.cursorsRight)-1)) :
           self.cursor = self.cursorsRight[index + delta]
@@ -164,11 +195,16 @@ class Score :
         if ((self.cursor + delta) >= 0) :
           self.cursor += delta
 
+
+      # SINGLE HAND PRACTICE
+      # Retrieve the index in the <cursorsLeft/Right> array that corresponds to 
+      # the current location.
+      # If it fails, something wrong has happened.
       if (self.activeHands == ACTIVE_HANDS_LEFT) :
         try :
           index = self.cursorsLeft.index(self.cursor)
         except :
-          print("[DEBUG] The current cursor is not aligned to browse the left hand.")
+          print("[INTERNAL ERROR] Left hand practice is active, but there is no event on the left hand at this cursor. Cannot browse from here!")
           
         if ((index + delta) >= 0) :
           self.cursor = self.cursorsLeft[index + delta]
@@ -177,7 +213,7 @@ class Score :
         try :
           index = self.cursorsRight.index(self.cursor)
         except :
-          print("[DEBUG] The current cursor is not aligned to browse the right hand.")
+          print("[INTERNAL ERROR] Right hand practice is active, but there is no event on the right hand at this cursor. Cannot browse from here!")
           
         if (index + delta >= 0) :
           self.cursor = self.cursorsRight[index + delta]
@@ -185,11 +221,18 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <cursorNext>
-  #
-  # Increase the cursor value of +1 step, with wrapping if loop mode is enabled
+  # METHOD Score.cursorNext()
   # ---------------------------------------------------------------------------
   def cursorNext(self) :
+    """
+    Jumps to the next cursor, wraps if any loop applies.
+    
+    The function takes into account the practice hands (both or single).
+    In single hand practice mode, it jumps automatically to the 'correct' next
+    cursor.
+    
+    Equivalent to 'cursorStep(1)', but takes the loop into account.
+    """
 
     if self.loopEnable :
       if ((self.cursor + 1) <= self.loopEnd) :
@@ -212,11 +255,18 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <cursorAlignToHand>
-  #
-  # Return the first compatible value right after the current location.
+  # METHOD Score.cursorAlignToHand()
   # ---------------------------------------------------------------------------
   def cursorAlignToHand(self, hand, direction = 0) :
+    """
+    Sets the cursor to the closest location that is compatible with the current
+    single hand practice mode.
+
+    If direction > 0, it looks for a compatible location forward.
+    If direction < 0, it looks for a compatible location backward.
+    If direction == 0, it looks for the closest compatible location (default behaviour)
+
+    """
     
     if (hand == LEFT_HAND) :
     
@@ -262,17 +312,23 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <cursorBegin>
-  #
-  # Set the cursor to the beginning of the score
+  # METHOD Score.cursorBegin()
   # ---------------------------------------------------------------------------
   def cursorBegin(self) :
-    
-    # If the loop mode is enabled, we want to go back to the beginning of the loop
+    """
+    Sets the cursor to the beginning of the score.
+
+    If loop practice is active, it jumps to the beginning of the loop.
+    """
+
+    # If the loop mode is enabled: go back to the beginning of the loop
     if (self.loopEnable and (self.cursor >= self.loopStart)) :
+      
+      # TODO: setting the cursor shall be protected depending on the active hand.
+      # Directly setting the cursor must be forbidden.
       self.cursor = self.loopStart
     
-    # Otherwise just set the cursor home
+    # Otherwise: set the cursor home
     else :
       if (self.activeHands == ACTIVE_HANDS_RIGHT) :
         self.cursor = self.cursorsRight[0]
@@ -284,12 +340,16 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <cursorEnd>
-  #
-  # Set the cursor to the end of the score
+  # METHOD Score.cursorEnd()
   # ---------------------------------------------------------------------------
   def cursorEnd(self) :
+    """
+    Sets the cursor to the end of the score.
+
+    If loop practice is active, it jumps to the end of the loop.
+    """
     
+    # If the loop mode is enabled: go back to the end of the loop
     if (self.loopEnable and (self.cursor <= self.loopEnd)) :
       self.cursor = self.loopEnd
     

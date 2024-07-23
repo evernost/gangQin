@@ -39,7 +39,7 @@ REV_MONTH = "July"
 PIANOROLL_VIEW_SPAN = 20
 
 # Theme 
-BACKGROUND_COLOR = (80, 50, 80)
+BACKGROUND_COLOR = (10, 50, 120)
 UI_TEXT_COLOR    = (200, 200, 250)
 
 #               Unused       Voice 1        Voice 2        Voice 3        Voice 4

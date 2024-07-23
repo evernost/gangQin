@@ -236,7 +236,7 @@ def showSetupGUI() :
   # -----------------------------------------------------------------------------
   # [GUI DEFINITION] OK button
   # -----------------------------------------------------------------------------
-  buttonOK = tk.Button(root, text = "Open", command = sendConf)
+  buttonOK = tk.Button(root, text = "Start", command = sendConf, default = tk.ACTIVE)
   buttonOK.grid(row = 1, column = 1, padx = 10, pady = 20, sticky = "e")
   buttonOK["width"] = 20
   if (len(fileList) == 1 and fileList[0] == "None") :

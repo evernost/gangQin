@@ -127,13 +127,14 @@ pianoRollWidget.loadPianoRoll(userScore.pianoRoll)
 pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
 
 # Create window
-pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH} {REV_YEAR}) - <{os.path.basename(selectedFile)}>")
+pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{os.path.basename(selectedFile)}>")
 
 # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
 pygame.key.set_repeat(250, 50)
 
 # Audio notifications widget
 soundNotify = notify.Notify()
+soundNotify.enabled = False
 
 
 
@@ -389,7 +390,7 @@ while running :
         (rootName, _) = os.path.splitext(rootNameExt)
         newName = rootDir + '/' + rootName + ".pr"
         userScore.exportToPrFile(newName)
-        pygame.display.set_caption(f"gangQin App - v{REV_MAJOR}.{REV_MINOR} ({REV_MONTH}. {REV_YEAR}) - <{rootName}.pr>")
+        pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{rootName}.pr>")
 
       # -------------------------
       # Space key: rehearsal mode
@@ -416,7 +417,7 @@ while running :
         # Note : use a copy of the MIDI notes list to prevent the 
         #        MIDI callback to mess with the function.
         if (max(midiCurr) == 1) :
-          userScore.cursorJumpToNextMatch(midiCurr.copy())
+          userScore.search(midiCurr.copy())
         elif ctrlKey :
           userScore.cursorStep(10)
         else :
@@ -427,7 +428,7 @@ while running :
         
         # Find feature
         if (max(midiCurr) == 1) :
-          userScore.cursorJumpToNextMatch(midiCurr.copy(), direction = -1)
+          userScore.search(midiCurr.copy(), direction = -1)
         elif ctrlKey :
           userScore.cursorStep(-10)
         else :
@@ -453,7 +454,6 @@ while running :
   # -------------------------------------------------
   # Show the notes expected to be played at that time
   # -------------------------------------------------
-  # TODO: <getTeacherNotes> must cache the teacher notes instead of building them at each call.
   teacherNotes = userScore.getTeacherNotes()
   keyboardWidget.keyPress(screen, teacherNotes)
 
@@ -634,7 +634,7 @@ while running :
   # Print some info relative to the current time
   # --------------------------------------------
   # Bookmark info
-  if userScore.isBookmarkedTimecode() :
+  if userScore.isBookmarked() :
     fu.renderText(screen, f"BOOKMARK #{userScore.bookmarks.index(userScore.getCursor()) + 1}", (10, 470), 2, UI_TEXT_COLOR)
 
   # Active hand info

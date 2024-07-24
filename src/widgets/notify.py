@@ -56,26 +56,28 @@ if (__name__ == "__main__") :
 class Notify :
 
   def __init__(self) :
+    
+    self.enabled = False
+    
     self.wrongNoteFlag = False
     self.loopPassedFlag = False
 
     
-
-
 
   # ---------------------------------------------------------------------------
   # Wrong note notification sound
   # ---------------------------------------------------------------------------
   def wrongNote(self) :
 
-    if not(self.wrongNoteFlag) :
+    if (self.enabled) :
+      if not(self.wrongNoteFlag) :
+        
+        file = random.choice(WRONG_SOUND_FILES)
+        
+        playsound.playsound(SOUND_DIR + "/" + file, False)
       
-      file = random.choice(WRONG_SOUND_FILES)
-      
-      playsound.playsound(SOUND_DIR + "/" + file, False)
-    
-      # Prevent from repeated plays
-      self.wrongNoteFlag = True
+        # Prevent from repeated plays
+        self.wrongNoteFlag = True
 
 
 

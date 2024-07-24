@@ -44,11 +44,29 @@ if (__name__ == "__main__") :
 
 
 
-# =============================================================================
-# Main code 
-# =============================================================================
+
 class Score :
 
+  """
+  DESCRIPTION
+  
+  
+  Score is read from a MIDI file
+  
+  A MIDI file assigns each event (note on/note off) to a timestamp.
+  
+  The timestamp essentially depends on the tempo that has been defined, the duration
+  of the note, etc.
+  
+  - <noteOntimecodes> = [[int, int, ...], [int, int, ...]]
+  The list contains 2 sublists: 1 for the left hand, 1 for the right hand.
+  Each sublist contains all the timecodes where a keypress event has been registered.
+  
+  
+  - <noteOntimecodesMerged> = [int, int, int, ...]
+  Same as <noteOntimecodes>, but left and right hand timecodes have been merged.
+
+  """
   def __init__(self) :
     
     # General information about the score
@@ -146,8 +164,9 @@ class Score :
   # ---------------------------------------------------------------------------
   def cursorStep(self, delta) :
     """
-    Increases / decreases the cursor value with a step (positive or negative)
+    Jumps in the score with a step (positive or negative)
     
+    Jump is done by adding/subtracting the step to the cursor value.
     Cursor value clamps to the allowed range no matter the step given.
     
     NOTES
@@ -155,17 +174,16 @@ class Score :
       sets the cursor beyond the end of the loop.
       Use <cursorNext> instead to take the loop into account and wrap accordingly.
     - The cursor steps depending on the current hand practice mode. 
-      In single hand mode, the jump will not be linear!
+      In single hand practice mode, the jump will not be linear!
     """
     
     if (delta > 0) :
 
+      # BOTH HAND PRACTICE
       if (self.activeHands == ACTIVE_HANDS_BOTH) :
         
-        # TODO: use <scoreLength> instead of "len(noteOntimecodesMerged)"
-        if ((self.cursor + delta) <= (len(self.noteOntimecodesMerged)-1)) :
+        if ((self.cursor + delta) <= self.cursorMax) :
           self.cursor += delta
-
 
       # SINGLE HAND PRACTICE
       # Retrieve the index in the <cursorsLeft/Right> array that corresponds to 
@@ -191,10 +209,10 @@ class Score :
 
     else :
 
+      # BOTH HAND PRACTICE
       if (self.activeHands == ACTIVE_HANDS_BOTH) :
         if ((self.cursor + delta) >= 0) :
           self.cursor += delta
-
 
       # SINGLE HAND PRACTICE
       # Retrieve the index in the <cursorsLeft/Right> array that corresponds to 
@@ -226,6 +244,8 @@ class Score :
   def cursorNext(self) :
     """
     Jumps to the next cursor, wraps if any loop applies.
+    
+    The jump takes into account the active hands.
     
     The function takes into account the practice hands (both or single).
     In single hand practice mode, it jumps automatically to the 'correct' next
@@ -260,7 +280,7 @@ class Score :
   def cursorAlignToHand(self, hand, direction = 0) :
     """
     Sets the cursor to the closest location that is compatible with the current
-    single hand practice mode.
+    hand practice mode.
 
     If direction > 0, it looks for a compatible location forward.
     If direction < 0, it looks for a compatible location backward.
@@ -325,7 +345,7 @@ class Score :
     if (self.loopEnable and (self.cursor >= self.loopStart)) :
       
       # TODO: setting the cursor shall be protected depending on the active hand.
-      # Directly setting the cursor must be forbidden.
+      # Directly setting the cursor is dangerous.
       self.cursor = self.loopStart
     
     # Otherwise: set the cursor home
@@ -351,6 +371,9 @@ class Score :
     
     # If the loop mode is enabled: go back to the end of the loop
     if (self.loopEnable and (self.cursor <= self.loopEnd)) :
+      
+      # TODO: setting the cursor shall be protected depending on the active hand.
+      # Directly setting the cursor is dangerous.
       self.cursor = self.loopEnd
     
     # Otherwise just set the cursor to the end
@@ -365,13 +388,14 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <cursorJumpToNextMatch>
-  #
-  # Search feature: move the cursor to the next location where the given notes
-  # appear in the score.
-  # Direction of search can be specified.
+  # METHOD Score.search(noteList, direction)
   # ---------------------------------------------------------------------------
-  def cursorJumpToNextMatch(self, noteList, direction = 1) :
+  def search(self, noteList, direction = 1) :
+    """
+    Sets the cursor to the next location where the given notes appear in the score.
+    
+    Direction of search can be specified.
+    """
 
     if (direction >= 0) :
       if (self.activeHands == ACTIVE_HANDS_RIGHT) :
@@ -496,11 +520,12 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <toggleBookmark>
-  #
-  # Toggles a bookmark at the current location pointed by the cursor.
+  # METHOD Score.toggleBookmark()
   # ---------------------------------------------------------------------------
   def toggleBookmark(self) :
+    """
+    Adds/removes a bookmark at the current cursor.
+    """
 
     # Is it an existing bookmark?
     if self.cursor in self.bookmarks :
@@ -522,7 +547,7 @@ class Score :
   #
   # Turns ON/OFF the left hand practice
   # ---------------------------------------------------------------------------
-  def toggleLeftHand(self) :
+  def toggleLeftHandPractice(self) :
 
     if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_RIGHT)) :
       self.activeHands = ACTIVE_HANDS_LEFT
@@ -538,7 +563,7 @@ class Score :
   #
   # Turns ON/OFF the practice on left hand
   # ---------------------------------------------------------------------------
-  def toggleRightHand(self) :
+  def toggleRightHandPractice(self) :
       
     if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_LEFT)) :
       self.activeHands = ACTIVE_HANDS_RIGHT
@@ -556,6 +581,12 @@ class Score :
   # Defines the cursor at which the loop shall start.
   # ---------------------------------------------------------------------------
   def setLoopStart(self) :
+    """
+    Sets the beginning of the loop at the current cursor.
+    
+    If the end of the loop is already defined, this function also enables
+    the loop practice mode.
+    """
     
     # Loop end is not yet defined
     if (self.loopEnd == -1) :
@@ -566,16 +597,20 @@ class Score :
       if (self.getCursor() < self.loopEnd) :
         self.loopStart = self.getCursor()
         self.loopEnable = True
-        print(f"[NOTE] Loop set: start = {self.loopStart+1} / end = {self.loopEnd+1}")
+        print(f"[NOTE] Loop is now set: start = {self.loopStart+1} / end = {self.loopEnd+1}")
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <setLoopEnd>
-  #
-  # Defines the cursor at which the loop shall end.
+  # METHOD Score.setLoopEnd()
   # ---------------------------------------------------------------------------
   def setLoopEnd(self) :
+    """
+    Sets the end of the loop at the current cursor.
+    
+    If the beginning of the loop is already defined, this function also enables
+    the loop practice mode.
+    """
     
     # Loop start is not yet defined
     if (self.loopStart == -1) :
@@ -587,11 +622,17 @@ class Score :
         self.loopEnd = self.getCursor()
         self.loopEnable = True
         self.cursor = self.loopStart
-        print(f"[NOTE] Loop set: start = {self.loopStart+1} / end = {self.loopEnd+1}")
+        print(f"[NOTE] Loop is now set: start = {self.loopStart+1} / end = {self.loopEnd+1}")
   
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD Score.clearLoop()
+  # ---------------------------------------------------------------------------
   def clearLoop(self) :
+    """
+    Disables the loop practice mode, clears the loop information.
+    """
     self.loopStart = -1
     self.loopEnd = -1
     self.loopEnable = False
@@ -649,26 +690,44 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <getTeacherNotes>
-  #
-  # Return the list of all notes that must be pressed at the current cursor
-  # location in the score.
-  # Note: notes that were pressed before and held up to the current cursor are
-  #       not included. To list them, use <getSustainedNotes>.
+  # METHOD Score.getTeacherNotes()
   # ---------------------------------------------------------------------------
   def getTeacherNotes(self) :
+    """
+    Returns the list of all notes that must be pressed at the current cursor
+    location in the score.
+    
+    NOTES
+    The notes that were pressed before and held up to the current cursor are
+    not included. To list them, use <getSustainedNotes>.
+    """
+    
+    
+    # TODO: add a cache feature
+    # This function is called for every frame update!!
+    
     self._updateTeacherNotes()
     return self.teacherNotes
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <switchHand>
-  #
-  # Affects a given note to the other hand.
+  # METHOD Score.toggleNoteHand(noteObject)
   # ---------------------------------------------------------------------------
-  def switchHand(self, note) :
-
+  def toggleNoteHand(self, note) :
+    """
+    Toggles the hand assigned to the note passed as argument.
+    
+    If the note is assigned to the left hand, it will now be assigned to the right
+    hand and vice versa.
+    
+    NOTE
+    Assigning a note from the left to the right hand has more impact than just 
+    editing the <hand> property of the note. The list of cursors must be edited too.
+   
+    Hence this function.
+    
+    """
     if (note.hand == LEFT_HAND) :
       sourceHand = LEFT_HAND
       destHand = RIGHT_HAND
@@ -685,7 +744,6 @@ class Score :
       self.cursorsLeft.sort()
       self.cursorsRight.remove(self.cursor)
 
-      
     # Update the note property
     note.hand = destHand
     
@@ -713,23 +771,33 @@ class Score :
     
 
   # ---------------------------------------------------------------------------
-  # METHOD <toggleRehearsalMode>
-  #
-  # Turns ON/OFF the rehearsal mode (ie progress in the score is halted no 
-  # matter what is being played)
+  # METHOD Score.toggleRehearsalMode()
   # ---------------------------------------------------------------------------
   def toggleRehearsalMode(self) :
+    """
+    Turns ON/OFF the rehearsal mode, i.e. enable/disable progressing in the score
+    based on the MIDI input.
+    
+    An arbiter inspects the keyboard input, looks if it matches with the score, and 
+    decides whether to move forward or stay in the current location.
+    
+    This function toggles the arbiter. 
+    When off, no more progress in the score is allowed.
+    """
+    
     self.progressEnable = not(self.progressEnable)
     print("[NOTE] Rehearsal mode will be available in a future release.")
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <importFromFile>
-  #
-  # Load the internal piano roll from an external file (.mid or .pr)
+  # METHOD Score.importFromFile(fileName)
   # ---------------------------------------------------------------------------
   def importFromFile(self, inputFile) :
+    """
+    Load the internal piano roll from an external file (.mid or .pr)
+    """
+  
     if (os.path.splitext(inputFile)[-1] == ".mid") :
       self._importFromMIDIFile(inputFile)
     else :
@@ -740,28 +808,24 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <importFromMIDIFile>
-  #
-  # Builds the piano roll (i.e. a 128-elements array) from a MIDI file.
-  # 
-  # Input:
-  # The MIDI file to read.
-  #
-  # Outputs:
-  # - pianoRoll.noteArray
-  # - pianoRoll.noteOnTimecodes
-  # - pianoRoll.avgNoteDuration
-  #
-  # pianoRoll.noteArray[t][p] = [note0, note1, ...]
-  # is the list of all notes played on track <t>, on pitch <p>. 
-  # Each element of the list is an instance of the Note() class.
-  # A Note() class has attributes:
-  # - noteXXX.start/.end (integer) : timestamp of its beginning/end
-  # - noteXXX.hand (string: "l", "r" or ""): hand used to play the note.
-  #
-  # pianoRoll.timecodes[t] = [t0, t1, ...]
+  # METHOD Score.importFromMIDIFile(midiFileName)
   # ---------------------------------------------------------------------------
   def _importFromMIDIFile(self, midiFile) :
+    """
+    Builds the internal score structure from a MIDI file.
+    
+    A score is stored in the object in the <pianoRoll> variable and looks like:
+    pianoRoll.noteArray[t][p] = [note0, note1, ...]
+    
+    It is basically the list of all notes played on track <t>, on pitch <p>. 
+    
+    Each element of the list is a Note object.
+    
+    A Note() object has attributes:
+    - noteXXX.start/.end (integer) : timestamp of its beginning/end
+    - noteXXX.hand (string: "l", "r" or ""): hand used to play the note.
+    pianoRoll.noteOntimecodes[t] = [t0, t1, ...]
+    """
 
     print("[INFO] Processing .mid file... ", end = "")
 
@@ -773,16 +837,24 @@ class Score :
     # And in general, the user might want to map specific tracks to the staffs
     # and not only track 0 and 1.
     # print(f"[NOTE] [MIDI import] Tracks found: {len(mid.tracks)}")
-    self.nStaffs = len(mid.tracks)
+    
+    # Only 2 staves are supported for now.
+    # The app focuses on piano practice: there is no plan to support more than
+    # 2 staves in the near future.
+    if (len(mid.tracks) > 2) :
+      print("[WARNING] The MIDI file has more than 2 tracks. Tracks beyond the first 2 will be ignored.")
+    self.nStaffs = 2
     
     # Allocate outputs
     self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
     self.noteOntimecodes = [[] for _ in range(self.nStaffs)]
 
     nNotes = 0; noteDuration = 0
+    
+    # Each note is assigned to a unique identifier (simple counter)
     id = 0
 
-    # Loop on the tracks
+    # Loop on the tracks, decode the MIDI messages
     for (trackNumber, track) in enumerate(mid.tracks) :
 
       currTime = 0
@@ -836,6 +908,7 @@ class Score :
 
 
         # Keyrelease event ----------------------------------------------------
+        # NOTE: in some files, 'NOTE OFF' message is mimicked using a 'NOTE ON' with null velocity.
         if ((msg.type == 'note_off') or ((msg.type == 'note_on') and (msg.velocity == 0))) :
           
           pitch = msg.note
@@ -864,11 +937,10 @@ class Score :
 
 
     # Merge note ON time codes from both staves
-    timecodesMerged = [item for sublist in self.noteOntimecodes for item in sublist]
+    timecodesMerged = [item for sublist in self.noteOntimecodes for item in sublist]    # What the hell is that?
     timecodesMerged = list(set(timecodesMerged))
     self.noteOntimecodesMerged = sorted(timecodesMerged)
-    self.cursorMax = len(self.noteOntimecodesMerged)-1
-
+    
     # The variable pointing in the <noteOntimecodesMerged> is called the "cursor" of the score.
     # This section lists the values of the cursor for which a noteOn event occured 
     # specifically on one hand or the other.
@@ -883,6 +955,9 @@ class Score :
 
     # Estimate average note duration (needed for the piano roll display)
     self.avgNoteDuration = noteDuration/nNotes
+    
+    # Length of the score
+    self.cursorMax = len(self.noteOntimecodesMerged)-1
     
     print("OK")
 
@@ -944,12 +1019,13 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <importFromPrFile>
-  #
-  # Import the piano roll and all metadata (finger, hand, comments etc.)
-  # from a .pr file (JSON) and restore them in the current session.
+  # METHOD Score._importFromPrFile(fileName)
   # ---------------------------------------------------------------------------
   def _importFromPrFile(self, pianoRollFile) :
+    """
+    Imports the score and all metadata (finger, hand, bookmarks etc.)
+    from a .pr file (JSON) and restores the last session.
+    """
     
     with open(pianoRollFile, "r") as fileHandler :
       importDict = json.load(fileHandler)
@@ -980,41 +1056,34 @@ class Score :
       "activeHands"           : "LR",
       "comboHighestAllTime"   : 0
     }
+    
     for currKey in safeDict :
       if currKey in importDict :
         safeDict[currKey] = importDict[currKey]
 
-    # Import "manually" elements of the PianoRoll object to the export dictionary.
-    # Not ideal but does the job for now as there aren't too many properties.
+    # Load the properties of the score from the dictionary
     self.nStaffs                = safeDict["nStaffs"]
     self.avgNoteDuration        = safeDict["avgNoteDuration"]
-
     self.cursor                 = safeDict["cursor"]
+    self.bookmarks              = safeDict["bookmarks"]
+    self.activeHands            = safeDict["activeHands"]
+    self.comboHighestAllTime    = safeDict["comboHighestAllTime"]
 
     self.noteOntimecodes        = safeDict["noteOntimecodes"]
     self.noteOntimecodesMerged  = safeDict["noteOntimecodesMerged"]
     self.cursorsLeft            = safeDict["cursorsLeft"]
     self.cursorsRight           = safeDict["cursorsRight"]
-
-    self.bookmarks              = safeDict["bookmarks"]
-
-    self.activeHands            = safeDict["activeHands"]
-
-    self.comboHighestAllTime    = safeDict["comboHighestAllTime"]
-
+    
     self.cursorMax = len(self.noteOntimecodesMerged)-1
 
     # TODO: import the scales
     # TODO: import the loops
 
-
-
-
     # -----------------------------
     # Pianoroll import - v0.X style
     # -----------------------------
     if (majorRev == 0) :
-      print("[INFO] Importing old school .pr file (v0.X versions)")
+      print("[INFO] Importing old school .pr file (versions v0.X)")
 
       # Note() objects were converted to a dictionary. Convert them back to a Note object
       self.pianoRoll = [[[] for noteList in trackList] for trackList in importDict["pianoRoll"]]
@@ -1031,25 +1100,35 @@ class Score :
 
 
 
-    # ---------------------------------------
-    # Pianoroll import - v1.0 and above style
-    # ---------------------------------------
+    # ---------------------------------
+    # Pianoroll import - v1.0 and above
+    # ---------------------------------
+    # From version 1.0, the pianoroll is flattened.
+    # From version 1.3, the variables:
+    # - <noteOntimecodes>, 
+    # - <noteOntimecodesMerged>, 
+    # - <cursorsLeft>, 
+    # - <cursorsRight>
+    # are rebuilt from the notes properties in the pianoroll.
     else :
-      # In version 1.0 and above, the pianoRoll is flattened.
-
+      
       self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
+      # self.noteOntimecodes = [[], []]
+      # self.noteOntimecodesMerged = []
+      # self.cursorsLeft = []
+      # self.cursorsRight = []
 
       noteCount = 0
       for noteObjDict in importDict["pianoRoll"] :
         
         noteObj = utils.Note(noteObjDict["pitch"])
         
+        # TODO: explain!
         propDict = noteObj.__dict__.copy()
         noteObj.id = noteObjDict["id"]; del propDict["id"]
 
+        # TODO: explain!
         for noteAttr in propDict :
-          
-          # Attributes check - user might have changed them
           if (noteAttr == "name") :
             if (utils.noteName(noteObjDict["pitch"]) != noteObjDict["name"]) :
               print(f"[WARNING] Note ID {noteObj.id}: MIDI pitch ({noteObjDict['pitch']}) and note name ({noteObjDict['name']}) do not agree. The pitch takes precedence, name will be overwritten to {utils.noteName(noteObjDict['pitch'])}.")
@@ -1058,34 +1137,50 @@ class Score :
 
         self.pianoRoll[noteObjDict["hand"]][noteObjDict["pitch"]].append(noteObj)
         noteCount += 1
-
-
-
+        
+        # TODO: complete the variables
+        # self.noteOntimecodes        = safeDict["noteOntimecodes"]
+        # self.noteOntimecodesMerged  = safeDict["noteOntimecodesMerged"]
+        # self.cursorsLeft            = safeDict["cursorsLeft"]
+        # self.cursorsRight           = safeDict["cursorsRight"]
+        # self.noteOntimecodes[noteObjDict["hand"]].append(noteObj.startTime)
+        
+        # if not(noteObj.startTime in self.noteOntimecodesMerged) :
+        #   self.noteOntimecodesMerged.append(noteObj.startTime)
+        
+      
       print(f"[DEBUG] {noteCount} notes read from .pr file.")
-
-    print(f"[NOTE] {pianoRollFile} successfully loaded!")
     
+    print(f"[NOTE] {pianoRollFile} successfully loaded!")
+
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <_checkForChanges> (private)
-  #
-  # Detect if there are any unsaved changes and updates the attribute
-  # <hasUnsavedChanges>
+  # METHOD Score.hasUnsavedChanges()
   # ---------------------------------------------------------------------------
-  def _checkForChanges(self) :
+  def hasUnsavedChanges(self) :
+    """
+    Returns True if there are any unsaved changes in the current session.
+    """
+    
     print("TODO")
     
 
-
-  def isBookmarkedTimecode(self) :
+  # ---------------------------------------------------------------------------
+  # METHOD Score.isBookmarked()
+  # ---------------------------------------------------------------------------
+  def isBookmarked(self) :
+    """
+    Returns True if the current position in the score is bookmarked.
+    """
     return (self.cursor in self.bookmarks)
   
 
 
-
-
-
-
+  # ---------------------------------------------------------------------------
+  # METHOD Score.guessScale()
+  # ---------------------------------------------------------------------------
   def guessScale(self, startCursor, span = -1) :
     print("TODO")
+
+

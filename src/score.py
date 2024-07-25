@@ -78,12 +78,9 @@ class Score :
     self.cursor = 0
     self.pianoRoll = []
 
-    self.scoreLength = 0              # TODO!
-    self.scoreLengthLeft = 0          # TODO!
-    self.scoreLengthRight = 0         # TODO!
+    self.scoreLength = 0
 
-    self.noteOntimecodes = [[]]       # List of all <noteON> timecodes, one for each staff
-    self.noteOntimecodesMerged = []   # Merge of <self.timecodes> on all staves
+    self.noteOnTimecodes = {"L": [], "R": [], "merged": [], "mergedUnique": []}
     self.cursorsLeft = []             # List of cursors values where a note is pressed on the left hand
     self.cursorsRight = []            # List of cursors values where a note is pressed on the right hand
 
@@ -140,19 +137,19 @@ class Score :
     """
     
     # TODO: incorrect for single hand practice mode!
-    return self.noteOntimecodesMerged[self.cursor]
+    return self.noteOnTimecodes["mergedUnique"][self.cursor]
 
 
 
   # ---------------------------------------------------------------------------
   # METHOD Score.setTimecodes()
   # ---------------------------------------------------------------------------
-  def setTimecodes(self, timecodes) :
-    """
-    TODO
-    """
+  # def setTimecodes(self, timecodes) :
+  #   """
+  #   TODO
+  #   """
     
-    self.noteOntimecodes = timecodes
+  #   self.noteOntimecodes = timecodes
 
     # TODO: update <cursor> too as it might not be valid anymore
     # ...
@@ -383,7 +380,7 @@ class Score :
       elif (self.activeHands == ACTIVE_HANDS_LEFT) :
         self.cursor = self.cursorsLeft[-1]
       else :
-        self.cursor = len(self.noteOntimecodesMerged)-1
+        self.cursor = self.scoreLength-1
 
 
 
@@ -403,7 +400,8 @@ class Score :
       elif (self.activeHands == ACTIVE_HANDS_LEFT) :
         timecodeSearchField = [x > self.cursor for x in self.cursorsRight]
       else :
-        timecodeSearchField = [x for x in range(self.cursor+1, len(self.noteOntimecodesMerged))]
+        # TODO: check the boundaries
+        timecodeSearchField = [x for x in range(self.cursor+1, self.scoreLength)]
     
     else :
       if (self.activeHands == ACTIVE_HANDS_RIGHT) :
@@ -429,7 +427,7 @@ class Score :
           for noteObj in self.pianoRoll[staffIndex][pitch] :
             
             # Detect a note pressed at this timecode
-            if (noteObj.startTime == self.noteOntimecodesMerged[cursorTry]) :
+            if (noteObj.startTime == self.noteOnTimecodes["mergedUnique"][cursorTry]) :
               foundPitch.append(noteObj.pitch)
 
       if (len(foundPitch) > 0) :
@@ -571,7 +569,6 @@ class Score :
     
     else :
       self.activeHands = ACTIVE_HANDS_BOTH
-
 
 
 
@@ -1048,11 +1045,9 @@ class Score :
       "nStaffs"               : 2,
       "avgNoteDuration"       : 100.0,
       "cursor"                : 0,
-      "noteOntimecodes"       : [[0], [0]],
-      "noteOntimecodesMerged" : [0],
-      "cursorsLeft"           : [0],
-      "cursorsRight"          : [0],
-      "bookmarks"             : [0],
+      "cursorsLeft"           : [],
+      "cursorsRight"          : [],
+      "bookmarks"             : [],
       "activeHands"           : "LR",
       "comboHighestAllTime"   : 0
     }
@@ -1069,12 +1064,11 @@ class Score :
     self.activeHands            = safeDict["activeHands"]
     self.comboHighestAllTime    = safeDict["comboHighestAllTime"]
 
-    self.noteOntimecodes        = safeDict["noteOntimecodes"]
-    self.noteOntimecodesMerged  = safeDict["noteOntimecodesMerged"]
-    self.cursorsLeft            = safeDict["cursorsLeft"]
-    self.cursorsRight           = safeDict["cursorsRight"]
-    
-    self.cursorMax = len(self.noteOntimecodesMerged)-1
+    # self.noteOntimecodes        = safeDict["noteOntimecodes"]
+    # self.noteOntimecodesMerged  = safeDict["noteOntimecodesMerged"]
+    # self.cursorsLeft            = safeDict["cursorsLeft"]
+    # self.cursorsRight           = safeDict["cursorsRight"]
+    # self.cursorMax = len(self.noteOntimecodesMerged)-1
 
     # TODO: import the scales
     # TODO: import the loops
@@ -1113,44 +1107,78 @@ class Score :
     else :
       
       self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
-      # self.noteOntimecodes = [[], []]
-      # self.noteOntimecodesMerged = []
-      # self.cursorsLeft = []
-      # self.cursorsRight = []
+      self.noteOnTimecodes = {"L": [], "R": [], "merged": [], "mergedUnique": []}
+      self.cursorsLeft = []
+      self.cursorsRight = []
 
       noteCount = 0
-      for noteObjDict in importDict["pianoRoll"] :
+      for noteObjImported in importDict["pianoRoll"] :
         
-        noteObj = utils.Note(noteObjDict["pitch"])
+        noteObj = utils.Note(noteObjImported["pitch"])
         
-        # TODO: explain!
-        propDict = noteObj.__dict__.copy()
-        noteObj.id = noteObjDict["id"]; del propDict["id"]
+        # List of all properties in a Note object, make a dictionary out of it.
+        noteAttrDict = noteObj.__dict__.copy()
+        
+        # TODO: not sure why the ID had to be treated differently
+        # noteObj.id = noteObjImported["id"]; del noteAttrDict["id"]
 
-        # TODO: explain!
-        for noteAttr in propDict :
-          if (noteAttr == "name") :
-            if (utils.noteName(noteObjDict["pitch"]) != noteObjDict["name"]) :
-              print(f"[WARNING] Note ID {noteObj.id}: MIDI pitch ({noteObjDict['pitch']}) and note name ({noteObjDict['name']}) do not agree. The pitch takes precedence, name will be overwritten to {utils.noteName(noteObjDict['pitch'])}.")
+        # Loop on the attributes of the Note object
+        for noteAttr in noteAttrDict :
           
-          setattr(noteObj, noteAttr, noteObjDict[noteAttr])
+          # CHECK: rectify inconsistencies between <pitch> and <name> attributes.
+          if (noteAttr == "name") :
+            expectedNoteName = utils.noteName(noteObjImported["pitch"])
+            actualNoteName   = noteObjImported["name"]
+            if (expectedNoteName != actualNoteName) :
+              print(f"[WARNING] Note ID {noteObj.id}: MIDI pitch ({noteObjImported['pitch']}) and note name ({actualNoteName}) do not agree. The pitch takes precedence, name will be overwritten to {expectedNoteName}.")
+          
+          # Call the attribute by its name (as string), and assign it.
+          setattr(noteObj, noteAttr, noteObjImported[noteAttr])
+        
+        
+        self.pianoRoll[noteObjImported["hand"]][noteObjImported["pitch"]].append(noteObj)
+        
+        if (noteObjImported["hand"] == LEFT_HAND) :
+          self.noteOnTimecodes["L"].append(noteObj.startTime)
+        elif (noteObjImported["hand"] == RIGHT_HAND) :
+          self.noteOnTimecodes["R"].append(noteObj.startTime)
 
-        self.pianoRoll[noteObjDict["hand"]][noteObjDict["pitch"]].append(noteObj)
+        self.noteOnTimecodes["merged"].append(noteObj.startTime)
+        
         noteCount += 1
         
-        # TODO: complete the variables
-        # self.noteOntimecodes        = safeDict["noteOntimecodes"]
-        # self.noteOntimecodesMerged  = safeDict["noteOntimecodesMerged"]
-        # self.cursorsLeft            = safeDict["cursorsLeft"]
-        # self.cursorsRight           = safeDict["cursorsRight"]
-        # self.noteOntimecodes[noteObjDict["hand"]].append(noteObj.startTime)
+
+      # Tidy up
+      self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
+      self.noteOnTimecodes["merged"].sort()
+
+      self.noteOnTimecodes["mergedUnique"] = set(self.noteOnTimecodes["merged"])
+      self.noteOnTimecodes["mergedUnique"] = list(self.noteOnTimecodes["mergedUnique"])
+      self.noteOnTimecodes["mergedUnique"].sort()
+
+      for (index, timecode) in enumerate(self.noteOnTimecodes["mergedUnique"]) :
+        unaffected = True
+        if (timecode in self.noteOnTimecodes["L"]) :
+          self.cursorsLeft.append(index)
+          unaffected = False
+
+        if (timecode in self.noteOnTimecodes["R"]) :
+          self.cursorsRight.append(index)
+          unaffected = False
         
-        # if not(noteObj.startTime in self.noteOntimecodesMerged) :
-        #   self.noteOntimecodesMerged.append(noteObj.startTime)
-        
+        if unaffected :
+          print("[INTERNAL ERROR] Something odd happened!")
+
+      self.scoreLength = len(self.noteOnTimecodes["mergedUnique"])
+      self.cursorMax = self.scoreLength-1
+
+      # DEBUG
+      print(f"[DEBUG] Left hand cursors   : {len(self.cursorsLeft)} / ref: {len(safeDict['cursorsLeft'])}")
+      print(f"[DEBUG] Right hand cursors  : {len(self.cursorsRight)} / ref: {len(safeDict['cursorsRight'])}")
       
       print(f"[DEBUG] {noteCount} notes read from .pr file.")
-    
+      print(f"[DEBUG] Score length: {self.scoreLength} steps")
+
     print(f"[NOTE] {pianoRollFile} successfully loaded!")
 
 

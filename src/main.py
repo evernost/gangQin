@@ -651,7 +651,7 @@ while running :
       fu.renderText(screen, f"LOOP: [_  ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (300, 20), 2, UI_TEXT_COLOR)
       
   # Cursor info
-  fu.renderText(screen, f"CURSOR: {userScore.cursor+1} / {userScore.cursorMax+1}", (12, 20), 2, UI_TEXT_COLOR)
+  fu.renderText(screen, f"CURSOR: {userScore.cursor+1} / {userScore.scoreLength}", (12, 20), 2, UI_TEXT_COLOR)
 
   # Combo info
   fu.renderText(screen, f"COMBO: {userScore.comboCount} (MAX: {userScore.comboHighestSession} / ALLTIME: {userScore.comboHighestAllTime})", (800, 20), 2, UI_TEXT_COLOR)

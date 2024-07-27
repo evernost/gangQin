@@ -17,7 +17,7 @@
 from commons import *
 
 import pygame
-import fontUtils as fu
+import text
 
 
 
@@ -80,20 +80,20 @@ class FingerSelector :
       labels = ["5 ", "4 ", "3 ", "2 ", "1 ", "- ", "- ", "1 ", "2 ", "3 ", "4 ", "5 "]
       
       # Note: 96 = 8*10 + 8*2, i.e. 8 x char size + 8 x space in-between
-      fu.renderText(screen, f"FINGER: ", (self.locX, self.locY), 2, self.textColor)      
+      text.renderText(screen, f"FINGER: ", (self.locX, self.locY), 2, self.textColor)      
       
       for i in range(12) :
         if (i <= 5) :          
           if (self.currentSel == i) :
-            fu.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelL)
+            text.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelL)
           else :
-            fu.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorL)
+            text.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorL)
 
         else :
           if (self.currentSel == i) :
-            fu.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelR)
+            text.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelR)
           else :
-            fu.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorR)
+            text.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorR)
 
       x0 = self.locX + 96 - 7
       yTop = self.locY + 3; yBottom = self.locY + 12

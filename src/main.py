@@ -40,7 +40,7 @@
 
 # Later:
 # - change the framework, use pyqt instead
-# - complete the font library (fontUtils.py)
+# - complete the font library (text.py)
 
 
 
@@ -60,10 +60,12 @@ from widgets import fingerSelector
 from widgets import notify
 
 # Various utilities
-import fontUtils as fu
+import arbiter
 import conf
-import utils
+import note
 import score
+import text
+import utils
 
 # For MIDI
 import mido
@@ -71,24 +73,6 @@ import rtmidi
 
 # For file/path utilities
 import os
-
-
-
-# =============================================================================
-# Constants pool
-# =============================================================================
-# None.
-
-
-
-# =============================================================================
-# General settings
-# =============================================================================
-# Defines the criteria to allow moving forward in the score.
-# - "exact": won't go further until the expected notes only are pressed, nothing else
-# - "exactWithSustain": same as "exact", but tolerates the last valid notes to be sustained
-# - "permissive": anything else played alongside the expected notes is ignored
-playComparisonMode = "permissive"
 
 
 
@@ -126,6 +110,9 @@ userScore.importFromFile(selectedFile)
 pianoRollWidget.loadPianoRoll(userScore.pianoRoll)
 pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
 
+# Create the arbiter
+pianoArbiter = arbiter.Arbiter("permissive")
+
 # Create window
 pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{os.path.basename(selectedFile)}>")
 
@@ -139,29 +126,16 @@ soundNotify.enabled = False
 
 
 # =============================================================================
-# Open MIDI keyboard interface
+# MIDI messages callback
 # =============================================================================
-# - midiCurr     : state of all the notes on the MIDI keyboard
-# - midiSustained: '1' for all notes that were correct in the score, but have been 
-#                  sustained since then.
-# - midiSuperfluous: 
-# - midiAssociatedID: 
-midiCurr         = [0 for _ in range(128)]
-midiSustained    = [0 for _ in range(128)]
-midiSuperfluous  = [0 for _ in range(128)]
-midiAssociatedID = [-1 for _ in range(128)]
+def midiCallback(midiMessage) :
+  pianoArbiter.updateMidiState(midiMessage)
 
-# Define the MIDI callback
-def midiCallback(message) :
-  if (message.type == 'note_on') :
-    midiCurr[message.note] = 1
 
-  elif (message.type == 'note_off') :
-    midiCurr[message.note] = 0
-    midiSustained[message.note] = 0 # this note cannot be considered as sustained anymore
-    midiSuperfluous[message.note] = 0
-    midiAssociatedID[message.note] = -1
 
+# =============================================================================
+# Navigation mode
+# =============================================================================
 if (conf.selectedDevice != "None") :
   midiPort = mido.open_input(conf.selectedDevice, callback = midiCallback)
 else :
@@ -416,8 +390,8 @@ while running :
         # the current notes being pressed.
         # Note : use a copy of the MIDI notes list to prevent the 
         #        MIDI callback to mess with the function.
-        if (max(midiCurr) == 1) :
-          userScore.search(midiCurr.copy())
+        if (max(pianoArbiter.midiCurr) == 1) :
+          userScore.search(pianoArbiter.midiCurr.copy())
         elif ctrlKey :
           userScore.cursorStep(10)
         else :
@@ -427,8 +401,8 @@ while running :
       if (event.button == MOUSE_SCROLL_DOWN) :
         
         # Find feature
-        if (max(midiCurr) == 1) :
-          userScore.search(midiCurr.copy(), direction = -1)
+        if (max(pianoArbiter.midiCurr) == 1) :
+          userScore.search(pianoArbiter.midiCurr.copy(), direction = -1)
         elif ctrlKey :
           userScore.cursorStep(-10)
         else :
@@ -446,7 +420,7 @@ while running :
   currKey = userScore.getCurrentKey()
   keyboardWidget.setKey(currKey)
   if (currKey != None) :
-    fu.renderText(screen, f"KEY: {currKey.root.upper()} {currKey.mode.upper()}", (200, 470), 2, UI_TEXT_COLOR)
+    text.render(screen, f"KEY: {currKey.root.upper()} {currKey.mode.upper()}", (200, 470), 2, UI_TEXT_COLOR)
   
   # Draw the piano roll on screen
   pianoRollWidget.drawPianoRoll(screen, userScore.getCurrentTimecode())
@@ -463,8 +437,8 @@ while running :
   # TODO: list in comprehension might do a better job here
   midiNoteList = []
   for pitch in GRAND_PIANO_MIDI_RANGE :
-    if (midiCurr[pitch] == 1) :
-      newMidiNote = utils.Note(pitch)
+    if (pianoArbiter.midiCurr[pitch] == 1) :
+      newMidiNote = note.Note(pitch)
       newMidiNote.fromKeyboardInput = True
       newMidiNote.hand = UNDEFINED_HAND
       newMidiNote.finger = 0
@@ -475,110 +449,10 @@ while running :
   # -----------------------------------------------------------------------
   # Decide whether to move forward in the score depending on the user input
   # -----------------------------------------------------------------------
-  
-  # *** Exact mode ***
-  if (playComparisonMode == "exact") :
-    if (userScore.teacherNotesMidi == midiCurr) :
-      userScore.cursorNext()
+  arbiterMsgQueue = pianoArbiter.eval(teacherNotes)
 
-
-
-  # *** Sustain mode ***
-  # Sustained note are tolerated to proceed forward.
-  # But they are not be treated as a pressed note: user needs to release and press it again.
-  if (playComparisonMode == "exactWithSustain") :
-    allowProgress = True
-    for pitch in GRAND_PIANO_MIDI_RANGE :
-
-      # Case 1: the right note is pressed, but is actually an "old" key press (sustained note)
-      if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 1)) :
-        allowProgress = False
-
-      # Case 2: a note is missing
-      if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 0) and (midiSustained[pitch] == 0)) :
-        allowProgress = False
-      
-      # Case 3: a wrong note is pressed 
-      if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
-        allowProgress = False
-
-    # Case 4: progress disabled because the "note finding" feature is still active
-    if (userScore.arbiterSuspendReq) :
-      allDown = True
-      for x in userScore.arbiterPitchListHold :
-        if (midiCurr[x] == 1) :
-          allDown = False
-
-      if allDown :
-        userScore.arbiterSuspendReq = False
-      else :
-        allowProgress = False
-
-    if allowProgress :
-      userScore.cursorNext()
-      
-      # Take snapshot
-      for pitch in range(128) :
-        if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
-          midiSustained[pitch] = 1
-
-
-
-  # *** Permissive mode ***
-  # Progress as long as the expected notes are pressed. 
-  # The rest is ignored, but flagged as 'superfluous'.
-  # 'Superfluous' notes need to be released and pressed again to be accepted later on.
-  if (playComparisonMode == "permissive") :
-    allowProgress = True
-    for pitch in GRAND_PIANO_MIDI_RANGE :
-
-      # Case 1: a note is missing
-      if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 0) and (midiSuperfluous[pitch] == 0)) :
-        allowProgress = False
-
-      # Case 2: the right note is played, but it was hit before expected and maintained since then
-      if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSuperfluous[pitch] == 1)) :
-        allowProgress = False
-
-      # Case 3: the note was played correctly, but has not been released yet
-      # Meanwhile, the score requires this note to be played again.
-      if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 1)) :
-        
-        # Read the ID of the current note
-        authorisedIDs = [x.id for x in userScore.teacherNotes if (x.pitch == pitch)]        
-        
-        # The IDs do not match: the note being played on the keyboard right now
-        # is a previous valid note being sustained.
-        # It cannot be used to trigger a new note of the same pitch.
-        if not(midiAssociatedID[pitch] in authorisedIDs) :
-          allowProgress = False
-        
-      # Other: a wrong note is pressed
-      # Since it is permissive, it does not block the progress.
-      # But it resets the combo counter and plays a notification.
-      if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1) and (midiSustained[pitch] == 0)) :
-        userScore.comboCount = 0
-        soundNotify.wrongNote()
-
-    # Case 4: progress disabled because the "note finding" feature is still active
-    # Waiting for all notes to be released.
-    if (userScore.arbiterSuspendReq) :
-      allDown = True
-      for x in userScore.arbiterPitchListHold :
-        if (midiCurr[x] == 1) :
-          allDown = False
-
-      if allDown :
-        userScore.arbiterSuspendReq = False
-      else :
-        allowProgress = False
-
-
-
-    # **********
-    # Conclusion
-    # **********
-    if allowProgress :
+  for msg in arbiterMsgQueue :
+    if (msg == arbiter.ARBITER_MSG_CURSOR_NEXT) :
       userScore.cursorNext()
       
       if (userScore.cursor == userScore.loopStart) :
@@ -587,24 +461,10 @@ while running :
         soundNotify.loopPassedReset()
       
       soundNotify.wrongNoteReset()
-      
-      # Update note status
-      for pitch in GRAND_PIANO_MIDI_RANGE :
-        
-        # Is it a superfluous note?
-        if ((userScore.teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1)) :
-          midiSuperfluous[pitch] = 1
 
-        # A valid note is now flagged as 'sustained'
-        # The ID of the associated teacher note is registered (this keypress cannot validate another note 
-        # of the same pitch)
-        if ((userScore.teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1)) :
-          midiSustained[pitch] = 1
-          
-          # Get the ID of the correct note
-          # TODO: is it really always the first one that needs to be taken?
-          q = [x for x in userScore.teacherNotes if (x.pitch == pitch)]
-          midiAssociatedID[pitch] = q[0].id
+    if (msg == arbiter.ARBITER_MSG_RESET_COMBO) :
+      userScore.comboCount = 0
+      soundNotify.wrongNote()
 
 
 
@@ -630,38 +490,40 @@ while running :
 
     clickMsg = False
 
-  # --------------------------------------------
-  # Print some info relative to the current time
-  # --------------------------------------------
-  # Bookmark info
+  # ---------------------------------------------
+  # Show some info relative to the current cursor
+  # ---------------------------------------------
+  # CURSOR
+  text.render(screen, f"CURSOR: {userScore.cursor+1} / {userScore.scoreLength}", (12, 20), 2, UI_TEXT_COLOR)
+  
+  # BOOKMARK
   if userScore.isBookmarked() :
-    fu.renderText(screen, f"BOOKMARK #{userScore.bookmarks.index(userScore.getCursor()) + 1}", (10, 470), 2, UI_TEXT_COLOR)
+    text.render(screen, f"BOOKMARK #{userScore.bookmarks.index(userScore.getCursor()) + 1}", (10, 470), 2, UI_TEXT_COLOR)
 
-  # Active hand info
-  fu.renderText(screen, userScore.activeHands, (1288, 470), 2, UI_TEXT_COLOR)
+  # ACTIVE HAND
+  text.render(screen, userScore.activeHands, (1288, 470), 2, UI_TEXT_COLOR)
 
-  # Loop info
+  # LOOP SETTINGS
   if userScore.loopEnable :
-    fu.renderText(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (300, 20), 2, UI_TEXT_COLOR)
+    text.render(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (300, 20), 2, UI_TEXT_COLOR)
   else :
     if (userScore.loopStart >= 0) :
-      fu.renderText(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... _]", (300, 20), 2, UI_TEXT_COLOR)
+      text.render(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... _]", (300, 20), 2, UI_TEXT_COLOR)
 
     if (userScore.loopEnd >= 0) :
-      fu.renderText(screen, f"LOOP: [_  ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (300, 20), 2, UI_TEXT_COLOR)
+      text.render(screen, f"LOOP: [_  ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (300, 20), 2, UI_TEXT_COLOR)
       
-  # Cursor info
-  fu.renderText(screen, f"CURSOR: {userScore.cursor+1} / {userScore.scoreLength}", (12, 20), 2, UI_TEXT_COLOR)
+  # COMBO COUNT
+  text.render(screen, f"COMBO: {userScore.comboCount} (MAX: {userScore.comboHighestSession} / ALLTIME: {userScore.comboHighestAllTime})", (800, 20), 2, UI_TEXT_COLOR)
 
-  # Combo info
-  fu.renderText(screen, f"COMBO: {userScore.comboCount} (MAX: {userScore.comboHighestSession} / ALLTIME: {userScore.comboHighestAllTime})", (800, 20), 2, UI_TEXT_COLOR)
-
-  # Finger selection
+  # FINGER SELECTION
   fingerSelWidget.show(screen)
   if (fingerSelWidget.getEditedNote() != None) :
     if (userScore.getCursor() != fingerSelWidget.editedCursor) :
       fingerSelWidget.resetEditedNote()
   
+
+
 
 
   # Request to edit the fingersatz with automatic note highlighting

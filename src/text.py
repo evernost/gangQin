@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
-# Module name   : fontUtils
-# File name     : fontUtils.py
-# Purpose       : provides text printing features
+# Module name   : text
+# File name     : text.py
+# Purpose       : provides text printing features over a Pygame window
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : Friday, 22 Sept 2023
 # -----------------------------------------------------------------------------
@@ -542,7 +542,7 @@ charPolygons["]"] = [
 #   This arguments defines the size of each square (in pixels)
 # - <col> = (R,G,B): text color
 # -----------------------------------------------------------------------------
-def renderText(screenInst, string, loc, size, col = (40, 50, 60)) :
+def render(screenInst, string, loc, size, col = (40, 50, 60)) :
   x0 = loc[0]; y0 = loc[1]
   w = size; h = size
 

@@ -17,7 +17,7 @@
 from commons import *
 
 import pygame
-import fontUtils as fu
+import text
 
 # For point in polygon test
 from shapely.geometry import Point, Polygon
@@ -429,10 +429,10 @@ class Keyboard :
       # Show finger number
       if (noteObj.finger in [1,2,3,4,5]) :
         # Font size 1
-        #fu.renderText(screenInst, str(finger), (x0+10,y0+23), 1, self.fingerFontWhiteNoteRGB)
+        #text.render(screenInst, str(finger), (x0+10,y0+23), 1, self.fingerFontWhiteNoteRGB)
         
         # Font size 2
-        fu.renderText(screenInst, str(noteObj.finger), (x0+7, y0+19), 2, self.fingerFontWhiteNoteRGB)
+        text.render(screenInst, str(noteObj.finger), (x0+7, y0+19), 2, self.fingerFontWhiteNoteRGB)
 
 
 
@@ -470,10 +470,10 @@ class Keyboard :
       # Show finger number
       if (noteObj.finger in [1,2,3,4,5]) :
         # Font size 1
-        #fu.renderText(screenInst, str(noteObj.finger), (x0+3, y0+23), 1, self.fingerFontBlackNoteRGB)
+        #text.render(screenInst, str(noteObj.finger), (x0+3, y0+23), 1, self.fingerFontBlackNoteRGB)
         
         # Font size 2
-        fu.renderText(screenInst, str(noteObj.finger), (x0+1, y0+19), 2, self.fingerFontBlackNoteRGB)
+        text.render(screenInst, str(noteObj.finger), (x0+1, y0+19), 2, self.fingerFontBlackNoteRGB)
 
 
 

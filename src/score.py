@@ -86,9 +86,10 @@ class Score :
     self.hasUnsavedChanges = False
     
     self.cursor = 0
-    self.pianoRoll = []
-
+    self.cursorMax = 0
     self.scoreLength = 0
+
+    self.pianoRoll = []
 
     self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
     
@@ -134,10 +135,113 @@ class Score :
   # ---------------------------------------------------------------------------
   def getCursor(self) :
     """
-    Returns the cursor of the current location in the score.
+    Returns the value of the cursor at the current location in the score.
     """
     return self.cursor
+  
 
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getCursorsLeftPointer()
+  # ---------------------------------------------------------------------------
+  def getCursorsLeftPointer(self) :
+    """
+    Returns the value <p> such that cursorsLeft[p] corresponds to the current
+    cursor.
+
+    If no such value exists, the function returns -1.
+    """
+    try :
+      index = self.cursorsLeft.index(self.cursor)
+      return index
+
+    except :
+      return -1
+    
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getCursorsRightPointer()
+  # ---------------------------------------------------------------------------
+  def getCursorsRightPointer(self) :
+    """
+    Returns the value <p> such that cursorsRight[p] corresponds to the current
+    cursor.
+
+    If no such value exists, the function returns -1.
+    """
+    try :
+      index = self.cursorsRight.index(self.cursor)
+      return index
+
+    except :
+      return -1
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score._buildCursorsLR()
+  # ---------------------------------------------------------------------------
+  def _buildCursorsLR(self) :
+    """
+    todo
+    """
+    self.cursorsLeft = []; self.cursorsRight = []
+
+    for (index, timecode) in enumerate(self.noteOnTimecodes["LR"]) :
+      unaffected = True
+      if (timecode in self.noteOnTimecodes["L"]) :
+        self.cursorsLeft.append(index)
+        unaffected = False
+
+      if (timecode in self.noteOnTimecodes["R"]) :
+        self.cursorsRight.append(index)
+        unaffected = False
+      
+      if unaffected :
+        print("[INTERNAL ERROR] Score._buildCursorsLR: something odd happened!")
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.setCursor(value)
+  # ---------------------------------------------------------------------------
+  def setCursor(self, value, force = False) :
+    """
+    Sets the cursor to the given value.
+    
+    The function is protected so that:
+    - values outside the score's range are clamped
+    - values not aligned with the active hand are adjusted
+
+    Setting the cursor must be done with this function exclusively.
+    Manually setting the <cursor> attribute might cause crashes.
+    """
+
+    # if (self.activeHands == ACTIVE_HANDS_RIGHT) :
+    #   self.cursor = self.cursorsRight[0]
+    # elif (self.activeHands == ACTIVE_HANDS_LEFT) :
+    #   self.cursor = self.cursorsLeft[0]
+    # else :
+    #   self.cursor = 0
+
+    if (self.activeHands == ACTIVE_HANDS_BOTH) :
+      if (value < 0) :
+        self.cursor = 0
+      elif (value > self.cursorMax) :
+        self.cursor = self.cursorMax
+      else :
+        self.cursor = value
+
+    elif (self.activeHands == ACTIVE_HANDS_LEFT) :
+      print("TODO")
+
+    elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
+      print("TODO")
+
+    else :
+      print("[INTERNAL ERROR] Score.setCursor: unknown active hand specification!")
+
+    
 
 
   # ---------------------------------------------------------------------------
@@ -149,7 +253,7 @@ class Score :
     """
     
     # TODO: incorrect for single hand practice mode
-    # TODO: method might be useless
+    # TODO: method might be useless :(
     return self.noteOnTimecodes["LR"][self.cursor]
 
 
@@ -166,19 +270,10 @@ class Score :
 
     # If the loop mode is enabled: go back to the beginning of the loop
     if (self.loopEnable and (self.cursor >= self.loopStart)) :
-      
-      # TODO: setting the cursor shall be protected depending on the active hand.
-      # Directly setting the cursor is dangerous.
-      self.cursor = self.loopStart
+      self.setCursor(self.loopStart)
     
-    # Otherwise: set the cursor home
     else :
-      if (self.activeHands == ACTIVE_HANDS_RIGHT) :
-        self.cursor = self.cursorsRight[0]
-      elif (self.activeHands == ACTIVE_HANDS_LEFT) :
-        self.cursor = self.cursorsLeft[0]
-      else :
-        self.cursor = 0
+      self.setCursor(0)
 
 
 
@@ -201,12 +296,13 @@ class Score :
     
     # Otherwise just set the cursor to the end
     else :
-      if (self.activeHands == ACTIVE_HANDS_RIGHT) :
-        self.cursor = self.cursorsRight[-1]
-      elif (self.activeHands == ACTIVE_HANDS_LEFT) :
-        self.cursor = self.cursorsLeft[-1]
-      else :
-        self.cursor = self.scoreLength-1
+      self.setCursor(self.cursorMax)
+      # if (self.activeHands == ACTIVE_HANDS_RIGHT) :
+      #   self.cursor = self.cursorsRight[-1]
+      # elif (self.activeHands == ACTIVE_HANDS_LEFT) :
+      #   self.cursor = self.cursorsLeft[-1]
+      # else :
+      #   self.cursor = self.scoreLength-1
 
 
 
@@ -232,43 +328,38 @@ class Score :
 
       # BOTH HAND PRACTICE
       if (self.activeHands == ACTIVE_HANDS_BOTH) :
-        
-        if ((self.cursor + delta) <= self.cursorMax) :
-          self.cursor += delta
+        self.setCursor(self.getCursor() + delta)
 
-      # SINGLE HAND PRACTICE
-      # Retrieve the index in the <cursorsLeft/Right> array that corresponds to 
-      # the current location.
-      # If it fails, something wrong has happened.
-      if (self.activeHands == ACTIVE_HANDS_LEFT) :
-        try :
-          index = self.cursorsLeft.index(self.cursor)
-        except :
+      # SINGLE HAND PRACTICE (LEFT)
+      elif (self.activeHands == ACTIVE_HANDS_LEFT) :
+        index = self.getCursorsLeftPointer()
+        
+        if (index == -1) :
           print("[INTERNAL ERROR] Left hand practice is active, but there is no event on the left hand at this cursor. Cannot browse from here!")
           
         if ((index + delta) <= (len(self.cursorsLeft)-1)) :
           self.cursor = self.cursorsLeft[index + delta]
 
-      if (self.activeHands == ACTIVE_HANDS_RIGHT) :
-        try :
-          index = self.cursorsRight.index(self.cursor)
-        except :
+      # SINGLE HAND PRACTICE (RIGHT)
+      elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
+        index = self.getCursorsLeftPointer()
+
+        if (index == -1) :
           print("[INTERNAL ERROR] Right hand practice is active, but there is no event on the right hand at this cursor. Cannot browse from here!")
           
         if ((index + delta) <= (len(self.cursorsRight)-1)) :
           self.cursor = self.cursorsRight[index + delta]
 
+      else :
+        print("[INTERNAL ERROR] Score.setCursor: unknown active hand specification!")
+
     else :
 
       # BOTH HAND PRACTICE
       if (self.activeHands == ACTIVE_HANDS_BOTH) :
-        if ((self.cursor + delta) >= 0) :
-          self.cursor += delta
+        self.setCursor(self.getCursor() + delta)
 
-      # SINGLE HAND PRACTICE
-      # Retrieve the index in the <cursorsLeft/Right> array that corresponds to 
-      # the current location.
-      # If it fails, something wrong has happened.
+      # SINGLE HAND PRACTICE (LEFT)
       if (self.activeHands == ACTIVE_HANDS_LEFT) :
         try :
           index = self.cursorsLeft.index(self.cursor)
@@ -278,6 +369,7 @@ class Score :
         if ((index + delta) >= 0) :
           self.cursor = self.cursorsLeft[index + delta]
 
+      # SINGLE HAND PRACTICE (RIGHT)
       if (self.activeHands == ACTIVE_HANDS_RIGHT) :
         try :
           index = self.cursorsRight.index(self.cursor)
@@ -488,8 +580,14 @@ class Score :
     """
     
     if (len(self.bookmarks) > 0) :
+      
+      # TODO: the set has to be restricted further in single hand practice
       tmp = [x for x in self.bookmarks if (x > self.cursor)]
       if (len(tmp) > 0) :
+        
+        # TODO: setting the cursor must be done through a method
+        # that takes the active hand into account.
+        # Setting it manually is dangerous
         self.cursor = tmp[0]
       else :
         print(f"[NOTE] Last bookmark reached")
@@ -724,51 +822,109 @@ class Score :
     If the note is assigned to the left hand, it will now be assigned to the right
     hand and vice versa.
     
-    NOTE
+    NOTES
     Assigning a note from the left to the right hand has more impact than just 
     editing the <hand> property of the note object. 
-    The list of cursors must be edited too.
+    Among others, the list of cursors must be edited too.
     """
     
     if (noteObj.hand == LEFT_HAND) :
-      sourceHand = LEFT_HAND
-      destHand = RIGHT_HAND
+      
+      noteObj.hand = RIGHT_HAND
 
-      self.cursorsRight.append(self.cursor)
-      self.cursorsRight.sort()
-      self.cursorsLeft.remove(self.cursor)
+      if (noteObj.startTime in self.noteOnTimecodes["L"]) :
+        
+        # Note: 'remove' only deletes one occurrence of the element.
+        self.noteOnTimecodes["L"].remove(noteObj.startTime)
+        self.noteOnTimecodes["R"].append(noteObj.startTime)
+        self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
+        
+        # Note: <self.noteOnTimecodes["LR_full"]> remains invariant in the process
+        # Note: <self.noteOnTimecodes["LR"]> remains invariant in the process
+
+      else :
+        print("[INTERNAL ERROR] Score.toggleNoteHand: database is not consistent.")
+        print("The timecode of the note you are trying to remove is not in the list of timecodes!")
+        exit()
+
+    elif (noteObj.hand == RIGHT_HAND) :
+      
+      noteObj.hand = LEFT_HAND
+
+      if (noteObj.startTime in self.noteOnTimecodes["R"]) :
+        
+        # Note: 'remove' only deletes one occurrence of the element.
+        self.noteOnTimecodes["R"].remove(noteObj.startTime)
+        self.noteOnTimecodes["L"].append(noteObj.startTime)
+        self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
+        
+        # Note: <self.noteOnTimecodes["LR_full"]> remains invariant in the process
+        # Note: <self.noteOnTimecodes["LR"]> remains invariant in the process
+
+      else :
+        print("[INTERNAL ERROR] Score.toggleNoteHand: database is not consistent.")
+        print("The timecode of the note you are trying to remove is not in the list of timecodes!")
+        exit()
 
     else :
-      sourceHand = RIGHT_HAND
-      destHand = LEFT_HAND
+      print("[INTERNAL ERROR]")
+      exit()
 
-      self.cursorsLeft.append(self.cursor)
-      self.cursorsLeft.sort()
-      self.cursorsRight.remove(self.cursor)
+    # Rebuild the lists of cursors
+    self._buildCursorsLR()
 
-    # Update the note property
-    noteObj.hand = destHand
+    lengthLR = len(self.noteOnTimecodes["LR_full"])
+    lengthL = len(self.noteOnTimecodes["L"]); lengthR = len(self.noteOnTimecodes["R"])
+    assert(lengthLR == (lengthL + lengthR))
     
-    # Move the note in the pianoroll
-    self.pianoRoll[destHand][noteObj.pitch].append(noteObj)
-    self.pianoRoll[destHand][noteObj.pitch].sort(key = lambda x: x.startTime)
-    del self.pianoRoll[sourceHand][noteObj.pitch][noteObj.noteIndex]
 
-    if not(noteObj.startTime in self.noteOntimecodes[destHand]) :
-      self.noteOntimecodes[destHand].append(noteObj.startTime)
-      self.noteOntimecodes[destHand].sort()
+
+    # # STEP 1: update <cursorsLeft> and <cursorsRight>
+    # if (noteObj.hand == LEFT_HAND) :
+    #   sourceHand = LEFT_HAND
+    #   destHand   = RIGHT_HAND
+
+    #   if not(self.getCursor() in self.cursorsRight) :
+    #     self.cursorsRight.append(self.cursor)
+    #     self.cursorsRight.sort()
+        
+    #     # That is too ambitious: there could be more than one note at this cursor
+    #     #self.cursorsLeft.remove(self.cursor)
+
+    # else :
+    #   sourceHand = RIGHT_HAND
+    #   destHand   = LEFT_HAND
+
+    #   if not(self.getCursor() in self.cursorsRight) :
+    #     self.cursorsLeft.append(self.cursor)
+    #     self.cursorsLeft.sort()
+        
+    #     # That is too ambitious: there could be more than one note at this cursor
+    #     #self.cursorsRight.remove(self.cursor)
+
+    # # STEP 2: update the note property
+    # noteObj.hand = destHand
     
-    # Remove this timecode from the timecode list of the original hand
-    # unless there is another note that has the same startTime
-    # Quite an oddity but better take it into account.
-    doubleStart = False
-    for x in self.pianoRoll[sourceHand][noteObj.pitch] :
-      if (x.startTime == noteObj.startTime) :
-        doubleStart = True
-        break
+    # # STEP 3: move the note in the pianoroll
+    # self.pianoRoll[destHand][noteObj.pitch].append(noteObj)
+    # self.pianoRoll[destHand][noteObj.pitch].sort(key = lambda x: x.startTime)
+    # del self.pianoRoll[sourceHand][noteObj.pitch][noteObj.noteIndex]
+
+    # if not(noteObj.startTime in self.noteOntimecodes[destHand]) :
+    #   self.noteOntimecodes[destHand].append(noteObj.startTime)
+    #   self.noteOntimecodes[destHand].sort()
     
-    if not(doubleStart) :
-      self.noteOntimecodes[destHand].remove(noteObj.startTime)
+    # # Remove this timecode from the timecode list of the original hand
+    # # unless there is another note that has the same startTime
+    # # Quite an oddity but better take it into account.
+    # doubleStart = False
+    # for x in self.pianoRoll[sourceHand][noteObj.pitch] :
+    #   if (x.startTime == noteObj.startTime) :
+    #     doubleStart = True
+    #     break
+    
+    # if not(doubleStart) :
+    #   self.noteOntimecodes[destHand].remove(noteObj.startTime)
 
 
 
@@ -1048,8 +1204,6 @@ class Score :
       
       self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
       self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
-      self.cursorsLeft = []
-      self.cursorsRight = []
 
       noteCount = 0
       for noteObjImported in importDict["pianoRoll"] :
@@ -1099,18 +1253,7 @@ class Score :
       self.noteOnTimecodes["LR"].sort()
 
       # Build <cursorsLeft> and <cursorsRight>
-      for (index, timecode) in enumerate(self.noteOnTimecodes["LR"]) :
-        unaffected = True
-        if (timecode in self.noteOnTimecodes["L"]) :
-          self.cursorsLeft.append(index)
-          unaffected = False
-
-        if (timecode in self.noteOnTimecodes["R"]) :
-          self.cursorsRight.append(index)
-          unaffected = False
-        
-        if unaffected :
-          print("[INTERNAL ERROR] Something odd happened!")
+      self._buildCursorsLR()
 
       self.scoreLength = len(self.noteOnTimecodes["LR"])
       self.cursorMax = self.scoreLength-1

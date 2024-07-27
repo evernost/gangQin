@@ -40,7 +40,6 @@ if (__name__ == "__main__") :
 # =============================================================================
 # Main code
 # =============================================================================
-
 class FingerSelector :
 
   def __init__(self, loc) :
@@ -71,6 +70,9 @@ class FingerSelector :
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD: FingerSelector.show()
+  # ---------------------------------------------------------------------------
   def show(self, screen) :
     """
     Render the finger selection widget on screen.
@@ -80,20 +82,20 @@ class FingerSelector :
       labels = ["5 ", "4 ", "3 ", "2 ", "1 ", "- ", "- ", "1 ", "2 ", "3 ", "4 ", "5 "]
       
       # Note: 96 = 8*10 + 8*2, i.e. 8 x char size + 8 x space in-between
-      text.renderText(screen, f"FINGER: ", (self.locX, self.locY), 2, self.textColor)      
+      text.render(screen, f"FINGER: ", (self.locX, self.locY), 2, self.textColor)      
       
       for i in range(12) :
         if (i <= 5) :          
           if (self.currentSel == i) :
-            text.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelL)
+            text.render(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelL)
           else :
-            text.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorL)
+            text.render(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorL)
 
         else :
           if (self.currentSel == i) :
-            text.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelR)
+            text.render(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelR)
           else :
-            text.renderText(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorR)
+            text.render(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorR)
 
       x0 = self.locX + 96 - 7
       yTop = self.locY + 3; yBottom = self.locY + 12
@@ -105,6 +107,9 @@ class FingerSelector :
     
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD: FingerSelector.setEditedNote()
+  # ---------------------------------------------------------------------------
   def setEditedNote(self, noteObj, cursor = -1) :
     """
     Defines the note whose properties are shown in the finger selector.
@@ -121,20 +126,26 @@ class FingerSelector :
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD: FingerSelector.getEditedNote()
+  # ---------------------------------------------------------------------------
   def getEditedNote(self) :
     """
-    TODO
+    todo
     """
+    
     return self.editedNote
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <resetEditedNote>
-  #
-  # TODO
+  # METHOD: FingerSelector.resetEditedNote()
   # ---------------------------------------------------------------------------
   def resetEditedNote(self) :
+    """
+    todo
+    """
+    
     self.editedNote.highlight = False
     self.editedNote = None
     self.editedCursor = -1
@@ -143,17 +154,18 @@ class FingerSelector :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <setFingerWithClick>
-  #
-  # Update the finger associated to the note being edited using a click on the 
-  # widget.
-  #
-  # The function returns if the click actually hit something relevant on the 
-  # widget and it got updated, or the click occured outside the scope and 
-  # nothing changed.
+  # METHOD: FingerSelector.setFingerWithClick(clickCoordinates)
   # ---------------------------------------------------------------------------
   def setFingerWithClick(self, clickCoord) :
-    
+    """
+    Update the finger associated to the note being edited using a click on the 
+    widget.
+
+    The function returns if the click actually hit something relevant on the 
+    widget and it got updated, or the click occured outside the scope and 
+    nothing changed.
+    """
+
     (clickX, clickY) = clickCoord
     x0 = self.locX + 96 - 7
     yTop = self.locY + 3; yBottom = self.locY + 12
@@ -184,6 +196,7 @@ class FingerSelector :
       
     return FINGERSEL_UNCHANGED
   
+
 
   # ---------------------------------------------------------------------------
   # METHOD <FingerSelector.setFingerAutoHighlight>

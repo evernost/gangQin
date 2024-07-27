@@ -495,7 +495,7 @@ while running :
       ret = fingerSelWidget.setFingerWithClick(clickCoord)
 
       if (ret == fingerSelector.FINGERSEL_HAND_CHANGE) :
-        userScore.switchHand(fingerSelWidget.getEditedNote())
+        userScore.toggleNoteHand(fingerSelWidget.getEditedNote())
 
     clickMsg = False
 

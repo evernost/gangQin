@@ -90,7 +90,7 @@ class Arbiter :
     self.midiSuperfluous  = [0 for _ in range(128)]
     self.midiAssociatedID = [-1 for _ in range(128)]
 
-    self.arbiterSuspendReq = False
+    self.suspended = False
     self.queryNotesPitch = []
 
 
@@ -113,7 +113,19 @@ class Arbiter :
       self.midiAssociatedID[midiMessage.note] = -1
 
 
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Arbiter.suspendReq(pitchList)
+  # ---------------------------------------------------------------------------
+  def suspendReq(self, queryNotesPitch) :
+    """
+    TODO
+    """
+    self.suspended = True
+    self.queryNotesPitch = queryNotesPitch
+
     
+
   # ---------------------------------------------------------------------------
   # METHOD: Arbiter.eval(teacherNotes)
   # ---------------------------------------------------------------------------
@@ -218,14 +230,14 @@ class Arbiter :
       # Case 5: progress is on hold because the "note finding" feature is active.
       # The current notes pressed are 'query' notes and all of them 
       # must be released before reenabling the arbiter.
-      if (self.arbiterSuspendReq) :
+      if (self.suspended) :
         allDown = True
         for x in self.queryNotesPitch :
           if (self.midiCurr[x] == 1) :
             allDown = False
 
         if allDown :
-          self.arbiterSuspendReq = False
+          self.suspended = False
         else :
           allowProgress = False
 

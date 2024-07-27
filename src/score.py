@@ -111,9 +111,7 @@ class Score :
     self.keyList = []
 
     self.progressEnable = True
-    self.arbiterSuspendReq = False
-    self.arbiterPitchListHold = []
-
+    
     # Combo!
     # Resets every time a wrong note is played.
     # Keeps track of the best scores achieved
@@ -669,17 +667,17 @@ class Score :
           break
       
     if found :
-      
       # We must prevent the arbiter from taking this as a valid input
       # and move on to the next cursor
       # All notes must be released before moving on.
       self.cursor = foundCursor
-      self.arbiterSuspendReq = True
-      self.arbiterPitchListHold = pitchList.copy()
+      arbiterSuspendReq = True
+      arbiterPitchListHold = pitchList.copy()
+      return (arbiterSuspendReq, arbiterPitchListHold)
     
     else :
       print("[NOTE] Could not find the current MIDI notes in the score!")
-
+      return (False, [])
 
 
   # ---------------------------------------------------------------------------
@@ -1012,7 +1010,6 @@ class Score :
     # self.noteOntimecodesMerged  = safeDict["noteOntimecodesMerged"]
     # self.cursorsLeft            = safeDict["cursorsLeft"]
     # self.cursorsRight           = safeDict["cursorsRight"]
-    # self.cursorMax = len(self.noteOntimecodesMerged)-1
 
     # TODO: import the scales
     # TODO: import the loops
@@ -1128,8 +1125,7 @@ class Score :
 
 
     stopTime = time.time()
-    print(f"[NOTE] Loading time: {stopTime-startTime:.1f}s")
-    print(f"[NOTE] {pianoRollFile} successfully loaded!")
+    print(f"[NOTE] Loading time: {stopTime-startTime:.2f}s")
 
 
 
@@ -1157,9 +1153,6 @@ class Score :
     # TODO: export the scales
     # exportDict["scale"] = self.scale
 
-    # Convert the Note() objects to a dictionnary before pushing them in the export dict
-    # exportDict["pianoRoll"] = [[[noteObj.__dict__ for noteObj in noteList] for noteList in trackList] for trackList in self.pianoRoll]
-
     noteCount = 0
     exportDict["pianoRoll"] = []
     for notesInTrack in self.pianoRoll :
@@ -1168,12 +1161,11 @@ class Score :
           noteCount += 1
           exportDict["pianoRoll"].append(noteObj.__dict__)
 
-    print(f"[DEBUG] {noteCount} notes written in .pr file.")
-
     with open(pianoRollFile, "w") as fileHandler :
       json.dump(exportDict, fileHandler, indent = 4)
 
     currTime = datetime.datetime.now()
+    print(f"[DEBUG] {noteCount} notes written in .pr file.")
     print(f"[NOTE] Saved to '{pianoRollFile}' at {currTime.strftime('%H:%M:%S')}")
 
 

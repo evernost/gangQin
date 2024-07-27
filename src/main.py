@@ -391,7 +391,11 @@ while running :
         # Note : use a copy of the MIDI notes list to prevent the 
         #        MIDI callback to mess with the function.
         if (max(pianoArbiter.midiCurr) == 1) :
-          userScore.search(pianoArbiter.midiCurr.copy())
+          print("[NOTE] Backward search requested...")
+          (suspendReq, pitchListHold) = userScore.search(pianoArbiter.midiCurr.copy())
+          if suspendReq :
+            pianoArbiter.suspendReq(pitchListHold)
+
         elif ctrlKey :
           userScore.cursorStep(10)
         else :
@@ -402,7 +406,11 @@ while running :
         
         # Find feature
         if (max(pianoArbiter.midiCurr) == 1) :
-          userScore.search(pianoArbiter.midiCurr.copy(), direction = -1)
+          print("[NOTE] Forward search requested...")
+          (suspendReq, pitchListHold) = userScore.search(pianoArbiter.midiCurr.copy(), direction = -1)
+          if suspendReq :
+            pianoArbiter.suspendReq(pitchListHold)
+        
         elif ctrlKey :
           userScore.cursorStep(-10)
         else :

@@ -135,10 +135,12 @@ class Arbiter :
 
     """
 
-    # Reformat the teacher notes
+    # Reformat the teacher notes, keep the 'new' notes only
+    # (not the sustained ones)
     teacherNotesAsMidiArray = [0 for _ in range(128)]
     for noteObj in teacherNotes :
-      teacherNotesAsMidiArray[noteObj.pitch] = 1
+      if (noteObj.sustained == False) :
+        teacherNotesAsMidiArray[noteObj.pitch] = 1
     
     msgQueue = []
 
@@ -193,7 +195,7 @@ class Arbiter :
       allowProgress = True
       for pitch in GRAND_PIANO_MIDI_RANGE :
 
-        # Case 1: a required notes is missing.
+        # Case 1: a required note is missing.
         if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 0) and (self.midiSuperfluous[pitch] == 0)) :
           allowProgress = False
 

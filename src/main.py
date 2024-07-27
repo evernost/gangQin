@@ -170,11 +170,13 @@ while running :
       keys    = pygame.key.get_pressed()
       ctrlKey = event.mod & pygame.KMOD_CTRL
       altKey  = event.mod & pygame.KMOD_ALT
+      shiftKey  = event.mod & pygame.KMOD_SHIFT
     
     if (event.type == pygame.KEYDOWN) :
       keys    = pygame.key.get_pressed()
       ctrlKey = event.mod & pygame.KMOD_CTRL
       altKey  = event.mod & pygame.KMOD_ALT
+      shiftKey  = event.mod & pygame.KMOD_SHIFT
 
       # -----------------
       # "q": exit the app
@@ -212,17 +214,18 @@ while running :
       if (keys[pygame.K_RIGHT] and ctrlKey) :
         userScore.cursorStep(10)
 
-      # ------------------------------------------
-      # ALT + Left arrow: highlight the note below
-      # ------------------------------------------
-      if (keys[pygame.K_LEFT] and altKey) :
-        print("[TODO]")
+      # ---------------------------------------------
+      # Tab key: highlight the note above for editing
+      # ---------------------------------------------
+      if (keys[pygame.K_TAB] and not(shiftKey)) :
+        print("[TODO] Editing next using shift key")
 
-      # -------------------------------------------
-      # ALT + Right arrow: highlight the note above
-      # -------------------------------------------
-      if (keys[pygame.K_LEFT] and altKey) :
-        print("[TODO]")
+      # -----------------------------------------------
+      # Maj + tab: highlight the note below for editing
+      # -----------------------------------------------
+      if (keys[pygame.K_TAB] and shiftKey) :
+        print("[TODO] Editing before using shift key")
+
 
       # ---------------------------------------
       # HOME: jump to the beginning of the file

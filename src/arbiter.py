@@ -30,12 +30,8 @@ if (__name__ == "__main__") :
 # =============================================================================
 # Constants pool
 # =============================================================================
-ARBITER_MODE_EXACT = 0                # Deprecated
-ARBITER_MODE_EXACT_WITH_SUSTAIN = 1   # Deprecated
-ARBITER_MODE_PERMISSIVE = 2
-
-ARBITER_MSG_CURSOR_NEXT = 0
-ARBITER_MSG_RESET_COMBO = 1
+MSG_CURSOR_NEXT = 0
+MSG_RESET_COMBO = 1
 
 
 
@@ -149,7 +145,7 @@ class Arbiter :
     # STRATEGY: EXACT MODE (deprecated)
     # if (self.comparisonMode == "exact") :
     #   if (teacherNotesMidi == midiCurr) :
-    #     msgQueue.append(ARBITER_MSG_CURSOR_NEXT)
+    #     msgQueue.append(MSG_CURSOR_NEXT)
     #     return ARBITER_DECISION_OK
 
     # STRATEGY: EXACT WITH SUSTAIN (deprecated)
@@ -225,7 +221,7 @@ class Arbiter :
         # Since it is permissive, it does not block the progress.
         # But it resets the combo counter and plays a notification.
         if ((teacherNotesAsMidiArray[pitch] == 0) and (self.midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 0)) :
-          msgQueue.append(ARBITER_MSG_RESET_COMBO)
+          msgQueue.append(MSG_RESET_COMBO)
           
       # Case 5: progress is on hold because the "note finding" feature is active.
       # The current notes pressed are 'query' notes and all of them 
@@ -245,7 +241,7 @@ class Arbiter :
 
       # CONCLUSION
       if allowProgress :
-        msgQueue.append(ARBITER_MSG_CURSOR_NEXT)
+        msgQueue.append(MSG_CURSOR_NEXT)
         
         # Update note status
         for pitch in GRAND_PIANO_MIDI_RANGE :

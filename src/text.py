@@ -25,16 +25,20 @@ if (__name__ == "__main__") :
 
 
 # =============================================================================
-# Main code 
+# Constants pool
 # =============================================================================
+LEFT_JUSTIFY = 0
+RIGHT_JUSTIFY = 1
+
+
 # Font design is based on old school calculators LCD
 # Example at https://www.dafont.com/fr/pixelmix.font
-#
+
 # This one wouldn't be bad either, but requires some more work: https://www.dafont.com/fr/perfect-dos-vga-437.font
 
-charPolygons = {}
+CHAR_POLYGONS = {}
 
-charPolygons["0"] = [
+CHAR_POLYGONS["0"] = [
   [0, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 1, 1],
@@ -44,7 +48,7 @@ charPolygons["0"] = [
   [0, 1, 1, 1, 0]
 ]
 
-charPolygons["1"] = [
+CHAR_POLYGONS["1"] = [
   [0, 0, 1, 0, 0],
   [0, 1, 1, 0, 0],
   [0, 0, 1, 0, 0],
@@ -54,7 +58,7 @@ charPolygons["1"] = [
   [0, 1, 1, 1, 0]
 ]
 
-charPolygons["2"] = [
+CHAR_POLYGONS["2"] = [
   [0, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
   [0, 0, 0, 0, 1],
@@ -64,7 +68,7 @@ charPolygons["2"] = [
   [1, 1, 1, 1, 1]
 ]
 
-charPolygons["3"] = [
+CHAR_POLYGONS["3"] = [
   [1, 1, 1, 1, 1],
   [0, 0, 0, 1, 0],
   [0, 0, 1, 0, 0],
@@ -74,7 +78,7 @@ charPolygons["3"] = [
   [0, 1, 1, 1, 0]
 ]
 
-charPolygons["4"] = [
+CHAR_POLYGONS["4"] = [
   [0, 0, 0, 1, 0],
   [0, 0, 1, 1, 0],
   [0, 1, 0, 1, 0],
@@ -84,7 +88,7 @@ charPolygons["4"] = [
   [0, 0, 0, 1, 0]
 ]
 
-charPolygons["5"] = [
+CHAR_POLYGONS["5"] = [
   [1, 1, 1, 1, 1],
   [1, 0, 0, 0, 0],
   [1, 1, 1, 1, 0],
@@ -94,7 +98,7 @@ charPolygons["5"] = [
   [0, 1, 1, 1, 0]
 ]
 
-charPolygons["6"] = [
+CHAR_POLYGONS["6"] = [
   [0, 0, 1, 1, 0],
   [0, 1, 0, 0, 0],
   [1, 0, 0, 0, 0],
@@ -104,7 +108,7 @@ charPolygons["6"] = [
   [0, 1, 1, 1, 0]
 ]
 
-charPolygons["7"] = [
+CHAR_POLYGONS["7"] = [
   [1, 1, 1, 1, 1],
   [0, 0, 0, 0, 1],
   [0, 0, 0, 1, 0],
@@ -114,7 +118,7 @@ charPolygons["7"] = [
   [0, 1, 0, 0, 0]
 ]
 
-charPolygons["8"] = [
+CHAR_POLYGONS["8"] = [
   [0, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -124,7 +128,7 @@ charPolygons["8"] = [
   [0, 1, 1, 1, 0]
 ]
 
-charPolygons["9"] = [
+CHAR_POLYGONS["9"] = [
   [0, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -134,7 +138,7 @@ charPolygons["9"] = [
   [0, 1, 1, 0, 0]
 ]
 
-charPolygons["A"] = [
+CHAR_POLYGONS["A"] = [
   [0, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -144,7 +148,7 @@ charPolygons["A"] = [
   [1, 0, 0, 0, 1]
 ]
 
-charPolygons["B"] = [
+CHAR_POLYGONS["B"] = [
   [1, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -154,7 +158,7 @@ charPolygons["B"] = [
   [1, 1, 1, 1, 0]
 ]
 
-charPolygons["C"] = [
+CHAR_POLYGONS["C"] = [
   [0, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 0],
@@ -164,7 +168,7 @@ charPolygons["C"] = [
   [0, 1, 1, 1, 0]
 ]
 
-charPolygons["D"] = [
+CHAR_POLYGONS["D"] = [
   [1, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -174,7 +178,7 @@ charPolygons["D"] = [
   [1, 1, 1, 1, 0]
 ]
 
-charPolygons["E"] = [
+CHAR_POLYGONS["E"] = [
   [1, 1, 1, 1, 1],
   [1, 0, 0, 0, 0],
   [1, 0, 0, 0, 0],
@@ -184,7 +188,7 @@ charPolygons["E"] = [
   [1, 1, 1, 1, 1]
 ]
 
-charPolygons["F"] = [
+CHAR_POLYGONS["F"] = [
   [1, 1, 1, 1, 1],
   [1, 0, 0, 0, 0],
   [1, 0, 0, 0, 0],
@@ -194,7 +198,7 @@ charPolygons["F"] = [
   [1, 0, 0, 0, 0]
 ]
 
-charPolygons["G"] = [
+CHAR_POLYGONS["G"] = [
   [0, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 0],
@@ -204,7 +208,7 @@ charPolygons["G"] = [
   [0, 1, 1, 1, 1]
 ]
 
-charPolygons["H"] = [
+CHAR_POLYGONS["H"] = [
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -214,7 +218,7 @@ charPolygons["H"] = [
   [1, 0, 0, 0, 1]
 ]
 
-charPolygons["I"] = [
+CHAR_POLYGONS["I"] = [
   [0, 1, 1, 1, 0],
   [0, 0, 1, 0, 0],
   [0, 0, 1, 0, 0],
@@ -224,7 +228,7 @@ charPolygons["I"] = [
   [0, 1, 1, 1, 0]
 ]
 
-charPolygons["J"] = [
+CHAR_POLYGONS["J"] = [
   [0, 0, 1, 1, 1],
   [0, 0, 0, 1, 0],
   [0, 0, 0, 1, 0],
@@ -234,7 +238,7 @@ charPolygons["J"] = [
   [0, 1, 1, 0, 0]
 ]
 
-charPolygons["K"] = [
+CHAR_POLYGONS["K"] = [
   [1, 0, 0, 0, 1],
   [1, 0, 0, 1, 0],
   [1, 0, 1, 0, 0],
@@ -244,7 +248,7 @@ charPolygons["K"] = [
   [1, 0, 0, 0, 1]
 ]
 
-charPolygons["L"] = [
+CHAR_POLYGONS["L"] = [
   [1, 0, 0, 0, 0],
   [1, 0, 0, 0, 0],
   [1, 0, 0, 0, 0],
@@ -254,7 +258,7 @@ charPolygons["L"] = [
   [1, 1, 1, 1, 1]
 ]
 
-charPolygons["M"] = [
+CHAR_POLYGONS["M"] = [
   [1, 0, 0, 0, 1],
   [1, 1, 0, 1, 1],
   [1, 0, 1, 0, 1],
@@ -264,7 +268,7 @@ charPolygons["M"] = [
   [1, 0, 0, 0, 1]
 ]
 
-charPolygons["N"] = [
+CHAR_POLYGONS["N"] = [
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
   [1, 1, 0, 0, 1],
@@ -274,7 +278,7 @@ charPolygons["N"] = [
   [1, 0, 0, 0, 1]
 ]
 
-charPolygons["O"] = [
+CHAR_POLYGONS["O"] = [
   [0, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -284,7 +288,7 @@ charPolygons["O"] = [
   [0, 1, 1, 1, 0]
 ]
 
-charPolygons["P"] = [
+CHAR_POLYGONS["P"] = [
   [1, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -294,7 +298,7 @@ charPolygons["P"] = [
   [1, 0, 0, 0, 0]
 ]
 
-charPolygons["Q"] = [
+CHAR_POLYGONS["Q"] = [
   [0, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -304,7 +308,7 @@ charPolygons["Q"] = [
   [0, 1, 1, 0, 1]
 ]
 
-charPolygons["R"] = [
+CHAR_POLYGONS["R"] = [
   [1, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -314,7 +318,7 @@ charPolygons["R"] = [
   [1, 0, 0, 0, 1]
 ]
 
-charPolygons["S"] = [
+CHAR_POLYGONS["S"] = [
   [0, 1, 1, 1, 1],
   [1, 0, 0, 0, 0],
   [1, 0, 0, 0, 0],
@@ -324,7 +328,7 @@ charPolygons["S"] = [
   [1, 1, 1, 1, 0]
 ]
 
-charPolygons["T"] = [
+CHAR_POLYGONS["T"] = [
   [1, 1, 1, 1, 1],
   [0, 0, 1, 0, 0],
   [0, 0, 1, 0, 0],
@@ -334,7 +338,7 @@ charPolygons["T"] = [
   [0, 0, 1, 0, 0]
 ]
 
-charPolygons["U"] = [
+CHAR_POLYGONS["U"] = [
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -344,7 +348,7 @@ charPolygons["U"] = [
   [0, 1, 1, 1, 0]
 ]
 
-charPolygons["V"] = [
+CHAR_POLYGONS["V"] = [
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -354,7 +358,7 @@ charPolygons["V"] = [
   [0, 0, 1, 0, 0]
 ]
 
-charPolygons["W"] = [
+CHAR_POLYGONS["W"] = [
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -364,7 +368,7 @@ charPolygons["W"] = [
   [0, 1, 0, 1, 0]
 ]
 
-charPolygons["X"] = [
+CHAR_POLYGONS["X"] = [
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
   [0, 1, 0, 1, 0],
@@ -374,7 +378,7 @@ charPolygons["X"] = [
   [1, 0, 0, 0, 1]
 ]
 
-charPolygons["Y"] = [
+CHAR_POLYGONS["Y"] = [
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
   [1, 0, 0, 0, 1],
@@ -384,7 +388,7 @@ charPolygons["Y"] = [
   [0, 0, 1, 0, 0]
 ]
 
-charPolygons["Z"] = [
+CHAR_POLYGONS["Z"] = [
   [1, 1, 1, 1, 1],
   [0, 0, 0, 0, 1],
   [0, 0, 0, 1, 0],
@@ -394,7 +398,7 @@ charPolygons["Z"] = [
   [1, 1, 1, 1, 1]
 ]
 
-charPolygons[" "] = [
+CHAR_POLYGONS[" "] = [
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
@@ -404,7 +408,7 @@ charPolygons[" "] = [
   [0, 0, 0, 0, 0]
 ]
 
-charPolygons["#"] = [
+CHAR_POLYGONS["#"] = [
   [0, 0, 0, 0, 0],
   [0, 1, 0, 1, 0],
   [1, 1, 1, 1, 1],
@@ -414,7 +418,7 @@ charPolygons["#"] = [
   [0, 1, 0, 1, 0]
 ]
 
-charPolygons["("] = [
+CHAR_POLYGONS["("] = [
   [0, 0, 0, 1, 0],
   [0, 0, 1, 0, 0],
   [0, 1, 0, 0, 0],
@@ -424,7 +428,7 @@ charPolygons["("] = [
   [0, 0, 0, 1, 0]
 ]
 
-charPolygons[")"] = [
+CHAR_POLYGONS[")"] = [
   [0, 1, 0, 0, 0],
   [0, 0, 1, 0, 0],
   [0, 0, 0, 1, 0],
@@ -434,7 +438,7 @@ charPolygons[")"] = [
   [0, 1, 0, 0, 0]
 ]
 
-charPolygons[":"] = [
+CHAR_POLYGONS[":"] = [
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
   [0, 0, 1, 0, 0],
@@ -444,7 +448,7 @@ charPolygons[":"] = [
   [0, 0, 0, 0, 0]
 ]
 
-charPolygons["/"] = [
+CHAR_POLYGONS["/"] = [
   [0, 0, 0, 1, 0],
   [0, 0, 0, 1, 0],
   [0, 0, 1, 0, 0],
@@ -454,7 +458,7 @@ charPolygons["/"] = [
   [0, 1, 0, 0, 0]
 ]
 
-charPolygons["?"] = [
+CHAR_POLYGONS["?"] = [
   [0, 1, 1, 0, 0],
   [1, 0, 0, 1, 0],
   [0, 0, 0, 1, 0],
@@ -464,7 +468,7 @@ charPolygons["?"] = [
   [0, 1, 0, 0, 0]
 ]
 
-charPolygons["-"] = [
+CHAR_POLYGONS["-"] = [
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
@@ -474,7 +478,7 @@ charPolygons["-"] = [
   [0, 0, 0, 0, 0]
 ]
 
-charPolygons["_"] = [
+CHAR_POLYGONS["_"] = [
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
@@ -484,7 +488,7 @@ charPolygons["_"] = [
   [1, 1, 1, 1, 1]
 ]
 
-charPolygons["."] = [
+CHAR_POLYGONS["."] = [
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
@@ -494,7 +498,7 @@ charPolygons["."] = [
   [0, 1, 1, 0, 0]
 ]
 
-charPolygons[","] = [
+CHAR_POLYGONS[","] = [
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
@@ -504,7 +508,7 @@ charPolygons[","] = [
   [0, 0, 1, 0, 0]
 ]
 
-charPolygons[";"] = [
+CHAR_POLYGONS[";"] = [
   [0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0],
   [0, 0, 1, 0, 0],
@@ -514,7 +518,7 @@ charPolygons[";"] = [
   [0, 0, 1, 0, 0]
 ]
 
-charPolygons["["] = [
+CHAR_POLYGONS["["] = [
   [0, 1, 1, 0, 0],
   [0, 1, 0, 0, 0],
   [0, 1, 0, 0, 0],
@@ -524,7 +528,7 @@ charPolygons["["] = [
   [0, 1, 1, 0, 0]
 ]
 
-charPolygons["]"] = [
+CHAR_POLYGONS["]"] = [
   [0, 0, 1, 1, 0],
   [0, 0, 0, 1, 0],
   [0, 0, 0, 1, 0],
@@ -542,20 +546,26 @@ charPolygons["]"] = [
 #   This arguments defines the size of each square (in pixels)
 # - <col> = (R,G,B): text color
 # -----------------------------------------------------------------------------
-def render(screenInst, string, loc, size, col = (40, 50, 60)) :
+def render(screenInst, string, loc, size, col = (40, 50, 60), justify = LEFT_JUSTIFY) :
   x0 = loc[0]; y0 = loc[1]
   w = size; h = size
 
+  if (justify == RIGHT_JUSTIFY) :
+    x0 = x0 - 6*w*len(string)
+
   for char in string :
-    for l in charPolygons[char] :
+    for l in CHAR_POLYGONS[char] :
       for c in l :
         if (c > 0) :
-          p = [(x0, y0), (x0 + (w-1), y0), (x0 + (w-1), y0 + (h-1)), (x0, y0 + (h-1))]
-          pygame.draw.polygon(screenInst, col, p)
+          squareCoord = [(x0, y0), (x0 + (w-1), y0), (x0 + (w-1), y0 + (h-1)), (x0, y0 + (h-1))]
+          pygame.draw.polygon(screenInst, col, squareCoord)
 
         x0 += w
       
       x0 -= 5*w; y0 += h
 
     x0 += 6*w; y0 = loc[1]
+
+  
+
 

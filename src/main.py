@@ -183,6 +183,7 @@ while running :
         if (midiPort != None) :
           midiPort.close()
         
+        print("")
         print("See you!")
         pygame.quit()
         raise SystemExit(0)
@@ -460,7 +461,7 @@ while running :
   arbiterMsgQueue = pianoArbiter.eval(teacherNotes)
 
   for msg in arbiterMsgQueue :
-    if (msg == arbiter.ARBITER_MSG_CURSOR_NEXT) :
+    if (msg == arbiter.MSG_CURSOR_NEXT) :
       userScore.cursorNext()
       
       if (userScore.cursor == userScore.loopStart) :
@@ -470,7 +471,7 @@ while running :
       
       soundNotify.wrongNoteReset()
 
-    if (msg == arbiter.ARBITER_MSG_RESET_COMBO) :
+    if (msg == arbiter.MSG_RESET_COMBO) :
       userScore.comboCount = 0
       soundNotify.wrongNote()
 
@@ -513,16 +514,16 @@ while running :
 
   # LOOP SETTINGS
   if userScore.loopEnable :
-    text.render(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (300, 20), 2, UI_TEXT_COLOR)
+    text.render(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (400, 20), 2, UI_TEXT_COLOR)
   else :
     if (userScore.loopStart >= 0) :
-      text.render(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... _]", (300, 20), 2, UI_TEXT_COLOR)
+      text.render(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... _]", (400, 20), 2, UI_TEXT_COLOR)
 
     if (userScore.loopEnd >= 0) :
-      text.render(screen, f"LOOP: [_  ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (300, 20), 2, UI_TEXT_COLOR)
+      text.render(screen, f"LOOP: [_  ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (400, 20), 2, UI_TEXT_COLOR)
       
   # COMBO COUNT
-  text.render(screen, f"COMBO: {userScore.comboCount} (MAX: {userScore.comboHighestSession} / ALLTIME: {userScore.comboHighestAllTime})", (800, 20), 2, UI_TEXT_COLOR)
+  text.render(screen, f"COMBO: {userScore.comboCount} (MAX: {userScore.comboHighestSession} / ALLTIME: {userScore.comboHighestAllTime})", (1312, 20), 2, UI_TEXT_COLOR, justify = text.RIGHT_JUSTIFY)
 
   # FINGER SELECTION
   fingerSelWidget.show(screen)

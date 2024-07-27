@@ -539,7 +539,6 @@ class Score :
     To list those, use <getSustainedNotes>.
     """
     
-    # TODO: add a cache feature. This function is called for every frame update!
     if (self.cachedCursor == self.cursor) :
       return self.cachedTeacherNotes
     

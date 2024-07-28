@@ -1298,25 +1298,39 @@ class Score :
 
       noteCount = 0
       for noteObjImported in importDict["pianoRoll"] :
-        
-        noteObj = note.Note(noteObjImported["pitch"])
+
+        # Create the object
+        noteObj = note.Note(0)
         
         # List of all properties in a Note object, make a dictionary out of it.
         noteAttrDict = noteObj.__dict__.copy()
         
-        # TODO: not sure why the ID had to be treated differently
-        # noteObj.id = noteObjImported["id"]; del noteAttrDict["id"]
+        # Make sure the ID is treated first, so that the warning later in the for loop
+        # can display the ID of the edited note.
+        noteObj.id = noteObjImported["id"]; del noteAttrDict["id"]
+
+        # Detect manual editions
+        expectedNoteName = note.getFriendlyName(noteObjImported["pitch"])
+        actualNoteName   = noteObjImported["name"]
+        oldColor = noteObjImported["keyColor"]
+        newColor = WHITE_KEY if ((noteObjImported["pitch"] % 12) in WHITE_NOTES_CODE_MOD12) else BLACK_KEY
+        if (expectedNoteName != actualNoteName) :
+          print(f"[NOTE] Note ID {noteObj.id}: manual edition detected.")
+          print(f"Following fields will be replaced:")
+          print(f"- note name: {actualNoteName} -> {expectedNoteName}")
+          print(f"- key color: {oldColor} -> {newColor}")
+          noteObjImported["name"] = expectedNoteName
+          noteObjImported["keyColor"] = newColor
 
         # Loop on the attributes of the Note object
         for noteAttr in noteAttrDict :
           
-          # CHECK: rectify inconsistencies between <pitch> and <name> attributes.
-          if (noteAttr == "name") :
-            expectedNoteName = note.getFriendlyName(noteObjImported["pitch"])
-            actualNoteName   = noteObjImported["name"]
-            if (expectedNoteName != actualNoteName) :
-              print(f"[WARNING] Note ID {noteObj.id}: MIDI pitch ({noteObjImported['pitch']}) and note name ({actualNoteName}) do not agree. The pitch takes precedence, name will be overwritten to {expectedNoteName}.")
           
+          #WHITE_KEY if ((pitch % 12) in WHITE_NOTES_CODE_MOD12) else BLACK_KEY
+
+
+
+
           # Call the attribute by its name (as string), and assign it.
           setattr(noteObj, noteAttr, noteObjImported[noteAttr])
         

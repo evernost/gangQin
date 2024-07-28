@@ -40,7 +40,7 @@ if (__name__ == "__main__") :
 # =============================================================================
 # Constants pool
 # =============================================================================
-# None.
+SET_CURSOR_SUCCESS = 0
 
 
 
@@ -81,7 +81,7 @@ class Score :
   def __init__(self) :
     
     # General information about the score
-    self.nStaffs = 0
+    self.nStaffs = 2
     self.avgNoteDuration = 0
     self.hasUnsavedChanges = False
     
@@ -89,7 +89,7 @@ class Score :
     self.cursorMax = 0
     self.scoreLength = 0
 
-    self.pianoRoll = []
+    self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
 
     self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
     
@@ -101,7 +101,6 @@ class Score :
     self.activeHands = "LR"
     
     self.teacherNotes = []
-    self.teacherNotesMidi = [0 for _ in range(128)]
     self.sustainedNotes = []
 
     self.cachedCursor = -1
@@ -144,38 +143,62 @@ class Score :
   # ---------------------------------------------------------------------------
   # METHOD Score.getCursorsLeftPointer()
   # ---------------------------------------------------------------------------
-  def getCursorsLeftPointer(self) :
+  def getCursorsLeftPointer(self, cursor, force = False) :
     """
-    Returns the value <p> such that cursorsLeft[p] corresponds to the current
-    cursor.
+    Returns the value <p> such that cursorsLeft[p] is equal to the query <cursor>.
 
-    If no such value exists, the function returns -1.
+    If no such value exists, the function returns:
+    - -1 when <force> is False (default)
+    - <p> such that cursorsLeft[p] is the closest possible to <cursor> otherwise.
     """
-    try :
-      index = self.cursorsLeft.index(self.cursor)
+    if (cursor in self.cursorsLeft) :
+      index = self.cursorsLeft.index(cursor)
       return index
 
-    except :
-      return -1
+    else :
+      if force :
+        minDist = abs(cursor - self.cursorsLeft[0]); minIndex = 0
+        for (idx, cursorLeft) in enumerate(self.cursorsLeft) :
+          if (abs(cursor - cursorLeft) < minDist) :
+            minDist = abs(cursor - cursorLeft)
+            minIndex = idx
+
+        print(f"[DEBUG] Requested cursor: {cursor}, closest: {minIndex}")
+        return minIndex
+
+      else :
+        return -1
     
 
 
   # ---------------------------------------------------------------------------
   # METHOD Score.getCursorsRightPointer()
   # ---------------------------------------------------------------------------
-  def getCursorsRightPointer(self) :
+  def getCursorsRightPointer(self, cursor, force = False) :
     """
-    Returns the value <p> such that cursorsRight[p] corresponds to the current
-    cursor.
+    Returns the value <p> such that cursorsRight[p] is equal to the query <cursor>.
 
-    If no such value exists, the function returns -1.
+    If no such value exists, the function returns:
+    - -1 when <force> is False (default)
+    - <p> such that cursorsRight[p] is the closest possible to <cursor> otherwise.
     """
-    try :
-      index = self.cursorsRight.index(self.cursor)
+    if (cursor in self.cursorsRight) :
+      index = self.cursorsRight.index(cursor)
       return index
 
-    except :
-      return -1
+    else :
+      if force :
+        minDist = abs(cursor - self.cursorsRight[0]); minIndex = 0
+        for (idx, cursorLeft) in enumerate(self.cursorsRight) :
+          if (abs(cursor - cursorLeft) < minDist) :
+            minDist = abs(cursor - cursorLeft)
+            minIndex = idx
+
+        print(f"[DEBUG] Requested cursor: {cursor}, closest: {minIndex}")
+        return minIndex
+
+      else :
+        return -1
 
 
 
@@ -205,7 +228,7 @@ class Score :
   # ---------------------------------------------------------------------------
   # METHOD Score.setCursor(value)
   # ---------------------------------------------------------------------------
-  def setCursor(self, value, force = False) :
+  def setCursor(self, value, ignoreActiveHand = False) :
     """
     Sets the cursor to the given value.
     
@@ -215,28 +238,34 @@ class Score :
 
     Setting the cursor must be done with this function exclusively.
     Manually setting the <cursor> attribute might cause crashes.
+
     """
 
-    # if (self.activeHands == ACTIVE_HANDS_RIGHT) :
-    #   self.cursor = self.cursorsRight[0]
-    # elif (self.activeHands == ACTIVE_HANDS_LEFT) :
-    #   self.cursor = self.cursorsLeft[0]
-    # else :
-    #   self.cursor = 0
+    if (value < 0) :
+      valueClamped = 0
+    elif (value > self.cursorMax) :
+      valueClamped = self.cursorMax
+    else :
+      valueClamped = value
+
+
 
     if (self.activeHands == ACTIVE_HANDS_BOTH) :
-      if (value < 0) :
-        self.cursor = 0
-      elif (value > self.cursorMax) :
-        self.cursor = self.cursorMax
-      else :
-        self.cursor = value
+      self.cursor = valueClamped
 
     elif (self.activeHands == ACTIVE_HANDS_LEFT) :
-      print("TODO")
+      if ignoreActiveHand :
+        self.cursor = valueClamped
+      else: 
+        p = self.getCursorsLeftPointer(valueClamped, force = True)
+        self.cursor = self.cursorsLeft[p]
 
     elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
-      print("TODO")
+      if ignoreActiveHand :
+        self.cursor = valueClamped
+      else: 
+        p = self.getCursorsRightPointer(valueClamped, force = True)
+        self.cursor = self.cursorsRight[p]
 
     else :
       print("[INTERNAL ERROR] Score.setCursor: unknown active hand specification!")
@@ -253,7 +282,6 @@ class Score :
     """
     
     # TODO: incorrect for single hand practice mode
-    # TODO: method might be useless :(
     return self.noteOnTimecodes["LR"][self.cursor]
 
 
@@ -297,12 +325,6 @@ class Score :
     # Otherwise just set the cursor to the end
     else :
       self.setCursor(self.cursorMax)
-      # if (self.activeHands == ACTIVE_HANDS_RIGHT) :
-      #   self.cursor = self.cursorsRight[-1]
-      # elif (self.activeHands == ACTIVE_HANDS_LEFT) :
-      #   self.cursor = self.cursorsLeft[-1]
-      # else :
-      #   self.cursor = self.scoreLength-1
 
 
 
@@ -332,7 +354,7 @@ class Score :
 
       # SINGLE HAND PRACTICE (LEFT)
       elif (self.activeHands == ACTIVE_HANDS_LEFT) :
-        index = self.getCursorsLeftPointer()
+        index = self.getCursorsLeftPointer(self.getCursor())
         
         if (index == -1) :
           print("[INTERNAL ERROR] Left hand practice is active, but there is no event on the left hand at this cursor. Cannot browse from here!")
@@ -342,7 +364,7 @@ class Score :
 
       # SINGLE HAND PRACTICE (RIGHT)
       elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
-        index = self.getCursorsLeftPointer()
+        index = self.getCursorsRightPointer(self.getCursor())
 
         if (index == -1) :
           print("[INTERNAL ERROR] Right hand practice is active, but there is no event on the right hand at this cursor. Cannot browse from here!")
@@ -353,6 +375,8 @@ class Score :
       else :
         print("[INTERNAL ERROR] Score.setCursor: unknown active hand specification!")
 
+
+
     else :
 
       # BOTH HAND PRACTICE
@@ -360,24 +384,27 @@ class Score :
         self.setCursor(self.getCursor() + delta)
 
       # SINGLE HAND PRACTICE (LEFT)
-      if (self.activeHands == ACTIVE_HANDS_LEFT) :
-        try :
-          index = self.cursorsLeft.index(self.cursor)
-        except :
+      elif (self.activeHands == ACTIVE_HANDS_LEFT) :
+        index = self.getCursorsLeftPointer(self.getCursor())
+        
+        if (index == -1) :
           print("[INTERNAL ERROR] Left hand practice is active, but there is no event on the left hand at this cursor. Cannot browse from here!")
           
         if ((index + delta) >= 0) :
           self.cursor = self.cursorsLeft[index + delta]
 
       # SINGLE HAND PRACTICE (RIGHT)
-      if (self.activeHands == ACTIVE_HANDS_RIGHT) :
-        try :
-          index = self.cursorsRight.index(self.cursor)
-        except :
+      elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
+        index = self.getCursorsRightPointer(self.getCursor())
+
+        if (index == -1) :
           print("[INTERNAL ERROR] Right hand practice is active, but there is no event on the right hand at this cursor. Cannot browse from here!")
           
         if (index + delta >= 0) :
           self.cursor = self.cursorsRight[index + delta]
+
+      else :
+        print("[INTERNAL ERROR] Score.cursorStep: unknown active hand specification!")
 
 
 
@@ -440,6 +467,8 @@ class Score :
     
     """
     
+    prevCursor = self.getCursor()
+
     if (hand == LEFT_HAND) :
       
       # TODO: guards needed here. There are case where the sets can be void.
@@ -447,18 +476,17 @@ class Score :
         subList = [x >= self.cursor for x in self.cursorsLeft]
         self.cursor = subList[0]
 
-      if (direction < 0) : 
+      elif (direction < 0) : 
         subList = [x <= self.cursor for x in self.cursorsLeft]
         self.cursor = subList[-1]
 
-      if (direction == 0) : 
+      else :
         minIndex = 0
         dist = abs(self.cursor - self.cursorsLeft[0])
         for (index, cursorLeft) in enumerate(self.cursorsLeft[1:]) :
           if (abs(self.cursor - cursorLeft) < dist) :
             dist = abs(self.cursor - cursorLeft)
-            minIndex = index+1
-          
+            minIndex = index+1          
         self.cursor = self.cursorsLeft[minIndex]
 
 
@@ -468,20 +496,27 @@ class Score :
         subList = [x >= self.cursor for x in self.cursorsRight]
         self.cursor = subList[0]
 
-      if (direction < 0) : 
+      elif (direction < 0) : 
         subList = [x <= self.cursor for x in self.cursorsRight]
         self.cursor = subList[-1]
 
-      if (direction == 0) : 
+      else :
         minIndex = 0
         dist = abs(self.cursor - self.cursorsRight[0])
         for (index, cursorRight) in enumerate(self.cursorsRight[1:]) :
           if (abs(self.cursor - cursorRight) < dist) :
             dist = abs(self.cursor - cursorRight)
             minIndex = index+1
-          
         self.cursor = self.cursorsRight[minIndex]
       
+    delta = self.getCursor() - prevCursor
+    if (delta > 0) :
+      print(f"[DEBUG] Cursor had to be adjusted because not aligned with the active hand (+{delta})")
+    elif (delta < 0) :
+      print(f"[DEBUG] Cursor had to be adjusted because not aligned with the active hand ({delta})")
+    else :
+      pass
+
 
 
   # ---------------------------------------------------------------------------
@@ -585,10 +620,20 @@ class Score :
       tmp = [x for x in self.bookmarks if (x > self.cursor)]
       if (len(tmp) > 0) :
         
-        # TODO: setting the cursor must be done through a method
-        # that takes the active hand into account.
-        # Setting it manually is dangerous
-        self.cursor = tmp[0]
+        if (self.activeHands == ACTIVE_HANDS_LEFT) :
+          self.setCursor(tmp[0], ignoreActiveHand = True)
+          if not(tmp[0] in self.cursorsLeft) :
+            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[0])} has nothing on the left hand.")
+        
+        elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
+          self.setCursor(tmp[0], ignoreActiveHand = True)
+          if not(tmp[0] in self.cursorsRight) :
+            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[0])} has nothing on the right hand.")
+        
+        else :
+          self.setCursor(tmp[0])
+      
+      
       else :
         print(f"[NOTE] Last bookmark reached")
     
@@ -606,7 +651,21 @@ class Score :
     if (len(self.bookmarks) > 0) :
       tmp = [x for x in self.bookmarks if (x < self.cursor)]
       if (len(tmp) > 0) :
-        self.cursor = tmp[-1]
+
+        if (self.activeHands == ACTIVE_HANDS_LEFT) :
+          self.setCursor(tmp[-1], ignoreActiveHand = True)
+          if not(tmp[-1] in self.cursorsLeft) :
+            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[-1])} has nothing on the left hand.")
+        
+        elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
+          self.setCursor(tmp[-1], ignoreActiveHand = True)
+          if not(tmp[-1] in self.cursorsRight) :
+            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[-1])} has nothing on the right hand.")
+
+        else :
+          self.cursor = tmp[-1]
+      
+      
       else :
         print(f"[NOTE] First bookmark reached")
 
@@ -633,8 +692,7 @@ class Score :
     
     Only notes that are pressed at this very cursor are returned.
     The notes that were pressed before and held up to the current cursor are
-    not included. 
-    To list those, use <getSustainedNotes>.
+    not included.
     """
     
     if (self.cachedCursor == self.cursor) :
@@ -650,24 +708,34 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD Score.resetCache()
+  # ---------------------------------------------------------------------------
+  def resetCache(self) :
+    """
+    Resets the cache of teacher notes.
+    """
+    
+    self.cachedCursor = -1
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD Score._updateTeacherNotes()
   # ---------------------------------------------------------------------------
   def _updateTeacherNotes(self) :
     """
-    Builds the list <teacherNotes> of current expected notes to be layed at 
+    Builds the list <teacherNotes> of current expected notes to be played at 
     the current cursor.
     """
     
     # Reset the play attributes of the previous notes before deleting them.
     # Note attributes are used for the display and the arbiter.
-    if len(self.teacherNotes) > 0 :
-      for noteObj in self.teacherNotes :
-        noteObj.visible = True
-        noteObj.sustained = False
-        noteObj.inactive = False
+    for noteObj in self.teacherNotes :
+      noteObj.visible = True
+      noteObj.sustained = False
+      noteObj.inactive = False
 
     self.teacherNotes = []
-    self.teacherNotesMidi = [0 for _ in range(128)]    # same as <teacherNotes>, but different structure
     
     # Loop on all notes in the score
     for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
@@ -677,18 +745,20 @@ class Score :
           # Detect a note pressed at this timecode
           if (noteObj.startTime == self.getCurrentTimecode()) :
             
-            # Single hand practice mode: flag the notes of the other hand as "inactive"
-            # so that it is displayed with the appropriate color
+            # SINGLE HAND PRACTICE
+            # Adds the notes of the inactive hand to the list.
+            # Sets their "inactive" property to "True" so that it is displayed with the appropriate color.
             if ((self.activeHands == ACTIVE_HANDS_LEFT) and (staffIndex == RIGHT_HAND)) :
               noteObj.inactive = True
+              self.teacherNotes.append(noteObj)
 
             elif ((self.activeHands == ACTIVE_HANDS_RIGHT) and (staffIndex == LEFT_HAND)) :
               noteObj.inactive = True
+              self.teacherNotes.append(noteObj)
 
             else :
               self.inactive = False
               self.teacherNotes.append(noteObj)
-              self.teacherNotesMidi[pitch] = 1
 
           # Detect a note held at this timecode
           if ((self.getCurrentTimecode() > noteObj.startTime) and (self.getCurrentTimecode() <= noteObj.stopTime)) :
@@ -697,6 +767,38 @@ class Score :
 
     if (len(self.teacherNotes) == 0) :
       print(f"[WARNING] Corrupted database: timecode is listed (t = {self.getCurrentTimecode()}), but no note was found starting at that moment.")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getLookaheadNotes()
+  # ---------------------------------------------------------------------------
+  def getLookaheadNotes(self) :
+    """
+    todo
+    """
+    
+    if (self.cachedCursor == self.cursor) :
+      return self.cachedTeacherNotes
+    
+    else :
+      self._updateLookaheadNotes()
+      self.cachedCursor = self.cursor
+      self.cachedTeacherNotes = self.teacherNotes
+      
+      return self.teacherNotes
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score._updateLookaheadNotes()
+  # ---------------------------------------------------------------------------
+  def _updateLookaheadNotes(self) :
+    """
+    todo
+    """
+    
+    print("todo!")
 
 
 
@@ -787,10 +889,12 @@ class Score :
 
     if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_RIGHT)) :
       self.activeHands = ACTIVE_HANDS_LEFT
-      self.cursorAlignToHand(LEFT_HAND)
+      self.cursorAlignToActiveHand(LEFT_HAND)
     
     else :
       self.activeHands = ACTIVE_HANDS_BOTH
+
+    self.resetCache()
 
 
 
@@ -804,10 +908,12 @@ class Score :
       
     if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_LEFT)) :
       self.activeHands = ACTIVE_HANDS_RIGHT
-      self.cursorAlignToHand(RIGHT_HAND)
+      self.cursorAlignToActiveHand(RIGHT_HAND)
     
     else :
       self.activeHands = ACTIVE_HANDS_BOTH
+
+    self.resetCache()
 
 
 
@@ -867,7 +973,7 @@ class Score :
         exit()
 
     else :
-      print("[INTERNAL ERROR]")
+      print("[INTERNAL ERROR] Score.toggleNoteHand: unknown active hand specification!")
       exit()
 
     # Rebuild the lists of cursors
@@ -875,57 +981,10 @@ class Score :
 
     lengthLR = len(self.noteOnTimecodes["LR_full"])
     lengthL = len(self.noteOnTimecodes["L"]); lengthR = len(self.noteOnTimecodes["R"])
+    
+    # Consistency check
     assert(lengthLR == (lengthL + lengthR))
     
-
-
-    # # STEP 1: update <cursorsLeft> and <cursorsRight>
-    # if (noteObj.hand == LEFT_HAND) :
-    #   sourceHand = LEFT_HAND
-    #   destHand   = RIGHT_HAND
-
-    #   if not(self.getCursor() in self.cursorsRight) :
-    #     self.cursorsRight.append(self.cursor)
-    #     self.cursorsRight.sort()
-        
-    #     # That is too ambitious: there could be more than one note at this cursor
-    #     #self.cursorsLeft.remove(self.cursor)
-
-    # else :
-    #   sourceHand = RIGHT_HAND
-    #   destHand   = LEFT_HAND
-
-    #   if not(self.getCursor() in self.cursorsRight) :
-    #     self.cursorsLeft.append(self.cursor)
-    #     self.cursorsLeft.sort()
-        
-    #     # That is too ambitious: there could be more than one note at this cursor
-    #     #self.cursorsRight.remove(self.cursor)
-
-    # # STEP 2: update the note property
-    # noteObj.hand = destHand
-    
-    # # STEP 3: move the note in the pianoroll
-    # self.pianoRoll[destHand][noteObj.pitch].append(noteObj)
-    # self.pianoRoll[destHand][noteObj.pitch].sort(key = lambda x: x.startTime)
-    # del self.pianoRoll[sourceHand][noteObj.pitch][noteObj.noteIndex]
-
-    # if not(noteObj.startTime in self.noteOntimecodes[destHand]) :
-    #   self.noteOntimecodes[destHand].append(noteObj.startTime)
-    #   self.noteOntimecodes[destHand].sort()
-    
-    # # Remove this timecode from the timecode list of the original hand
-    # # unless there is another note that has the same startTime
-    # # Quite an oddity but better take it into account.
-    # doubleStart = False
-    # for x in self.pianoRoll[sourceHand][noteObj.pitch] :
-    #   if (x.startTime == noteObj.startTime) :
-    #     doubleStart = True
-    #     break
-    
-    # if not(doubleStart) :
-    #   self.noteOntimecodes[destHand].remove(noteObj.startTime)
-
 
 
   # ---------------------------------------------------------------------------
@@ -991,7 +1050,7 @@ class Score :
     
     # Allocate outputs
     self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
-    self.noteOntimecodes = [[] for _ in range(self.nStaffs)]
+    self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
 
     nNotes = 0; noteDuration = 0
     
@@ -1035,8 +1094,16 @@ class Score :
             
             # Append the timecode of this keypress
             # TODO: not sure this check on every single note is efficient
-            if not(currTime in self.noteOntimecodes[trackNumber]) : 
-              self.noteOntimecodes[trackNumber].append(currTime)
+            # if not(currTime in self.noteOntimecodes[trackNumber]) : 
+            #   self.noteOntimecodes[trackNumber].append(currTime)
+            if (trackNumber == LEFT_HAND) :
+              self.noteOnTimecodes["L"].append(currTime)
+            elif (trackNumber == RIGHT_HAND) :
+              self.noteOnTimecodes["R"].append(currTime)
+            else :
+              print("[INTERNAL ERROR] Invalid track number.")
+
+            self.noteOnTimecodes["LR_full"].append(currTime)
           
           # First note with this pitch
           else :
@@ -1047,10 +1114,17 @@ class Score :
             self.pianoRoll[trackNumber][pitch].append(note.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
             
             # Append the timecode of this keypress
-            if not(currTime in self.noteOntimecodes[trackNumber]) : 
-              self.noteOntimecodes[trackNumber].append(currTime)
+            # if not(currTime in self.noteOntimecodes[trackNumber]) : 
+            #   self.noteOntimecodes[trackNumber].append(currTime)
 
+            if (trackNumber == LEFT_HAND) :
+              self.noteOnTimecodes["L"].append(currTime)
+            elif (trackNumber == RIGHT_HAND) :
+              self.noteOnTimecodes["R"].append(currTime)
+            else :
+              print("[INTERNAL ERROR] Invalid track number.")
 
+            self.noteOnTimecodes["LR_full"].append(currTime)
 
         # Keyrelease event ----------------------------------------------------
         # NOTE: in some files, 'NOTE OFF' message is mimicked using a 'NOTE ON' with null velocity.
@@ -1080,36 +1154,53 @@ class Score :
         # Other MIDI events are ignored.
 
 
+    # Tidy up:
+    # - sort the timecodes by ascending values
+    # - remove duplicate entries
+    self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
+    self.noteOnTimecodes["LR_full"].sort()
+
+    self.noteOnTimecodes["LR"] = set(self.noteOnTimecodes["LR_full"])
+    self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
+    self.noteOnTimecodes["LR"].sort()
+
+    # Build <cursorsLeft> and <cursorsRight>
+    self._buildCursorsLR()
+
 
     # Merge note ON time codes from both staves
-    timecodesMerged = [item for sublist in self.noteOntimecodes for item in sublist]    # What the hell is that?
-    timecodesMerged = list(set(timecodesMerged))
-    self.noteOntimecodesMerged = sorted(timecodesMerged)
+    # timecodesMerged = [item for sublist in self.noteOntimecodes for item in sublist]    # What the hell is that?
+    # timecodesMerged = list(set(timecodesMerged))
+    # self.noteOntimecodesMerged = sorted(timecodesMerged)
     
     # The variable pointing in the <noteOntimecodesMerged> is called the "cursor" of the score.
     # This section lists the values of the cursor for which a noteOn event occured 
     # specifically on one hand or the other.
     # This is needed for the single hand practice mode.
-    self.cursorsLeft = []; self.cursorsRight = []
-    for (cursor, timecode) in enumerate(self.noteOntimecodesMerged) :
-      if (timecode in self.noteOntimecodes[RIGHT_HAND]) :
-        self.cursorsRight.append(cursor)
+    # self.cursorsLeft = []; self.cursorsRight = []
+    # for (cursor, timecode) in enumerate(self.noteOntimecodesMerged) :
+    #   if (timecode in self.noteOntimecodes[RIGHT_HAND]) :
+    #     self.cursorsRight.append(cursor)
 
-      if (timecode in self.noteOntimecodes[LEFT_HAND]) :
-        self.cursorsLeft.append(cursor)
+    #   if (timecode in self.noteOntimecodes[LEFT_HAND]) :
+    #     self.cursorsLeft.append(cursor)
 
     # Estimate average note duration (needed for the piano roll display)
     self.avgNoteDuration = noteDuration/nNotes
     
-    # Length of the score
-    self.cursorMax = len(self.noteOntimecodesMerged)-1
-    
-    stopTime = time.time()
-    print(f"[NOTE] Loading time: {stopTime-startTime:.1f}s (TODO!)")
+    self.scoreLength = len(self.noteOnTimecodes["LR"])
+    self.cursorMax = self.scoreLength-1
     
     print("OK")
 
+    # DEBUG
+    print(f"[DEBUG] Score length: {self.scoreLength} steps")
 
+
+    stopTime = time.time()
+    print(f"[NOTE] Loading time: {stopTime-startTime:.2f}s")
+    
+    
 
   # ---------------------------------------------------------------------------
   # METHOD Score._importFromPrFile(fileName)

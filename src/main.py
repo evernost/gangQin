@@ -351,13 +351,13 @@ while running :
       # "l": toggle left hand practice
       # ------------------------------
       if (keys[pygame.K_l]) :  
-        userScore.toggleLeftHand()
+        userScore.toggleLeftHandPractice()
 
       # -------------------------------
       # "r": toggle right hand practice
       # -------------------------------
       if (keys[pygame.K_r]) :
-        userScore.toggleRightHand()
+        userScore.toggleRightHandPractice()
 
       # ----------------
       # "s": export/save

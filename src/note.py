@@ -107,10 +107,10 @@ class Note :
       elif self.inactive :
 
         if (self.keyColor == WHITE_KEY) :
-          (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -60, 0), (240, 240, 240), utils.adjustHSV(baseColor, 0, -60, 0))
+          (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -70, 0), (240, 240, 240), utils.adjustHSV(baseColor, 0, -60, 0))
         
         else :
-          (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -60, 0), (170, 170, 170), utils.adjustHSV(baseColor, 0, -60, 0))
+          (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -70, 0), (170, 170, 170), utils.adjustHSV(baseColor, 0, -60, 0))
             
       else :
 
@@ -188,9 +188,4 @@ def getFriendlyName(midiCode) :
 
   else :
     return ""
-
-
-
-
-
 

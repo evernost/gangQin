@@ -296,14 +296,16 @@ class Keyboard :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <keyPress>
-  #
-  # Highlight the given list of notes on the the keyboard.
-  # Indicate the hand to be used and the required finger if the information is 
-  # available.
+  # METHOD Keyboard.keyPress
   # ---------------------------------------------------------------------------
   def keyPress(self, screenInst, noteList) :
+    """
+    Highlights the notes in <noteList> on the keyboard.
     
+    Indicates the hand to be used and the required finger if the information is 
+    available.
+    """
+
     # Preprocess the list so that the earliest notes are drawn first
     # This avoids the sustained notes to be drawn on top.
     noteList.sort(key = lambda x: x.startTime)
@@ -371,7 +373,11 @@ class Keyboard :
       if (len(subList) >= 3) :
         print("[WARNING] Odd score: that's a lot of fingers to press one single note *questionning emoji*")
 
-
+    
+    
+    # --------------
+    # "Normal" notes
+    # --------------
     for noteObj in noteList :
 
       # White note highlighting

@@ -42,6 +42,7 @@ if (__name__ == "__main__") :
 # =============================================================================
 SET_CURSOR_SUCCESS = 0
 
+CURSOR_STEADY_COUNT_LIMIT = 1000
 
 
 class Score :
@@ -120,6 +121,10 @@ class Score :
     self.comboDrop = False
     self.comboHighestSession = 0
     self.comboHighestAllTime = 0
+
+    self.statsLastCursor = -1
+    self.statsSteadyCount = 0
+    self.statsCursor = []
 
     # Loop practice feature
     # TODO: allow to store several loops
@@ -1414,6 +1419,33 @@ class Score :
     currTime = datetime.datetime.now()
     print(f"[DEBUG] {noteCount} notes written in .pr file.")
     print(f"[NOTE] Saved to '{pianoRollFile}' at {currTime.strftime('%H:%M:%S')}")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.updateStats()
+  # ---------------------------------------------------------------------------
+  def updateStats(self) :
+    """
+    Add the current cursor to the statistics.
+    """
+    
+    if (self.getCursor() != self.stats_lastCursor) :
+      self.statsSteadyCount = 0
+      self.statsLastCursor = self.getCursor()
+
+
+    else :
+      if (self.statsSteadyCount < CURSOR_STEADY_COUNT_LIMIT) :
+        self.statsCursor[self.getCursor()] += 1
+        self.statsSteadyCount += 1
+
+      elif (self.statsSteadyCount == CURSOR_STEADY_COUNT_LIMIT) :
+        print("[DEBUG] Steady limit reached!")
+        self.statsSteadyCount += 1
+
+      else :
+        pass
 
 
 

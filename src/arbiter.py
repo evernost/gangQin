@@ -4,7 +4,7 @@
 # Module name   : arbiter
 # File name     : arbiter.py
 # File type     : Python script (Python 3)
-# Purpose       : 
+# Purpose       : decision machinery to approve or reject the keyboard input.
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : July 26th, 2024
 # -----------------------------------------------------------------------------

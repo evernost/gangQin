@@ -2,7 +2,7 @@
 # =============================================================================
 # Module name   : text
 # File name     : text.py
-# Purpose       : provides text printing features over a Pygame window
+# Purpose       : provides text printing features in a Pygame window.
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : Friday, 22 Sept 2023
 # -----------------------------------------------------------------------------

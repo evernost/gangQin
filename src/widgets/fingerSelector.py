@@ -3,7 +3,7 @@
 # Project       : gangQin
 # Module name   : fingerSelector
 # File name     : fingerSelector.py
-# Purpose       : provides a widget to edit the properties of a given note
+# Purpose       : provides a widget to edit the properties of a given note.
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : Sunday, 8 Oct 2023
 # -----------------------------------------------------------------------------

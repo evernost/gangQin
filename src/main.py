@@ -544,6 +544,11 @@ while running :
     setFingersatzMsg = -1
 
 
+
+  # Some statistics
+  userScore.updateStats()
+
+
   clock.tick(FPS)
 
   # Update the display

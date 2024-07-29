@@ -42,7 +42,7 @@ if (__name__ == "__main__") :
 # =============================================================================
 SET_CURSOR_SUCCESS = 0
 
-CURSOR_STEADY_COUNT_LIMIT = 1000
+CURSOR_STEADY_COUNT_LIMIT = 300
 
 
 class Score :
@@ -122,12 +122,12 @@ class Score :
     self.comboHighestSession = 0
     self.comboHighestAllTime = 0
 
+    # Some learning statistics
     self.statsLastCursor = -1
     self.statsSteadyCount = 0
     self.statsCursor = []
 
     # Loop practice feature
-    # TODO: allow to store several loops
     self.loopEnable = False
     self.loopStart = -1
     self.loopEnd = -1
@@ -1229,10 +1229,7 @@ class Score :
       print(f"[WARNING] No version could be read from the .pr file. Is it corrupted?")
       # At that point, the rest of the parsing might fail.
 
-    # if (f"v{REV_MAJOR}.{REV_MINOR}" != importDict["revision"]) :
-    #   print(f"[WARNING] [.pr import] Piano roll file was made in version {importDict['revision']}. Current version is v{REV_MAJOR}.{REV_MINOR}")
-
-    # Safe loading feature
+    # Default dictionary, in case some fields do not exist.
     safeDict = {
       "revision"              : "v0.0",
       "nStaffs"               : 2,
@@ -1242,26 +1239,26 @@ class Score :
       "cursorsRight"          : [],
       "bookmarks"             : [],
       "activeHands"           : "LR",
-      "comboHighestAllTime"   : 0
+      "comboHighestAllTime"   : 0,
+      "statsLastCursor"       : -1,
+      "statsSteadyCount"      : 0,
+      "statsCursor"           : []
     }
-    
+  
     for currKey in safeDict :
       if currKey in importDict :
         safeDict[currKey] = importDict[currKey]
 
-    # Load the properties of the score from the dictionary
+    # Initialize the object  
     self.nStaffs                = safeDict["nStaffs"]
     self.avgNoteDuration        = safeDict["avgNoteDuration"]
     self.cursor                 = safeDict["cursor"]
     self.bookmarks              = safeDict["bookmarks"]
     self.activeHands            = safeDict["activeHands"]
     self.comboHighestAllTime    = safeDict["comboHighestAllTime"]
-
-    # self.noteOntimecodes        = safeDict["noteOntimecodes"]
-    # self.noteOntimecodesMerged  = safeDict["noteOntimecodesMerged"]
-    # self.cursorsLeft            = safeDict["cursorsLeft"]
-    # self.cursorsRight           = safeDict["cursorsRight"]
-
+    self.statsLastCursor        = safeDict["statsLastCursor"]
+    self.statsSteadyCount       = safeDict["statsSteadyCount"]
+    self.statsCursor            = safeDict["statsCursor"]
     # TODO: import the scales
     # TODO: import the loops
 
@@ -1329,12 +1326,6 @@ class Score :
 
         # Loop on the attributes of the Note object
         for noteAttr in noteAttrDict :
-          
-          
-          #WHITE_KEY if ((pitch % 12) in WHITE_NOTES_CODE_MOD12) else BLACK_KEY
-
-
-
 
           # Call the attribute by its name (as string), and assign it.
           setattr(noteObj, noteAttr, noteObjImported[noteAttr])
@@ -1368,13 +1359,18 @@ class Score :
       self.scoreLength = len(self.noteOnTimecodes["LR"])
       self.cursorMax = self.scoreLength-1
 
+      # If the cursor statistics are inexistant, initialize it
+      if (len(self.statsCursor) == 0) :
+        self.statsCursor = [0 for _ in range(self.scoreLength)]
+      else :
+        print(f"[DEBUG] Hardest section: {self.statsCursor.index(max(self.statsCursor))+1}")
+
       # DEBUG
       print(f"[DEBUG] Left hand cursors   : {len(self.cursorsLeft)} / ref: {len(safeDict['cursorsLeft'])}")
       print(f"[DEBUG] Right hand cursors  : {len(self.cursorsRight)} / ref: {len(safeDict['cursorsRight'])}")
       
       print(f"[DEBUG] {noteCount} notes read from .pr file.")
       print(f"[DEBUG] Score length: {self.scoreLength} steps")
-
 
     stopTime = time.time()
     print(f"[NOTE] Loading time: {stopTime-startTime:.2f}s")
@@ -1401,6 +1397,9 @@ class Score :
     exportDict["bookmarks"]             = self.bookmarks
     exportDict["activeHands"]           = self.activeHands
     exportDict["comboHighestAllTime"]   = self.comboHighestAllTime
+    exportDict["statsSteadyCount"]      = self.statsSteadyCount
+    exportDict["statsLastCursor"]       = self.statsLastCursor
+    exportDict["statsCursor"]           = self.statsCursor
 
     # TODO: export the scales
     # exportDict["scale"] = self.scale
@@ -1414,7 +1413,7 @@ class Score :
           exportDict["pianoRoll"].append(noteObj.__dict__)
 
     with open(pianoRollFile, "w") as fileHandler :
-      json.dump(exportDict, fileHandler, indent = 4)
+      json.dump(exportDict, fileHandler, indent = 2)
 
     currTime = datetime.datetime.now()
     print(f"[DEBUG] {noteCount} notes written in .pr file.")
@@ -1430,10 +1429,9 @@ class Score :
     Add the current cursor to the statistics.
     """
     
-    if (self.getCursor() != self.stats_lastCursor) :
+    if (self.getCursor() != self.statsLastCursor) :
       self.statsSteadyCount = 0
       self.statsLastCursor = self.getCursor()
-
 
     else :
       if (self.statsSteadyCount < CURSOR_STEADY_COUNT_LIMIT) :
@@ -1441,7 +1439,7 @@ class Score :
         self.statsSteadyCount += 1
 
       elif (self.statsSteadyCount == CURSOR_STEADY_COUNT_LIMIT) :
-        print("[DEBUG] Steady limit reached!")
+        print(f"[DEBUG] Steady limit reached! (cursor = {self.getCursor()+1})")
         self.statsSteadyCount += 1
 
       else :

@@ -774,6 +774,23 @@ class Score :
       print(f"[WARNING] Corrupted database: timecode is listed (t = {self.getCurrentTimecode()}), but no note was found starting at that moment.")
 
 
+    # Lookahead feature: show also the upcoming notes 
+    # to help with the hand placement.
+    
+    # STEP 1: get the N notes that will be triggered 
+    # after the current cursor
+    # These notes shall be taken within a certain timecode 
+    # limit from the current location.
+
+
+    # STEP 2: edit their lookahead property to tell Keyboard
+    # that they should be displayed in a certain way.
+
+    # TODO: instead of showing the notes ahead in a certain window,
+    # maybe a sort of "slur" function should be added so that 
+    # only the notes in the slur are shown in the lookahead.
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD Score.getLookaheadNotes()

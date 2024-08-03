@@ -827,9 +827,10 @@ class Score :
     # These notes shall be taken within a certain timecode 
     # limit from the current location.
     
-    currentPitches = [x.pitch for x in self.cachedTeacherNotes]
+    # Don't show the same pitch twice
+    activePitches = [x.pitch for x in self.cachedTeacherNotes]
     
-    for n in range(1, self.lookAheadDistance) :
+    for n in range(1, (self.lookAheadDistance+1)) :
       if ((self.getCursor() + n) < self.cursorMax) :
         for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
           for (staffIndex, _) in enumerate(self.pianoRoll) :
@@ -837,11 +838,12 @@ class Score :
 
               # Detect a note pressed at this timecode
               if (noteObj.startTime == (self.noteOnTimecodes["LR"][self.cursor + n])) :
-                if not(noteObj.pitch in currentPitches) :
+                if not(noteObj.pitch in activePitches) :
                   noteCopy = copy.deepcopy(noteObj)
                   noteCopy.upcoming = True
                   noteCopy.upcomingDistance = n
                   upcomingNotes.append(noteCopy)
+                  activePitches.append(noteCopy.pitch)
 
 
     return upcomingNotes
@@ -1491,10 +1493,15 @@ class Score :
         for noteObj in notesInPitch :
           noteCount += 1
           
-          noteExportAttr = noteObj.__dict__
+          noteObjCopy = copy.deepcopy(noteObj)
+          noteExportAttr = noteObjCopy.__dict__
 
-          # Filter the note attributes that will be exported
-          # ...
+          # Filter out some note attributes that need not to be exported
+          del noteExportAttr["highlight"]
+          del noteExportAttr["upcoming"]
+          del noteExportAttr["upcomingDistance"]
+          del noteExportAttr["fromKeyboardInput"]
+          del noteExportAttr["lookAheadDistance"]
 
           exportDict["pianoRoll"].append(noteExportAttr)
 

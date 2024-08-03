@@ -71,13 +71,13 @@ class Note :
     else :
       if (self.hand == LEFT_HAND) :
         if (self.upcoming) :
-          baseColor = utils.adjustHSV((255, 0, 255), 0, -30 - (self.upcomingDistance*20), -10)
+          baseColor = utils.adjustHSV((255, 0, 127), 0, -40 - (self.upcomingDistance*20), -10)
         else :
           baseColor = utils.adjustHSV((255, 0, 0), 0, -20, -10)
 
       else :
         if (self.upcoming) :
-          baseColor = utils.adjustHSV((0, 255, 255), 0, -30 - (self.upcomingDistance*20), -20)
+          baseColor = utils.adjustHSV((0, 255, 127), 0, -40 - (self.upcomingDistance*20), -20)
         else :
           baseColor = utils.adjustHSV((0, 255, 0), 0, -20, -20)
       
@@ -121,18 +121,15 @@ class Note :
       else :
 
         # Upcoming note -------------------------------------------------------
-        # if (self.upcoming) :
-        #   if (self.keyColor == WHITE_KEY) :
-        #     baseColor = (255, 0, 191)
-        #     (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -60, 0), (160, 160, 160), utils.adjustHSV(baseColor, 0, -60, 0))
+        if (self.upcoming) :
+          if (self.keyColor == WHITE_KEY) :
+            (rectColor, rectOutlineColor, pianoRollColor) = (baseColor, (255, 255, 255), baseColor)
             
-        #   else :
-        #     baseColor = (255, 0, 191)
-        #     (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, 0, -30), (80, 80, 80), utils.adjustHSV(baseColor, 0, 0, -30))
+          else :
+            (rectColor, rectOutlineColor, pianoRollColor) = (baseColor, (0, 0, 0), baseColor)
 
         # Sustained note ------------------------------------------------------
         if (self.sustained) :
-
           if (self.keyColor == WHITE_KEY) :
             (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -60, 0), (160, 160, 160), utils.adjustHSV(baseColor, 0, -60, 0))
             
@@ -141,7 +138,6 @@ class Note :
 
         # Normal note ---------------------------------------------------------
         else : 
-          
           if (self.keyColor == WHITE_KEY) :
             (rectColor, rectOutlineColor, pianoRollColor) = (baseColor, (10, 10, 10), baseColor)
             

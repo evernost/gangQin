@@ -132,6 +132,7 @@ class Score :
     self.loopEnable = False
     self.loopStart = -1
     self.loopEnd = -1
+    self.loopStrictMode = False
 
 
     self.lookAheadDistance = 0

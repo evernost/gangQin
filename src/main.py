@@ -226,7 +226,6 @@ while running :
       if (keys[pygame.K_TAB] and shiftKey) :
         print("[TODO] Editing before using shift key")
 
-
       # ---------------------------------------
       # HOME: jump to the beginning of the file
       # ---------------------------------------
@@ -261,6 +260,17 @@ while running :
           userScore.lookAheadDistance += 1
 
         print(f"[DEBUG] Lookahead distance set to {userScore.lookAheadDistance}")
+
+      # --------------------------------
+      # F3: toggle "strict mode" in loop
+      # --------------------------------
+      if (keys[pygame.K_F3]) :
+        if userScore.loopStrictMode :
+          print(f"[DEBUG] Strict mode in loop is OFF")
+        else :
+          print(f"[DEBUG] Strict mode in loop is ON")
+          
+        userScore.loopStrictMode = not(userScore.loopStrictMode)
 
       # ---------------------------
       # F9: set the start of a loop
@@ -495,8 +505,12 @@ while running :
       #print("[DEBUG] Wrong note!")
       userScore.comboCount = 0
       soundNotify.wrongNote()
-      if (userScore.loopEnable) :
+      
+      # Looped practice: a wrong note reset the cursor to the beginning of the loop 
+      # when <loopStrictMode> is active.
+      if (userScore.loopEnable) and (userScore.loopStrictMode) :
         userScore.setCursor(userScore.loopStart)
+        print("[NOTE] Ooops, wrong note. Going back to the beginning of the loop!")
 
 
   

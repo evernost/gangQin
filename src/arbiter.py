@@ -136,10 +136,10 @@ class Arbiter :
     """
 
     # Reformat the teacher notes, keep the 'new' notes only
-    # (not the sustained ones)
+    # (not the sustained ones, not the notes of the inactive hand)
     teacherNotesAsMidiArray = [0 for _ in range(128)]
     for noteObj in teacherNotes :
-      if (noteObj.sustained == False) :
+      if ((noteObj.sustained == False) and (noteObj.inactive == False)):
         teacherNotesAsMidiArray[noteObj.pitch] = 1
     
     msgQueue = []

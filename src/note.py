@@ -48,6 +48,8 @@ class Note :
     self.highlight = highlight      # True if its fingersatz is being edited
     self.inactive = False           # True if the note shall be ignored by the arbiter (single hand practice)
     self.disabled = False           # True if the note shall be ignored by the arbiter (unplayable note)
+    self.upcoming = False           # True if the note is about to be played soon
+    self.upcomingDistance = 0       # The highest the value, the further the note
     self.fromKeyboardInput = False  # True if it is a note played by the user from the MIDI input
     self.voice = voice              # Define the voice the note belongs to, if another is needed on top of the usual left/right voice
     self.lookAheadDistance = 0      # Define how far away this note is located relative to the current cursor
@@ -68,18 +70,22 @@ class Note :
       baseColor = VOICE_COLOR[self.voice]
     else :
       if (self.hand == LEFT_HAND) :
-        baseColor = utils.adjustHSV((255, 0, 0), 0, -20, -10)
+        if (self.upcoming) :
+          baseColor = utils.adjustHSV((255, 0, 255), 0, -30 - (self.upcomingDistance*20), -10)
+        else :
+          baseColor = utils.adjustHSV((255, 0, 0), 0, -20, -10)
+
       else :
-        baseColor = utils.adjustHSV((0, 255, 0), 0, -20, -20)
+        if (self.upcoming) :
+          baseColor = utils.adjustHSV((0, 255, 255), 0, -30 - (self.upcomingDistance*20), -20)
+        else :
+          baseColor = utils.adjustHSV((0, 255, 0), 0, -20, -20)
       
 
     # Disabled note (unplayable, wrong, etc.) ---------------------------------
     # Same color no matter what the voice is.
     # 'sustained', 'highlight', 'voice', 'lookAheadDistance' attributes are all ignored.
     if self.disabled :
-
-      if (self.lookAheadDistance > 0) :
-        print("[ERROR] A disabled note cannot have a non-zero lookahead")
 
       if (self.keyColor == WHITE_KEY) :
         (rectColor, rectOutlineColor, pianoRollColor) = ((200, 200, 200), (170, 170, 170), (250, 250, 250))
@@ -113,6 +119,16 @@ class Note :
           (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -70, 0), (170, 170, 170), utils.adjustHSV(baseColor, 0, -60, 0))
             
       else :
+
+        # Upcoming note -------------------------------------------------------
+        # if (self.upcoming) :
+        #   if (self.keyColor == WHITE_KEY) :
+        #     baseColor = (255, 0, 191)
+        #     (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -60, 0), (160, 160, 160), utils.adjustHSV(baseColor, 0, -60, 0))
+            
+        #   else :
+        #     baseColor = (255, 0, 191)
+        #     (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, 0, -30), (80, 80, 80), utils.adjustHSV(baseColor, 0, 0, -30))
 
         # Sustained note ------------------------------------------------------
         if (self.sustained) :

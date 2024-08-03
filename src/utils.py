@@ -220,8 +220,21 @@ def adjustHSV(rgbColor, deltaHue, deltaSat, deltaVal) :
   (H,S,V) = colorsys.rgb_to_hsv(R,G,B)
 
   # Apply correction
-  # TODO : add guards
-  (H,S,V) = ((H + (deltaHue/360.0)) % 1.0, S + (deltaSat/100.0), V + (deltaVal/100.0))
+  H = H + (deltaHue/360.0) % 1.0
+  
+  satNew = S + (deltaSat/100.0)
+  if (satNew < 0.0) :
+    satNew = 0.0
+  elif (satNew > 1.0) :
+    satNew = 1.0
+  S = satNew
+
+  vNew = V + (deltaVal/100.0)
+  if (vNew < 0.0) :
+    vNew = 0.0
+  elif (vNew > 1.0) :
+    vNew = 1.0
+  V = vNew
 
   # Convert back to RGB
   (R,G,B) = colorsys.hsv_to_rgb(H,S,V)

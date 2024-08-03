@@ -251,6 +251,17 @@ while running :
       if (keys[pygame.K_UP]) :
         userScore.gotoNextBookmark()
 
+      # -------------------------------
+      # F2: increase lookAhead distance
+      # -------------------------------
+      if (keys[pygame.K_F2]) :
+        if (userScore.lookAheadDistance == 5) :
+          userScore.lookAheadDistance = 0
+        else :
+          userScore.lookAheadDistance += 1
+
+        print(f"[DEBUG] Lookahead distance set to {userScore.lookAheadDistance}")
+
       # ---------------------------
       # F9: set the start of a loop
       # ---------------------------
@@ -458,6 +469,12 @@ while running :
   
   keyboardWidget.keyPress(screen, midiNoteList)
 
+  # -----------------------
+  # Show the upcoming notes
+  # -----------------------
+  upcomingNotes = userScore.getUpcomingNotes()
+  keyboardWidget.keyPress(screen, upcomingNotes)
+
   # -----------------------------------------------------------------------
   # Decide whether to move forward in the score depending on the user input
   # -----------------------------------------------------------------------
@@ -475,11 +492,14 @@ while running :
       soundNotify.wrongNoteReset()
 
     if (msg == arbiter.MSG_RESET_COMBO) :
+      #print("[DEBUG] Wrong note!")
       userScore.comboCount = 0
       soundNotify.wrongNote()
+      if (userScore.loopEnable) :
+        userScore.setCursor(userScore.loopStart)
 
 
-
+  
   # -----------------------
   # Note properties edition
   # -----------------------

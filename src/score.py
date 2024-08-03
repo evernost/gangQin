@@ -20,12 +20,13 @@ from commons import *
 import note
 
 import json   # for JSON database import/export
-import os     # for file manipulation
 import mido   # for MIDI file manipulation
+import os     # for file manipulation
 
 import datetime
-import time
 import re
+import time
+import copy
 
 
 
@@ -132,6 +133,8 @@ class Score :
     self.loopStart = -1
     self.loopEnd = -1
 
+
+    self.lookAheadDistance = 0
 
 
   # ---------------------------------------------------------------------------
@@ -781,7 +784,16 @@ class Score :
     # after the current cursor
     # These notes shall be taken within a certain timecode 
     # limit from the current location.
+    # for n in range(5) :
+    #   if ((self.getCursor() + n) < self.cursorMax) :
+    #     for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+    #       for (staffIndex, _) in enumerate(self.pianoRoll) :
+    #         for noteObj in self.pianoRoll[staffIndex][pitch] :
 
+    #           # Detect a note pressed at this timecode
+    #           if (noteObj.startTime == (self.noteOnTimecodes["LR"][self.cursor] + n)) :
+    #             print("found")
+    #             noteObj.upcoming = True
 
     # STEP 2: edit their lookahead property to tell Keyboard
     # that they should be displayed in a certain way.
@@ -789,6 +801,58 @@ class Score :
     # TODO: instead of showing the notes ahead in a certain window,
     # maybe a sort of "slur" function should be added so that 
     # only the notes in the slur are shown in the lookahead.
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getUpcomingNotes()
+  # ---------------------------------------------------------------------------
+  def getUpcomingNotes(self) :
+    """
+    Builds the list of the notes about to come after the current cursor.
+
+    NOTES
+    The list contains a copy of the notes.
+    Feel free to edit their properties. It will not affect the actual notes of 
+    the score.
+    """
+    
+    upcomingNotes = []
+
+    # Lookahead feature: show also the upcoming notes 
+    # to help with the hand placement.
+    
+    # STEP 1: get the N notes that will be triggered 
+    # after the current cursor
+    # These notes shall be taken within a certain timecode 
+    # limit from the current location.
+    
+    currentPitches = [x.pitch for x in self.cachedTeacherNotes]
+    
+    for n in range(1, self.lookAheadDistance) :
+      if ((self.getCursor() + n) < self.cursorMax) :
+        for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+          for (staffIndex, _) in enumerate(self.pianoRoll) :
+            for noteObj in self.pianoRoll[staffIndex][pitch] :
+
+              # Detect a note pressed at this timecode
+              if (noteObj.startTime == (self.noteOnTimecodes["LR"][self.cursor + n])) :
+                if not(noteObj.pitch in currentPitches) :
+                  noteCopy = copy.deepcopy(noteObj)
+                  noteCopy.upcoming = True
+                  noteCopy.upcomingDistance = n
+                  upcomingNotes.append(noteCopy)
+
+
+    return upcomingNotes
+
+    # STEP 2: edit their lookahead property to tell Keyboard
+    # that they should be displayed in a certain way.
+
+    # TODO: instead of showing the notes ahead in a certain window,
+    # maybe a sort of "slur" function should be added so that 
+    # only the notes in the slur are shown in the lookahead.
+
 
 
 
@@ -1329,23 +1393,22 @@ class Score :
         noteObj.id = noteObjImported["id"]; del noteAttrDict["id"]
 
         # Detect manual editions
-        expectedNoteName = note.getFriendlyName(noteObjImported["pitch"])
-        actualNoteName   = noteObjImported["name"]
-        oldColor = noteObjImported["keyColor"]
+        noteNameExpected = note.getFriendlyName(noteObjImported["pitch"])
+        noteNameActual   = noteObjImported["name"]
         newColor = WHITE_KEY if ((noteObjImported["pitch"] % 12) in WHITE_NOTES_CODE_MOD12) else BLACK_KEY
-        if (expectedNoteName != actualNoteName) :
+        if (noteNameExpected != noteNameActual) :
           print(f"[NOTE] Note ID {noteObj.id}: manual edition detected.")
           print(f"Following fields will be replaced:")
-          print(f"- note name: {actualNoteName} -> {expectedNoteName}")
-          print(f"- key color: {oldColor} -> {newColor}")
-          noteObjImported["name"] = expectedNoteName
+          print(f"- note name: {noteNameActual} -> {noteNameExpected}")
+          print(f"- key color: {newColor}")
+          noteObjImported["name"]     = noteNameExpected
           noteObjImported["keyColor"] = newColor
 
         # Loop on the attributes of the Note object
+        # Set the attribute by string
         for noteAttr in noteAttrDict :
-
-          # Call the attribute by its name (as string), and assign it.
-          setattr(noteObj, noteAttr, noteObjImported[noteAttr])
+          if noteAttr in noteObjImported :
+            setattr(noteObj, noteAttr, noteObjImported[noteAttr])
         
         
         self.pianoRoll[noteObjImported["hand"]][noteObjImported["pitch"]].append(noteObj)
@@ -1427,7 +1490,13 @@ class Score :
       for notesInPitch in notesInTrack :
         for noteObj in notesInPitch :
           noteCount += 1
-          exportDict["pianoRoll"].append(noteObj.__dict__)
+          
+          noteExportAttr = noteObj.__dict__
+
+          # Filter the note attributes that will be exported
+          # ...
+
+          exportDict["pianoRoll"].append(noteExportAttr)
 
     with open(pianoRollFile, "w") as fileHandler :
       json.dump(exportDict, fileHandler, indent = 2)

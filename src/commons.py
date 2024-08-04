@@ -32,12 +32,12 @@ REV_MAJOR = 1
 REV_MINOR = 3
 REV_TYPE = "BETA" # or "ALPHA" or "STABLE"
 REV_YEAR = 2024
-REV_MONTH = "July"
+REV_MONTH = "August"
 
 # Piano roll settings
 # Defines (roughly) the number of notes to be displayed ahead from the current cursor 
 # in the piano roll
-PIANOROLL_VIEW_SPAN = 20
+PIANOROLL_VIEW_SPAN = 10
 
 # Theme 
 BACKGROUND_COLOR = (10, 50, 120)

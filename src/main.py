@@ -22,25 +22,15 @@
 #   and show a "fluidity" score
 # - allow the user to add some comments. Comments should span one to several timecodes.
 #   Comments can be guidelines, info on the way to play, ... any notes, really.
-# - patch the keypress management in the code (combinations of CTRL+... are buggy)
 
 # Nice to have:
 # - funky animation everytime the right notes are played
-# - patch the obscure variable names in keyboardUtils
 # - add a play button to hear some sections
 # - <drawPianoRoll>: compute polygons once for all. Don't recompute them if time code hasn't changed
 # - add autosave feature (save snapshot every 2 minutes)
 # - show a "*" in the title bar as soon as there are unsaved changes in the pianoRoll object
-# - pretty print the JSON (.pr file)
-# - show arrows on the keyboard to give some guidance about where the "center of gravity"
-#   of the hand is heading to
-# - loop feature: "color memory game". Increase the size of the loop as the user
+# - increasing loop feature ("color memory game"). Increase the size of the loop as the user
 #   plays it without any mistakes and more quickly
-# - auto-increase the step size if CTRL+left/right is hit multiple times in a row
-
-# Later:
-# - change the framework, use pyqt instead
-# - complete the font library (text.py)
 
 
 

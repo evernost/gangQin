@@ -19,14 +19,13 @@ from commons import *
 
 import note
 
+import datetime
+import copy
 import json   # for JSON database import/export
 import mido   # for MIDI file manipulation
 import os     # for file manipulation
-
-import datetime
 import re
 import time
-import copy
 
 
 
@@ -41,9 +40,8 @@ if (__name__ == "__main__") :
 # =============================================================================
 # Constants pool
 # =============================================================================
-SET_CURSOR_SUCCESS = 0
-
 CURSOR_STEADY_COUNT_LIMIT = 300
+
 
 
 class Score :
@@ -134,8 +132,9 @@ class Score :
     self.loopEnd = -1
     self.loopStrictMode = False
 
-
+    # Lookahead view
     self.lookAheadDistance = 0
+
 
 
   # ---------------------------------------------------------------------------
@@ -1448,12 +1447,8 @@ class Score :
       else :
         print(f"[DEBUG] Hardest section: {self.statsCursor.index(max(self.statsCursor))+1}")
 
-      # DEBUG
-      print(f"[DEBUG] Left hand cursors   : {len(self.cursorsLeft)} / ref: {len(safeDict['cursorsLeft'])}")
-      print(f"[DEBUG] Right hand cursors  : {len(self.cursorsRight)} / ref: {len(safeDict['cursorsRight'])}")
-      
-      print(f"[DEBUG] {noteCount} notes read from .pr file.")
-      print(f"[DEBUG] Score length: {self.scoreLength} steps")
+      print(f"[NOTE] {noteCount} notes read from .pr file.")
+      print(f"[NOTE] Score length: {self.scoreLength} steps")
 
     stopTime = time.time()
     print(f"[NOTE] Loading time: {stopTime-startTime:.2f}s")

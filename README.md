@@ -26,6 +26,26 @@ Piano learning app, for those who can't read music scores.
 
 
 
+## Shortcuts
+
+| Key           | Function      |
+|:------------- |:-------------|
+| ←             |Previous  cursor|
+| →             |Next cursor     |
+| ↑             |Next bookmark   |
+| ↓             |Previous bookmark|
+| S             |Save to .pr file|
+| B             |Toggle bookmark on the current cursor|
+| L             |Toggle left hand practice|
+| R             |Toggle right hand practice|
+| F2            |Increase lookahead distance|
+| F3            |Toggle 'strict' mode in looped practice|
+| F9            |Set the beginning of the loop at the current cursor|
+| F10           |Set the end of the loop at the current cursor|
+| F11           |Erase loop information|
+
+
+
 ## Requirements
 
 - **pygame** (tested with version 2.6)

@@ -314,19 +314,19 @@ while running :
       # "c": add a comment
       # ------------------
       if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_c]) :
-        print("[NOTE] Adding comments will be available in a future release.")
+        print("[INFO] Adding comments will be available in a future release.")
 
       # --------------------------------
       # "d" + "-": shorten note duration
       # --------------------------------
       if (keys[pygame.K_d] and keys[pygame.K_KP_MINUS]) :
-        print("[NOTE] Note duration shortening will be added in a future release.")
+        print("[INFO] Note duration shortening will be added in a future release.")
 
       # ----------------------------
       # "h": (Hear) toggle play mode
       # ----------------------------
       if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_h]) :
-        print("[NOTE] Playing the song feature will be added in a future release.")
+        print("[INFO] Playing the song feature will be added in a future release.")
 
       # ---------------------------------------------
       # "k": toggle display of the notes in the scale
@@ -356,7 +356,7 @@ while running :
       # CTRL + k: set the key the song is in
       # ------------------------------------
       if (keys[pygame.K_LCTRL] and keys[pygame.K_k]) :
-        print("[NOTE] Setting the key of the song will be added in a future release.")
+        print("[INFO] Setting the key of the song will be added in a future release.")
 
       # ------------------------------
       # "l": toggle left hand practice
@@ -374,7 +374,7 @@ while running :
       # "s": export/save
       # ----------------
       if (keys[pygame.K_s]) :
-        print("[NOTE] Exporting piano roll...")
+        print("[INFO] Exporting piano roll...")
         (rootDir, rootNameExt) = os.path.split(selectedFile)
         (rootName, _) = os.path.splitext(rootNameExt)
         newName = rootDir + '/' + rootName + ".pr"
@@ -406,7 +406,7 @@ while running :
         # Note : use a copy of the MIDI notes list to prevent the 
         #        MIDI callback to mess with the function.
         if (max(pianoArbiter.midiCurr) == 1) :
-          print("[NOTE] Backward search requested...")
+          print("[INFO] Backward search requested...")
           (suspendReq, pitchListHold) = userScore.search(pianoArbiter.midiCurr.copy())
           if suspendReq :
             pianoArbiter.suspendReq(pitchListHold)
@@ -421,7 +421,7 @@ while running :
         
         # Find feature
         if (max(pianoArbiter.midiCurr) == 1) :
-          print("[NOTE] Forward search requested...")
+          print("[INFO] Forward search requested...")
           (suspendReq, pitchListHold) = userScore.search(pianoArbiter.midiCurr.copy(), direction = -1)
           if suspendReq :
             pianoArbiter.suspendReq(pitchListHold)
@@ -500,7 +500,7 @@ while running :
       # when <loopStrictMode> is active.
       if (userScore.loopEnable) and (userScore.loopStrictMode) :
         userScore.setCursor(userScore.loopStart)
-        print("[NOTE] Ooops, wrong note. Going back to the beginning of the loop!")
+        print("[INFO] Ooops, wrong note. Going back to the beginning of the loop!")
 
 
   

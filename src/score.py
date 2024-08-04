@@ -541,13 +541,13 @@ class Score :
     # Loop end is not yet defined
     if (self.loopEnd == -1) :
       self.loopStart = self.getCursor()
-      print(f"[NOTE] Start of loop set at {self.loopStart+1}")
+      print(f"[INFO] Start of loop set at {self.loopStart+1}")
 
     else :
       if (self.getCursor() < self.loopEnd) :
         self.loopStart = self.getCursor()
         self.loopEnable = True
-        print(f"[NOTE] Loop is now set: start = {self.loopStart+1} / end = {self.loopEnd+1}")
+        print(f"[INFO] Loop is now set: start = {self.loopStart+1} / end = {self.loopEnd+1}")
 
 
 
@@ -565,14 +565,14 @@ class Score :
     # Loop start is not yet defined
     if (self.loopStart == -1) :
       self.loopEnd = self.getCursor()
-      print(f"[NOTE] End of loop set at {self.loopEnd+1}")
+      print(f"[INFO] End of loop set at {self.loopEnd+1}")
 
     else :
       if (self.getCursor() > self.loopStart) :
         self.loopEnd = self.getCursor()
         self.loopEnable = True
         self.cursor = self.loopStart
-        print(f"[NOTE] Loop is now set: start = {self.loopStart+1} / end = {self.loopEnd+1}")
+        print(f"[INFO] Loop is now set: start = {self.loopStart+1} / end = {self.loopEnd+1}")
   
 
 
@@ -586,7 +586,7 @@ class Score :
     self.loopStart = -1
     self.loopEnd = -1
     self.loopEnable = False
-    print("[NOTE] Loop cleared.")
+    print("[INFO] Loop cleared.")
 
 
 
@@ -601,11 +601,11 @@ class Score :
     # Is it an existing bookmark?
     if self.cursor in self.bookmarks :
       self.bookmarks = [x for x in self.bookmarks if (x != self.cursor)]
-      print(f"[NOTE] Bookmark removed at cursor {self.getCursor()+1}")
+      print(f"[INFO] Bookmark removed at cursor {self.getCursor()+1}")
     
     # New bookmark
     else :
-      print(f"[NOTE] Bookmark added at cursor {self.getCursor()+1}")
+      print(f"[INFO] Bookmark added at cursor {self.getCursor()+1}")
       self.bookmarks.append(self.cursor)
       self.bookmarks.sort()
 
@@ -643,7 +643,7 @@ class Score :
       
       
       else :
-        print(f"[NOTE] Last bookmark reached")
+        print(f"[INFO] Last bookmark reached")
     
 
 
@@ -675,7 +675,7 @@ class Score :
       
       
       else :
-        print(f"[NOTE] First bookmark reached")
+        print(f"[INFO] First bookmark reached")
 
 
 
@@ -948,7 +948,7 @@ class Score :
             break
         
         if isInList :
-          print(f"[NOTE] Find: current input was found at cursor = {cursorTry}")
+          print(f"[INFO] Find: current input was found at cursor = {cursorTry}")
           found = True
           foundCursor = cursorTry
           break
@@ -963,7 +963,7 @@ class Score :
       return (arbiterSuspendReq, arbiterPitchListHold)
     
     else :
-      print("[NOTE] Could not find the current MIDI notes in the score!")
+      print("[INFO] Could not find the current MIDI notes in the score!")
       return (False, [])
 
 
@@ -1127,7 +1127,7 @@ class Score :
     # But in general MIDI files might contain more than that.
     # And in general, the user might want to map specific tracks to the staffs
     # and not only track 0 and 1.
-    # print(f"[NOTE] [MIDI import] Tracks found: {len(mid.tracks)}")
+    # print(f"[INFO] [MIDI import] Tracks found: {len(mid.tracks)}")
     
     # Only 2 staves are supported for now.
     # The app focuses on piano practice: there is no plan to support more than
@@ -1279,6 +1279,9 @@ class Score :
     self.scoreLength = len(self.noteOnTimecodes["LR"])
     self.cursorMax = self.scoreLength-1
     
+    # Statistics are inexistant, initialize them
+    self.statsCursor = [0 for _ in range(self.scoreLength)]
+    
     print("OK")
 
     # DEBUG
@@ -1286,7 +1289,7 @@ class Score :
 
 
     stopTime = time.time()
-    print(f"[NOTE] Loading time: {stopTime-startTime:.2f}s")
+    print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
     
     
 
@@ -1309,7 +1312,7 @@ class Score :
       (majorRev, minorRev) = (int(versionMatch.group(1)), int(versionMatch.group(2)))
 
     else :
-      print(f"[WARNING] No version could be read from the .pr file. Is it corrupted?")
+      print(f"[WARNING] No version could be read from the .pr file. Either it is corrupted or too old and this version does not speak Dinosaur anymore.")
       # At that point, the rest of the parsing might fail.
 
     # Default dictionary, in case some fields do not exist.
@@ -1349,20 +1352,32 @@ class Score :
     # Pianoroll import - v0.X style
     # -----------------------------
     if (majorRev == 0) :
-      print("[INFO] Importing old school .pr file (versions v0.X)")
+      print("[INFO] Importing dinosaur .pr file (versions v0.X). Please consider saving it with a newer version.")
 
       # Note() objects were converted to a dictionary. Convert them back to a Note object
       self.pianoRoll = [[[] for noteList in trackList] for trackList in importDict["pianoRoll"]]
+      self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
+      noteCount = 0
 
       for track in range(self.nStaffs) :
         for pitch in GRAND_PIANO_MIDI_RANGE :
-          for noteDict in importDict["pianoRoll"][track][pitch] :
-            noteObj = note.Note(noteDict['pitch'])
+          for noteObjImported in importDict["pianoRoll"][track][pitch] :
+            noteObj = note.Note(noteObjImported['pitch'])
             
             for noteAttr in noteObj.__dict__ :
-              setattr(noteObj, noteAttr, noteDict[noteAttr])
+              if noteAttr in noteObjImported :
+                setattr(noteObj, noteAttr, noteObjImported[noteAttr])
+        
+            if (noteObjImported["hand"] == LEFT_HAND) :
+              self.noteOnTimecodes["L"].append(noteObj.startTime)
+            elif (noteObjImported["hand"] == RIGHT_HAND) :
+              self.noteOnTimecodes["R"].append(noteObj.startTime)
+
+            self.noteOnTimecodes["LR_full"].append(noteObj.startTime)
             
             self.pianoRoll[track][pitch].append(noteObj)
+
+            noteCount += 1
 
 
 
@@ -1380,8 +1395,8 @@ class Score :
       
       self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
       self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
-
       noteCount = 0
+
       for noteObjImported in importDict["pianoRoll"] :
 
         # Create the object
@@ -1399,7 +1414,7 @@ class Score :
         noteNameActual   = noteObjImported["name"]
         newColor = WHITE_KEY if ((noteObjImported["pitch"] % 12) in WHITE_NOTES_CODE_MOD12) else BLACK_KEY
         if (noteNameExpected != noteNameActual) :
-          print(f"[NOTE] Note ID {noteObj.id}: manual edition detected.")
+          print(f"[INFO] Note ID {noteObj.id}: manual edition detected.")
           print(f"Following fields will be replaced:")
           print(f"- note name: {noteNameActual} -> {noteNameExpected}")
           print(f"- key color: {newColor}")
@@ -1411,7 +1426,6 @@ class Score :
         for noteAttr in noteAttrDict :
           if noteAttr in noteObjImported :
             setattr(noteObj, noteAttr, noteObjImported[noteAttr])
-        
         
         self.pianoRoll[noteObjImported["hand"]][noteObjImported["pitch"]].append(noteObj)
         
@@ -1425,33 +1439,33 @@ class Score :
         noteCount += 1
         
 
-      # Tidy up:
-      # - sort the timecodes by ascending values
-      # - remove duplicate entries
-      self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
-      self.noteOnTimecodes["LR_full"].sort()
+    # Tidy up:
+    # - sort the timecodes by ascending values
+    # - remove duplicate entries
+    self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
+    self.noteOnTimecodes["LR_full"].sort()
 
-      self.noteOnTimecodes["LR"] = set(self.noteOnTimecodes["LR_full"])
-      self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
-      self.noteOnTimecodes["LR"].sort()
+    self.noteOnTimecodes["LR"] = set(self.noteOnTimecodes["LR_full"])
+    self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
+    self.noteOnTimecodes["LR"].sort()
 
-      # Build <cursorsLeft> and <cursorsRight>
-      self._buildCursorsLR()
+    # Build <cursorsLeft> and <cursorsRight>
+    self._buildCursorsLR()
 
-      self.scoreLength = len(self.noteOnTimecodes["LR"])
-      self.cursorMax = self.scoreLength-1
+    self.scoreLength = len(self.noteOnTimecodes["LR"])
+    self.cursorMax = self.scoreLength-1
 
-      # If the cursor statistics are inexistant, initialize it
-      if (len(self.statsCursor) == 0) :
-        self.statsCursor = [0 for _ in range(self.scoreLength)]
-      else :
-        print(f"[DEBUG] Hardest section: {self.statsCursor.index(max(self.statsCursor))+1}")
+    # If the cursor statistics are inexistant, initialize it
+    if (len(self.statsCursor) == 0) :
+      self.statsCursor = [0 for _ in range(self.scoreLength)]
+    else :
+      print(f"[DEBUG] Hardest section: {self.statsCursor.index(max(self.statsCursor))+1}")
 
-      print(f"[NOTE] {noteCount} notes read from .pr file.")
-      print(f"[NOTE] Score length: {self.scoreLength} steps")
+    print(f"[INFO] {noteCount} notes read from .pr file.")
+    print(f"[INFO] Score length: {self.scoreLength} steps")
 
     stopTime = time.time()
-    print(f"[NOTE] Loading time: {stopTime-startTime:.2f}s")
+    print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
 
 
 
@@ -1506,7 +1520,7 @@ class Score :
 
     currTime = datetime.datetime.now()
     print(f"[DEBUG] {noteCount} notes written in .pr file.")
-    print(f"[NOTE] Saved to '{pianoRollFile}' at {currTime.strftime('%H:%M:%S')}")
+    print(f"[INFO] Saved to '{pianoRollFile}' at {currTime.strftime('%H:%M:%S')}")
 
 
 
@@ -1590,7 +1604,7 @@ class Score :
     """
     
     self.progressEnable = not(self.progressEnable)
-    print("[NOTE] Rehearsal mode will be available in a future release.")
+    print("[INFO] Rehearsal mode will be available in a future release.")
 
 
 

@@ -593,7 +593,7 @@ class Keyboard :
   # Toggles the display of the scale
   # ---------------------------------------------------------------------------
   def showScale(self) :
-    print("[NOTE] Showing the scale will be available in a future release.")
+    print("[INFO] Showing the scale will be available in a future release.")
 
 
 

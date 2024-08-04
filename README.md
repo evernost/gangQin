@@ -1,26 +1,29 @@
-# gangQin (v1.2)
+# gangQin (v1.3)
 Piano learning app, for those who can't read music scores.
 
 ## Features (current release)
 - **MIDI import**: scores can be imported from standard MIDI files
-- **Bookmarking**: navigate quickly from one section to the other without scrolling the entire song
+- **Bookmarking**: navigate quickly from one important section to the other without scrolling the entire song
 - **_fingersatz_**: edit and display the finger to use for each note
-- **Loop practice**: define the location of the complex section, play it on repeat
+- **Loop practice**: define a complex section you want to practice, play it on repeat
 - **Single hand practice**: practice the left or right hand only
 - **Key highlight**: highlight the notes associated to the current key of the song. Highlighting changes dynamically if there are key changes
 - **Readable work file**: annotated score, bookmarks, fingersatz, ... are saved in a human readable file (JSON)
 - **Combo counter**: keep track of the number of correct notes played in a row
 - **Quick find**: a given chord whose location is unknown can be found just pressing the query chord on the MIDI keyboard.
+- **Perfect loop practice**: in loop practice, progress can be reset as soon as a mistake is made 😈
+- **Lookahead view**: the keyboard shows the notes to be pressed, but also the upcoming ones with different shades for improved 'sightreading'. Lookahead distance can be adjusted.
 
 ## Upcoming features
-- Note 'lookahead' display
+- Enhanced fingersatz edition, with more shortcuts
 - 'heading' indicator, pointing for each hand the direction they are about to aim to
 - Dynamic comments display, updated based on the location in the score
 - Relative difficulty display (based on user playing info analysis)
 
 ## Screenshot
 
-![image](https://github.com/evernost/gangQin/assets/106398901/ba9d3e4b-d4fe-4194-b2f6-0df6440085b4)
+![image](https://github.com/user-attachments/assets/7074402e-3e76-420b-b5c5-e5a7e0cd500a)
+
 
 
 ## Requirements

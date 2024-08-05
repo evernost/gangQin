@@ -162,7 +162,7 @@ while running :
       altKey  = event.mod & pygame.KMOD_ALT
       shiftKey  = event.mod & pygame.KMOD_SHIFT
     
-    if (event.type == pygame.KEYDOWN) :
+    elif (event.type == pygame.KEYDOWN) :
       keys    = pygame.key.get_pressed()
       ctrlKey = event.mod & pygame.KMOD_CTRL
       altKey  = event.mod & pygame.KMOD_ALT
@@ -390,7 +390,7 @@ while running :
     # -------------------------------------------------------------------------
     # Mouse click event handling
     # -------------------------------------------------------------------------
-    if (event.type == pygame.MOUSEBUTTONDOWN) :
+    elif (event.type == pygame.MOUSEBUTTONDOWN) :
       
       # Left click
       if (event.button == MOUSE_LEFT_CLICK) :
@@ -504,6 +504,19 @@ while running :
 
 
   
+  # ------------------------------------------------------
+  # Show pointing hand when hovering over an editable note
+  # ------------------------------------------------------
+  (mouse_x, mouse_y) = pygame.mouse.get_pos()
+  if ((10 <= mouse_x <= 1310) and (300 <= mouse_y <= 450)) :  
+    detectedNote = keyboardWidget.isActiveNoteClicked(pygame.mouse.get_pos())
+    if detectedNote :
+      pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+  else:
+    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+
+
+
   # -----------------------
   # Note properties edition
   # -----------------------

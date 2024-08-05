@@ -556,14 +556,16 @@ class Keyboard :
     # TODO
 
 
+  
   # ---------------------------------------------------------------------------
-  # METHOD <isActiveNoteClicked>
-  #
-  # Given a click coordinates, indicate whether it is an active key (a "lit" key)
-  # that has been clicked.
+  # METHOD Keyboard.isActiveNoteClicked
   # ---------------------------------------------------------------------------
   def isActiveNoteClicked(self, clickCoord) :
-    
+    """
+    Given a click coordinates, indicate whether it is an active key (a "lit" key)
+    that has been clicked.
+    """
+
     candidates = []
     (clickX, clickY) = clickCoord
 

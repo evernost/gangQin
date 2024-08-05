@@ -1396,6 +1396,7 @@ class Score :
       self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
       self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
       noteCount = 0
+      masteredNoteCount = 0
 
       for noteObjImported in importDict["pianoRoll"] :
 
@@ -1427,6 +1428,9 @@ class Score :
           if noteAttr in noteObjImported :
             setattr(noteObj, noteAttr, noteObjImported[noteAttr])
         
+        if (noteObj.finger != 0) :
+          masteredNoteCount += 1
+
         self.pianoRoll[noteObjImported["hand"]][noteObjImported["pitch"]].append(noteObj)
         
         if (noteObjImported["hand"] == LEFT_HAND) :
@@ -1462,6 +1466,7 @@ class Score :
       print(f"[DEBUG] Hardest section: {self.statsCursor.index(max(self.statsCursor))+1}")
 
     print(f"[INFO] {noteCount} notes read from .pr file.")
+    print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")
     print(f"[INFO] Score length: {self.scoreLength} steps")
 
     stopTime = time.time()

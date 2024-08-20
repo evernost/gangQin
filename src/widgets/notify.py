@@ -65,13 +65,15 @@ class Notify :
     
 
   # ---------------------------------------------------------------------------
-  # Wrong note notification sound
+  # METHOD Notify.wrongNote()
   # ---------------------------------------------------------------------------
   def wrongNote(self) :
+    """
+    Plays the wrong note sound.
+    """
 
     if (self.enabled) :
       if not(self.wrongNoteFlag) :
-        
         file = random.choice(WRONG_SOUND_FILES)
         
         playsound.playsound(SOUND_DIR + "/" + file, False)
@@ -82,25 +84,25 @@ class Notify :
 
 
   # ---------------------------------------------------------------------------
-  # Loop passed notification sound
+  # METHOD Notify.loopPassed()
   # ---------------------------------------------------------------------------
   def loopPassed(self) :
 
-    if not(self.loopPassedFlag) :
+    if (self.enabled) :
+      if not(self.loopPassedFlag) :
+        file = random.choice(SUCCESS_SOUND_FILES)
+        
+        playsound.playsound(SOUND_DIR + "/" + file, False)
       
-      file = random.choice(SUCCESS_SOUND_FILES)
-      
-      playsound.playsound(SOUND_DIR + "/" + file, False)
-    
-      # Prevent from repeated plays
-      self.loopPassedFlag = True
+        # Prevent from repeated plays
+        self.loopPassedFlag = True
+
 
 
   # ---------------------------------------------------------------------------
   # Flag reset
   # ---------------------------------------------------------------------------
   def wrongNoteReset(self) :
-
     self.wrongNoteFlag = False
 
   def loopPassedReset(self) :

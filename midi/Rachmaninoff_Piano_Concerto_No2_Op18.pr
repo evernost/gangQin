@@ -43,6 +43,7 @@
     2299,
     2410,
     2500,
+    2602,
     3069,
     3141,
     3285
@@ -1222,7 +1223,7 @@
     68,
     131,
     62,
-    684,
+    707,
     97,
     44,
     121,
@@ -1248,7 +1249,7 @@
     119,
     203,
     230,
-    881,
+    898,
     175,
     131,
     142,
@@ -1272,13 +1273,13 @@
     105,
     106,
     89,
-    979,
+    1002,
     202,
     281,
     69,
     184,
     54,
-    1052,
+    1104,
     45,
     42,
     67,
@@ -1296,7 +1297,7 @@
     42,
     45,
     43,
-    1265,
+    1288,
     138,
     175,
     261,
@@ -1304,7 +1305,7 @@
     107,
     179,
     94,
-    919,
+    945,
     115,
     388,
     88,
@@ -1324,7 +1325,7 @@
     90,
     485,
     709,
-    838,
+    858,
     246,
     352,
     130,
@@ -1344,7 +1345,7 @@
     85,
     66,
     75,
-    1190,
+    1220,
     233,
     90,
     63,
@@ -1382,7 +1383,7 @@
     65,
     61,
     91,
-    1591,
+    1617,
     527,
     379,
     347,
@@ -1438,7 +1439,7 @@
     71,
     81,
     87,
-    15893,
+    15923,
     1841,
     1849,
     1574,
@@ -1486,7 +1487,7 @@
     2699,
     2683,
     1526,
-    14113,
+    14148,
     6917,
     4732,
     3685,
@@ -1538,7 +1539,7 @@
     637,
     283,
     248,
-    27637,
+    27678,
     4082,
     4402,
     3959,
@@ -1577,7 +1578,7 @@
     4674,
     3474,
     4356,
-    15047,
+    15084,
     11589,
     8253,
     5372,
@@ -1587,11 +1588,11 @@
     3715,
     3720,
     4299,
-    15791,
+    15836,
     4105,
     1832,
     1580,
-    65027,
+    65135,
     11128,
     19842,
     10642,
@@ -1683,7 +1684,7 @@
     55,
     54,
     193,
-    2371,
+    2389,
     447,
     378,
     139,
@@ -1791,7 +1792,7 @@
     27,
     35,
     432,
-    27087,
+    27105,
     7349,
     6535,
     6438,
@@ -1819,7 +1820,7 @@
     1428,
     1758,
     1528,
-    10609,
+    10638,
     5828,
     3051,
     4984,
@@ -2258,7 +2259,7 @@
     21,
     57,
     19178,
-    13536,
+    13567,
     4018,
     3379,
     5165,
@@ -2351,7 +2352,7 @@
     1684,
     1280,
     1053,
-    86389,
+    86432,
     48302,
     54914,
     51567,
@@ -2462,7 +2463,7 @@
     0,
     0,
     0,
-    550,
+    572,
     0,
     0,
     0,
@@ -2552,124 +2553,124 @@
     0,
     0,
     0,
-    219,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    362,
+    58,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    3,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    3,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    3,
+    2,
+    2,
+    22,
+    9,
+    9,
+    9,
+    12,
+    10,
+    8,
+    9,
+    10,
+    7,
+    8,
+    9,
+    9,
+    7,
+    9,
+    9,
+    8,
+    10,
+    9,
+    10,
+    9,
+    9,
+    8,
+    11,
+    8,
+    10,
+    9,
+    9,
+    9,
+    34,
+    491,
+    1316,
+    669,
+    702,
+    45,
+    72,
+    119,
+    511,
+    224,
+    312,
+    53,
+    44,
+    196,
+    9,
+    9,
+    7,
+    21,
     0,
     0,
     0,
@@ -6351,7 +6352,7 @@
     },
     {
       "pitch": 55,
-      "hand": 0,
+      "hand": 1,
       "finger": 0,
       "keyColor": 0,
       "noteIndex": 43,
@@ -8415,7 +8416,7 @@
     },
     {
       "pitch": 59,
-      "hand": 0,
+      "hand": 1,
       "finger": 0,
       "keyColor": 0,
       "noteIndex": 21,
@@ -26587,7 +26588,7 @@
       "voice": 0,
       "name": "C5",
       "id": 2319,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 72,
@@ -26651,7 +26652,7 @@
       "voice": 0,
       "name": "C5",
       "id": 2338,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 72,
@@ -26667,7 +26668,7 @@
       "voice": 0,
       "name": "C5",
       "id": 2398,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 72,
@@ -26715,7 +26716,7 @@
       "voice": 0,
       "name": "C5",
       "id": 2477,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 72,
@@ -30843,7 +30844,7 @@
       "voice": 0,
       "name": "D5",
       "id": 2413,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 74,
@@ -30875,7 +30876,7 @@
       "voice": 0,
       "name": "D5",
       "id": 2469,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 74,
@@ -33627,7 +33628,7 @@
       "voice": 0,
       "name": "Eb5",
       "id": 2304,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 75,
@@ -36891,7 +36892,7 @@
       "voice": 0,
       "name": "F5",
       "id": 2427,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 77,
@@ -36923,7 +36924,7 @@
       "voice": 0,
       "name": "F5",
       "id": 2461,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 77,
@@ -43851,7 +43852,7 @@
       "voice": 0,
       "name": "Ab5",
       "id": 2431,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 80,
@@ -50427,7 +50428,7 @@
       "voice": 0,
       "name": "C6",
       "id": 2320,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 84,
@@ -50523,7 +50524,7 @@
       "voice": 0,
       "name": "C6",
       "id": 2339,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 84,
@@ -50603,7 +50604,7 @@
       "voice": 0,
       "name": "C6",
       "id": 2370,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 84,
@@ -50683,7 +50684,7 @@
       "voice": 0,
       "name": "C6",
       "id": 2399,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 84,
@@ -50747,7 +50748,7 @@
       "voice": 0,
       "name": "C6",
       "id": 2447,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 84,
@@ -50811,7 +50812,7 @@
       "voice": 0,
       "name": "C6",
       "id": 2478,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 84,
@@ -53371,7 +53372,7 @@
       "voice": 0,
       "name": "D6",
       "id": 2414,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 86,
@@ -53435,7 +53436,7 @@
       "voice": 0,
       "name": "D6",
       "id": 2470,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 86,
@@ -55387,7 +55388,7 @@
       "voice": 0,
       "name": "Eb6",
       "id": 2305,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 87,
@@ -55531,7 +55532,7 @@
       "voice": 0,
       "name": "Eb6",
       "id": 2371,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 87,
@@ -57131,7 +57132,7 @@
       "voice": 0,
       "name": "F6",
       "id": 2428,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 89,
@@ -57179,7 +57180,7 @@
       "voice": 0,
       "name": "F6",
       "id": 2462,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 89,
@@ -58955,7 +58956,7 @@
       "voice": 0,
       "name": "G6",
       "id": 2372,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 91,
@@ -59083,7 +59084,7 @@
       "voice": 0,
       "name": "G6",
       "id": 2448,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 91,
@@ -60011,7 +60012,7 @@
       "voice": 0,
       "name": "Ab6",
       "id": 2432,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 92,
@@ -60923,7 +60924,7 @@
       "voice": 0,
       "name": "Bb6",
       "id": 2449,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 94,
@@ -61515,7 +61516,7 @@
       "voice": 0,
       "name": "C7",
       "id": 2373,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 96,
@@ -61563,7 +61564,7 @@
       "voice": 0,
       "name": "C7",
       "id": 2450,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 96,
@@ -71211,7 +71212,7 @@
       "voice": 0,
       "name": "C3",
       "id": 6060,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 48,
@@ -71275,7 +71276,7 @@
       "voice": 0,
       "name": "C3",
       "id": 6079,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 48,
@@ -71291,7 +71292,7 @@
       "voice": 0,
       "name": "C3",
       "id": 6139,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 48,
@@ -71339,7 +71340,7 @@
       "voice": 0,
       "name": "C3",
       "id": 6218,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 48,
@@ -73451,7 +73452,7 @@
       "voice": 0,
       "name": "D3",
       "id": 6154,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 50,
@@ -73483,7 +73484,7 @@
       "voice": 0,
       "name": "D3",
       "id": 6210,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 50,
@@ -75243,7 +75244,7 @@
       "voice": 0,
       "name": "Eb3",
       "id": 6045,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 51,
@@ -77723,7 +77724,7 @@
       "voice": 0,
       "name": "F3",
       "id": 6168,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 53,
@@ -77755,7 +77756,7 @@
       "voice": 0,
       "name": "F3",
       "id": 6202,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 53,
@@ -85227,7 +85228,7 @@
       "voice": 0,
       "name": "Ab3",
       "id": 6172,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 56,
@@ -85295,7 +85296,7 @@
     },
     {
       "pitch": 56,
-      "hand": 1,
+      "hand": 0,
       "finger": 0,
       "keyColor": 1,
       "noteIndex": 132,
@@ -93547,7 +93548,7 @@
       "voice": 0,
       "name": "C4",
       "id": 6061,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 60,
@@ -93643,7 +93644,7 @@
       "voice": 0,
       "name": "C4",
       "id": 6080,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 60,
@@ -93723,7 +93724,7 @@
       "voice": 0,
       "name": "C4",
       "id": 6111,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 60,
@@ -93803,7 +93804,7 @@
       "voice": 0,
       "name": "C4",
       "id": 6140,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 60,
@@ -93867,7 +93868,7 @@
       "voice": 0,
       "name": "C4",
       "id": 6188,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 60,
@@ -93931,7 +93932,7 @@
       "voice": 0,
       "name": "C4",
       "id": 6219,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 60,
@@ -93951,7 +93952,7 @@
     },
     {
       "pitch": 60,
-      "hand": 1,
+      "hand": 0,
       "finger": 0,
       "keyColor": 0,
       "noteIndex": 221,
@@ -98395,7 +98396,7 @@
       "voice": 0,
       "name": "D4",
       "id": 6155,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 62,
@@ -98459,7 +98460,7 @@
       "voice": 0,
       "name": "D4",
       "id": 6211,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 62,
@@ -101547,7 +101548,7 @@
       "voice": 0,
       "name": "Eb4",
       "id": 6046,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 63,
@@ -101691,7 +101692,7 @@
       "voice": 0,
       "name": "Eb4",
       "id": 6112,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 63,
@@ -105643,7 +105644,7 @@
       "voice": 0,
       "name": "F4",
       "id": 6169,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 65,
@@ -105691,7 +105692,7 @@
       "voice": 0,
       "name": "F4",
       "id": 6203,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 65,
@@ -105711,7 +105712,7 @@
     },
     {
       "pitch": 65,
-      "hand": 1,
+      "hand": 0,
       "finger": 0,
       "keyColor": 0,
       "noteIndex": 140,
@@ -109339,7 +109340,7 @@
       "voice": 0,
       "name": "G4",
       "id": 6113,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 67,
@@ -109467,7 +109468,7 @@
       "voice": 0,
       "name": "G4",
       "id": 6189,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 67,
@@ -111627,7 +111628,7 @@
       "voice": 0,
       "name": "Ab4",
       "id": 6173,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 68,
@@ -114587,7 +114588,7 @@
       "voice": 0,
       "name": "Bb4",
       "id": 6190,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 70,
@@ -116315,7 +116316,7 @@
       "voice": 0,
       "name": "C5",
       "id": 6114,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 72,
@@ -116363,7 +116364,7 @@
       "voice": 0,
       "name": "C5",
       "id": 6191,
-      "visible": false
+      "visible": true
     },
     {
       "pitch": 72,

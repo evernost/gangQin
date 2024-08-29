@@ -208,13 +208,13 @@ while running :
       # Tab key: highlight the note above for editing
       # ---------------------------------------------
       if (keys[pygame.K_TAB] and not(shiftKey)) :
-        print("[TODO] Editing next using shift key")
+        print("[TODO] Highlight next note for fingersatz edition using Tab key")
 
       # -----------------------------------------------
-      # Maj + tab: highlight the note below for editing
+      # Maj + tab: highlight the note before for editing
       # -----------------------------------------------
       if (keys[pygame.K_TAB] and shiftKey) :
-        print("[TODO] Editing before using shift key")
+        print("[TODO] Highlight previous note for fingersatz edition using Tab key")
 
       # ---------------------------------------
       # HOME: jump to the beginning of the file
@@ -500,7 +500,7 @@ while running :
       # when <loopStrictMode> is active.
       if (userScore.loopEnable) and (userScore.loopStrictMode) :
         userScore.setCursor(userScore.loopStart)
-        print("[INFO] Ooops, wrong note. Going back to the beginning of the loop!")
+        print("[INFO] Wrong note, loop reset :(")
 
 
   
@@ -508,10 +508,14 @@ while running :
   # Show pointing hand when hovering over an editable note
   # ------------------------------------------------------
   (mouse_x, mouse_y) = pygame.mouse.get_pos()
+  
+  # Is the cursor somewhere above the keyboard?
   if ((10 <= mouse_x <= 1310) and (300 <= mouse_y <= 450)) :  
     detectedNote = keyboardWidget.isActiveNoteClicked(pygame.mouse.get_pos())
     if detectedNote :
       pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+    else :
+      pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
   else:
     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 

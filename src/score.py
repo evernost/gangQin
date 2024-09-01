@@ -135,6 +135,10 @@ class Score :
     # Lookahead view
     self.lookAheadDistance = 0
 
+    # Tempo sections
+    self.tempoReadFromScore = False
+    self.tempoSections = [(1, 120)]
+
 
 
   # ---------------------------------------------------------------------------
@@ -1328,7 +1332,8 @@ class Score :
       "comboHighestAllTime"   : 0,
       "statsLastCursor"       : -1,
       "statsSteadyCount"      : 0,
-      "statsCursor"           : []
+      "statsCursor"           : [],
+      "tempoSections"         : [(1, 120)]
     }
   
     for currKey in safeDict :
@@ -1345,8 +1350,7 @@ class Score :
     self.statsLastCursor        = safeDict["statsLastCursor"]
     self.statsSteadyCount       = safeDict["statsSteadyCount"]
     self.statsCursor            = safeDict["statsCursor"]
-    # TODO: import the scales
-    # TODO: import the loops
+    
 
     # -----------------------------
     # Pianoroll import - v0.X style
@@ -1498,9 +1502,6 @@ class Score :
     exportDict["statsLastCursor"]       = self.statsLastCursor
     exportDict["statsCursor"]           = self.statsCursor
 
-    # TODO: export the scales
-    # exportDict["scale"] = self.scale
-
     noteCount = 0
     exportDict["pianoRoll"] = []
     for notesInTrack in self.pianoRoll :
@@ -1517,6 +1518,7 @@ class Score :
           del noteExportAttr["upcomingDistance"]
           del noteExportAttr["fromKeyboardInput"]
           del noteExportAttr["lookAheadDistance"]
+          del noteExportAttr["visible"]
 
           exportDict["pianoRoll"].append(noteExportAttr)
 

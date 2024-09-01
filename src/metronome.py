@@ -54,18 +54,18 @@ class Metronome :
 
     self.counter = 1
 
-    self._enableKeyPress = False
     self._optionMode = False
     self._switched = False
 
-    self.tickDuration = 0.1
+    self.tickDuration = 0.2
     self.tickVolume = 0.3
     
     self.msgQueue = []
 
+    # Prepare the sounds for the "ticks"
     t = np.linspace(0, self.tickDuration, int(44100 * self.tickDuration), endpoint = False)
-    tickHigh = np.int16(32767 * self.tickVolume * np.sin(2 * np.pi * 880.0 * t))
-    tickLow = np.int16(32767 * self.tickVolume * np.sin(2 * np.pi * 440.0 * t))
+    tickHigh = np.int16(32767 * self.tickVolume * np.sin(2 * np.pi * 880.0 * t) * np.exp(-t/(self.tickDuration/3)))
+    tickLow = np.int16(32767 * self.tickVolume * np.sin(2 * np.pi * 440.0 * t) * np.exp(-t/(self.tickDuration/3)))
     
     # Convert the array to a bytes object (Pygame expects byte data)
     tickHigh = tickHigh.tobytes()

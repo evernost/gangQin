@@ -270,11 +270,21 @@ while running :
       # --------------------------------
       if (keys[pygame.K_F3]) :
         if userScore.loopStrictMode :
-          print(f"[DEBUG] Strict mode in loop is OFF")
+          print(f"[DEBUG] Strict mode in loop is OFF.")
         else :
-          print(f"[DEBUG] Strict mode in loop is ON")
+          print(f"[DEBUG] Strict mode in loop is ON.")
           
         userScore.loopStrictMode = not(userScore.loopStrictMode)
+
+      # -----------------------------------------------------------
+      # F4: metronome's tempo follows the instructions in the score
+      # -----------------------------------------------------------
+      if (keys[pygame.K_F4]) :
+        if userScore.tempoReadFromScore :
+          print("[INFO] Metronome: AUTO MODE. Tempo value is read from the score, modifications will be stored in the score.")
+        else :
+          print("[INFO] Metronome: FREE RUNNING MODE. Tempo value is free, modifications will not affect the tempo information in the score.")
+        userScore.tempoReadFromScore = not(userScore.tempoReadFromScore)
 
       # ---------------------------
       # F9: set the start of a loop

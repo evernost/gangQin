@@ -30,10 +30,10 @@ import time
 
 
 # =============================================================================
-# Guards
+# Unit tests
 # =============================================================================
 if (__name__ == "__main__") :
-  print("[WARNING] This lib is not intended to be called as a main.")
+  print("[INFO] There are no unit tests available for 'score.py'")
 
 
 

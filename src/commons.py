@@ -5,7 +5,7 @@
 # File name     : commons.py
 # Purpose       : constants used throughout the project
 # Author        : QuBi (nitrogenium@hotmail.com)
-# Creation date : Sunday, 8 Oct 2023
+# Creation date : Sunday, Oct 8th, 2023
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
@@ -29,10 +29,10 @@
 # Customizable variables
 # ----------------------
 REV_MAJOR = 1
-REV_MINOR = 3
-REV_TYPE = "BETA" # or "ALPHA" or "STABLE"
+REV_MINOR = 4
+REV_TYPE = "BETA" # "ALPHA", "BETA", "STABLE"
 REV_YEAR = 2024
-REV_MONTH = "August"
+REV_MONTH = "September"
 
 # Piano roll settings
 # Defines (roughly) the number of notes to be displayed ahead from the current cursor 

@@ -52,6 +52,7 @@ from widgets import notify
 # Various utilities
 import arbiter
 import conf
+import metronome
 import note
 import score
 import text
@@ -113,6 +114,12 @@ pygame.key.set_repeat(250, 50)
 soundNotify = notify.Notify()
 soundNotify.enabled = False
 
+# Metronome
+metronomeObj = metronome.Metronome(120, 4, 4)
+METRONOME_TASK = pygame.USEREVENT + 1
+pygame.time.set_timer(METRONOME_TASK, metronomeObj.getInterval_ms())
+pygame.mixer.init(frequency = 44100, size = -16, channels = 1, buffer = 512)
+
 
 
 # =============================================================================
@@ -162,11 +169,18 @@ while running :
       altKey  = event.mod & pygame.KMOD_ALT
       shiftKey  = event.mod & pygame.KMOD_SHIFT
     
+      # Send message to the metronome
+      metronomeObj.keyRelease(event.key)
+
+
     elif (event.type == pygame.KEYDOWN) :
       keys    = pygame.key.get_pressed()
       ctrlKey = event.mod & pygame.KMOD_CTRL
       altKey  = event.mod & pygame.KMOD_ALT
       shiftKey  = event.mod & pygame.KMOD_SHIFT
+
+      # Send message to the metronome
+      metronomeObj.keyPress(keys)
 
       # -----------------
       # "q": exit the app
@@ -363,7 +377,7 @@ while running :
       # ------------------------------
       if (keys[pygame.K_l]) :  
         userScore.toggleLeftHandPractice()
-
+      
       # -------------------------------
       # "r": toggle right hand practice
       # -------------------------------
@@ -430,6 +444,13 @@ while running :
           userScore.cursorStep(-10)
         else :
           userScore.cursorStep(-1)
+
+
+    # -------------------------------------------------------------------------
+    # Metronome
+    # -------------------------------------------------------------------------
+    elif (event.type == METRONOME_TASK) :
+      metronomeObj.playTick()
 
 
 
@@ -499,8 +520,17 @@ while running :
       # Looped practice: a wrong note reset the cursor to the beginning of the loop 
       # when <loopStrictMode> is active.
       if (userScore.loopEnable) and (userScore.loopStrictMode) :
-        userScore.setCursor(userScore.loopStart)
-        print("[INFO] Wrong note, loop reset :(")
+        c = userScore.getCursor()
+        
+        # Cursor is reset only if it was in the looping range.
+        # Otherwise it is affected: user is practicing something outside the loop.
+        # It wouldn't make sense to reset the cursor in this case.
+        if ((c >= userScore.loopStart) and (c <= userScore.loopEnd)) :
+          userScore.setCursor(userScore.loopStart)
+          print("[INFO] Wrong note, loop reset :(")
+
+        else: 
+          print("[INFO] Wrong note outside the looping range.")
 
 
   
@@ -543,6 +573,8 @@ while running :
 
     clickMsg = False
 
+
+
   # ---------------------------------------------
   # Show some info relative to the current cursor
   # ---------------------------------------------
@@ -575,7 +607,9 @@ while running :
     if (userScore.getCursor() != fingerSelWidget.editedCursor) :
       fingerSelWidget.resetEditedNote()
   
-
+  # METRONOME
+  if metronomeObj.enable :
+    text.render(screen, f"BPM:{metronomeObj.bpm} - {metronomeObj.num}/{metronomeObj.denom} - {metronomeObj.counter}", (900, 470), 2, UI_TEXT_COLOR)
 
 
 
@@ -588,6 +622,22 @@ while running :
 
   # Some statistics
   userScore.updateStats()
+
+  # Read metronome messages
+  if (len(metronomeObj.msgQueue) > 0) :
+    for msg in metronomeObj.msgQueue :
+      if (msg == metronome.MSG_TEMPO_UPDATE) :
+        pygame.time.set_timer(METRONOME_TASK, metronomeObj.getInterval_ms())
+      
+      elif (msg == metronome.MSG_TIMER_OFF) :
+        pygame.time.set_timer(METRONOME_TASK, 0)
+
+      elif (msg == metronome.MSG_TIMER_ON) :
+        pygame.time.set_timer(METRONOME_TASK, metronomeObj.getInterval_ms())
+        metronomeObj.counter = metronomeObj.num
+        metronomeObj.playTick()
+    
+    metronomeObj.clearQueue()
 
 
   clock.tick(FPS)

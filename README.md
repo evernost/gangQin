@@ -1,4 +1,4 @@
-# gangQin (v1.3)
+# gangQin (v1.4)
 Piano learning app, for those who can't read music scores.
 
 ## Features (current release)
@@ -13,6 +13,7 @@ Piano learning app, for those who can't read music scores.
 - **Quick find**: a given chord whose location is unknown can be found just pressing the query chord on the MIDI keyboard.
 - **Perfect loop practice**: in loop practice, progress can be reset as soon as a mistake is made 😈
 - **Lookahead view**: the keyboard shows the notes to be pressed, but also the upcoming ones with different shades for improved 'sightreading'. Lookahead distance can be adjusted.
+- **Metronome**: play with perfect timing.
 
 ## Upcoming features
 - Enhanced fingersatz edition, with more shortcuts
@@ -22,7 +23,7 @@ Piano learning app, for those who can't read music scores.
 
 ## Screenshot
 
-![image](https://github.com/user-attachments/assets/7074402e-3e76-420b-b5c5-e5a7e0cd500a)
+![image](https://github.com/user-attachments/assets/0b3f73a9-8bc5-4def-a016-6dabc6d473cd)
 
 
 
@@ -38,6 +39,9 @@ Piano learning app, for those who can't read music scores.
 | B             |Toggle bookmark on the current cursor|
 | L             |Toggle left hand practice|
 | R             |Toggle right hand practice|
+| M             |Toggle metronome|
+| M+            |Increase metronome tempo|
+| M-            |Decrease metronome tempo|
 | F2            |Increase lookahead distance|
 | F3            |Toggle 'strict' mode in looped practice|
 | F9            |Set the beginning of the loop at the current cursor|
@@ -49,6 +53,7 @@ Piano learning app, for those who can't read music scores.
 ## Requirements
 
 - **pygame** (tested with version 2.6)
+- **numpy**
 - **shapely** (tested with version 2.0.4)
 - **playsound**
   - pip install --upgrade setuptools wheel

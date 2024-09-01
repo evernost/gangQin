@@ -13,13 +13,13 @@ Piano learning app, for those who can't read music scores.
 - **Quick find**: a given chord whose location is unknown can be found just pressing the query chord on the MIDI keyboard.
 - **Perfect loop practice**: in loop practice, progress can be reset as soon as a mistake is made 😈
 - **Lookahead view**: the keyboard shows the notes to be pressed, but also the upcoming ones with different shades for improved 'sightreading'. Lookahead distance can be adjusted.
-- **Metronome**: play with perfect timing.
+- **Metronome**: practice with perfect timing.
 
 ## Upcoming features
+- Metronome with dynamic tempo, ajusts automatically throughout the score
 - Enhanced fingersatz edition, with more shortcuts
-- 'heading' indicator, pointing for each hand the direction they are about to aim to
 - Dynamic comments display, updated based on the location in the score
-- Relative difficulty display (based on user playing info analysis)
+
 
 ## Screenshot
 

@@ -24,9 +24,11 @@ import text
 # =============================================================================
 # Constants pool
 # =============================================================================
+FINGERSEL_NONE_SELECTED = -1
 FINGERSEL_UNCHANGED = 0
 FINGERSEL_CHANGED = 1
 FINGERSEL_HAND_CHANGE = 3
+
 
 
 # =============================================================================
@@ -43,6 +45,30 @@ if (__name__ == "__main__") :
 class FingerSelector :
 
   def __init__(self, loc) :
+    
+
+    # UI interaction queues
+    self.msgQueueIn = []
+    self.msgQueueOut = []
+
+    # -1 = nothing is selected
+    #  0 = left hand, finger 5
+    #  1 = left hand, finger 4
+    # ...
+    #  4 = left hand, finger 1
+    #  5 = left hand, finger undefined
+    #  6 = right hand, finger undefined
+    #  7 = right hand, finger 1
+    # ...
+    # 11 = right hand, finger 5
+    self.currentSel = FINGERSEL_NONE_SELECTED
+
+    self.visible = False
+
+    self.editedNote = None
+    self.editedCursor = -1
+
+    # *** Graphical properties ***
     (self.locX, self.locY) = loc
     self.textColor = UI_TEXT_COLOR
     self.textColorL = (145, 7, 0)
@@ -52,21 +78,19 @@ class FingerSelector :
     self.textColorSelL = (244, 13, 0)
     self.textColorSelR = (0, 244, 13)
 
-    # - 0 = left hand, finger 5
-    # - 1 = left hand, finger 4
-    # ...
-    # - 4 = left hand, finger 1
-    # - 5 = left hand, finger undefined
-    # - 6 = right hand, finger undefined
-    # - 7 = right hand, finger 1
-    # ...
-    # - 11 = right hand, finger 5
-    self.currentSel = -1
 
-    self.visible = False
 
-    self.editedNote = None
-    self.editedCursor = -1
+  # ---------------------------------------------------------------------------
+  # METHOD Metronome.keyPress(pygameKeys)
+  # ---------------------------------------------------------------------------
+  def keyPress(self, pygameKeys) :
+    """
+    todo
+    """
+
+    if pygameKeys[pygame.K_TAB] :      
+      print("[DEBUG] Fingersatz edition using (shift) tab is not done yet!")
+      self.msgQueueIn.append("TAB")
 
 
 
@@ -241,6 +265,21 @@ class FingerSelector :
         fingerNumber = -1
 
 
+
+  # ---------------------------------------------------------------------------
+  # METHOD <FingerSelector.highlightWithTab>
+  # ---------------------------------------------------------------------------
+  def highlightWithTab(self, teacherNotes) :
+    """
+    Highlights the editable notes one after the other every time the 'tab' or
+    'shift' + 'tab' combination is pressed.
+    """
+
+    # Sustained notes are not editable through this mode 
+    # (is it supposed to be a shortcut)
+    activeNotes = [x for x in teacherNotes if not(x.sustained)]
+
+    print("todo!")
 
 
 

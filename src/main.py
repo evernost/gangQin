@@ -222,7 +222,7 @@ while running :
       # Tab key: highlight the note above for editing
       # ---------------------------------------------
       if (keys[pygame.K_TAB] and not(shiftKey)) :
-        print("[TODO] Highlight next note for fingersatz edition using Tab key")
+        fingerSelWidget.keyPress(keys)
 
       # -----------------------------------------------
       # Maj + tab: highlight the note before for editing

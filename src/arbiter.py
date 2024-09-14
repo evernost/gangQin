@@ -207,16 +207,19 @@ class Arbiter :
 
         # Case 3: a required note is here, but it was hit before and has been sustained since then.
         # Meanwhile, the score requires this note to be played again.
-        # This case is detected by comparing the ID of the notes.
+        # This case is detected as follows:
+        # Every time a note is valid, we bind its pitch to the unique ID of the note in the score, and
+        # the binding lasts for as long as the note is sustained on the keyboard.
+        # Later on, the score requires this note. The note is pressed, but a binding exists: the note is rejected.
         if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 1)) :
           
           # Read the ID of the current note
-          authorisedIDs = [x.id for x in teacherNotes if (x.pitch == pitch)]        
+          expectedIDs = [x.id for x in teacherNotes if ((x.pitch == pitch) and (x.sustained == False) and (x.inactive == False))]
           
-          # The expected ID do not match with the ID of the sustained note.:
+          # The expected ID does not match with the ID of the sustained note.:
           # The note being played on the keyboard right now is a previous valid note being sustained.
           # It cannot be used to trigger a new note of the same pitch.
-          if not(self.midiAssociatedID[pitch] in authorisedIDs) :
+          if not(self.midiAssociatedID[pitch] in expectedIDs) :
             allowProgress = False
           
         # Case 4: a wrong note is pressed.
@@ -248,13 +251,14 @@ class Arbiter :
         # Update note status
         for pitch in GRAND_PIANO_MIDI_RANGE :
           
-          # Is it a superfluous note?
+          # Flag the notes played in 'excess'.
           if ((teacherNotesAsMidiArray[pitch] == 0) and (self.midiCurr[pitch] == 1)) :
             self.midiSuperfluous[pitch] = 1
 
-          # A valid note is now flagged as 'sustained'
-          # The ID of the associated teacher note is registered (this keypress cannot validate another note 
-          # of the same pitch)
+          # Flag the sustained notes.
+          # Any note that was valid becomes flagged as 'sustained' as long as it's held.
+          # The ID of the associated teacher note is stored in an array,
+          # so that this keypress cannot validate another note of the same pitch.
           if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1)) :
             self.midiSustained[pitch] = 1
             

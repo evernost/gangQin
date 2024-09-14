@@ -509,8 +509,11 @@ while running :
   # -----------------------------------------------------------------------
   # Decide whether to move forward in the score depending on the user input
   # -----------------------------------------------------------------------
+  
+  # Evaluate the status based on the score and the user input
   arbiterMsgQueue = pianoArbiter.eval(teacherNotes)
 
+  # Read the arbiter messages
   for msg in arbiterMsgQueue :
     if (msg == arbiter.MSG_CURSOR_NEXT) :
       userScore.cursorNext()
@@ -529,7 +532,8 @@ while running :
       
       # Looped practice: a wrong note reset the cursor to the beginning of the loop 
       # when <loopStrictMode> is active.
-      if (userScore.loopEnable) and (userScore.loopStrictMode) :
+      # Reset occurs even if only the start point of the loop has been defined (unbounded looped practice)
+      if ((userScore.loopEnable or (userScore.loopStart != -1)) and (userScore.loopStrictMode)) :
         c = userScore.getCursor()
         
         # Cursor is reset only if it was in the looping range.

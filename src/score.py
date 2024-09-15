@@ -1159,99 +1159,99 @@ class Score :
 
     # Loop on the tracks, decode the MIDI messages
     for (trackNumber, track) in enumerate(mid.tracks) :
+      if (trackNumber < 2) :
+        currTime = 0
+        for msg in track :
 
-      currTime = 0
-      for msg in track :
-
-        # Update the current date ---------------------------------------------
-        currTime += msg.time
-        
-        # Keypress event ------------------------------------------------------
-        if ((msg.type == 'note_on') and (msg.velocity > 0)) :
+          # Update the current date ---------------------------------------------
+          currTime += msg.time
           
-          pitch = msg.note
-          
-          # Inspect the previous notes with the same pitch
-          if (len(self.pianoRoll[trackNumber][pitch]) > 0) :
+          # Keypress event ------------------------------------------------------
+          if ((msg.type == 'note_on') and (msg.velocity > 0)) :
             
-            # Detect if among these notes, one is still held
-            for currNote in self.pianoRoll[trackNumber][pitch] :
-              if (currNote.stopTime < 0) :
-                print(f"[WARNING] Ambiguous note at t = {currTime} ({note.getFriendlyName(pitch)}): a keypress overlaps a hanging keypress on the same note.")
-
-                # New note detected: close the previous note.
-                # That is one strategy, but it might be wrong. It depends on the song.
-                # User should decide here.
-                currNote.stopTime = currTime
-                noteDuration += (currNote.stopTime - currNote.startTime)
-                nNotes += 1.0
-                id += 1
-
-            # Append the new note to the list
-            # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
-            insertIndex = len(self.pianoRoll[trackNumber][pitch])
-            self.pianoRoll[trackNumber][pitch].append(note.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
+            pitch = msg.note
             
-            # Append the timecode of this keypress
-            # TODO: not sure this check on every single note is efficient
-            # if not(currTime in self.noteOntimecodes[trackNumber]) : 
-            #   self.noteOntimecodes[trackNumber].append(currTime)
-            if (trackNumber == LEFT_HAND) :
-              self.noteOnTimecodes["L"].append(currTime)
-            elif (trackNumber == RIGHT_HAND) :
-              self.noteOnTimecodes["R"].append(currTime)
+            # Inspect the previous notes with the same pitch
+            if (len(self.pianoRoll[trackNumber][pitch]) > 0) :
+              
+              # Detect if among these notes, one is still held
+              for currNote in self.pianoRoll[trackNumber][pitch] :
+                if (currNote.stopTime < 0) :
+                  print(f"[WARNING] Ambiguous note at t = {currTime} ({note.getFriendlyName(pitch)}): a keypress overlaps a hanging keypress on the same note.")
+
+                  # New note detected: close the previous note.
+                  # That is one strategy, but it might be wrong. It depends on the song.
+                  # User should decide here.
+                  currNote.stopTime = currTime
+                  noteDuration += (currNote.stopTime - currNote.startTime)
+                  nNotes += 1.0
+                  id += 1
+
+              # Append the new note to the list
+              # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
+              insertIndex = len(self.pianoRoll[trackNumber][pitch])
+              self.pianoRoll[trackNumber][pitch].append(note.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
+              
+              # Append the timecode of this keypress
+              # TODO: not sure this check on every single note is efficient
+              # if not(currTime in self.noteOntimecodes[trackNumber]) : 
+              #   self.noteOntimecodes[trackNumber].append(currTime)
+              if (trackNumber == LEFT_HAND) :
+                self.noteOnTimecodes["L"].append(currTime)
+              elif (trackNumber == RIGHT_HAND) :
+                self.noteOnTimecodes["R"].append(currTime)
+              else :
+                print("[INTERNAL ERROR] Invalid track number.")
+
+              self.noteOnTimecodes["LR_full"].append(currTime)
+            
+            # First note with this pitch
             else :
-              print("[INTERNAL ERROR] Invalid track number.")
+              
+              # Append the new note to the list
+              # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
+              insertIndex = len(self.pianoRoll[trackNumber][pitch])
+              self.pianoRoll[trackNumber][pitch].append(note.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
+              
+              # Append the timecode of this keypress
+              # if not(currTime in self.noteOntimecodes[trackNumber]) : 
+              #   self.noteOntimecodes[trackNumber].append(currTime)
 
-            self.noteOnTimecodes["LR_full"].append(currTime)
-          
-          # First note with this pitch
-          else :
+              if (trackNumber == LEFT_HAND) :
+                self.noteOnTimecodes["L"].append(currTime)
+              elif (trackNumber == RIGHT_HAND) :
+                self.noteOnTimecodes["R"].append(currTime)
+              else :
+                print("[INTERNAL ERROR] Invalid track number.")
+
+              self.noteOnTimecodes["LR_full"].append(currTime)
+
+          # Keyrelease event ----------------------------------------------------
+          # NOTE: in some files, 'NOTE OFF' message is mimicked using a 'NOTE ON' with null velocity.
+          if ((msg.type == 'note_off') or ((msg.type == 'note_on') and (msg.velocity == 0))) :
             
-            # Append the new note to the list
-            # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
-            insertIndex = len(self.pianoRoll[trackNumber][pitch])
-            self.pianoRoll[trackNumber][pitch].append(note.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
+            pitch = msg.note
+
+            # Take the latest event in the piano roll for this note
+            noteObj = self.pianoRoll[trackNumber][pitch][-1]
             
-            # Append the timecode of this keypress
-            # if not(currTime in self.noteOntimecodes[trackNumber]) : 
-            #   self.noteOntimecodes[trackNumber].append(currTime)
+            # Close it
+            noteObj.stopTime = currTime
+            noteObj.id = id
+            
+            noteDuration += (noteObj.stopTime - noteObj.startTime)
+            nNotes += 1.0
+            id += 1
 
-            if (trackNumber == LEFT_HAND) :
-              self.noteOnTimecodes["L"].append(currTime)
-            elif (trackNumber == RIGHT_HAND) :
-              self.noteOnTimecodes["R"].append(currTime)
-            else :
-              print("[INTERNAL ERROR] Invalid track number.")
-
-            self.noteOnTimecodes["LR_full"].append(currTime)
-
-        # Keyrelease event ----------------------------------------------------
-        # NOTE: in some files, 'NOTE OFF' message is mimicked using a 'NOTE ON' with null velocity.
-        if ((msg.type == 'note_off') or ((msg.type == 'note_on') and (msg.velocity == 0))) :
-          
-          pitch = msg.note
-
-          # Take the latest event in the piano roll for this note
-          noteObj = self.pianoRoll[trackNumber][pitch][-1]
-          
-          # Close it
-          noteObj.stopTime = currTime
-          noteObj.id = id
-          
-          noteDuration += (noteObj.stopTime - noteObj.startTime)
-          nNotes += 1.0
-          id += 1
-
-          # Quite common apparently. Is that really an error case?
-          # if (noteObj.startTime == noteObj.stopTime) :
-          #   print(f"[WARNING] [MIDI import] MIDI note {pitch} ({note.getFriendlyName(pitch)}) has null duration (start time = stop time = {noteObj.startTime})")
-          #   self.pianoRoll[trackNumber][pitch].pop()
+            # Quite common apparently. Is that really an error case?
+            # if (noteObj.startTime == noteObj.stopTime) :
+            #   print(f"[WARNING] [MIDI import] MIDI note {pitch} ({note.getFriendlyName(pitch)}) has null duration (start time = stop time = {noteObj.startTime})")
+            #   self.pianoRoll[trackNumber][pitch].pop()
 
 
 
-        # Others --------------------------------------------------------------
-        # Other MIDI events are ignored.
+          # Others --------------------------------------------------------------
+          # Other MIDI events are ignored.
 
 
     # Tidy up:

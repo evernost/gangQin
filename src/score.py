@@ -139,6 +139,13 @@ class Score :
     self.tempoReadFromScore = False
     self.tempoSections = [(1, 120)]
 
+    # Session info
+    self.sessionCount = 0
+    self.sessionStartTime = datetime.datetime.now()
+    self.sessionStopTime = 0
+    self.sessionTotalPracticeTime = 0
+    self.sessionLog = []
+
 
 
   # ---------------------------------------------------------------------------
@@ -235,6 +242,7 @@ class Score :
       
       if unaffected :
         print("[INTERNAL ERROR] Score._buildCursorsLR: something odd happened!")
+
 
 
   # ---------------------------------------------------------------------------
@@ -861,7 +869,6 @@ class Score :
 
 
 
-
   # ---------------------------------------------------------------------------
   # METHOD Score.getLookaheadNotes()
   # ---------------------------------------------------------------------------
@@ -969,6 +976,7 @@ class Score :
     else :
       print("[INFO] Could not find the current MIDI notes in the score!")
       return (False, [])
+
 
 
   # ---------------------------------------------------------------------------
@@ -1259,7 +1267,6 @@ class Score :
     # Build <cursorsLeft> and <cursorsRight>
     self._buildCursorsLR()
 
-
     # Merge note ON time codes from both staves
     # timecodesMerged = [item for sublist in self.noteOntimecodes for item in sublist]    # What the hell is that?
     # timecodesMerged = list(set(timecodesMerged))
@@ -1285,17 +1292,22 @@ class Score :
     
     # Statistics are inexistant, initialize them
     self.statsCursor = [0 for _ in range(self.scoreLength)]
+    self.sessionCount = 1
+    self.sessionStartTime = datetime.datetime.now()
+    self.sessionStopTime = -1
+    self.sessionTotalPracticeTime = 0
+    self.sessionLog = []
     
-    print("OK")
-
     # DEBUG
     print(f"[DEBUG] Score length: {self.scoreLength} steps")
-
 
     stopTime = time.time()
     print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
     
+    print("")
+    print(f"[INFO] Get ready for the first session!")
     
+
 
   # ---------------------------------------------------------------------------
   # METHOD Score._importFromPrFile(fileName)
@@ -1321,42 +1333,48 @@ class Score :
 
     # Default dictionary, in case some fields do not exist.
     safeDict = {
-      "revision"              : "v0.0",
-      "nStaffs"               : 2,
-      "avgNoteDuration"       : 100.0,
-      "cursor"                : 0,
-      "cursorsLeft"           : [],
-      "cursorsRight"          : [],
-      "bookmarks"             : [],
-      "activeHands"           : "LR",
-      "comboHighestAllTime"   : 0,
-      "statsLastCursor"       : -1,
-      "statsSteadyCount"      : 0,
-      "statsCursor"           : [],
-      "tempoSections"         : [(1, 120)]
+      "revision"                  : "v0.0",
+      "nStaffs"                   : 2,
+      "avgNoteDuration"           : 100.0,
+      "cursor"                    : 0,
+      "cursorsLeft"               : [],
+      "cursorsRight"              : [],
+      "bookmarks"                 : [],
+      "activeHands"               : "LR",
+      "comboHighestAllTime"       : 0,
+      "statsLastCursor"           : -1,
+      "statsSteadyCount"          : 0,
+      "statsCursor"               : [],
+      "tempoSections"             : [(1, 120)],
+      "sessionCount"              : 0,
+      "sessionTotalPracticeTime"  : 0,
+      "sessionLog"                : []
     }
   
+    # Load every existing field
     for currKey in safeDict :
       if currKey in importDict :
         safeDict[currKey] = importDict[currKey]
 
     # Initialize the object  
-    self.nStaffs                = safeDict["nStaffs"]
-    self.avgNoteDuration        = safeDict["avgNoteDuration"]
-    self.cursor                 = safeDict["cursor"]
-    self.bookmarks              = safeDict["bookmarks"]
-    self.activeHands            = safeDict["activeHands"]
-    self.comboHighestAllTime    = safeDict["comboHighestAllTime"]
-    self.statsLastCursor        = safeDict["statsLastCursor"]
-    self.statsSteadyCount       = safeDict["statsSteadyCount"]
-    self.statsCursor            = safeDict["statsCursor"]
+    self.nStaffs                  = safeDict["nStaffs"]
+    self.avgNoteDuration          = safeDict["avgNoteDuration"]
+    self.cursor                   = safeDict["cursor"]
+    self.bookmarks                = safeDict["bookmarks"]
+    self.activeHands              = safeDict["activeHands"]
+    self.comboHighestAllTime      = safeDict["comboHighestAllTime"]
+    self.statsLastCursor          = safeDict["statsLastCursor"]
+    self.statsSteadyCount         = safeDict["statsSteadyCount"]
+    self.statsCursor              = safeDict["statsCursor"]
+    self.sessionCount             = safeDict["sessionCount"]
+    self.sessionTotalPracticeTime = safeDict["sessionTotalPracticeTime"]
+    self.sessionLog               = safeDict["sessionLog"]
     
-
     # -----------------------------
     # Pianoroll import - v0.X style
     # -----------------------------
     if (majorRev == 0) :
-      print("[INFO] Importing dinosaur .pr file (versions v0.X). Please consider saving it with a newer version.")
+      print("[INFO] Importing dinosaur .pr file (versions v0.X). Please consider saving it with a newer version of gangQin")
 
       # Note() objects were converted to a dictionary. Convert them back to a Note object
       self.pianoRoll = [[[] for noteList in trackList] for trackList in importDict["pianoRoll"]]
@@ -1382,8 +1400,6 @@ class Score :
             self.pianoRoll[track][pitch].append(noteObj)
 
             noteCount += 1
-
-
 
     # ---------------------------------
     # Pianoroll import - v1.0 and above
@@ -1446,7 +1462,6 @@ class Score :
         
         noteCount += 1
         
-
     # Tidy up:
     # - sort the timecodes by ascending values
     # - remove duplicate entries
@@ -1463,18 +1478,34 @@ class Score :
     self.scoreLength = len(self.noteOnTimecodes["LR"])
     self.cursorMax = self.scoreLength-1
 
-    # If the cursor statistics are inexistant, initialize it
+    stopTime = time.time()
+    print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
+    print(f"[INFO] {noteCount} notes read from .pr file.")
+    print(f"[INFO] Score length: {self.scoreLength} steps")
+
+
+
+    # Update the session information
+    if (self.sessionCount >= 1) :
+      avgSessionTimeMin = round(self.sessionTotalPracticeTime/(60*self.sessionCount))
+    else :
+      avgSessionTimeMin = 0.0
+    self.sessionCount += 1
+    self.sessionStartTime = datetime.datetime.now()
+    self.sessionStopTime = -1
+
+    print("")
+    print(f"[INFO] Get ready for session #{self.sessionCount}!")
+    if (avgSessionTimeMin > 0.0) :
+      print(f"[INFO] Your average session time: {avgSessionTimeMin} minutes")
+    
+    print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")
+    
+    # If the cursor statistics are inexistant, initialize them.
     if (len(self.statsCursor) == 0) :
       self.statsCursor = [0 for _ in range(self.scoreLength)]
     else :
-      print(f"[DEBUG] Hardest section: {self.statsCursor.index(max(self.statsCursor))+1}")
-
-    print(f"[INFO] {noteCount} notes read from .pr file.")
-    print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")
-    print(f"[INFO] Score length: {self.scoreLength} steps")
-
-    stopTime = time.time()
-    print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
+      print(f"[DEBUG] Hardest section: at cursor {self.statsCursor.index(max(self.statsCursor))+1}")
 
 
 
@@ -1522,6 +1553,13 @@ class Score :
 
           exportDict["pianoRoll"].append(noteExportAttr)
 
+    # Export the current session statistics
+    self.sessionStopTime = datetime.datetime.now()
+    duration = self.sessionStopTime - self.sessionStartTime
+    exportDict["sessionCount"]              = self.sessionCount
+    exportDict["sessionTotalPracticeTime"]  = self.sessionTotalPracticeTime + round(duration.total_seconds())
+    exportDict["sessionLog"]                = self.sessionLog + [self.getSessionLog()]
+    
     with open(pianoRollFile, "w") as fileHandler :
       json.dump(exportDict, fileHandler, indent = 2)
 
@@ -1615,5 +1653,26 @@ class Score :
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getSessionLog()
+  # ---------------------------------------------------------------------------
+  def getSessionLog(self) :
+    """
+    Generates the string with the information of the current session.
+    """
 
+    day = self.sessionStartTime.day
+    
+    if ((4 <= day <= 20) or (24 <= day <= 30)) :
+      daySuffix = "th"
+    else:
+      daySuffix = ["st", "nd", "rd"][day % 10 - 1]
+
+    duration = self.sessionStopTime - self.sessionStartTime
+    duration = int(round(duration.total_seconds()))
+    durationStr = f"{duration // 60}min{duration % 60}s"
+    outputStr = self.sessionStartTime.strftime(f"Session {self.sessionCount}: %A, %B %d{daySuffix} at %H:%M. Duration: {durationStr}")
+
+    return outputStr
+    
 

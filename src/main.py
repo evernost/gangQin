@@ -525,29 +525,51 @@ while running :
       
       soundNotify.wrongNoteReset()
 
-    if (msg == arbiter.MSG_RESET_COMBO) :
-      #print("[DEBUG] Wrong note!")
+    if (msg == arbiter.MSG_RESET_COMBO) :  
+      comboFall = (userScore.comboCount != 0)
+    
       userScore.comboCount = 0
       soundNotify.wrongNote()
       
-      # Looped practice: a wrong note reset the cursor to the beginning of the loop 
+      # Strict mode practice: a wrong note resets the cursor to the beginning of the loop 
       # when <loopStrictMode> is active.
       # Reset occurs even if only the start point of the loop has been defined (unbounded looped practice)
-      if ((userScore.loopEnable or (userScore.loopStart != -1)) and (userScore.loopStrictMode)) :
+      if (userScore.loopStrictMode) :
         c = userScore.getCursor()
         
-        # Cursor is reset only if it was in the looping range.
-        # Otherwise it is affected: user is practicing something outside the loop.
-        # It wouldn't make sense to reset the cursor in this case.
-        if ((c >= userScore.loopStart) and (c <= userScore.loopEnd)) :
-          userScore.setCursor(userScore.loopStart)
-          print("[INFO] Wrong note, loop reset :(")
+        # Bound looped practice
+        # The beginning and the end of the loop are defined.
+        if userScore.loopEnable :
+            
+          # Cursor resets only if it was in the looping range.
+          # Otherwise it is not affected: the user is practicing something outside the loop.
+          # It wouldn't make sense to reset the cursor in this case.
+          if ((c >= userScore.loopStart) and (c <= userScore.loopEnd)) :
+            userScore.setCursor(userScore.loopStart)
+            
+            if comboFall :
+              print(f"[INFO] Wrong note! loop reset :(   (combo: {c - userScore.loopStart})")
 
-        else: 
-          print("[INFO] Wrong note outside the looping range.")
+          else: 
+            if comboFall :
+              print("[INFO] Wrong note outside the looping range.")
 
+        # Unbound looped practice
+        # The end of the loop is not defined.
+        # It is commonly used to practice a section and try to go as far as possible.
+        elif (userScore.loopStart != -1) :
+          if (c >= userScore.loopStart) :
+            userScore.setCursor(userScore.loopStart)
+            
+            if comboFall :
+              print(f"[INFO] Wrong note! loop reset :(   (combo: {c - userScore.loopStart})")
+          
+          else : 
+            if comboFall :
+              print("[INFO] Wrong note outside the looping range.")
 
   
+
   # ------------------------------------------------------
   # Show pointing hand when hovering over an editable note
   # ------------------------------------------------------

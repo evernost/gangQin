@@ -29,7 +29,7 @@
 # Customizable variables
 # ----------------------
 REV_MAJOR = 1
-REV_MINOR = 4
+REV_MINOR = 5
 REV_TYPE = "BETA" # "ALPHA", "BETA", "STABLE"
 REV_YEAR = 2024
 REV_MONTH = "September"
@@ -92,6 +92,9 @@ NOTE_SPACING = 1
 MOUSE_LEFT_CLICK = 1
 MOUSE_SCROLL_UP = 4
 MOUSE_SCROLL_DOWN = 5
+
+# Autosaving feature for the statistics
+AUTOSAVE_STATS = False
 
 
 

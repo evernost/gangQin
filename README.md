@@ -1,24 +1,26 @@
-# gangQin (v1.4)
+# gangQin (v1.5)
 Piano learning app, for those who can't read music scores.
 
 ## Features (current release)
-- **MIDI import**: scores can be imported from standard MIDI files
-- **Bookmarking**: navigate quickly from one important section to the other without scrolling the entire song
-- **_fingersatz_**: edit and display the finger to use for each note
-- **Loop practice**: define a complex section you want to practice, play it on repeat
+- **MIDI import**: import your songs from standard MIDI files
+- **Bookmarking**: navigate quickly from one important section to the other without scrolling through the entire song
+- **_fingersatz_ edition**: edit and display the finger to use for each note
+- **Looped practice**: define a complex section you want to practice, play it on repeat
 - **Single hand practice**: practice the left or right hand only
-- **Key highlight**: highlight the notes associated to the current key of the song. Highlighting changes dynamically if there are key changes
-- **Readable work file**: annotated score, bookmarks, fingersatz, ... are saved in a human readable file (JSON)
+- **Key highlighting**: highlight the notes associated to the current key of the song (Cmaj, Dmin, etc.) Highlighting changes dynamically if there are key changes
+- **Readable work file**: annotated score, bookmarks, fingersatz, ... are saved in a human readable '.pr' file (JSON)
 - **Combo counter**: keep track of the number of correct notes played in a row
 - **Quick find**: a given chord whose location is unknown can be found just pressing the query chord on the MIDI keyboard.
-- **Perfect loop practice**: in loop practice, progress can be reset as soon as a mistake is made 😈
+- **Perfect loop practice**: in looped practice, progress can be reset as soon as a mistake is made 😈
 - **Lookahead view**: the keyboard shows the notes to be pressed, but also the upcoming ones with different shades for improved 'sightreading'. Lookahead distance can be adjusted.
 - **Metronome**: practice with perfect timing.
+- **Unbound looped practice**: define a start point and try to play. Any mistake jumps you back to the starting point
 
 ## Upcoming features
 - Metronome with dynamic tempo, ajusts automatically throughout the score
 - Enhanced fingersatz edition, with more shortcuts
 - Dynamic comments display, updated based on the location in the score
+- More flexible MIDI loading: select the tracks you want to import
 
 
 ## Screenshot

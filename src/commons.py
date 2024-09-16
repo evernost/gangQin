@@ -29,8 +29,8 @@
 # Customizable variables
 # ----------------------
 REV_MAJOR = 1
-REV_MINOR = 5
-REV_TYPE = "BETA" # "ALPHA", "BETA", "STABLE"
+REV_MINOR = 6
+REV_TYPE = "ALPHA" # "ALPHA", "BETA", "STABLE"
 REV_YEAR = 2024
 REV_MONTH = "September"
 
@@ -93,8 +93,14 @@ MOUSE_LEFT_CLICK = 1
 MOUSE_SCROLL_UP = 4
 MOUSE_SCROLL_DOWN = 5
 
-# Autosaving feature for the statistics
-AUTOSAVE_STATS = False
+# Path of the songs (.pr and .mid)
+SONG_PATH = "./songs"
+
+# Backup feature (autosave)
+AUTOSAVE_INTERVAL_SEC = 90
+AUTOSAVE_BACKUP_PATH = "./backup"
+
+
 
 
 

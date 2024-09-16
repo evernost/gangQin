@@ -1496,8 +1496,9 @@ class Score :
 
     print("")
     print(f"[INFO] Get ready for session #{self.sessionCount}!")
+    print(f"[INFO] Total practice time: {round(self.sessionTotalPracticeTime/60)} minutes")
     if (avgSessionTimeMin > 0.0) :
-      print(f"[INFO] Your average session time: {avgSessionTimeMin} minutes")
+      print(f"[INFO] Average session time: {avgSessionTimeMin} minutes")
     
     print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")
     

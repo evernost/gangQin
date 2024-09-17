@@ -72,6 +72,7 @@ import os
 # =============================================================================
 
 # Open the MIDI interface file selection GUI
+conf.midiChannelSelectionGUI()
 (selectedDevice, selectedFile) = conf.showSetupGUI()
 
 if ((selectedFile == "") or (selectedFile == "None")) :
@@ -119,6 +120,10 @@ metronomeObj = metronome.Metronome(120, 4, 4)
 METRONOME_TASK = pygame.USEREVENT + 1
 pygame.time.set_timer(METRONOME_TASK, metronomeObj.getInterval_ms())
 pygame.mixer.init(frequency = 44100, size = -16, channels = 1, buffer = 512)
+
+# Autosave (todo)
+AUTOSAVE_TASK = pygame.USEREVENT + 2
+
 
 
 

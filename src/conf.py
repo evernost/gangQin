@@ -51,7 +51,7 @@ def getFileList(folderPath, extension) :
 
 
 # -----------------------------------------------------------------------------
-# GUI entry point
+# File selection GUI
 # -----------------------------------------------------------------------------
 def showSetupGUI() :
 
@@ -286,3 +286,4 @@ def showSetupGUI() :
     configData.write(configfile)
 
   return (selectedDevice, selectedFile)
+

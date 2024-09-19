@@ -3,7 +3,7 @@
 # Project       : gangQin
 # Module name   : keyboard
 # File name     : keyboard.py
-# Purpose       : provides a grand piano widget for main app GUI
+# Purpose       : draws and manages the keyboard displayed on screen.
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : Sunday, 8 Oct 2023
 # -----------------------------------------------------------------------------

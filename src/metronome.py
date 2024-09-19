@@ -3,7 +3,7 @@
 # Project       : gangQin
 # Module name   : metronome
 # File name     : metronome.py
-# Purpose       : Metronome object
+# Purpose       : metronome object
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : Saturday, 31th August, 2024
 # -----------------------------------------------------------------------------
@@ -39,7 +39,6 @@ if (__name__ == "__main__") :
 
 
 class Metronome :
-
   """
   todo!
 
@@ -62,16 +61,12 @@ class Metronome :
     
     self.msgQueue = []
 
-    # Prepare the sounds for the "ticks"
+    # Prepare the samples array that make the 'tic' sound of the metronome
     t = np.linspace(0, self.tickDuration, int(44100 * self.tickDuration), endpoint = False)
     tickHigh = np.int16(32767 * self.tickVolume * np.sin(2 * np.pi * 880.0 * t) * np.exp(-t/(self.tickDuration/3)))
     tickLow = np.int16(32767 * self.tickVolume * np.sin(2 * np.pi * 440.0 * t) * np.exp(-t/(self.tickDuration/3)))
-    
-    # Convert the array to a bytes object (Pygame expects byte data)
     tickHigh = tickHigh.tobytes()
     tickLow = tickLow.tobytes()
-
-    # Create a Pygame Sound object from the raw sound data
     self.tickHighSound = pygame.mixer.Sound(buffer = tickHigh)
     self.tickLowSound = pygame.mixer.Sound(buffer = tickLow)
 
@@ -82,7 +77,7 @@ class Metronome :
   # ---------------------------------------------------------------------------
   def getInterval_ms(self) :
     """
-    Returns the value the interval (in ms) between 2 clicks.
+    Returns the value the interval (in ms) between 2 clicks of the metronome.
     """
     
     return (1000*60//self.bpm)
@@ -94,7 +89,8 @@ class Metronome :
   # ---------------------------------------------------------------------------
   def keyPress(self, pygameKeys) :
     """
-    todo
+    Updates the metronome object status (ON, OFF, increase tempo, etc.) 
+    based on the keys that have been pressed.
     """
 
     if pygameKeys[pygame.K_m] :
@@ -127,7 +123,8 @@ class Metronome :
   # ---------------------------------------------------------------------------
   def keyRelease(self, key) :
     """
-    todo
+    Updates the metronome object status (ON, OFF, increase tempo, etc.) 
+    based on the keys that have been released.
     """
 
     if (key == pygame.K_m) :
@@ -150,7 +147,7 @@ class Metronome :
   # ---------------------------------------------------------------------------
   def playTick(self) :
     """
-    todo
+    Plays the metronome 'tic' sound.
     """
 
     if self.enable :
@@ -163,8 +160,6 @@ class Metronome :
         self.tickLowSound.play()
         self.counter += 1
 
-      #print(f"Tic toc! {self.counter}/{self.num}")
-
 
 
   # ---------------------------------------------------------------------------
@@ -172,3 +167,5 @@ class Metronome :
   # ---------------------------------------------------------------------------
   def clearQueue(self) :
     self.msgQueue = []
+
+

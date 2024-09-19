@@ -38,22 +38,19 @@ MSG_RESET_COMBO = 1
 class Arbiter :
 
   """
-  DESCRIPTION
-  
-  Provides all the machinery to help determine if the keyboard inputs
+  Provides all the machinery that determines if the keyboard inputs
   are valid and whether it allows to progress in the song.
 
   It returns the decision, that can be used then:
   - to step to the next cursor
-  - update the combo counter
+  - update the combo counter ("how many good notes in a row")
   - play a "fail" sound 
 
   Criteria to allow moving forward in the score are the following:
   - "exact": won't go further until the expected notes only are pressed, nothing else.
   - "exactWithSustain": same as "exact", but tolerates the last valid notes to be sustained
   - "permissive": anything else played alongside the expected notes is ignored
-  
-
+  Only the "permissive" mode is used, the others are here for "historical" reasons.
 
   MIDI update:
   - midiCurr        : state of all the notes on the MIDI keyboard
@@ -115,7 +112,10 @@ class Arbiter :
   # ---------------------------------------------------------------------------
   def suspendReq(self, queryNotesPitch) :
     """
-    TODO
+    Turns on the "suspend" mode.
+    "Suspend mode" is triggered for the search mode, i.e. when the user inputs
+    some "query" notes on the keyboard and wants to know where these notes 
+    appear in the score.
     """
     self.suspended = True
     self.queryNotesPitch = queryNotesPitch

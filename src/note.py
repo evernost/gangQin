@@ -28,8 +28,6 @@ if (__name__ == "__main__") :
 
 
 
-
-
 class Note :
 
   def __init__(self, pitch, hand = UNDEFINED_HAND, finger = 0, noteIndex = 0, startTime = 0, stopTime = 0, voice = VOICE_DEFAULT, highlight = False) :
@@ -65,6 +63,10 @@ class Note :
   # getNoteColor()
   # ---------------------------------------------------------------------------
   def getNoteColor(self) :
+    """
+    Returns the RGB color (as a 3-tuple) of the note based on its properties.
+    """
+
 
     if (self.voice != VOICE_DEFAULT) :
       baseColor = VOICE_COLOR[self.voice]
@@ -177,7 +179,7 @@ class Note :
 
 
 # -----------------------------------------------------------------------------
-# FUNCTION getFriendlyName(midiCode)
+# METHOD: Note.getFriendlyName(pitchList)
 # -----------------------------------------------------------------------------
 def getFriendlyName(midiCode) :
   """

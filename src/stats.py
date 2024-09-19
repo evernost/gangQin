@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
 # Project       : gangQin
-# Module name   : session
-# File name     : session.py
+# Module name   : stats
+# File name     : stats.py
 # File type     : Python script (Python 3)
 # Purpose       : generates statistics about the user practice of the song.
 # Author        : QuBi (nitrogenium@hotmail.com)
@@ -38,18 +38,18 @@ if (__name__ == "__main__") :
 
 
 
-class Session :
+class Stats :
 
   """
   todo
   """
   def __init__(self) :
     
-    self.count = 0
-    self.startTime = datetime.datetime.now()
-    self.stopTime = 0
-    self.totalPracticeTimeSec = 0
-    self.sessionLog = []
+    self.sessionCount = 0
+    self.sessionStartTime = datetime.datetime.now()
+    self.sessionStopTime = 0
+    self.sessionTotalPracticeTimeSec = 0
+    self.sessionLogString = []
 
     self.comboCount = 0
     self.comboDrop = False

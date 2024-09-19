@@ -11,30 +11,6 @@
 # =============================================================================
 
 # =============================================================================
-# TODO list
-# =============================================================================
-
-# Mandatory:
-# - during MIDI import: ask the user which tracks to use (there might be more than 2)
-# - allow the user to transfer a note from one hand to the other
-#   That involves inserting a note in <noteOnTimecodes>
-# - loop timer: as soon as the first note of the loop is played, start a timer
-#   and show a "fluidity" score
-# - allow the user to add some comments. Comments should span one to several timecodes.
-#   Comments can be guidelines, info on the way to play, ... any notes, really.
-
-# Nice to have:
-# - funky animation everytime the right notes are played
-# - add a play button to hear some sections
-# - <drawPianoRoll>: compute polygons once for all. Don't recompute them if time code hasn't changed
-# - add autosave feature (save snapshot every 2 minutes)
-# - show a "*" in the title bar as soon as there are unsaved changes in the pianoRoll object
-# - increasing loop feature ("color memory game"). Increase the size of the loop as the user
-#   plays it without any mistakes and more quickly
-
-
-
-# =============================================================================
 # External libs 
 # =============================================================================
 # Project specific constants
@@ -44,10 +20,11 @@ from commons import *
 import pygame
 
 # Widgets
-from widgets import keyboard
-from widgets import pianoRoll
 from widgets import fingerSelector
+from widgets import keyboard
 from widgets import notify
+from widgets import pianoRoll
+from widgets import trackSelectGUI
 
 # Various utilities
 import arbiter
@@ -72,11 +49,15 @@ import os
 # =============================================================================
 
 # Open the MIDI interface file selection GUI
-conf.midiChannelSelectionGUI()
 (selectedDevice, selectedFile) = conf.showSetupGUI()
 
 if ((selectedFile == "") or (selectedFile == "None")) :
   raise SystemExit(0)
+
+
+trackSelectGUI.show()
+
+
 
 pygame.init()
 

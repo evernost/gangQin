@@ -1,6 +1,9 @@
 # gangQin (v1.5)
 Piano learning app, for those who can't read music scores.
 
+## What do I need?
+A piano keyboard with MIDI output, plugged into a computer running your favorite Python interpreter.
+
 ## Features (current release)
 - **MIDI import**: import your songs from standard MIDI files
 - **Bookmarking**: navigate quickly from one important section to the other without scrolling through the entire song

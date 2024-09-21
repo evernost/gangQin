@@ -54,8 +54,8 @@ import os
 if ((selectedFile == "") or (selectedFile == "None")) :
   raise SystemExit(0)
 
-
-trackSelectGUI.show()
+# MIDI file selected: open the track selection GUI
+#midiTracks = trackSelectGUI.show()
 
 
 
@@ -67,11 +67,10 @@ screenHeight = 500
 screen = pygame.display.set_mode((screenWidth, screenHeight))
 
 # Time management
-FPS = 60
 clock = pygame.time.Clock()
 
 # Create widgets
-keyboardWidget = keyboard.Keyboard((10, 300))
+keyboardWidget = keyboard.Keyboard(loc = (10, 300))
 pianoRollWidget = pianoRoll.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
 fingerSelWidget = fingerSelector.FingerSelector((490, 470))
 
@@ -666,8 +665,6 @@ while running :
 
   # Update the display
   pygame.display.flip()
-
-
 
 # Quit Pygame
 pygame.quit()

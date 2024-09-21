@@ -40,8 +40,8 @@ REV_MONTH = "September"
 PIANOROLL_VIEW_SPAN = 10
 
 # Theme 
-BACKGROUND_COLOR = (10, 50, 120)
-UI_TEXT_COLOR    = (200, 200, 250)
+BACKGROUND_COLOR = (30, 70, 130)
+UI_TEXT_COLOR    = (129, 172, 226)
 
 #               Unused       Voice 1        Voice 2        Voice 3        Voice 4
 VOICE_COLOR = [(0, 0, 0), (0, 150, 200), (0, 200, 200), (200, 100, 0), (200, 200, 0)]
@@ -92,6 +92,8 @@ NOTE_SPACING = 1
 MOUSE_LEFT_CLICK = 1
 MOUSE_SCROLL_UP = 4
 MOUSE_SCROLL_DOWN = 5
+
+FPS = 60
 
 # Path of the songs (.pr and .mid)
 SONG_PATH = "./songs"

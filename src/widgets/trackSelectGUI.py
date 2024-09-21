@@ -73,21 +73,33 @@ for (trackNumber, track) in enumerate(mid.tracks) :
 
 def show() :
 
+  leftTrack = -1; rightTrack = -1
+
   def on_quit() : 
-    print("That's all folks.")
     root.destroy()
 
   def on_setLeft(event) : 
-    print("To the left hand!")
-    # trackLst.delete(0)  # Remove the current content
-    # trackLst.insert(0, "aaa")  # Insert new content at the first index
-    sel = trackLst.curselection()
-    print(f"Sel = {sel}")
+    ret = trackLst.curselection()
+
+    if (len(ret) > 0) :
+      
+      # Verify that left hand is not already assigned
+      
+      (sel, *rem) = ret
+      trackLst.delete(sel)
+      s = f"Track {sel} ({nNotes[sel]} notes)"
+      trackLst.insert(sel, f"{s : <35}{'[LEFT]' : >7}")
+      trackLst.selection_set(sel)
+      trackLst.activate(sel)
+
+
 
 
 
   def on_setRight(event) : 
     print("To the right hand!")
+    sel = trackLst.curselection()
+    print(f"Sel = {sel}")
 
   def on_generate() :
     print("TODO")
@@ -110,13 +122,8 @@ def show() :
 
   content = ttk.Frame(root, padding = 20)
 
-  choices = [f"{'Track 1 (5443 notes)' : <35}{'[LEFT]' : >7}",
-            f"{'Track 2 (5443 notes)' : <35}{'[RIGHT]' : >7}",
-            f"{'Track 3 (10 notes)' : <35}{'' : >7}",
-            ]
-  trackListVar = tk.StringVar(value = trackList)
-
   availableLbl = ttk.Label(content, text = "Available tracks:")
+  trackListVar = tk.StringVar(value = trackList)
   trackLst = tk.Listbox(content, listvariable = trackListVar, width = 50, font = ("Consolas", 10))
 
   setLeftButton = ttk.Button(content, text = "Assign track to Left hand")

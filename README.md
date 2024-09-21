@@ -24,6 +24,7 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 - Enhanced fingersatz edition, with more shortcuts
 - Dynamic comments display, updated based on the location in the score
 - More flexible MIDI loading: select the tracks you want to import
+- Semi-automated _fingersatz_ edition to simplify the assignation of repeated sections (repeated chords, codas, etc.)
 - Direct view on the real score using a PDF editor (stay tuned!)
 
 ## Screenshot

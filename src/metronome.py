@@ -91,6 +91,8 @@ class Metronome :
     """
     Updates the metronome object status (ON, OFF, increase tempo, etc.) 
     based on the keys that have been pressed.
+
+    TODO: 'm' and '↑' increase the number of beats per bar.
     """
 
     if pygameKeys[pygame.K_m] :

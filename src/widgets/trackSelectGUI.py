@@ -59,7 +59,6 @@ for (trackNumber, track) in enumerate(mid.tracks) :
   
   nNotes[trackNumber] = 0
   for msg in track :
-  
     if ((msg.type == 'note_on') and (msg.velocity > 0)) :
       nNotes[trackNumber] += 1
       
@@ -70,49 +69,81 @@ for (trackNumber, track) in enumerate(mid.tracks) :
 
 
 
-
 def show() :
 
+  global leftTrack; global rightTrack
   leftTrack = -1; rightTrack = -1
 
   def on_quit() : 
     root.destroy()
 
-  def on_setLeft(event) : 
+  def on_setLeft(event = None) : 
+    global leftTrack
     ret = trackLst.curselection()
 
+    # If something is selected
     if (len(ret) > 0) :
       
-      # Verify that left hand is not already assigned
-      
       (sel, *rem) = ret
+      
+      # Edit the 'new' left hand
       trackLst.delete(sel)
       s = f"Track {sel} ({nNotes[sel]} notes)"
       trackLst.insert(sel, f"{s : <35}{'[LEFT]' : >7}")
       trackLst.selection_set(sel)
       trackLst.activate(sel)
 
+      # Verify that left hand is not already assigned
+      if (leftTrack != -1) :
+        # Edit the 'old' left hand
+        trackLst.delete(leftTrack)
+        s = f"Track {leftTrack} ({nNotes[leftTrack]} notes)"
+        trackLst.insert(leftTrack, f"{s : <35}{'' : >7}")
+        
+      leftTrack = sel
+
+    else : 
+      print(f"Please select the track you want to assign to the left hand.")
 
 
 
+  def on_setRight(event = None) : 
+    global rightTrack
+    
+    ret = trackLst.curselection()
 
-  def on_setRight(event) : 
-    print("To the right hand!")
-    sel = trackLst.curselection()
-    print(f"Sel = {sel}")
+    # If something is selected
+    if (len(ret) > 0) :
+      
+      (sel, *rem) = ret
+      
+      # Edit the 'new' left hand
+      trackLst.delete(sel)
+      s = f"Track {sel} ({nNotes[sel]} notes)"
+      trackLst.insert(sel, f"{s : <35}{'[RIGHT]' : >7}")
+      trackLst.selection_set(sel)
+      trackLst.activate(sel)
+
+      # Verify that left hand is not already assigned
+      if (rightTrack != -1) :
+        # Edit the 'old' left hand
+        trackLst.delete(rightTrack)
+        s = f"Track {rightTrack} ({nNotes[rightTrack]} notes)"
+        trackLst.insert(rightTrack, f"{s : <35}{'' : >7}")
+        
+      rightTrack = sel
+
+    else : 
+      print(f"Please select the track you want to assign to the right hand.")
 
   def on_generate() :
     print("TODO")
 
   def on_downKey(event) :
     if not trackLst.curselection() :
-      
       trackLst.selection_set(0)
-      
       trackLst.activate(0)
-
       trackLst.focus_set()
-
 
 
 
@@ -126,8 +157,8 @@ def show() :
   trackListVar = tk.StringVar(value = trackList)
   trackLst = tk.Listbox(content, listvariable = trackListVar, width = 50, font = ("Consolas", 10))
 
-  setLeftButton = ttk.Button(content, text = "Assign track to Left hand")
-  setRightButton = ttk.Button(content, text = "Assign track to Right hand")
+  setLeftButton = ttk.Button(content, text = "Assign track to Left hand", command = on_setLeft)
+  setRightButton = ttk.Button(content, text = "Assign track to Right hand", command = on_setRight)
 
   generateButton = ttk.Button(content, text = "Generate", command = on_generate, default = "active")
   quitButton = ttk.Button(content, text = "Quit", command = on_quit)

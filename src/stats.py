@@ -19,6 +19,7 @@ from commons import *
 
 import datetime
 import json
+import os
 import time
 
 
@@ -34,75 +35,93 @@ if (__name__ == "__main__") :
 # =============================================================================
 # Constants pool
 # =============================================================================
-# None.
+TICK_INTERVAL_MS = 500
 
 
 
+# =============================================================================
+# Main code
+# =============================================================================
 class Stats :
 
   """
   todo
   """
-  def __init__(self) :
+  def __init__(self, songFile) :
+    self.logFile = ""
     
+    self.scoreLength = 0
+
     self.sessionCount = 0
     self.sessionStartTime = datetime.datetime.now()
     self.sessionStopTime = 0
-    self.sessionTotalPracticeTimeSec = 0
-    self.sessionLogString = []
+
+    self.totalPracticeTimeSec = 0
 
     self.comboCount = 0
     self.comboDrop = False
     self.comboHighestSession = 0
     self.comboHighestAllTime = 0
 
+    self.cursorHistogram = []
+    self.cursorWrongNoteCount = []
+
     self.cursorStats = -1
     self.statsSteadyCount = 0
     self.statsCursor = []
 
-
-
-
+    self._initFile(songFile)
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.getCursor()
+  # METHOD Stats._initFile()
   # ---------------------------------------------------------------------------
-  def getCursor(self) :
+  def _initFile(self, songFile) :
     """
-    Returns the value of the cursor at the current location in the score.
+    Initialises the log file: load the log file if it exists or create a new 
+    one if it does not exist yet.
     """
-    return self.cursor
-  
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.getCursorsLeftPointer()
-  # ---------------------------------------------------------------------------
-  def getCursorsLeftPointer(self, cursor, force = False) :
-    """
-    Returns the value <p> such that cursorsLeft[p] is equal to the query <cursor>.
-
-    If no such value exists, the function returns:
-    - -1 when <force> is False (default)
-    - <p> such that cursorsLeft[p] is the closest possible to <cursor> otherwise.
-    """
-    if (cursor in self.cursorsLeft) :
-      index = self.cursorsLeft.index(cursor)
-      return index
-
-    else :
-      if force :
-        minDist = abs(cursor - self.cursorsLeft[0]); minIndex = 0
-        for (idx, cursorLeft) in enumerate(self.cursorsLeft) :
-          if (abs(cursor - cursorLeft) < minDist) :
-            minDist = abs(cursor - cursorLeft)
-            minIndex = idx
-
-        print(f"[DEBUG] Requested cursor: {cursor}, closest: {minIndex}")
-        return minIndex
-
-      else :
-        return -1
     
+    (_, rootNameExt) = os.path.split(songFile)
+    (rootName, _) = os.path.splitext(rootNameExt)
+    self.logFile = './logs/' + rootName + ".log"
+    
+    if os.path.isfile(self.logFile) :
+      print(f"That does not exist")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats.tick()
+  # ---------------------------------------------------------------------------
+  def tick(self) :
+    """
+    Updates the statistics.
+    This function needs to be called by the main app periodically, at the rate 
+    defined by 'TICK_INTERVAL_MS'.
+
+    The function is used to detect inactivity periods, measure time spent in a 
+    given section etc.
+    """
+    print("tictoc!")
+
+
+
+
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats.resetIdleTimer()
+  # ---------------------------------------------------------------------------
+  def resetIdleTimer(self) :
+    """
+    Resets the idle timer, i.e. the timer that detects inactivity on the app.
+    """
+    print("TODO!")
+
+
+
+

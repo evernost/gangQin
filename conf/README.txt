@@ -1,2 +1,2 @@
 *** gangQin/conf ***
-Contains the .ini file that stores information/settings of the app (like the last song practiced)
+Contains the 'conf.ini' file that stores tunable settings of the app (like the last song practiced)

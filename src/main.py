@@ -20,6 +20,7 @@ from commons import *
 import pygame
 
 # Widgets
+from widgets import fileSelectGUI
 from widgets import fingerSelector
 from widgets import keyboard
 from widgets import notify
@@ -28,10 +29,10 @@ from widgets import trackSelectGUI
 
 # Various utilities
 import arbiter
-import conf
 import metronome
 import note
 import score
+import stats
 import text
 import utils
 
@@ -49,7 +50,7 @@ import os
 # =============================================================================
 
 # Open the MIDI interface file selection GUI
-(selectedDevice, selectedFile) = conf.showSetupGUI()
+(selectedDevice, selectedFile) = fileSelectGUI.show()
 
 if ((selectedFile == "") or (selectedFile == "None")) :
   raise SystemExit(0)
@@ -69,21 +70,41 @@ screen = pygame.display.set_mode((screenWidth, screenHeight))
 # Time management
 clock = pygame.time.Clock()
 
-# Create widgets
-keyboardWidget = keyboard.Keyboard(loc = (10, 300))
-pianoRollWidget = pianoRoll.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
-fingerSelWidget = fingerSelector.FingerSelector((490, 470))
-
-# Create score and import file
+# Import file in the internal score representation
 userScore = score.Score()
 userScore.importFromFile(selectedFile)
 
-# Load score and adjust the piano roll view
+# Grand piano widget
+keyboardWidget = keyboard.Keyboard(loc = (10, 300))
+
+# Pianoroll widget
+pianoRollWidget = pianoRoll.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
 pianoRollWidget.loadPianoRoll(userScore.pianoRoll)
 pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
 
+# Finger editor widget
+fingerSelWidget = fingerSelector.FingerSelector((490, 470))
+
+# Audio notifications widget
+soundNotify = notify.Notify()
+soundNotify.enabled = False
+
+# Metronome widget
+metronomeObj = metronome.Metronome(120, 4, 4)
+METRONOME_TASK = pygame.USEREVENT + 1
+pygame.time.set_timer(METRONOME_TASK, metronomeObj.getInterval_ms())
+pygame.mixer.init(frequency = 44100, size = -16, channels = 1, buffer = 512)
+
+# Statistics widget
+statsObj = stats.Stats(selectedFile)
+STATS_TASK = pygame.USEREVENT + 2
+pygame.time.set_timer(STATS_TASK, stats.TICK_INTERVAL_MS)
+
 # Create the arbiter
 pianoArbiter = arbiter.Arbiter("permissive")
+
+
+
 
 # Create window
 pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{os.path.basename(selectedFile)}>")
@@ -91,19 +112,8 @@ pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({R
 # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
 pygame.key.set_repeat(250, 50)
 
-# Audio notifications widget
-soundNotify = notify.Notify()
-soundNotify.enabled = False
-
-# Metronome
-metronomeObj = metronome.Metronome(120, 4, 4)
-METRONOME_TASK = pygame.USEREVENT + 1
-pygame.time.set_timer(METRONOME_TASK, metronomeObj.getInterval_ms())
-pygame.mixer.init(frequency = 44100, size = -16, channels = 1, buffer = 512)
-
-# Autosave (todo)
-AUTOSAVE_TASK = pygame.USEREVENT + 2
-
+# Autosave feature (todo)
+AUTOSAVE_TASK = pygame.USEREVENT + 3
 
 
 
@@ -118,8 +128,8 @@ def midiCallback(midiMessage) :
 # =============================================================================
 # Navigation mode
 # =============================================================================
-if (conf.selectedDevice != "None") :
-  midiPort = mido.open_input(conf.selectedDevice, callback = midiCallback)
+if (selectedDevice != "None") :
+  midiPort = mido.open_input(selectedDevice, callback = midiCallback)
 else :
   print("[WARNING] No MIDI interface selected: running in navigation mode.")
   midiPort = None
@@ -442,10 +452,13 @@ while running :
 
 
     # -------------------------------------------------------------------------
-    # Metronome
+    # Timer events
     # -------------------------------------------------------------------------
     elif (event.type == METRONOME_TASK) :
       metronomeObj.playTick()
+
+    elif (event.type == STATS_TASK) :
+      statsObj.tick()
 
 
 

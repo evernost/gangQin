@@ -25,17 +25,8 @@ from tkinter import ttk
 
 
 # =============================================================================
-# Guards
-# =============================================================================
-if (__name__ == "__main__") :
-  print("[INFO] There are no unit tests available for 'conf.py'")
-
-
-
-# =============================================================================
 # Main code
 # =============================================================================
-
 def getFileList(folderPath, extension) :
   """
   todo
@@ -53,7 +44,7 @@ def getFileList(folderPath, extension) :
 # -----------------------------------------------------------------------------
 # File selection GUI
 # -----------------------------------------------------------------------------
-def showSetupGUI() :
+def show() :
 
   global selectedDevice
   global selectedFile
@@ -184,8 +175,8 @@ def showSetupGUI() :
   fileSelFrame = ttk.LabelFrame(root, text = "File input")
   fileSelFrame.grid(row=0, column = 1, padx = 10, pady = 5, sticky = "e")
 
-  label2 = tk.Label(fileSelFrame, text = "Filter by:")
-  label2.grid(row = 0, column = 0, padx = 3, pady = 1, sticky = "w")
+  filterByFrame = tk.Label(fileSelFrame, text = "Filter by:")
+  filterByFrame.grid(row = 0, column = 0, padx = 3, pady = 1, sticky = "w")
 
   fileExt = tk.StringVar()
   radioButton_mid = ttk.Radiobutton(fileSelFrame, text = ".mid file", value = ".mid", variable = fileExt, command = onRadioButtonChange)
@@ -287,3 +278,10 @@ def showSetupGUI() :
 
   return (selectedDevice, selectedFile)
 
+
+
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  show()

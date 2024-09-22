@@ -5,7 +5,7 @@
 # File name     : trackSelectGUI.py
 # Purpose       : provides GUI to select the tracks in a MIDI file.
 # Author        : QuBi (nitrogenium@hotmail.com)
-# Creation date : September 17th, 2024
+# Creation date : Tuesday, 17 September 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================

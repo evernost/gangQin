@@ -6,7 +6,7 @@
 # File type     : Python script (Python 3)
 # Purpose       : generates statistics about the user practice of the song.
 # Author        : QuBi (nitrogenium@hotmail.com)
-# Creation date : September 15th, 2024
+# Creation date : Sunday, 15 September 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
@@ -53,6 +53,7 @@ class Stats :
     self.scoreLength = 0
 
     self.sessionCount = 0
+    self.sessionLog = []
     self.sessionStartTime = datetime.datetime.now()
     self.sessionStopTime = 0
 
@@ -70,6 +71,10 @@ class Stats :
     self.statsSteadyCount = 0
     self.statsCursor = []
 
+    # UI interaction queues
+    self.msgQueueIn = []
+    self.msgQueueOut = []
+
     self._initFile(songFile)
 
 
@@ -85,10 +90,12 @@ class Stats :
     
     (_, rootNameExt) = os.path.split(songFile)
     (rootName, _) = os.path.splitext(rootNameExt)
-    self.logFile = './logs/' + rootName + ".log"
+    self.logFile = os.path.join(".", "logs", rootName + ".log")
     
     if os.path.isfile(self.logFile) :
-      print(f"That does not exist")
+      with open(self.logFile, "r") as jsonFile:
+        data = json.load(jsonFile)
+
 
 
 

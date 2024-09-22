@@ -6,7 +6,7 @@
 # File type     : Python script (Python 3)
 # Purpose       : decision machinery to approve or reject the keyboard input.
 # Author        : QuBi (nitrogenium@hotmail.com)
-# Creation date : July 26th, 2024
+# Creation date : Friday, 26 July 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
@@ -20,14 +20,6 @@ from commons import *
 
 
 # =============================================================================
-# Guards
-# =============================================================================
-if (__name__ == "__main__") :
-  print("[WARNING] This lib is not intended to be called as a main.")
-
-
-
-# =============================================================================
 # Constants pool
 # =============================================================================
 MSG_CURSOR_NEXT = 0
@@ -35,6 +27,9 @@ MSG_RESET_COMBO = 1
 
 
 
+# =============================================================================
+# Main code
+# =============================================================================
 class Arbiter :
 
   """
@@ -269,4 +264,11 @@ class Arbiter :
 
 
     return msgQueue
-  
+
+
+
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[WARNING] This lib is not intended to be called as a main.")

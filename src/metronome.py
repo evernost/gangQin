@@ -5,7 +5,7 @@
 # File name     : metronome.py
 # Purpose       : metronome object
 # Author        : QuBi (nitrogenium@hotmail.com)
-# Creation date : Saturday, 31th August, 2024
+# Creation date : Saturday, 31 August 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================

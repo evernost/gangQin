@@ -16,21 +16,13 @@
 # Project specific constants
 from commons import *
 
-# For color manipulation
 import colorsys
+
 
 
 # =============================================================================
 # Constants pool
 # =============================================================================
-
-
-
-# =============================================================================
-# Guards
-# =============================================================================
-if (__name__ == "__main__") :
-  print("[WARNING] This library is not intended to be called as a main.")
 
 
 
@@ -240,3 +232,11 @@ def adjustHSV(rgbColor, deltaHue, deltaSat, deltaVal) :
   (R,G,B) = colorsys.hsv_to_rgb(H,S,V)
 
   return (int(R*255.0), int(G*255.0), int(B*255.0))
+
+
+
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'utils.py'")

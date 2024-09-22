@@ -6,7 +6,7 @@
 # File type     : Python script (Python 3)
 # Purpose       : provides the functions to interact with the music score
 # Author        : QuBi (nitrogenium@hotmail.com)
-# Creation date : October 5th, 2023
+# Creation date : Thursday, 5 October 2023
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
@@ -26,14 +26,6 @@ import mido   # for MIDI file manipulation
 import os     # for file manipulation
 import re
 import time
-
-
-
-# =============================================================================
-# Unit tests
-# =============================================================================
-if (__name__ == "__main__") :
-  print("[INFO] There are no unit tests available for 'score.py'")
 
 
 
@@ -1676,4 +1668,11 @@ class Score :
 
     return outputStr
     
+
+
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'score.py'")
 

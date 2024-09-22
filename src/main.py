@@ -131,7 +131,7 @@ def midiCallback(midiMessage) :
 if (selectedDevice != "None") :
   midiPort = mido.open_input(selectedDevice, callback = midiCallback)
 else :
-  print("[WARNING] No MIDI interface selected: running in navigation mode.")
+  print("[NOTE] No MIDI interface selected: running in navigation mode.")
   midiPort = None
 
 
@@ -164,8 +164,9 @@ while running :
       altKey  = event.mod & pygame.KMOD_ALT
       shiftKey  = event.mod & pygame.KMOD_SHIFT
     
-      # Send message to the metronome
+      # Send message to the widgets
       metronomeObj.keyRelease(event.key)
+      fingerSelWidget.keyRelease(keys)
 
 
     elif (event.type == pygame.KEYDOWN) :
@@ -174,8 +175,9 @@ while running :
       altKey  = event.mod & pygame.KMOD_ALT
       shiftKey  = event.mod & pygame.KMOD_SHIFT
 
-      # Send message to the metronome
+      # Send message to the widgets
       metronomeObj.keyPress(keys)
+      fingerSelWidget.keyPress(keys)
 
       # -----------------
       # "q": exit the app
@@ -213,17 +215,17 @@ while running :
       if (keys[pygame.K_RIGHT] and ctrlKey) :
         userScore.cursorStep(10)
 
-      # ---------------------------------------------
-      # Tab key: highlight the note above for editing
-      # ---------------------------------------------
-      if (keys[pygame.K_TAB] and not(shiftKey)) :
-        fingerSelWidget.keyPress(keys)
+      # # ---------------------------------------------
+      # # Tab key: highlight the note above for editing
+      # # ---------------------------------------------
+      # if (keys[pygame.K_TAB] and not(shiftKey)) :
+      #   fingerSelWidget.keyPress(keys)
 
-      # -----------------------------------------------
-      # Maj + tab: highlight the note before for editing
-      # -----------------------------------------------
-      if (keys[pygame.K_TAB] and shiftKey) :
-        print("[TODO] Highlight previous note for fingersatz edition using Tab key")
+      # # -----------------------------------------------
+      # # Maj + tab: highlight the note before for editing
+      # # -----------------------------------------------
+      # if (keys[pygame.K_TAB] and shiftKey) :
+      #   print("[TODO] Highlight previous note for fingersatz edition using Tab key")
 
       # ---------------------------------------
       # HOME: jump to the beginning of the file

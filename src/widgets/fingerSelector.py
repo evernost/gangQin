@@ -46,7 +46,6 @@ class FingerSelector :
 
   def __init__(self, loc) :
     
-
     # UI interaction queues
     self.msgQueueIn = []
     self.msgQueueOut = []

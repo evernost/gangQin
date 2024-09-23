@@ -65,24 +65,24 @@ class Stats :
     self.comboHighestAllTime = 0
 
     self.cursorHistogram = []
+    self.cursorIdleCount = 0
+    
     self.cursorWrongNoteCount = []
-
-    self.cursorStats = -1
-    self.statsSteadyCount = 0
-    self.statsCursor = []
+    
+    self.tickInterval_ms = 0
 
     # UI interaction queues
     self.msgQueueIn = []
     self.msgQueueOut = []
 
-    self._initFile(songFile)
+    self._initFromFile(songFile)
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats._initFile()
+  # METHOD Stats._initFromFile()
   # ---------------------------------------------------------------------------
-  def _initFile(self, songFile) :
+  def _initFromFile(self, songFile) :
     """
     Initialises the log file: load the log file if it exists or create a new 
     one if it does not exist yet.
@@ -96,7 +96,26 @@ class Stats :
       with open(self.logFile, "r") as jsonFile:
         data = json.load(jsonFile)
 
+      # Load the fields
+      self.sessionCount = data["sessionCount"]
+      self.sessionLog = data["sessionLog"]
 
+      self.totalPracticeTimeSec = data["totalPracticeTimeSec"]
+
+      self.comboHighestAllTime = data["comboHighestAllTime"]
+
+      self.cursorHistogram = data["cursorHistogram"]
+      self.cursorWrongNoteCount = []
+
+      self.cursorStats = -1
+      self.statsSteadyCount = 0
+      self.statsCursor = []
+    
+    else :
+      print("[NOTE] No log file exists for this song. A new one will be created.")
+
+
+    
 
 
   # ---------------------------------------------------------------------------

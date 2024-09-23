@@ -23,6 +23,12 @@ from tkinter import ttk
 
 
 # =============================================================================
+# Constants pool
+# =============================================================================
+MAX_TRACK_NAME_LENGTH = 10
+
+
+# =============================================================================
 # Main code
 # =============================================================================
 def centerWindow(container) :
@@ -49,7 +55,10 @@ mid = mido.MidiFile(midiFile)
 
 
 nTracks = len(mid.tracks)
-nNotes = [0 for _ in range(nTracks)]
+trackInfo = [{
+  "name": 0,
+  "nNotes": 0
+  } for _ in range(nTracks)]
 
 print(f"[DEBUG] Tracks: {nTracks}")
 
@@ -57,12 +66,18 @@ print(f"[DEBUG] Tracks: {nTracks}")
 trackList = []
 for (trackNumber, track) in enumerate(mid.tracks) :
   
-  nNotes[trackNumber] = 0
+  trackInfo[trackNumber]["nNotes"] = 0
+  trackInfo[trackNumber]["name"]   = track.name.split("\x00")[0]
   for msg in track :
     if ((msg.type == 'note_on') and (msg.velocity > 0)) :
-      nNotes[trackNumber] += 1
+      trackInfo[trackNumber]["nNotes"] += 1
       
-  s = f"Track {trackNumber} ({nNotes[trackNumber]} notes)"
+  if (len(trackInfo[trackNumber]["name"]) > MAX_TRACK_NAME_LENGTH) :
+    sName = trackInfo[trackNumber]["name"][0:(MAX_TRACK_NAME_LENGTH-3)] + "..."
+  else :
+    sName = trackInfo[trackNumber]["name"]
+  
+  s = f"Track {trackNumber} - {sName} ({trackInfo[trackNumber]['nNotes']} notes)"
   trackList.append(f"{s : <35}{'' : >7}")
 
 
@@ -88,7 +103,7 @@ def show() :
       
       # Edit the 'new' left hand
       trackLst.delete(sel)
-      s = f"Track {sel} ({nNotes[sel]} notes)"
+      s = f"Track {sel} ({trackInfo['nNotes'][sel]} notes)"
       trackLst.insert(sel, f"{s : <35}{'[LEFT]' : >7}")
       trackLst.selection_set(sel)
       trackLst.activate(sel)
@@ -97,7 +112,7 @@ def show() :
       if (leftTrack != -1) :
         # Edit the 'old' left hand
         trackLst.delete(leftTrack)
-        s = f"Track {leftTrack} ({nNotes[leftTrack]} notes)"
+        s = f"Track {leftTrack} ({trackInfo['nNotes'][leftTrack]} notes)"
         trackLst.insert(leftTrack, f"{s : <35}{'' : >7}")
         
       leftTrack = sel
@@ -119,7 +134,7 @@ def show() :
       
       # Edit the 'new' left hand
       trackLst.delete(sel)
-      s = f"Track {sel} ({nNotes[sel]} notes)"
+      s = f"Track {sel} ({trackInfo['nNotes'][sel]} notes)"
       trackLst.insert(sel, f"{s : <35}{'[RIGHT]' : >7}")
       trackLst.selection_set(sel)
       trackLst.activate(sel)
@@ -128,7 +143,7 @@ def show() :
       if (rightTrack != -1) :
         # Edit the 'old' left hand
         trackLst.delete(rightTrack)
-        s = f"Track {rightTrack} ({nNotes[rightTrack]} notes)"
+        s = f"Track {rightTrack} ({trackInfo['nNotes'][rightTrack]} notes)"
         trackLst.insert(rightTrack, f"{s : <35}{'' : >7}")
         
       rightTrack = sel

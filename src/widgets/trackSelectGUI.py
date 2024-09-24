@@ -28,6 +28,7 @@ from tkinter import ttk
 MAX_TRACK_NAME_LENGTH = 10
 
 
+
 # =============================================================================
 # Main code
 # =============================================================================
@@ -54,13 +55,31 @@ midiFile = "./songs/Rachmaninoff_Piano_Concerto_No_3_Op_30_1st_Movement.mid"
 mid = mido.MidiFile(midiFile)
 
 
+class Track:
+  def __init__(self, nTracks):
+    self.nTracks = nTracks
+    
+
+  
+
+
+
+
+
+
 nTracks = len(mid.tracks)
+print(f"[DEBUG] Tracks: {nTracks}")
+
+
+
+
+
 trackInfo = [{
   "name": 0,
   "nNotes": 0
   } for _ in range(nTracks)]
 
-print(f"[DEBUG] Tracks: {nTracks}")
+
 
 # Loop on the tracks, decode the MIDI messages
 trackList = []

@@ -173,7 +173,7 @@ def show() :
   
   
   fileSelFrame = ttk.LabelFrame(root, text = "File input")
-  fileSelFrame.grid(row=0, column = 1, padx = 10, pady = 5, sticky = "e")
+  fileSelFrame.grid(row = 0, column = 1, padx = 10, pady = 5, sticky = "e")
 
   filterByFrame = tk.Label(fileSelFrame, text = "Filter by:")
   filterByFrame.grid(row = 0, column = 0, padx = 3, pady = 1, sticky = "w")

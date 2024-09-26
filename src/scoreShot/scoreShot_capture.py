@@ -32,7 +32,7 @@ def take_screenshot(event):
   height = root.winfo_height()
   
   
-  bbox = (x, y, x + width, y + height)
+  bbox = (x+100, y+100, x + width-100, y + height-100)
   
   
   screenshot = ImageGrab.grab(bbox)
@@ -40,11 +40,26 @@ def take_screenshot(event):
   print("[DEBUG] Screenshot saved as 'screenshot.png'.")
 
 
+def on_moveWindow(event) :
+    
+    x = root.winfo_x()
+    y = root.winfo_y()
+
+    if (event.keysym == "Up") :
+      root.geometry(f"+{x}+{y-1}")
+    elif (event.keysym == "Down") :
+      root.geometry(f"+{x}+{y+1}")
+    elif (event.keysym == "Left") :
+      root.geometry(f"+{x-1}+{y}")
+    elif (event.keysym == "Right") :
+      root.geometry(f"+{x+1}+{y}")
 
 
-def update_mouse_position():
+
+
+def update_mouse_position() :
   x, y = root.winfo_pointerxy()
-  print(f"Mouse Position: X: {x}, Y: {y}")
+  print(f"[DEBUG] Mouse: ({x}, {y}) --- Root winfo_x/y: ({root.winfo_x()}, {root.winfo_y()}) --- Root winfo_w/h: ({root.winfo_width()}, {root.winfo_height()})")
   
   root.after(200, update_mouse_position)
 
@@ -102,14 +117,16 @@ root.attributes("-transparentcolor", "red")
 canvas = tk.Canvas(frames[4], bg = "red", highlightthickness = 0)
 canvas.pack(fill = "both", expand = True)
 
-# Draw a line with specified coordinates (x1, y1, x2, y2)
-# Replace these coordinates with your own
+
 x1, y1 = 50, 50
 x2, y2 = 150, 50
 canvas.create_line(x1, y1, x2, y2, fill = "black", width = 1)
 
 
-
+root.bind('<Up>', on_moveWindow)
+root.bind('<Down>', on_moveWindow)
+root.bind('<Left>', on_moveWindow)
+root.bind('<Right>', on_moveWindow)
 root.bind('<s>', take_screenshot)
 root.bind('<q>', on_quit)
 

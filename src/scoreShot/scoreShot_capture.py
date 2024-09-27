@@ -18,54 +18,112 @@ from PIL import ImageGrab
 
 
 
+# TODO
+# - Find the relation between Imagegrab and the window coordinates
+# - Find how to show an image (what container)
+# - Test how immediate a screenshot loading is
+# - See how to implement the drag and drop of the rulers
+
+
+
+# =============================================================================
+# Constants pool
+# =============================================================================
+# Some high resolution screens use a scaling factor that messes with the 
+# coordinates of 'Imagegrab'.
+SCREEN_SCALING = 1.0
+
+
 # =============================================================================
 # Main code
 # =============================================================================
 
 
 
+class Ruler :
+
+  def __init__(self) :
+    
+    self.toto = 0
+    
+    
+
+
+
+
+
+
+
+
+
+
+# Callback functions
 def take_screenshot(event):
+  x = captureWin.winfo_x()
+  y = captureWin.winfo_y()
+  width = captureWin.winfo_width()
+  height = captureWin.winfo_height()
   
-  x = root.winfo_x()
-  y = root.winfo_y()
-  width = root.winfo_width()
-  height = root.winfo_height()
-  
-  
-  bbox = (x+100, y+100, x + width-100, y + height-100)
-  
+  bbox = (0, 0, captureWin.winfo_screenwidth(), captureWin.winfo_screenheight())
+  #bbox = (x+7+100, y+100, x+7+100+root.winfo_width()-100, y+100+root.winfo_height()-100)
   
   screenshot = ImageGrab.grab(bbox)
   screenshot.save("screenshot.png")
   print("[DEBUG] Screenshot saved as 'screenshot.png'.")
 
-
 def on_moveWindow(event) :
-    
-    x = root.winfo_x()
-    y = root.winfo_y()
+    x = captureWin.winfo_x()
+    y = captureWin.winfo_y()
 
     if (event.keysym == "Up") :
-      root.geometry(f"+{x}+{y-1}")
+      captureWin.geometry(f"+{x}+{y-1}")
     elif (event.keysym == "Down") :
-      root.geometry(f"+{x}+{y+1}")
+      captureWin.geometry(f"+{x}+{y+1}")
     elif (event.keysym == "Left") :
-      root.geometry(f"+{x-1}+{y}")
+      captureWin.geometry(f"+{x-1}+{y}")
     elif (event.keysym == "Right") :
-      root.geometry(f"+{x+1}+{y}")
+      captureWin.geometry(f"+{x+1}+{y}")
 
+def on_mouseWheel(event) :
+    x = captureWin.winfo_x()
+    y = captureWin.winfo_y()
 
-
-
-def update_mouse_position() :
-  x, y = root.winfo_pointerxy()
-  print(f"[DEBUG] Mouse: ({x}, {y}) --- Root winfo_x/y: ({root.winfo_x()}, {root.winfo_y()}) --- Root winfo_w/h: ({root.winfo_width()}, {root.winfo_height()})")
-  
-  root.after(200, update_mouse_position)
-
-def on_quit(event) : 
+    if (event.state & 0x0001) : 
+      if (event.delta > 0) :
+        captureWin.geometry(f"+{x+1}+{y}")
+      elif (event.delta < 0) :
+        captureWin.geometry(f"+{x-1}+{y}")
+    else :
+      if (event.delta > 0) :
+        captureWin.geometry(f"+{x}+{y-1}")
+      elif (event.delta < 0) :
+        captureWin.geometry(f"+{x}+{y+1}")
+    
+def on_quit(event = None) : 
   print("Exiting app...")
   root.destroy()
+
+def update_mouse_position() :
+  x, y = captureWin.winfo_pointerxy()
+  print(f"[DEBUG] Mouse: ({x}, {y}) --- Root winfo_x/y: ({captureWin.winfo_x()}, {captureWin.winfo_y()}) --- Root winfo_w/h: ({captureWin.winfo_width()}, {captureWin.winfo_height()})")
+  
+  captureWin.after(200, update_mouse_position)
+
+
+
+
+
+
+
+print(f"================================================================================")
+print(f"SCORESHOT CAPTURE - v0.1 (September 2024)")
+print(f"================================================================================")
+print("Shortcuts:")
+print("- Left/Right/Up/Down : move the capture window pixel by pixel")
+print("- 'c'                : take snapshot")
+print("- 'q'                : exit app")
+
+
 
 
 
@@ -74,21 +132,31 @@ def on_quit(event) :
 
 # Create the main window
 root = tk.Tk()
-root.geometry("800x300")
-root.title("scoreShot - Capture v0.1 [ALPHA] (September 2024)")
-root.attributes('-topmost', True)
+root.geometry("800x500")
+root.title("scoreShot - Capture (database) v0.1 [ALPHA] (September 2024)")
+
+captureWin = tk.Toplevel(root)
+captureWin.geometry("800x300")
+captureWin.title("scoreShot - Capture (tool) v0.1 [ALPHA] (September 2024)")
+
+
+# Capture window is always on top
+captureWin.attributes("-topmost", True)
+
+
+
 
 
 
 # Set fixed sizes for the first and last columns, and let the middle column take the rest
-root.grid_columnconfigure(0, minsize=100)  # First column fixed at 100 pixels
-root.grid_columnconfigure(1, weight=1)     # Middle column flexible, takes the remaining space
-root.grid_columnconfigure(2, minsize=100)  # Last column fixed at 100 pixels
+captureWin.grid_columnconfigure(0, minsize = 100)  # First column fixed at 100 pixels
+captureWin.grid_columnconfigure(1, weight = 1)     # Middle column flexible, takes the remaining space
+captureWin.grid_columnconfigure(2, minsize = 100)  # Last column fixed at 100 pixels
 
 # Set fixed sizes for the first and last rows, and let the middle row take the rest
-root.grid_rowconfigure(0, minsize=100)     # First row fixed at 100 pixels
-root.grid_rowconfigure(1, weight=1)        # Middle row flexible, takes the remaining space
-root.grid_rowconfigure(2, minsize=100)     # Last row fixed at 100 pixels
+captureWin.grid_rowconfigure(0, minsize=100)     # First row fixed at 100 pixels
+captureWin.grid_rowconfigure(1, weight=1)        # Middle row flexible, takes the remaining space
+captureWin.grid_rowconfigure(2, minsize=100)     # Last row fixed at 100 pixels
 
 
 
@@ -103,13 +171,13 @@ colors = ["lightblue", "lightgreen", "lightcoral", "lightyellow",
 frames = []
 for row in range(3):
     for col in range(3):
-        color_index = row * 3 + col  # Calculate the index for the color list
-        frame = tk.Frame(root, bg=colors[color_index])
+        color_index = row * 3 + col
+        frame = tk.Frame(captureWin, bg = colors[color_index])
         frame.grid(row=row, column=col, sticky="nsew")
         frames.append(frame)
 
 
-root.attributes("-transparentcolor", "red")
+captureWin.attributes("-transparentcolor", "red")
 
 
 
@@ -118,18 +186,21 @@ canvas = tk.Canvas(frames[4], bg = "red", highlightthickness = 0)
 canvas.pack(fill = "both", expand = True)
 
 
-x1, y1 = 50, 50
-x2, y2 = 150, 50
-canvas.create_line(x1, y1, x2, y2, fill = "black", width = 1)
+rulerUp = canvas.create_line(50, 50, 150, 50, fill = "black", width = 1)
+rulerDown = canvas.create_line(50, 80, 150, 80, fill = "black", width = 1)
 
 
-root.bind('<Up>', on_moveWindow)
-root.bind('<Down>', on_moveWindow)
-root.bind('<Left>', on_moveWindow)
-root.bind('<Right>', on_moveWindow)
-root.bind('<s>', take_screenshot)
-root.bind('<q>', on_quit)
+captureWin.bind('<Up>', on_moveWindow)
+captureWin.bind('<Down>', on_moveWindow)
+captureWin.bind('<Left>', on_moveWindow)
+captureWin.bind('<Right>', on_moveWindow)
+captureWin.bind('<MouseWheel>', on_mouseWheel)
+captureWin.bind('<s>', take_screenshot)
+captureWin.bind('<q>', on_quit)
 
 update_mouse_position()
+
+root.protocol("WM_DELETE_WINDOW", on_quit)
+
 
 root.mainloop()

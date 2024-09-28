@@ -44,20 +44,25 @@ SCREEN_SCALING = 1.0
 class Ruler :
   def __init__(self, canvasArray) :
     self.canvasArray = canvasArray
+    
+    # Lines for the rulers
     self.rulerLeft  = canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (1, 10))
     self.rulerRight = canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (1, 10))
     self.rulerUp    = canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (1, 10))
     self.rulerDown  = canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (1, 10))
 
-    self.handleLeft  = self.canvasArray[3].create_rectangle(0, 0, 0, 1, fill = "green", outline = "green")
-    self.handleRight = self.canvasArray[3].create_rectangle(0, 0, 0, 1, fill = "green", outline = "green")
+    # Handles to drag and drop the rulers
+    self.handleLeft   = self.canvasArray[3].create_rectangle(0, 0, 0, 1, fill = "grey", outline = "grey")
+    self.handleRight  = self.canvasArray[5].create_rectangle(0, 0, 0, 1, fill = "grey", outline = "grey")
+    self.handleUp     = self.canvasArray[1].create_rectangle(0, 0, 0, 1, fill = "grey", outline = "grey")
+    self.handleDown   = self.canvasArray[7].create_rectangle(0, 0, 0, 1, fill = "grey", outline = "grey")
 
-    self.canvasArray[3].tag_bind(self.handleLeft, '<Button-1>', self.on_click)
-    self.canvasArray[3].tag_bind(self.handleLeft, '<B1-Motion>', self.on_drag)
-    self.canvasArray[3].tag_bind(self.handleLeft, '<ButtonRelease-1>', self.on_release)
-
-    self.drag_data = {"x": 0, "y": 0}
-
+    # Drag and drop information
+    self.bindHandle(self.handleLeft, 3)
+    self.bindHandle(self.handleRight, 5)
+    self.bindHandle(self.handleUp, 1)
+    self.bindHandle(self.handleDown, 7)
+    self.dragData = {"x": 0, "y": 0, "id": None}
 
   def updateAfterResize(self) :
     canvasArray[4].coords(self.rulerUp,     (0, 50, canvasArray[4].winfo_width(), 50))
@@ -65,26 +70,43 @@ class Ruler :
     canvasArray[4].coords(self.rulerLeft,   (50, 0, 50, canvasArray[4].winfo_height()))
     canvasArray[4].coords(self.rulerRight,  (canvasArray[4].winfo_width()-50, 0, canvasArray[4].winfo_width()-50, canvasArray[4].winfo_height()))
 
+    canvasArray[1].coords(self.handleUp,    (50-5, 80, 50+5, 99))
+    canvasArray[7].coords(self.handleDown,  (canvasArray[4].winfo_width()-50-5, 0, canvasArray[4].winfo_width()-50+5, 19))
     canvasArray[3].coords(self.handleLeft,  (80, 45, 99, 55))
+    canvasArray[5].coords(self.handleRight, (0, canvasArray[4].winfo_height()-50-5, 19, canvasArray[4].winfo_height()-50+5))
+    
+  def bindHandle(self, handle, canvasId) :
+    self.canvasArray[canvasId].tag_bind(handle, '<Button-1>', lambda event, id = canvasId : self.on_click(event, id))
+    self.canvasArray[canvasId].tag_bind(handle, '<B1-Motion>', lambda event, id = canvasId : self.on_drag(event, id))
+
+  def on_click(self, event, canvasId):
+    self.dragData["x"] = event.x
+    self.dragData["y"] = event.y
+    self.dragData["id"] = canvasId
+
+  def on_drag(self, event, canvasId):
+    dx = event.x - self.dragData["x"]
+    dy = event.y - self.dragData["y"]
+    
+    if (canvasId == 1) :
+      self.canvasArray[1].move(self.handleUp, dx, 0)
+      self.canvasArray[4].move(self.rulerLeft, dx, 0)
+    elif (canvasId == 3) :
+      self.canvasArray[3].move(self.handleLeft, 0, dy)
+      self.canvasArray[4].move(self.rulerUp, 0, dy)
+    elif (canvasId == 5) :
+      self.canvasArray[5].move(self.handleRight, 0, dy)
+      self.canvasArray[4].move(self.rulerDown, 0, dy)
+    elif (canvasId == 7) :
+      self.canvasArray[7].move(self.handleDown, dx, 0)
+      self.canvasArray[4].move(self.rulerRight, dx, 0)
 
 
-  def on_click(self, event):
-    self.drag_data["x"] = event.x
-    self.drag_data["y"] = event.y
 
-  def on_drag(self, event):
-    dy = event.y - self.drag_data["y"]
-    self.canvasArray[3].move(self.handleLeft, 0, dy)
-    self.canvasArray[4].move(self.rulerUp, 0, dy)
+    self.dragData["x"] = event.x
+    self.dragData["y"] = event.y
 
-    self.drag_data["x"] = event.x
-    self.drag_data["y"] = event.y
-
-  def on_release(self, event):
-    pass
-
-
-
+  
 
 
 
@@ -99,7 +121,7 @@ def take_screenshot(event):
   #bbox = (x+7+100, y+100, x+7+100+root.winfo_width()-100, y+100+root.winfo_height()-100)
   
   screenshot = ImageGrab.grab(bbox)
-  screenshot.save("screenshot.png")
+  screenshot.save("./songs/scoreShotDB/screenshot.png")
   print("[DEBUG] Screenshot saved as 'screenshot.png'.")
 
 def on_moveWindow(event) :
@@ -164,7 +186,7 @@ print("- 'q'                : exit app")
 # Create the main window
 root = tk.Tk()
 root.geometry("1000x500")
-root.title("scoreShot - Capture (database) v0.1 [ALPHA] (September 2024)")
+root.title("scoreShot - Capture database v0.1 [ALPHA] (September 2024)")
 root.resizable(0, 0)
 
 content = ttk.Frame(root, padding = 20)
@@ -187,7 +209,7 @@ imgbox.grid(column = 1, row = 1, columnspan = 1, rowspan = 1)
 
 captureWin = tk.Toplevel(root)
 captureWin.geometry("1250x440")
-captureWin.title("scoreShot - Capture (tool) v0.1 [ALPHA] (September 2024)")
+captureWin.title("scoreShot - Capture tool v0.1 [ALPHA] (September 2024)")
 
 
 # Capture window is always on top
@@ -209,17 +231,9 @@ captureWin.grid_rowconfigure(0, minsize = BORDER_SIZE)
 captureWin.grid_rowconfigure(1, weight = 1)
 captureWin.grid_rowconfigure(2, minsize = BORDER_SIZE)
 
-
-
-
-
-
 # Define a set of distinct colors for the 9 frames
-colors = ["lightblue", "lightgreen", "lightcoral", "lightyellow", 
-          "red", "lightgray", "lightcyan", "lightgoldenrod", "lightsteelblue"]
-
-
-
+colors = ["lightsteelblue", "lightblue", "lightsteelblue", "lightblue", 
+          "red", "lightblue", "lightsteelblue", "lightblue", "lightsteelblue"]
 
 canvasArray = []
 for row in range(3):

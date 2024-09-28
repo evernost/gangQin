@@ -14,7 +14,8 @@
 # External libs 
 # =============================================================================
 import tkinter as tk
-from PIL import ImageGrab
+from tkinter import ttk
+from PIL import ImageGrab, ImageTk, Image
 
 
 
@@ -41,16 +42,46 @@ SCREEN_SCALING = 1.0
 
 
 class Ruler :
+  def __init__(self, canvasArray) :
+    self.canvasArray = canvasArray
+    self.rulerLeft  = canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (1, 10))
+    self.rulerRight = canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (1, 10))
+    self.rulerUp    = canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (1, 10))
+    self.rulerDown  = canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (1, 10))
 
-  def __init__(self) :
-    
-    self.toto = 0
-    
-    
+    self.handleLeft  = self.canvasArray[3].create_rectangle(0, 0, 0, 1, fill = "green", outline = "green")
+    self.handleRight = self.canvasArray[3].create_rectangle(0, 0, 0, 1, fill = "green", outline = "green")
+
+    self.canvasArray[3].tag_bind(self.handleLeft, '<Button-1>', self.on_click)
+    self.canvasArray[3].tag_bind(self.handleLeft, '<B1-Motion>', self.on_drag)
+    self.canvasArray[3].tag_bind(self.handleLeft, '<ButtonRelease-1>', self.on_release)
+
+    self.drag_data = {"x": 0, "y": 0}
 
 
+  def updateAfterResize(self) :
+    canvasArray[4].coords(self.rulerUp,     (0, 50, canvasArray[4].winfo_width(), 50))
+    canvasArray[4].coords(self.rulerDown,   (0, canvasArray[4].winfo_height()-50, canvasArray[4].winfo_width(), canvasArray[4].winfo_height()-50))
+    canvasArray[4].coords(self.rulerLeft,   (50, 0, 50, canvasArray[4].winfo_height()))
+    canvasArray[4].coords(self.rulerRight,  (canvasArray[4].winfo_width()-50, 0, canvasArray[4].winfo_width()-50, canvasArray[4].winfo_height()))
+
+    canvasArray[3].coords(self.handleLeft,  (80, 45, 99, 55))
 
 
+  def on_click(self, event):
+    self.drag_data["x"] = event.x
+    self.drag_data["y"] = event.y
+
+  def on_drag(self, event):
+    dy = event.y - self.drag_data["y"]
+    self.canvasArray[3].move(self.handleLeft, 0, dy)
+    self.canvasArray[4].move(self.rulerUp, 0, dy)
+
+    self.drag_data["x"] = event.x
+    self.drag_data["y"] = event.y
+
+  def on_release(self, event):
+    pass
 
 
 
@@ -120,7 +151,7 @@ print(f"SCORESHOT CAPTURE - v0.1 (September 2024)")
 print(f"================================================================================")
 print("Shortcuts:")
 print("- Left/Right/Up/Down : move the capture window pixel by pixel")
-print("- 'c'                : take snapshot")
+print("- 's'                : take snapshot")
 print("- 'q'                : exit app")
 
 
@@ -132,11 +163,30 @@ print("- 'q'                : exit app")
 
 # Create the main window
 root = tk.Tk()
-root.geometry("800x500")
+root.geometry("1000x500")
 root.title("scoreShot - Capture (database) v0.1 [ALPHA] (September 2024)")
+root.resizable(0, 0)
+
+content = ttk.Frame(root, padding = 20)
+
+availableLbl = ttk.Label(content, text = "Snapshots:")
+trackListVar = tk.StringVar(value = [])
+trackLst = tk.Listbox(content, listvariable = trackListVar, width = 50, font = ("Consolas", 10))
+img = ImageTk.PhotoImage(Image.open("screenshot.png"))
+imgbox = tk.Label(root, image = img)
+
+
+
+content.grid(column = 0, row = 0)
+
+availableLbl.grid(column = 0, row = 0, columnspan = 1, rowspan = 1, sticky = "w")
+trackLst.grid(column = 0, row = 1, columnspan = 1, rowspan = 1)
+imgbox.grid(column = 1, row = 1, columnspan = 1, rowspan = 1)
+
+
 
 captureWin = tk.Toplevel(root)
-captureWin.geometry("800x300")
+captureWin.geometry("1250x440")
 captureWin.title("scoreShot - Capture (tool) v0.1 [ALPHA] (September 2024)")
 
 
@@ -149,14 +199,15 @@ captureWin.attributes("-topmost", True)
 
 
 # Set fixed sizes for the first and last columns, and let the middle column take the rest
-captureWin.grid_columnconfigure(0, minsize = 100)  # First column fixed at 100 pixels
-captureWin.grid_columnconfigure(1, weight = 1)     # Middle column flexible, takes the remaining space
-captureWin.grid_columnconfigure(2, minsize = 100)  # Last column fixed at 100 pixels
+BORDER_SIZE = 100
+captureWin.grid_columnconfigure(0, minsize = BORDER_SIZE)
+captureWin.grid_columnconfigure(1, weight = 1)
+captureWin.grid_columnconfigure(2, minsize = BORDER_SIZE)
 
 # Set fixed sizes for the first and last rows, and let the middle row take the rest
-captureWin.grid_rowconfigure(0, minsize=100)     # First row fixed at 100 pixels
-captureWin.grid_rowconfigure(1, weight=1)        # Middle row flexible, takes the remaining space
-captureWin.grid_rowconfigure(2, minsize=100)     # Last row fixed at 100 pixels
+captureWin.grid_rowconfigure(0, minsize = BORDER_SIZE)
+captureWin.grid_rowconfigure(1, weight = 1)
+captureWin.grid_rowconfigure(2, minsize = BORDER_SIZE)
 
 
 
@@ -165,40 +216,45 @@ captureWin.grid_rowconfigure(2, minsize=100)     # Last row fixed at 100 pixels
 
 # Define a set of distinct colors for the 9 frames
 colors = ["lightblue", "lightgreen", "lightcoral", "lightyellow", 
-          "lightpink", "lightgray", "lightcyan", "lightgoldenrod", "lightsteelblue"]
+          "red", "lightgray", "lightcyan", "lightgoldenrod", "lightsteelblue"]
 
-# Create and place 9 frames in a 3x3 grid
-frames = []
+
+
+
+canvasArray = []
 for row in range(3):
     for col in range(3):
         color_index = row * 3 + col
-        frame = tk.Frame(captureWin, bg = colors[color_index])
-        frame.grid(row=row, column=col, sticky="nsew")
-        frames.append(frame)
+        if ((row == 0) or (row == 2) or (col == 0) or (col == 2)) :
+          c = tk.Canvas(captureWin, bg = colors[color_index], highlightthickness = 0, width = BORDER_SIZE, height = BORDER_SIZE)
+        else: 
+          c = tk.Canvas(captureWin, bg = colors[color_index], highlightthickness = 0)
+        c.grid(row = row, column = col, sticky = "nsew")
+        canvasArray.append(c)
+
+
+
+ruler = Ruler(canvasArray)
+
+
+def on_resize(event) :
+  ruler.updateAfterResize()
 
 
 captureWin.attributes("-transparentcolor", "red")
-
-
-
-# Create a canvas widget
-canvas = tk.Canvas(frames[4], bg = "red", highlightthickness = 0)
-canvas.pack(fill = "both", expand = True)
-
-
-rulerUp = canvas.create_line(50, 50, 150, 50, fill = "black", width = 1)
-rulerDown = canvas.create_line(50, 80, 150, 80, fill = "black", width = 1)
-
 
 captureWin.bind('<Up>', on_moveWindow)
 captureWin.bind('<Down>', on_moveWindow)
 captureWin.bind('<Left>', on_moveWindow)
 captureWin.bind('<Right>', on_moveWindow)
 captureWin.bind('<MouseWheel>', on_mouseWheel)
+captureWin.bind('<Configure>', on_resize)
 captureWin.bind('<s>', take_screenshot)
 captureWin.bind('<q>', on_quit)
 
-update_mouse_position()
+
+
+# update_mouse_position()
 
 root.protocol("WM_DELETE_WINDOW", on_quit)
 

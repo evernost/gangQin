@@ -1,5 +1,5 @@
 # gangQin (v1.5)
-Piano learning app, for those who can't read music scores.
+Piano learning app, for those who struggle with the conventional music scores.
 
 ## What do I need?
 A piano keyboard with MIDI output, plugged into a computer running your favorite Python interpreter.
@@ -19,13 +19,15 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 - **Metronome**: practice with perfect timing.
 - **Unbound looped practice**: define a start point and try to play. Any mistake jumps you back to the starting point
 
-## Upcoming features
-- Metronome with dynamic tempo, ajusts automatically throughout the score
-- Enhanced fingersatz edition, with more shortcuts
-- Dynamic comments display, updated based on the location in the score
-- More flexible MIDI loading: select the tracks you want to import
-- Semi-automated _fingersatz_ edition to simplify the assignation of repeated sections (repeated chords, codas, etc.)
-- Direct view on the real score using a PDF editor (stay tuned!)
+## Upcoming features (one day)
+- **Direct view on the real score**: showing the actual score while playing might be quite cool 🙂
+- **Enhanced _fingersatz_ edition**: more shortcuts, make it quicker and easier to edit
+- **More complete playing statistics**: provide some hindsight on the overall playing performance of a song
+- **Dynamic comments display**: a comment, or notes show at a certain cursor, for a certain section, like a copilot
+- **Flexible MIDI loading**: select the specific tracks you want to import (MIDI might have way more than 2)
+- **Metronome with dynamic tempo**: ajusts automatically throughout the score. Helps also to monitor your playing speed, hence your progress
+- **Semi-automated _fingersatz_ edition**: simplify the assignation of repeated sections (repeated chords, codas, etc.)
+
 
 ## Screenshot
 

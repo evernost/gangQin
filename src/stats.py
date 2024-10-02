@@ -69,6 +69,8 @@ class Stats :
     
     self.cursorWrongNoteCount = []
     
+    self.playedNotes = 0  # total number of correct notes played
+
     self.tickInterval_ms = 0
 
     # UI interaction queues

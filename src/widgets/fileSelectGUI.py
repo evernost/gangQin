@@ -29,7 +29,8 @@ from tkinter import ttk
 # =============================================================================
 def getFileList(folderPath, extension) :
   """
-  todo
+  Returns a sorted list of all files of a given extension in a specific
+  directory.
   """
   fileList = []
   for filename in os.listdir(folderPath) :

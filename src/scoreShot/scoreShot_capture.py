@@ -121,11 +121,14 @@ def on_snapshotSel(event) :
     imgName = captureListBox.get(i)
 
     x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/{imgName}"))
+
+    # TODO: resize so that the picture occupies the same real estate no
+    # matter what (even if there was some screen scaling)
+    # ...
+
+
     imgbox.config(image = x)
     imgbox.image = x
-    
-    # If scaling factor is not 1.0: scale the image back
-    # ...
     
     
     

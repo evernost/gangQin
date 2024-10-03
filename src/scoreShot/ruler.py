@@ -22,7 +22,8 @@ from PIL import ImageGrab, ImageTk, Image
 # =============================================================================
 # Constants pool
 # =============================================================================
-
+HANDLE_LENGTH = 20
+HANDLE_HEIGHT = 10
 
 
 # =============================================================================
@@ -33,12 +34,10 @@ class Ruler :
     self.canvasArray = canvasArray
     
     # Lines for the rulers
-    # Coordinates can't be specified at that point: they depend on the window properties
-    # that is not initialised yet
-    self.rulerLeft  = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (1, 10))
-    self.rulerRight = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (1, 10))
-    self.rulerUp    = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (1, 10))
-    self.rulerDown  = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (1, 10))
+    self.rulerLeft  = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (2, 4))
+    self.rulerRight = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (2, 4))
+    self.rulerUp    = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (2, 4))
+    self.rulerDown  = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (4, 4))
 
     # Handles to drag and drop the rulers
     self.handleLeft   = self.canvasArray[3].create_rectangle(0, 0, 0, 1, fill = "grey", outline = "grey")
@@ -56,32 +55,80 @@ class Ruler :
     # Visible property
     self._visible = True
 
+    # Initialisation
+    self._initDone = False
+
 
 
 
   def update(self) :
+    """
+    This function is called every time the capture window is resized or moved.
+    """
     apHeight = self.canvasArray[4].winfo_height()
     apWidth = self.canvasArray[4].winfo_width()
-    self.canvasArray[4].coords(self.rulerUp,     (0, 50, apWidth, 50))
-    self.canvasArray[4].coords(self.rulerDown,   (0, apHeight-50, apWidth, apHeight-50))
-    self.canvasArray[4].coords(self.rulerLeft,   (50, 0, 50, apHeight))
-    self.canvasArray[4].coords(self.rulerRight,  (apWidth-50, 0, apWidth-50, apHeight))
-
-    self.canvasArray[1].coords(self.handleUp,    (50-5, 80, 50+5, 99))
-    self.canvasArray[7].coords(self.handleDown,  (apWidth-50-5, 0, apWidth-50+5, 19))
-    self.canvasArray[3].coords(self.handleLeft,  (80, 45, 99, 55))
-    self.canvasArray[5].coords(self.handleRight, (0, apHeight-50-5, 19, apHeight-50+5))
+  
+    # If the transparent canvas has a weird size, it is probably not initialised yet.
+    if ((apWidth <= 1) or (apHeight <= 1)) :
+      pass
     
+    else :
+      
+      # At init: give a first plausible position for the cursors
+      if not(self._initDone) :
+        self.canvasArray[4].coords(self.rulerUp,     (0, 50, apWidth, 50))
+        self.canvasArray[4].coords(self.rulerDown,   (0, apHeight-50, apWidth, apHeight-50))
+        self.canvasArray[4].coords(self.rulerLeft,   (50, 0, 50, apHeight))
+        self.canvasArray[4].coords(self.rulerRight,  (apWidth-50, 0, apWidth-50, apHeight))
+
+        self.canvasArray[1].coords(self.handleUp,    (50-5, 80, 50+5, 99))
+        self.canvasArray[7].coords(self.handleDown,  (apWidth-50-5, 0, apWidth-50+5, 19))
+        self.canvasArray[3].coords(self.handleLeft,  (80, 45, 99, 55))
+        self.canvasArray[5].coords(self.handleRight, (0, apHeight-50-5, 19, apHeight-50+5))
+        self._initDone = True
+      
+      # Afterwards: clamp the values to avoid losing the cursors 
+      else :
+        (_,y,_,_) = self.canvasArray[4].coords(self.rulerUp)
+        y = min(y, apHeight-10)
+        y = max(y, 10)
+        self.canvasArray[4].coords(self.rulerUp,     (0, y, apWidth, y))
+        self.canvasArray[3].coords(self.handleLeft,  (80, y-5, 99, y+5))
+        
+        (_,y,_,_) = self.canvasArray[4].coords(self.rulerDown)
+        y = min(y, apHeight-10)
+        y = max(y, 10)
+        self.canvasArray[4].coords(self.rulerDown,   (0, y, apWidth, y))
+        self.canvasArray[5].coords(self.handleRight, (0, y-5, 19, y+5))
+        
+        (x,_,_,_) = self.canvasArray[4].coords(self.rulerLeft)
+        x = min(x, apWidth-10)
+        x = max(x, 10)
+        self.canvasArray[4].coords(self.rulerLeft,   (x, 0, x, apHeight))
+        self.canvasArray[1].coords(self.handleUp,    (x-5, 80, x+5, 99))
+        
+        (x,_,_,_) = self.canvasArray[4].coords(self.rulerRight)
+        x = min(x, apWidth-10)
+        x = max(x, 10)
+        self.canvasArray[4].coords(self.rulerRight,  (x, 0, x, apHeight))
+        self.canvasArray[7].coords(self.handleDown,  (x-5, 0, x+5, 19))
+        
+        
+
+
+
+
+
   def bindHandle(self, handle, canvasId) :
     self.canvasArray[canvasId].tag_bind(handle, "<Button-1>", lambda event, id = canvasId : self.on_click(event, id))
     self.canvasArray[canvasId].tag_bind(handle, "<B1-Motion>", lambda event, id = canvasId : self.on_drag(event, id))
 
-  def on_click(self, event, canvasId):
+  def on_click(self, event, canvasId) :
     self.dragData["x"] = event.x
     self.dragData["y"] = event.y
     self.dragData["id"] = canvasId
 
-  def on_drag(self, event, canvasId):
+  def on_drag(self, event, canvasId) :
     dx = event.x - self.dragData["x"]
     dy = event.y - self.dragData["y"]
     
@@ -107,7 +154,10 @@ class Ruler :
 
   @visible.setter
   def visible(self, val) :
-    
+    """
+    Setter for the 'visible' attribute.
+    This function is called every time the 'visible' attribute is set.
+    """
     if val :
       self.canvasArray[4].itemconfig(self.rulerLeft, state = "normal")
       self.canvasArray[4].itemconfig(self.rulerRight, state = "normal")
@@ -118,6 +168,11 @@ class Ruler :
       self.canvasArray[5].itemconfig(self.handleRight, state = "normal")
       self.canvasArray[1].itemconfig(self.handleUp, state = "normal")
       self.canvasArray[7].itemconfig(self.handleDown, state = "normal")
+
+
+
+
+
     else :
       self.canvasArray[4].itemconfig(self.rulerLeft, state = "hidden")
       self.canvasArray[4].itemconfig(self.rulerRight, state = "hidden")
@@ -128,8 +183,19 @@ class Ruler :
       self.canvasArray[5].itemconfig(self.handleRight, state = "hidden")
       self.canvasArray[1].itemconfig(self.handleUp, state = "hidden")
       self.canvasArray[7].itemconfig(self.handleDown, state = "hidden")
+
+
+      # Change the "highlightbackground" property: it will show in the screeshot otherwise.
     
     self._visible = val
+
+
+
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'ruler.py'")
 
 
 

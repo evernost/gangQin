@@ -58,6 +58,7 @@ SCORE_DB_DIR = "./songs/scoreShotDB"
 def on_screenshot(event):
   global captureCount
 
+  # Define the coordinates of the aperture 
   x1 = canvasArray[4].winfo_rootx()*SCREEN_SCALING
   y1 = canvasArray[4].winfo_rooty()*SCREEN_SCALING
   x2 = x1 + canvasArray[4].winfo_width()*SCREEN_SCALING
@@ -65,6 +66,8 @@ def on_screenshot(event):
 
   # Turn off the rulers, we don't want them in the screenshot
   rulerObj.visible = False
+  canvasArray[4].config(highlightthickness = 0)
+
   captureWin.update()
 
   screenshot = ImageGrab.grab((x1,y1,x2,y2))
@@ -72,6 +75,7 @@ def on_screenshot(event):
   
   # Turn the rulers back on
   rulerObj.visible = True
+  canvasArray[4].config(highlightthickness = 2)
 
   print(f"[DEBUG] Screenshot saved as 'screenshot_{captureCount}.png'")
   captureCount += 1
@@ -95,30 +99,20 @@ def on_mouseWheel(event) :
 
     if (event.state & 0x0001) : 
       if (event.delta > 0) :
-        captureWin.geometry(f"+{x+1}+{y}")
-      elif (event.delta < 0) :
         captureWin.geometry(f"+{x-1}+{y}")
+      elif (event.delta < 0) :
+        captureWin.geometry(f"+{x+1}+{y}")
     else :
       if (event.delta > 0) :
         captureWin.geometry(f"+{x}+{y-1}")
       elif (event.delta < 0) :
         captureWin.geometry(f"+{x}+{y+1}")
     
-def on_quit(event = None) : 
-  print("Exiting app...")
-  root.destroy()
-
-def update_mouse_position() :
-  x, y = captureWin.winfo_pointerxy()
-  print(f"[DEBUG] Mouse: ({x}, {y}) --- Root winfo_x/y: ({captureWin.winfo_x()}, {captureWin.winfo_y()}) --- Root winfo_w/h: ({captureWin.winfo_width()}, {captureWin.winfo_height()})")
-  
-  captureWin.after(200, update_mouse_position)
 
 def on_snapshotSel(event) :
-  i = captureListBox.curselection()
-    
-  if i :
-    imgName = captureListBox.get(i)
+  index = captureListBox.curselection()
+  if index :
+    imgName = captureListBox.get(index)
 
     x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/{imgName}"))
 
@@ -130,12 +124,26 @@ def on_snapshotSel(event) :
     imgbox.config(image = x)
     imgbox.image = x
     
-    
-    
-    
+
+def on_keyPress(event) :
+  if (event.char == 'r') :
+    recallImg.lift()
+
+def on_keyRelease(event) :
+  if (event.char == "r") :
+    recallImg.lower()
+
+def on_resize(event) :
+  rulerObj.update()
 
 
+def on_quit(event = None) : 
+  print("Exiting app...")
+  root.destroy()
 
+
+    
+    
 
 print(f"================================================================================")
 print(f"SCORESHOT CAPTURE - v0.1 (September 2024)")
@@ -144,8 +152,9 @@ print("Shortcuts:")
 print("- Left/Right/Up/Down     : move the capture window pixel by pixel")
 print("- Mouse wheel up         : move the capture window position up by 1 pixel")
 print("- Mouse wheel down       : move the capture window position down by 1 pixel")
-print("- Alt + Mouse wheel up   : move the capture window position right by 1 pixel")
-print("- Alt + Mouse wheel down : move the capture window position left by 1 pixel")
+print("- Alt + Mouse wheel up   : move the capture window position left by 1 pixel")
+print("- Alt + Mouse wheel down : move the capture window position right by 1 pixel")
+print("- 'r'                    : temporarily recall the last snaphost")
 print("- 's'                    : take snapshot")
 print("- 'q'                    : exit app")
 
@@ -174,7 +183,7 @@ root.grid_columnconfigure(1, weight = 1)
 
 availableLbl = ttk.Label(root, text = "Snapshots:")
 captureList = []
-for fileName in os.listdir("./songs/scoreShotDB/") :
+for fileName in os.listdir(SCORE_DB_DIR) :
   if fileName.endswith(".png"):
     captureList.append(fileName)
 captureListVar = tk.StringVar(value = captureList)
@@ -208,6 +217,9 @@ captureWin.grid_rowconfigure(0, minsize = BORDER_SIZE)
 captureWin.grid_rowconfigure(1, weight = 1)
 captureWin.grid_rowconfigure(2, minsize = BORDER_SIZE)
 
+
+
+
 # Define a set of distinct colors for the 9 frames
 colors = ["lightsteelblue", "lightblue", "lightsteelblue", "lightblue", 
           "red", "lightblue", "lightsteelblue", "lightblue", "lightsteelblue"]
@@ -222,38 +234,43 @@ for row in range(3):
       c = tk.Canvas(captureWin, bg = colors[color_index], highlightthickness = 0, width = BORDER_SIZE, height = BORDER_SIZE)
     elif ((row == 1) and (col == 1)) :
       c = tk.Canvas(captureWin, bg = colors[color_index], highlightthickness = 2, highlightbackground = "blue")
-    else: 
+    else :
       c = tk.Canvas(captureWin, bg = colors[color_index], highlightthickness = 0)
     c.grid(row = row, column = col, sticky = "nsew")
     canvasArray.append(c)
-
-
 
 rulerObj = ruler.Ruler(canvasArray)
 
 
 
-def on_resize(event) :
-  rulerObj.update()
+x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/screenshot_0.png"))
+recallImg = tk.Label(captureWin, image = x)
+recallImg.grid(row = 1, column = 1, sticky = "nsew")
+recallImg.lower()
+
+
+
 
 
 
 captureWin.attributes("-transparentcolor", "red")
 
-captureWin.bind('<Up>', on_moveWindow)
-captureWin.bind('<Down>', on_moveWindow)
-captureWin.bind('<Left>', on_moveWindow)
-captureWin.bind('<Right>', on_moveWindow)
-captureWin.bind('<MouseWheel>', on_mouseWheel)
-captureWin.bind('<Configure>', on_resize)
-captureWin.bind('<s>', on_screenshot)
-captureWin.bind('<q>', on_quit)
+captureWin.bind("<Up>", on_moveWindow)
+captureWin.bind("<Down>", on_moveWindow)
+captureWin.bind("<Left>", on_moveWindow)
+captureWin.bind("<Right>", on_moveWindow)
+captureWin.bind("<MouseWheel>", on_mouseWheel)
+captureWin.bind("<Configure>", on_resize)
+captureWin.bind('<KeyPress>', on_keyPress)
+captureWin.bind('<KeyRelease>', on_keyRelease)
+captureWin.bind("<s>", on_screenshot)
+captureWin.bind("<q>", on_quit)
 
 captureListBox.bind("<<ListboxSelect>>", on_snapshotSel)
 
 captureCount = 0
 
-#update_mouse_position()
+
 
 root.protocol("WM_DELETE_WINDOW", on_quit)
 

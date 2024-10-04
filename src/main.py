@@ -53,16 +53,13 @@ import os
 (selectedDevice, selectedFile) = fileSelectGUI.show()
 
 if ((selectedFile == "") or (selectedFile == "None")) :
-  raise SystemExit(0)
+  exit()
 
-# MIDI file selected: open the track selection GUI
-#midiTracks = trackSelectGUI.show()
-
-
-
-pygame.init()
+if selectedFile.endswith(".mid") :
+  midiTracks = trackSelectGUI.show()
 
 # Define screen dimensions
+pygame.init()
 screenWidth = 1320
 screenHeight = 500
 screen = pygame.display.set_mode((screenWidth, screenHeight))
@@ -97,6 +94,7 @@ pygame.mixer.init(frequency = 44100, size = -16, channels = 1, buffer = 512)
 
 # Statistics widget
 statsObj = stats.Stats(selectedFile)
+statsObj.showIntroSummary()
 STATS_TASK = pygame.USEREVENT + 2
 pygame.time.set_timer(STATS_TASK, stats.TICK_INTERVAL_MS)
 

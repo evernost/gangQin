@@ -1366,33 +1366,9 @@ class Score :
     # Pianoroll import - v0.X style
     # -----------------------------
     if (majorRev == 0) :
-      print("[INFO] Importing dinosaur .pr file (versions v0.X). Please consider saving it with a newer version of gangQin")
-
-      # Note() objects were converted to a dictionary. Convert them back to a Note object
-      self.pianoRoll = [[[] for noteList in trackList] for trackList in importDict["pianoRoll"]]
-      self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
-      noteCount = 0
-
-      for track in range(self.nStaffs) :
-        for pitch in GRAND_PIANO_MIDI_RANGE :
-          for noteObjImported in importDict["pianoRoll"][track][pitch] :
-            noteObj = note.Note(noteObjImported['pitch'])
-            
-            for noteAttr in noteObj.__dict__ :
-              if noteAttr in noteObjImported :
-                setattr(noteObj, noteAttr, noteObjImported[noteAttr])
-        
-            if (noteObjImported["hand"] == LEFT_HAND) :
-              self.noteOnTimecodes["L"].append(noteObj.startTime)
-            elif (noteObjImported["hand"] == RIGHT_HAND) :
-              self.noteOnTimecodes["R"].append(noteObj.startTime)
-
-            self.noteOnTimecodes["LR_full"].append(noteObj.startTime)
-            
-            self.pianoRoll[track][pitch].append(noteObj)
-
-            noteCount += 1
-
+      print("[INFO] Importing dinosaur .pr file (versions v0.X) has been deprecated since gangQin v1.6")
+      exit()
+      
     # ---------------------------------
     # Pianoroll import - v1.0 and above
     # ---------------------------------
@@ -1464,7 +1440,9 @@ class Score :
     self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
     self.noteOnTimecodes["LR"].sort()
 
-    # Build <cursorsLeft> and <cursorsRight>
+    # Build "cursorsLeft" and "cursorsRight".
+    # Each one is a list of all cursors where something has to be played 
+    # either on the left (cursorsLeft) or right hand (cursorsRight)
     self._buildCursorsLR()
 
     self.scoreLength = len(self.noteOnTimecodes["LR"])
@@ -1474,31 +1452,14 @@ class Score :
     print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
     print(f"[INFO] {noteCount} notes read from .pr file.")
     print(f"[INFO] Score length: {self.scoreLength} steps")
-
-
-
-    # Update the session information
-    if (self.sessionCount >= 1) :
-      avgSessionTimeMin = round(self.sessionTotalPracticeTime/(60*self.sessionCount))
-    else :
-      avgSessionTimeMin = 0.0
-    self.sessionCount += 1
-    self.sessionStartTime = datetime.datetime.now()
-    self.sessionStopTime = -1
-
-    print("")
-    print(f"[INFO] Get ready for session #{self.sessionCount}!")
-    print(f"[INFO] Total practice time: {round(self.sessionTotalPracticeTime/60)} minutes")
-    if (avgSessionTimeMin > 0.0) :
-      print(f"[INFO] Average session time: {avgSessionTimeMin} minutes")
     
     print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")
     
     # If the cursor statistics are inexistant, initialize them.
-    if (len(self.statsCursor) == 0) :
-      self.statsCursor = [0 for _ in range(self.scoreLength)]
-    else :
-      print(f"[DEBUG] Hardest section: at cursor {self.statsCursor.index(max(self.statsCursor))+1}")
+    # if (len(self.statsCursor) == 0) :
+    #   self.statsCursor = [0 for _ in range(self.scoreLength)]
+    # else :
+    #   print(f"[DEBUG] Hardest section: at cursor {self.statsCursor.index(max(self.statsCursor))+1}")
 
 
 

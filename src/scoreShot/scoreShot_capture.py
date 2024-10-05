@@ -25,6 +25,7 @@
 # =============================================================================
 # External libs 
 # =============================================================================
+import database
 import os
 from PIL import ImageGrab, ImageTk, Image
 import ruler
@@ -51,11 +52,8 @@ SCORE_DB_DIR = "./songs/scoreShotDB"
 # Main code
 # =============================================================================
 
-
-
-
 # Callback functions
-def on_screenshot(event):
+def on_screenshot(event) :
   global captureCount
 
   # Define the coordinates of the aperture 
@@ -142,8 +140,7 @@ def on_quit(event = None) :
   root.destroy()
 
 
-    
-    
+
 
 print(f"================================================================================")
 print(f"SCORESHOT CAPTURE - v0.1 (September 2024)")
@@ -161,24 +158,17 @@ print("- 'q'                    : exit app")
 
 
 
-
-
-
-
-# Create the main window
+# -----------------------------------------------------------------------------
+# Main window definition
+# -----------------------------------------------------------------------------
 root = tk.Tk()
 root.geometry("1500x500")
 root.title("scoreShot - Capture database v0.1 [ALPHA] (September 2024)")
 root.resizable(0, 0)
-root.bind('<q>', on_quit)
 
-
-
-
+# Main window layout
 root.grid_columnconfigure(0, minsize = 100)
 root.grid_columnconfigure(1, weight = 1)
-
-
 
 
 availableLbl = ttk.Label(root, text = "Snapshots:")
@@ -192,22 +182,28 @@ x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/screenshot_0.png"))
 imgbox = tk.Label(root, image = x)
 
 
+
 availableLbl.grid(column = 0, row = 0, columnspan = 1, rowspan = 1, sticky = "sw")
 captureListBox.grid(column = 0, row = 1, columnspan = 1, rowspan = 1)
 imgbox.grid(column = 1, row = 1, columnspan = 1, rowspan = 1)
 
 
+# Keyboard bindings
+root.bind('<q>', on_quit)
 
+
+
+# -----------------------------------------------------------------------------
+# Capture window definition
+# -----------------------------------------------------------------------------
 captureWin = tk.Toplevel(root)
 captureWin.geometry("1250x440")
 captureWin.title("scoreShot - Capture tool v0.1 [ALPHA] (September 2024)")
 
-
 # Capture window is always on top
 captureWin.attributes("-topmost", True)
 
-
-
+# Capture window layout
 BORDER_SIZE = 100
 captureWin.grid_columnconfigure(0, minsize = BORDER_SIZE)
 captureWin.grid_columnconfigure(1, weight = 1)
@@ -232,12 +228,17 @@ for row in range(3):
     # The "border" canvases have a fixed size
     if ((row == 0) or (row == 2) or (col == 0) or (col == 2)) :
       c = tk.Canvas(captureWin, bg = colors[color_index], highlightthickness = 0, width = BORDER_SIZE, height = BORDER_SIZE)
+    
+    # The middle canvas (capture aperture) has a variable size
     elif ((row == 1) and (col == 1)) :
       c = tk.Canvas(captureWin, bg = colors[color_index], highlightthickness = 2, highlightbackground = "blue")
     else :
       c = tk.Canvas(captureWin, bg = colors[color_index], highlightthickness = 0)
     c.grid(row = row, column = col, sticky = "nsew")
     canvasArray.append(c)
+
+# Bind the red color (unused in the palette) with the transparency property.
+captureWin.attributes("-transparentcolor", "red")
 
 rulerObj = ruler.Ruler(canvasArray)
 
@@ -249,12 +250,7 @@ recallImg.grid(row = 1, column = 1, sticky = "nsew")
 recallImg.lower()
 
 
-
-
-
-
-captureWin.attributes("-transparentcolor", "red")
-
+# Keyboard bindings
 captureWin.bind("<Up>", on_moveWindow)
 captureWin.bind("<Down>", on_moveWindow)
 captureWin.bind("<Left>", on_moveWindow)
@@ -270,9 +266,32 @@ captureListBox.bind("<<ListboxSelect>>", on_snapshotSel)
 
 captureCount = 0
 
-
-
 root.protocol("WM_DELETE_WINDOW", on_quit)
+
+
+
+
+
+
+# The name of the song file (.pr file) is the only input for this interface.
+# It shall come from a selection GUI.
+# Only .pr files can be selected.
+songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
+
+# Try to load, create a new 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 root.mainloop()

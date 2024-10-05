@@ -507,12 +507,11 @@ while running :
   # -----------------------------------------------------------------------
   # Decide whether to move forward in the score depending on the user input
   # -----------------------------------------------------------------------
-  
-  # Evaluate the status based on the score and the user input
   arbiterMsgQueue = pianoArbiter.eval(teacherNotes)
 
-  # Read the arbiter messages
   for msg in arbiterMsgQueue :
+    
+    # MSG_CURSOR_NEXT: the current input is valid
     if (msg == arbiter.MSG_CURSOR_NEXT) :
       userScore.cursorNext()
       
@@ -523,50 +522,55 @@ while running :
       
       soundNotify.wrongNoteReset()
 
+    # MSG_RESET_COMBO: the current input broke the combo
     if (msg == arbiter.MSG_RESET_COMBO) :  
-      comboFall = (userScore.comboCount != 0)
-    
-      userScore.comboCount = 0
+      
+      # Combo is broken if it was non-zero: you can't break it twice.
+      isComboBroken = (userScore.comboCount != 0)
       soundNotify.wrongNote()
       
-      # Strict mode practice: a wrong note resets the cursor to the beginning of the loop 
-      # when <loopStrictMode> is active.
-      # Reset occurs even if only the start point of the loop has been defined (unbounded looped practice)
+      # TODO: user score shall not be in charge of the combo.
+      userScore.comboCount = 0
+      
+      # Strict looped practice: a wrong note resets the cursor to the beginning of the loop.
       if (userScore.loopStrictMode) :
         c = userScore.getCursor()
+        comboDropHeight = c - userScore.loopStart
         
-        # Bound looped practice
-        # The beginning and the end of the loop are defined.
+        # Bound looped practice (beginning and end loop are defined)
         if userScore.loopEnable :
             
-          # Cursor resets only if it was in the looping range.
-          # Otherwise it is not affected: the user is practicing something outside the loop.
-          # It wouldn't make sense to reset the cursor in this case.
+          # Reset the cursor only if it is in the looping range.
+          # (it could be temporarily outside for specific practice)
           if ((c >= userScore.loopStart) and (c <= userScore.loopEnd)) :
             userScore.setCursor(userScore.loopStart)
             
-            if comboFall :
-              print(f"[INFO] Wrong note! loop reset :(   (combo: {c - userScore.loopStart})")
+            if (isComboBroken and (comboDropHeight > 3)) :
+              # NOTE: requiring a minimal "drop height" to print the message avoids 
+              # flooding the console when many wrong notes are played at once.
+              print(f"[INFO] Wrong note! loop reset :(   (combo: {comboDropHeight})")
 
-          else: 
-            if comboFall :
+          else : 
+            if isComboBroken :
               print("[INFO] Wrong note outside the looping range.")
 
-        # Unbound looped practice
-        # The end of the loop is not defined.
-        # It is commonly used to practice a section and try to go as far as possible.
+        # Unbound looped practice (only the beginning of the loop is defined)
         elif (userScore.loopStart != -1) :
           if (c >= userScore.loopStart) :
             userScore.setCursor(userScore.loopStart)
             
-            if comboFall :
-              print(f"[INFO] Wrong note! loop reset :(   (combo: {c - userScore.loopStart})")
+            if (isComboBroken and (comboDropHeight > 3)):
+              print(f"[INFO] Wrong note! loop reset :(   (combo: {comboDropHeight})")
           
           else : 
-            if comboFall :
+            if isComboBroken :
               print("[INFO] Wrong note outside the looping range.")
 
+      # Disabled looped practice: a wrong note has no particular consequence.
+      else :
+        pass
   
+
 
   # ------------------------------------------------------
   # Show pointing hand when hovering over an editable note
@@ -613,28 +617,20 @@ while running :
   # Show some info relative to the current cursor
   # ---------------------------------------------
   # CURSOR
-  text.render(screen, f"CURSOR: {userScore.cursor+1} / {userScore.scoreLength}", (12, 20), 2, UI_TEXT_COLOR)
+  text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)
   
   # BOOKMARK
-  if userScore.isBookmarked() :
-    text.render(screen, f"BOOKMARK #{userScore.bookmarks.index(userScore.getCursor()) + 1}", (10, 470), 2, UI_TEXT_COLOR)
+  text.showBookmark(screen, userScore.getBookmarkIndex())
 
   # ACTIVE HAND
-  text.render(screen, userScore.activeHands, (1288, 470), 2, UI_TEXT_COLOR)
+  text.showActiveHands(screen, userScore.activeHands)
 
   # LOOP SETTINGS
-  if userScore.loopEnable :
-    text.render(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (400, 20), 2, UI_TEXT_COLOR)
-  else :
-    if (userScore.loopStart >= 0) :
-      text.render(screen, f"LOOP: [{userScore.loopStart+1} ... {userScore.cursor+1} ... _]", (400, 20), 2, UI_TEXT_COLOR)
-
-    if (userScore.loopEnd >= 0) :
-      text.render(screen, f"LOOP: [_  ... {userScore.cursor+1} ... {userScore.loopEnd+1}]", (400, 20), 2, UI_TEXT_COLOR)
-      
+  text.showLoop(screen, userScore.loopEnable, userScore.loopStart, userScore.loopEnd, userScore.getCursor())
+  
   # COMBO COUNT
-  text.render(screen, f"COMBO: {userScore.comboCount} (MAX: {userScore.comboHighestSession} / ALLTIME: {userScore.comboHighestAllTime})", (1312, 20), 2, UI_TEXT_COLOR, justify = text.RIGHT_JUSTIFY)
-
+  text.showCombo(screen, statsObj.comboCount, statsObj.comboHighestSession, statsObj.comboHighestAllTime)
+  
   # FINGER SELECTION
   fingerSelWidget.show(screen)
   if (fingerSelWidget.getEditedNote() != None) :
@@ -655,7 +651,7 @@ while running :
 
 
   # Some statistics
-  userScore.updateStats()
+  # userScore.updateStats()
 
   # Read metronome messages
   if (len(metronomeObj.msgQueue) > 0) :

@@ -345,3 +345,18 @@ class FingerSelector :
     return (UNDEFINED_FINGER, UNDEFINED_HAND)
   
 
+
+  # ---------------------------------------------------------------------------
+  # METHOD FingerSelector.keyRelease(pygameKeys)
+  # ---------------------------------------------------------------------------
+  def keyRelease(self, key) :
+    """
+    Updates the finger selector widget status (ON, OFF, increase tempo, etc.) 
+    based on the keys that have been released.
+    """
+
+    #TODO!
+
+    if (key == pygame.K_m) :
+      pass
+

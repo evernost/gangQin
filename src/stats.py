@@ -172,7 +172,53 @@ class Stats :
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getSessionLog()
+  # ---------------------------------------------------------------------------
+  # def getSessionLog(self) :
+  #   """
+  #   Generates the string with the information of the current session.
+  #   """
 
+  #   day = self.sessionStartTime.day
+    
+  #   if ((4 <= day <= 20) or (24 <= day <= 30)) :
+  #     daySuffix = "th"
+  #   else:
+  #     daySuffix = ["st", "nd", "rd"][day % 10 - 1]
+
+  #   duration = self.sessionStopTime - self.sessionStartTime
+  #   duration = int(round(duration.total_seconds()))
+  #   durationStr = f"{duration // 60}min{duration % 60}s"
+  #   outputStr = self.sessionStartTime.strftime(f"Session {self.sessionCount}: %A, %B %d{daySuffix} at %H:%M. Duration: {durationStr}")
+
+  #   return outputStr
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.updateStats()
+  # ---------------------------------------------------------------------------
+  # def updateStats(self) :
+  #   """
+  #   Add the current cursor to the statistics.
+  #   """
+    
+  #   if (self.getCursor() != self.statsLastCursor) :
+  #     self.statsSteadyCount = 0
+  #     self.statsLastCursor = self.getCursor()
+
+  #   else :
+  #     if (self.statsSteadyCount < CURSOR_STEADY_COUNT_LIMIT) :
+  #       self.statsCursor[self.getCursor()] += 1
+  #       self.statsSteadyCount += 1
+
+  #     elif (self.statsSteadyCount == CURSOR_STEADY_COUNT_LIMIT) :
+  #       print(f"[DEBUG] Steady limit reached! (cursor = {self.getCursor()+1})")
+  #       self.statsSteadyCount += 1
+
+  #     else :
+  #       pass
 
 
 
@@ -185,6 +231,8 @@ class Stats :
     the input keyboard.
     """
     self.cursorIdleTimer = 0
+
+
 
 
 

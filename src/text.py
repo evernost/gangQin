@@ -12,6 +12,9 @@
 # =============================================================================
 # External libs
 # =============================================================================
+# Project specific constants
+from commons import *
+
 import pygame
 
 
@@ -540,13 +543,15 @@ CHAR_POLYGONS["]"] = [
 
 # -----------------------------------------------------------------------------
 # METHOD <renderText>
-# Prints a string on screen 
-# - <loc> = (x,y): coordinates of the first char
-# - <size> = int: each element of charPolygon is drawn as a square of pixel
-#   This arguments defines the size of each square (in pixels)
-# - <col> = (R,G,B): text color
 # -----------------------------------------------------------------------------
 def render(screenInst, string, loc, size, col = (40, 50, 60), justify = LEFT_JUSTIFY) :
+  """
+  Prints a string on a pygame screen.
+  - "loc" = (x,y): coordinates of the first char
+  - "size" (int): each element of charPolygon is drawn as a square of pixel
+    This arguments defines the size of each square (in pixels)
+  - "col" = (R,G,B): text color in RGB values
+  """
   x0 = loc[0]; y0 = loc[1]
   w = size; h = size
 
@@ -566,6 +571,54 @@ def render(screenInst, string, loc, size, col = (40, 50, 60), justify = LEFT_JUS
 
     x0 += 6*w; y0 = loc[1]
 
+
+
+# -----------------------------------------------------------------------------
+# FUNCTION <showCursor>
+# -----------------------------------------------------------------------------
+def showCursor(screen, cursor, scoreLength) :
+  render(screen, f"CURSOR: {cursor} / {scoreLength}", (12, 20), 2, UI_TEXT_COLOR)
+
+
+
+# -----------------------------------------------------------------------------
+# FUNCTION <showBookmark>
+# -----------------------------------------------------------------------------
+def showBookmark(screen, bookmarkIndex) :
+  if (bookmarkIndex != -1) :
+    render(screen, f"BOOKMARK #{bookmarkIndex}", (10, 470), 2, UI_TEXT_COLOR)
+
+
+
+# -----------------------------------------------------------------------------
+# FUNCTION <showActiveHands>
+# -----------------------------------------------------------------------------
+def showActiveHands(screen, activeHands) :
+  render(screen, activeHands, (1288, 470), 2, UI_TEXT_COLOR)
+
+
+
+# -----------------------------------------------------------------------------
+# FUNCTION <showLoop>
+# -----------------------------------------------------------------------------
+def showLoop(screen, loopEnable, loopStart, loopEnd, cursor) :
+  if loopEnable :
+    render(screen, f"LOOP: [{loopStart+1} ... {cursor+1} ... {loopEnd+1}]", (400, 20), 2, UI_TEXT_COLOR)
+  else :
+    if (loopStart >= 0) :
+      render(screen, f"LOOP: [{loopStart+1} ... {cursor+1} ... _]", (400, 20), 2, UI_TEXT_COLOR)
+
+    if (loopEnd >= 0) :
+      render(screen, f"LOOP: [_  ... {cursor+1} ... {loopEnd+1}]", (400, 20), 2, UI_TEXT_COLOR)
+
+
+
+# -----------------------------------------------------------------------------
+# FUNCTION <showLoop>
+# -----------------------------------------------------------------------------
+def showCombo(screen, comboCount, comboHighestSession, comboHighestAllTime) :
+  render(screen, f"COMBO: {comboCount} (MAX: {comboHighestSession} / ALLTIME: {comboHighestAllTime})", (1312, 20), 2, UI_TEXT_COLOR, justify = RIGHT_JUSTIFY)
+
+
+
   
-
-

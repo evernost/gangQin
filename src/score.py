@@ -108,15 +108,15 @@ class Score :
     # Resets every time a wrong note is played.
     # Keeps track of the best scores achieved
     # TODO: remove it from the Score class
-    self.comboCount = 0
-    self.comboDrop = False
-    self.comboHighestSession = 0
-    self.comboHighestAllTime = 0
+    # self.comboCount = 0
+    # self.comboDrop = False
+    # self.comboHighestSession = 0
+    # self.comboHighestAllTime = 0
 
     # Some learning statistics
-    self.statsLastCursor = -1
-    self.statsSteadyCount = 0
-    self.statsCursor = []
+    # self.statsLastCursor = -1
+    # self.statsSteadyCount = 0
+    # self.statsCursor = []
 
     # Loop practice feature
     self.loopEnable = False
@@ -132,11 +132,11 @@ class Score :
     self.tempoSections = [(1, 120)]
 
     # Session info
-    self.sessionCount = 0
-    self.sessionStartTime = datetime.datetime.now()
-    self.sessionStopTime = 0
-    self.sessionTotalPracticeTime = 0
-    self.sessionLog = []
+    # self.sessionCount = 0
+    # self.sessionStartTime = datetime.datetime.now()
+    # self.sessionStopTime = 0
+    # self.sessionTotalPracticeTime = 0
+    # self.sessionLog = []
 
 
 
@@ -691,6 +691,24 @@ class Score :
     Returns True if the current position in the score is bookmarked.
     """
     return (self.cursor in self.bookmarks)
+  
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getBookmarkIndex()
+  # ---------------------------------------------------------------------------
+  def getBookmarkIndex(self) :
+    """
+    Returns the index (i.e. the bookmark number) of the current cursor.
+    If the current cursor is not bookmarked, it returns -1.
+
+    Note: the bookmark index is returned in 'friendly' indexing i.e. starting 
+    from 1.
+    """
+    
+    if self.isBookmarked() :      
+      return self.bookmarks.index(self.getCursor()) + 1
+    else :
+      return -1
   
 
 
@@ -1526,26 +1544,26 @@ class Score :
   # ---------------------------------------------------------------------------
   # METHOD Score.updateStats()
   # ---------------------------------------------------------------------------
-  def updateStats(self) :
-    """
-    Add the current cursor to the statistics.
-    """
+  # def updateStats(self) :
+  #   """
+  #   Add the current cursor to the statistics.
+  #   """
     
-    if (self.getCursor() != self.statsLastCursor) :
-      self.statsSteadyCount = 0
-      self.statsLastCursor = self.getCursor()
+  #   if (self.getCursor() != self.statsLastCursor) :
+  #     self.statsSteadyCount = 0
+  #     self.statsLastCursor = self.getCursor()
 
-    else :
-      if (self.statsSteadyCount < CURSOR_STEADY_COUNT_LIMIT) :
-        self.statsCursor[self.getCursor()] += 1
-        self.statsSteadyCount += 1
+  #   else :
+  #     if (self.statsSteadyCount < CURSOR_STEADY_COUNT_LIMIT) :
+  #       self.statsCursor[self.getCursor()] += 1
+  #       self.statsSteadyCount += 1
 
-      elif (self.statsSteadyCount == CURSOR_STEADY_COUNT_LIMIT) :
-        print(f"[DEBUG] Steady limit reached! (cursor = {self.getCursor()+1})")
-        self.statsSteadyCount += 1
+  #     elif (self.statsSteadyCount == CURSOR_STEADY_COUNT_LIMIT) :
+  #       print(f"[DEBUG] Steady limit reached! (cursor = {self.getCursor()+1})")
+  #       self.statsSteadyCount += 1
 
-      else :
-        pass
+  #     else :
+  #       pass
 
 
 
@@ -1610,24 +1628,24 @@ class Score :
   # ---------------------------------------------------------------------------
   # METHOD Score.getSessionLog()
   # ---------------------------------------------------------------------------
-  def getSessionLog(self) :
-    """
-    Generates the string with the information of the current session.
-    """
+  # def getSessionLog(self) :
+  #   """
+  #   Generates the string with the information of the current session.
+  #   """
 
-    day = self.sessionStartTime.day
+  #   day = self.sessionStartTime.day
     
-    if ((4 <= day <= 20) or (24 <= day <= 30)) :
-      daySuffix = "th"
-    else:
-      daySuffix = ["st", "nd", "rd"][day % 10 - 1]
+  #   if ((4 <= day <= 20) or (24 <= day <= 30)) :
+  #     daySuffix = "th"
+  #   else:
+  #     daySuffix = ["st", "nd", "rd"][day % 10 - 1]
 
-    duration = self.sessionStopTime - self.sessionStartTime
-    duration = int(round(duration.total_seconds()))
-    durationStr = f"{duration // 60}min{duration % 60}s"
-    outputStr = self.sessionStartTime.strftime(f"Session {self.sessionCount}: %A, %B %d{daySuffix} at %H:%M. Duration: {durationStr}")
+  #   duration = self.sessionStopTime - self.sessionStartTime
+  #   duration = int(round(duration.total_seconds()))
+  #   durationStr = f"{duration // 60}min{duration % 60}s"
+  #   outputStr = self.sessionStartTime.strftime(f"Session {self.sessionCount}: %A, %B %d{daySuffix} at %H:%M. Duration: {durationStr}")
 
-    return outputStr
+  #   return outputStr
     
 
 

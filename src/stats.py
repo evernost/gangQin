@@ -45,16 +45,16 @@ TICK_INTERVAL_MS = 500
 class Stats :
 
   """
-  Monitors the activity, user inputs for statistic purposes.
-  It provides various hindsights relative to the performance on the song like:
+  Monitors the activity, right/wrong notes to provide some statistics.
+  It gives access to various hindsights relative to the performance on the song like:
   - active time spent learning the score
   - number of practice sessions
   - average practice time per session 
   - etc.
 
-  All information are stored in a human readable log file.
+  All information are stored in a human readable log file in ./logs
 
-  Note: all information is stored LOCALLY for the sole purpose of the user ONLY. 
+  NOTE: all information is stored LOCALLY for the sole purpose of the user ONLY. 
   Nothing is sent to a server for telemetry mumbo jumbo or any "improving user experience"
   kind of crap.
   """

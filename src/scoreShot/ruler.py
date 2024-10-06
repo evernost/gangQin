@@ -65,52 +65,52 @@ class Ruler :
     """
     This function is called every time the capture window is resized or moved.
     """
-    apHeight = self.canvasArray[4].winfo_height()
-    apWidth = self.canvasArray[4].winfo_width()
+    captureHeight = self.canvasArray[4].winfo_height()
+    captureWidth = self.canvasArray[4].winfo_width()
   
-    # If the transparent canvas has a weird size, it is probably not initialised yet.
-    if ((apWidth <= 1) or (apHeight <= 1)) :
+    # If the transparent canvas has a weird size, it has probably not been initialised yet.
+    if ((captureWidth <= 1) or (captureHeight <= 1)) :
       pass
     
     else :
       
-      # At init: give a first plausible position for the cursors
+      # At init: give a first plausible position for the rulers/handles.
       if not(self._initDone) :
-        self.canvasArray[4].coords(self.rulerUp,     (0, 50, apWidth, 50))
-        self.canvasArray[4].coords(self.rulerDown,   (0, apHeight-50, apWidth, apHeight-50))
-        self.canvasArray[4].coords(self.rulerLeft,   (50, 0, 50, apHeight))
-        self.canvasArray[4].coords(self.rulerRight,  (apWidth-50, 0, apWidth-50, apHeight))
+        self.canvasArray[4].coords(self.rulerUp,     (0, 50, captureWidth, 50))
+        self.canvasArray[4].coords(self.rulerDown,   (0, captureHeight-50, captureWidth, captureHeight-50))
+        self.canvasArray[4].coords(self.rulerLeft,   (50, 0, 50, captureHeight))
+        self.canvasArray[4].coords(self.rulerRight,  (captureWidth-50, 0, captureWidth-50, captureHeight))
 
         self.canvasArray[1].coords(self.handleUp,    (50-5, 80, 50+5, 99))
-        self.canvasArray[7].coords(self.handleDown,  (apWidth-50-5, 0, apWidth-50+5, 19))
+        self.canvasArray[7].coords(self.handleDown,  (captureWidth-50-5, 0, captureWidth-50+5, 19))
         self.canvasArray[3].coords(self.handleLeft,  (80, 45, 99, 55))
-        self.canvasArray[5].coords(self.handleRight, (0, apHeight-50-5, 19, apHeight-50+5))
+        self.canvasArray[5].coords(self.handleRight, (0, captureHeight-50-5, 19, captureHeight-50+5))
         self._initDone = True
       
-      # Afterwards: clamp the values to avoid losing the cursors 
+      # Afterwards: clamp the values to avoid losing the rulers/handles.
       else :
         (_,y,_,_) = self.canvasArray[4].coords(self.rulerUp)
-        y = min(y, apHeight-10)
+        y = min(y, captureHeight-10)
         y = max(y, 10)
-        self.canvasArray[4].coords(self.rulerUp,     (0, y, apWidth, y))
+        self.canvasArray[4].coords(self.rulerUp,     (0, y, captureWidth, y))
         self.canvasArray[3].coords(self.handleLeft,  (80, y-5, 99, y+5))
         
         (_,y,_,_) = self.canvasArray[4].coords(self.rulerDown)
-        y = min(y, apHeight-10)
+        y = min(y, captureHeight-10)
         y = max(y, 10)
-        self.canvasArray[4].coords(self.rulerDown,   (0, y, apWidth, y))
+        self.canvasArray[4].coords(self.rulerDown,   (0, y, captureWidth, y))
         self.canvasArray[5].coords(self.handleRight, (0, y-5, 19, y+5))
         
         (x,_,_,_) = self.canvasArray[4].coords(self.rulerLeft)
-        x = min(x, apWidth-10)
+        x = min(x, captureWidth-10)
         x = max(x, 10)
-        self.canvasArray[4].coords(self.rulerLeft,   (x, 0, x, apHeight))
+        self.canvasArray[4].coords(self.rulerLeft,   (x, 0, x, captureHeight))
         self.canvasArray[1].coords(self.handleUp,    (x-5, 80, x+5, 99))
         
         (x,_,_,_) = self.canvasArray[4].coords(self.rulerRight)
-        x = min(x, apWidth-10)
+        x = min(x, captureWidth-10)
         x = max(x, 10)
-        self.canvasArray[4].coords(self.rulerRight,  (x, 0, x, apHeight))
+        self.canvasArray[4].coords(self.rulerRight,  (x, 0, x, captureHeight))
         self.canvasArray[7].coords(self.handleDown,  (x-5, 0, x+5, 19))
         
         

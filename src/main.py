@@ -165,7 +165,7 @@ while running :
       # Send message to the widgets
       metronomeObj.keyRelease(event.key)
       fingerSelWidget.keyRelease(keys)
-
+      pianoRollWidget.keyRelease(keys)
 
     elif (event.type == pygame.KEYDOWN) :
       keys    = pygame.key.get_pressed()
@@ -176,6 +176,7 @@ while running :
       # Send message to the widgets
       metronomeObj.keyPress(keys)
       fingerSelWidget.keyPress(keys)
+      pianoRollWidget.keyPress(keys)
 
       # -----------------
       # "q": exit the app
@@ -411,6 +412,8 @@ while running :
     # -------------------------------------------------------------------------
     elif (event.type == pygame.MOUSEBUTTONDOWN) :
       
+      pianoRollWidget.mouseEvent(event)
+
       # Left click
       if (event.button == MOUSE_LEFT_CLICK) :
         clickMsg = True

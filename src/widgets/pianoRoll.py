@@ -50,19 +50,12 @@ class PianoRoll :
     self.yBottom = yBottom
 
     # Defines the amount of notes shown in the piano roll view
-    # Units are in timecodes. Use <avgNoteDuration> to use it conveniently
+    # Units are in timecodes. Use "avgNoteDuration" to use it conveniently
     self.viewSpan = 1000
 
     self.noteArray = [[] for _ in range(128)]
     self.nStaffs = 0
     
-    self.teacherNotes = []
-    self.teacherNotesPolygons = []
-    self.teacherMidi = []
-
-    # TODO: add comments to explain the meaning of this
-    self.activeNoteClicked = ()
-
     # Color scheme
     self.backgroundRGB = (80, 80, 80)         # Background color for the piano roll
     self.keyLineRGB = (50, 50, 50)            # Color of the lines separating each notes in the piano roll
@@ -76,12 +69,17 @@ class PianoRoll :
     self.d = BLACK_NOTE_WIDTH
     self.e = NOTE_SPACING
 
+    # UI interaction queues
+    self._altPressed = False
+    self.msgQueueIn = []
+    self.msgQueueOut = []
+
 
 
   # ---------------------------------------------------------------------------
   # METHOD <_drawKeyLines> (private)
   #
-  # Draw the thin lines in-between each note
+  # Draw the thin lines in-between each note.
   # ---------------------------------------------------------------------------
   def _drawKeyLines(self, screenInst) :
 
@@ -209,23 +207,6 @@ class PianoRoll :
             
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD <getActiveNoteClicked>
-  #
-  # TODO
-  # ---------------------------------------------------------------------------
-  # def getActiveNoteClicked(self) :
-  #   return self.activeNoteClicked
-  
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD <updateNoteProperties>
-  #
-  # TODO
-  # ---------------------------------------------------------------------------
-  # def updateNoteProperties(self, note) :
-  #   self.noteArray[note.hand][note.pitch][note.noteIndex].finger = note.finger
 
     
 
@@ -241,3 +222,76 @@ class PianoRoll :
     self.noteArray = noteArray.copy()
 
 
+
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD PianoRoll.keyPress(pygameKeys)
+  # ---------------------------------------------------------------------------
+  def keyPress(self, pygameKeys) :
+    """
+    TODO
+    """
+
+    if pygameKeys[pygame.K_LALT] :
+      print("[DEBUG] Keypress: 'ALT'")
+
+    # if pygameKeys[pygame.K_m] :
+
+    #   if not(self.enable) :
+    #     self.enable = True
+    #     self._switched = True
+    #     self.msgQueue.append(MSG_TIMER_ON)
+
+    #   if pygameKeys[pygame.K_KP_PLUS] :
+    #     self._optionMode = True
+    #     self.bpm += 1
+    #     if not(MSG_TEMPO_UPDATE in self.msgQueue) :
+    #       self.msgQueue.append(MSG_TEMPO_UPDATE)
+      
+    #   elif pygameKeys[pygame.K_KP_MINUS] :
+    #     self._optionMode = True
+    #     self.bpm -= 1
+    #     if not(MSG_TEMPO_UPDATE in self.msgQueue) :
+    #       self.msgQueue.append(MSG_TEMPO_UPDATE)
+
+    # else :
+    #   self.switched = False
+    #   self._optionMode = False
+
+
+      
+  # ---------------------------------------------------------------------------
+  # METHOD PianoRoll.keyRelease(pygameKeys)
+  # ---------------------------------------------------------------------------
+  def keyRelease(self, pygameKeys) :
+    """
+    TODO
+    """
+
+    if pygameKeys[pygame.K_LALT] :
+      print("[DEBUG] Keyrelease: '<'")
+
+    # if (key == pygame.K_m) :
+
+    #   if self._switched :
+    #     self._switched = False
+
+    #   else : 
+    #     if self._optionMode :
+    #       self._optionMode = False
+    #     else :
+    #       self.enable = False
+    #       self.counter = 1
+    #       self.msgQueue.append(MSG_TIMER_OFF)
+
+
+
+  def mouseEvent(self, event) :
+    print("[DEBUG] Keyrelease: '<'")
+    # if (event.type == pygame.MOUSEBUTTONDOWN) :
+    #   keys    = pygame.key.get_pressed()
+    #   ctrlKey = event.mod & pygame.KMOD_CTRL
+    #   altKey  = event.mod & pygame.KMOD_ALT

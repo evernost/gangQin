@@ -198,7 +198,7 @@ root.bind('<q>', on_quit)
 # -----------------------------------------------------------------------------
 captureWin = tk.Toplevel(root)
 captureWin.geometry("1250x440")
-captureWin.title("scoreShot - Capture tool v0.1 [ALPHA] (September 2024)")
+captureWin.title("scoreShot - Capture tool v0.1 [ALPHA] (October 2024)")
 
 # Capture window is always on top
 captureWin.attributes("-topmost", True)
@@ -278,8 +278,8 @@ root.protocol("WM_DELETE_WINDOW", on_quit)
 # Only .pr files can be selected.
 songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
 
-# Try to load, create a new 
-
+# Try to load the snapshot database, create one if it doesn't exist.
+db = database.Database(songFile)
 
 
 

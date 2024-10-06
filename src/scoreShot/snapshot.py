@@ -45,7 +45,8 @@ class Snapshot :
     self.displayRectLeftHand = []   # Display rectangles' coordinates for the left hand
     self.displayRectRightHand = []  # Display rectangles' coordinates for the right hand
     
-    self.hasIssue = False           # Set to True if any issue has been reported in the player or in gangQin
+    self.needsRework = False        # Set to True if any issue has been reported in the player or in gangQin
+    self.fileMissing = False        # Set to True if the capture file could not be found
   
   
   

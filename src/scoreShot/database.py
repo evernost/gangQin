@@ -101,21 +101,15 @@ class Database :
 
     # Snapshot folder exists
     else :
-      if not(os.path.exists(self.filename)) :
+      if not(os.path.exists(self.jsonFile)) :
         print("[DEBUG] The snapshot directory exists, but there is no JSON.")
         exit()
       
       else : 
-        if os.path.isfile(self.file) :
-          with open(self.file, "r") as jsonFile :
-            data = json.load(jsonFile)
+        with open(self.file, "r") as jsonFile :
+          data = json.load(jsonFile)
         
-        else :
-          print(f"[NOTE] No snapshot database found (JSON), a new one will be created.")
-
-
-
-
+        
 
 
     

@@ -97,7 +97,6 @@ class EditorGUI :
     self.captureWin.attributes("-topmost", True)
 
     # Capture window layout
-    
     self.captureWin.grid_columnconfigure(0, minsize = BORDER_SIZE)
     self.captureWin.grid_columnconfigure(1, weight = 1)
     self.captureWin.grid_columnconfigure(2, minsize = BORDER_SIZE)
@@ -130,9 +129,9 @@ class EditorGUI :
     self.captureWin.attributes("-transparentcolor", "red")
 
     x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/screenshot_0.png"))
-    recallImg = tk.Label(self.captureWin, image = x)
-    recallImg.grid(row = 1, column = 1, sticky = "nsew")
-    recallImg.lower()
+    self.recallImg = tk.Label(self.captureWin, image = x)
+    self.recallImg.grid(row = 1, column = 1, sticky = "nsew")
+    self.recallImg.lower()
 
 
     # Keyboard bindings
@@ -212,13 +211,13 @@ class EditorGUI :
     self.captureWin.update()
 
     screenshot = ImageGrab.grab((x1,y1,x2,y2))
-    screenshot.save(f"{SCORE_DB_DIR}/screenshot_{captureCount}.png")
+    screenshot.save(f"{SCORE_DB_DIR}/screenshot_0.png")
     
     # Turn the rulers back on
     self.rulerObj.visible = True
     self.canvasArray[4].config(highlightthickness = 2)
 
-    print(f"[DEBUG] Screenshot saved as 'screenshot_{captureCount}.png'")
+    print(f"[DEBUG] Screenshot saved as 'screenshot_0.png'")
 
 
 

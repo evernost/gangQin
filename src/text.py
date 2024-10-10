@@ -621,4 +621,9 @@ def showCombo(screen, comboCount, comboHighestSession, comboHighestAllTime) :
 
 
 
-  
+# -----------------------------------------------------------------------------
+# FUNCTION <showMetronome>
+# -----------------------------------------------------------------------------
+def showMetronome(screen, metronomeObj) :
+  if metronomeObj.enable :
+    render(screen, f"BPM:{metronomeObj.bpm} - {metronomeObj.num}/{metronomeObj.denom} - {metronomeObj.counter}", (950, 470), 2, UI_TEXT_COLOR)

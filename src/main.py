@@ -641,11 +641,8 @@ while running :
       fingerSelWidget.resetEditedNote()
   
   # METRONOME
-  if metronomeObj.enable :
-    text.render(screen, f"BPM:{metronomeObj.bpm} - {metronomeObj.num}/{metronomeObj.denom} - {metronomeObj.counter}", (900, 470), 2, UI_TEXT_COLOR)
-
-
-
+  text.showMetronome(screen, metronomeObj)
+  
   # Request to edit the fingersatz with automatic note highlighting
   if (setFingersatzMsg > 0) :
     fingerSelWidget.setFingerAutoHighlight(setFingersatzMsg, userScore.teacherNotes, userScore.activeHands)

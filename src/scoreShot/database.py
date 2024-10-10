@@ -32,7 +32,6 @@ import string
 
 
 
-
 # =============================================================================
 # Main code
 # =============================================================================
@@ -103,7 +102,7 @@ class Database :
     else :
       if not(os.path.exists(self.jsonFile)) :
         print("[DEBUG] The snapshot directory exists, but there is no JSON.")
-        exit()
+        #exit()
       
       else : 
         with open(self.file, "r") as jsonFile :
@@ -140,6 +139,26 @@ class Database :
   
   
   def createFileName(self) :
-    allowedChars = string.ascii_uppercase + string.digits
+    #allowedChars = string.ascii_uppercase + string.digits
+    allowedChars = "ABCDEFGHKMNPQRTUVWXYZ" + "23456789"
     
     return "".join(random.choice(allowedChars) for _ in range(5))
+  
+
+
+  def save(self) :
+    """
+    Saves the current database state in a JSON file.
+    """
+    print("todo")
+
+
+
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  db = Database("TEST")
+  
+  s = db.createFileName()
+  print(f"[DEBUG] Sample internal file name: '{s}'")

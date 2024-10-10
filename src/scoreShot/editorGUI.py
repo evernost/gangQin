@@ -3,19 +3,13 @@
 # Project       : gangQin
 # Module name   : editorGUI
 # File name     : editorGUI.py
-# Purpose       : 
+# Purpose       : self-contained class with all the appropriate elements to 
+#                 interact with the GUI.
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : Sunday, 07 October 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
-
-
-
-# =============================================================================
-# Tasks
-# =============================================================================
-# None listed yet.
 
 
 
@@ -27,6 +21,7 @@ import os
 from PIL import ImageGrab, ImageTk, Image
 import ruler
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import ttk
 
 
@@ -35,8 +30,9 @@ from tkinter import ttk
 # =============================================================================
 # Constants pool
 # =============================================================================
-# Some high resolution screens use a scaling factor that messes with the 
-# coordinates of 'Imagegrab'.
+# Some high resolution screens (typically 4k) use a scaling factor that messes 
+# with the coordinates of 'Imagegrab'.
+# Declare here the scaling that applies to you:
 # Zoom factor 100%: SCREEN_SCALING = 1.0
 # Zoom factor 250%: SCREEN_SCALING = 2.5
 SCREEN_SCALING = 1.0
@@ -45,6 +41,14 @@ SCORE_DB_DIR = "./songs/scoreShotDB"
 
 
 BORDER_SIZE = 100
+
+
+
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'editorGUI.py'")
 
 
 
@@ -60,6 +64,10 @@ class EditorGUI :
     
     self.root = root
     
+    self.hasUnsavedChanges = False
+
+
+
     # Main window properties
     self.root.geometry("1500x500")
     self.root.title("scoreShot - Capture database v0.1 [ALPHA] (September 2024)")
@@ -105,23 +113,28 @@ class EditorGUI :
     self.captureWin.grid_rowconfigure(1, weight = 1)
     self.captureWin.grid_rowconfigure(2, minsize = BORDER_SIZE)
 
-    colors = ["lightsteelblue", "lightblue", "lightsteelblue", "lightblue", 
-          "red", "lightblue", "lightsteelblue", "lightblue", "lightsteelblue"]
-
     self.canvasArray = []
     for row in range(3):
       for col in range(3):
-        color_index = row * 3 + col
+        i = (col + row*3)
+        
+        if (i == 4) :
+          color = "red"
+        elif ((i % 2) == 0) :
+          color = "lightsteelblue"
+        else :
+          color = "lightblue"
         
         # The "border" canvases have a fixed size
         if ((row == 0) or (row == 2) or (col == 0) or (col == 2)) :
-          c = tk.Canvas(self.captureWin, bg = colors[color_index], highlightthickness = 0, width = BORDER_SIZE, height = BORDER_SIZE)
+          c = tk.Canvas(self.captureWin, bg = color, highlightthickness = 0, width = BORDER_SIZE, height = BORDER_SIZE)
         
         # The middle canvas (capture aperture) has a variable size
         elif ((row == 1) and (col == 1)) :
-          c = tk.Canvas(self.captureWin, bg = colors[color_index], highlightthickness = 2, highlightbackground = "blue")
+          c = tk.Canvas(self.captureWin, bg = color, highlightthickness = 2, highlightbackground = "blue")
         else :
-          c = tk.Canvas(self.captureWin, bg = colors[color_index], highlightthickness = 0)
+          c = tk.Canvas(self.captureWin, bg = color, highlightthickness = 0)
+        
         c.grid(row = row, column = col, sticky = "nsew")
         self.canvasArray.append(c)
 
@@ -167,10 +180,26 @@ class EditorGUI :
 
 
 
+  def _exitChecks(self) :
+    """
+    Define here all the actions to be done before leaving the app.
+    """
+    self.root.withdraw()
+    response = messagebox.askyesno("Exit", "Save the unsaved changes?")
 
 
-  
+
+
+
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # Callbacks methods
+  # ---------------------------------------------------------------------------
   def CLBK_onQuit(self, event = None) : 
+    self._exitChecks()
     print("Exiting app...")
     self.root.destroy()
 
@@ -188,7 +217,7 @@ class EditorGUI :
       elif (event.delta < 0) :
         self.captureWin.geometry(f"+{x+1}+{y}")
     
-    # Mousewheel
+    # no(Shift key) + mousewheel
     else :
       if (event.delta > 0) :
         self.captureWin.geometry(f"+{x}+{y-1}")
@@ -205,7 +234,7 @@ class EditorGUI :
     y2 = y1 + self.canvasArray[4].winfo_height()*SCREEN_SCALING
 
     # Turn off the rulers, we don't want them in the screenshot.
-    self.rulerObj.visible = False
+    self.ruler.visible = False
     self.canvasArray[4].config(highlightthickness = 0)
 
     self.captureWin.update()
@@ -214,7 +243,7 @@ class EditorGUI :
     screenshot.save(f"{SCORE_DB_DIR}/screenshot_0.png")
     
     # Turn the rulers back on
-    self.rulerObj.visible = True
+    self.ruler.visible = True
     self.canvasArray[4].config(highlightthickness = 2)
 
     print(f"[DEBUG] Screenshot saved as 'screenshot_0.png'")
@@ -252,16 +281,21 @@ class EditorGUI :
       self.imgbox.image = x
 
 
+
   def CLBK_onKeyPress(self, event) :
     if (event.char == 'r') :
       self.recallImg.lift()
+
+
 
   def CLBK_onKeyRelease(self, event) :
     if (event.char == "r") :
       self.recallImg.lower()
 
+
+
   def CLBK_onResize(self, event) :
-    self.rulerObj.update()
+    self.ruler.update()
 
 
 

@@ -12,20 +12,17 @@
 
 
 
-
-
-
 # =============================================================================
 # External libs 
 # =============================================================================
-
+# None.
 
 
 
 # =============================================================================
 # Constants pool
 # =============================================================================
-
+# None.
 
 
 
@@ -35,10 +32,12 @@
 class Snapshot :
   def __init__(self, name, index) :
     
-    self.file = ""                  # Name of the underlying snapshot image file
-    self.index = 0
+    self.file = ""                  # Name of the actual snapshot image file
+    self.index = 0                  # Index of the image in the database
     
-    self.description = ""           # Description string of the snapshot (page number in the original score, etc.)
+    self.displayName = ""           # String to display in the GUI listbox
+
+    self.description = ""           # Description string of the snapshot (page number in the original score, any comment, etc.)
     
     self.cursorRange = []           # Range of cursors (in the score) that is covered by this snapshot
     
@@ -46,8 +45,15 @@ class Snapshot :
     self.displayRectRightHand = []  # Display rectangles' coordinates for the right hand
     
     self.needsRework = False        # Set to True if any issue has been reported in the player or in gangQin
-    self.fileMissing = False        # Set to True if the capture file could not be found
+    self.fileMissing = False        # Set to True if the image file could not be found
   
+
+
+
+
   
-  
-  
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'snapshot.py'")

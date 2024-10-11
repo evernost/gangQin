@@ -73,11 +73,12 @@ print("- 'q'                    : exit app")
 songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
 
 # Try to load the snapshot database, create one if it doesn't exist.
-db = database.Database(songFile)
+#db = database.Database(songFile)
 
 
 root = tk.Tk()
 
 app = editorGUI.EditorGUI(root)
+app.initDB(songFile)
 
 root.mainloop()

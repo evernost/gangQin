@@ -142,7 +142,7 @@ class Database :
     #allowedChars = string.ascii_uppercase + string.digits
     allowedChars = "ABCDEFGHKMNPQRTUVWXYZ" + "23456789"
     
-    return "".join(random.choice(allowedChars) for _ in range(5))
+    return "".join(random.choice(allowedChars) for _ in range(6))
   
 
 

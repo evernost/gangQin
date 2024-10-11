@@ -39,16 +39,7 @@ SCREEN_SCALING = 1.0
 
 SCORE_DB_DIR = "./songs/scoreShotDB"
 
-
 BORDER_SIZE = 100
-
-
-
-# =============================================================================
-# Unit tests
-# =============================================================================
-if (__name__ == "__main__") :
-  print("[INFO] There are no unit tests available for 'editorGUI.py'")
 
 
 
@@ -80,13 +71,6 @@ class EditorGUI :
     # imgbox = tk.Label(root, image = x)
     self.imgbox = tk.Label(self.root, text = "*** No signal ***")
     
-    # captureList = []
-    # for fileName in os.listdir(SCORE_DB_DIR) :
-    #   if fileName.endswith(".png"):
-    #     captureList.append(fileName)
-    # captureListVar = tk.StringVar(value = captureList)
-    # captureListBox = tk.Listbox(root, listvariable = captureListVar, width = 30, font = ("Consolas", 10))
-
     # Main window layout
     self.root.grid_columnconfigure(0, minsize = 100)
     self.root.grid_columnconfigure(1, weight = 1)
@@ -173,9 +157,31 @@ class EditorGUI :
 
     # Keyboard bindings
     self.root.bind('<q>', self.CLBK_onQuit)
-
-
     self.root.protocol("WM_DELETE_WINDOW", self.CLBK_onQuit)
+
+
+
+
+  def initDB(self, songFile) :
+    self.db = database.Database(songFile)
+
+    if (self.db.nSnapshots != 0) :
+      
+      
+      # Fill in the listbox
+      # captureList = []
+      # for fileName in os.listdir(SCORE_DB_DIR) :
+      #   if fileName.endswith(".png"):
+      #     captureList.append(fileName)
+      # captureListVar = tk.StringVar(value = captureList)
+      # captureListBox = tk.Listbox(root, listvariable = captureListVar, width = 30, font = ("Consolas", 10))
+      print("TODO")
+
+
+      # Show the first image of the list
+
+
+
 
 
 
@@ -184,14 +190,10 @@ class EditorGUI :
     """
     Define here all the actions to be done before leaving the app.
     """
-    self.root.withdraw()
-    response = messagebox.askyesno("Exit", "Save the unsaved changes?")
-
-
-
-
-
-
+    if self.hasUnsavedChanges :
+      self.root.withdraw()
+      self.captureWin.withdraw()
+      save = messagebox.askyesno("Exit", "Save the unsaved changes?")
 
 
 
@@ -311,7 +313,11 @@ class EditorGUI :
 
 
 
-
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'editorGUI.py'")
 
 
 

@@ -198,10 +198,15 @@ class EditorGUI :
     Define here all the actions to be done before leaving the app.
     Typically, look for unsaved changes.
     """
-    if self.hasUnsavedChanges :
-      self.root.withdraw()
-      self.captureWin.withdraw()
+    if self.db.hasUnsavedChanges :
       save = messagebox.askyesno("Exit", "Save the unsaved changes?")
+
+      # Save to JSON
+      # ...
+      
+    self.root.withdraw()
+    self.captureWin.withdraw()
+      
 
 
 

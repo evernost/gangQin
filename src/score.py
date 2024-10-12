@@ -36,11 +36,12 @@ CURSOR_STEADY_COUNT_LIMIT = 300
 
 
 
+# =============================================================================
+# Main code
+# =============================================================================
 class Score :
 
-  """
-  DESCRIPTION
-  
+  """  
   The Score objects contains the music score, but also stores all the settings 
   of the practice session.
   
@@ -54,21 +55,15 @@ class Score :
   The Score abstracts these timecodes and browses in the song using a 'cursor'.
   Every time a note starts playing in the song, a cursor is assigned to it.
   
-  
-  
-  ATTRIBUTES
-  
+  Description of the attributes:
   - <noteOnTimecodes>: dictionary containing the following subsets:
     - "LR_full" : full list of the note start timecodes (including duplicates)
     - "LR"      : same as "LR", without the duplicate values
     - "L"       : list of the note start timecodes (left hand only), duplicates removed
     - "R"       : list of the note start timecodes (right hand only), duplicates removed
     
-    
   - <cursorsLeft>   : list of cursors values where a note is pressed on the left hand
   - <cursorsRight>  : list of cursors values where a note is pressed on the right hand
-
-
   """
   def __init__(self) :
     

@@ -31,6 +31,9 @@ HANDLE_HEIGHT = 10
 # Main code
 # =============================================================================
 class Ruler :
+  
+  
+  
   def __init__(self, canvasArray) :
     self.canvasArray = canvasArray
     
@@ -61,10 +64,13 @@ class Ruler :
 
 
 
-
+  # ---------------------------------------------------------------------------
+  # METHOD Ruler.update()
+  # ---------------------------------------------------------------------------
   def update(self) :
     """
-    This function is called every time the capture window is resized or moved.
+    Updates the ...
+    This function must be called every time the capture window is resized or moved.
     """
     captureHeight = self.canvasArray[4].winfo_height()
     captureWidth = self.canvasArray[4].winfo_width()
@@ -114,13 +120,57 @@ class Ruler :
         self.canvasArray[4].coords(self.rulerRight,  (x, 0, x, captureHeight))
         self.canvasArray[7].coords(self.handleDown,  (x-5, 0, x+5, 19))
         
-        
+
+
+  # ---------------------------------------------------------------------------
+  # GETTER Ruler.visible
+  # ---------------------------------------------------------------------------
+  @property
+  def visible(self) :
+    return self._visible
+
+  # ---------------------------------------------------------------------------
+  # SETTER Ruler.visible
+  # ---------------------------------------------------------------------------
+  @visible.setter
+  def visible(self, val) :
+    """
+    Setter for the 'visible' attribute.
+    This function is called every time the 'visible' attribute is set.
+    """
+    self._visible = val
+    
+    if val :
+      self.canvasArray[4].itemconfig(self.rulerLeft, state = "normal")
+      self.canvasArray[4].itemconfig(self.rulerRight, state = "normal")
+      self.canvasArray[4].itemconfig(self.rulerUp, state = "normal")
+      self.canvasArray[4].itemconfig(self.rulerDown, state = "normal")
+      
+      self.canvasArray[3].itemconfig(self.handleLeft, state = "normal")
+      self.canvasArray[5].itemconfig(self.handleRight, state = "normal")
+      self.canvasArray[1].itemconfig(self.handleUp, state = "normal")
+      self.canvasArray[7].itemconfig(self.handleDown, state = "normal")
+
+    else :
+      self.canvasArray[4].itemconfig(self.rulerLeft, state = "hidden")
+      self.canvasArray[4].itemconfig(self.rulerRight, state = "hidden")
+      self.canvasArray[4].itemconfig(self.rulerUp, state = "hidden")
+      self.canvasArray[4].itemconfig(self.rulerDown, state = "hidden")
+      
+      self.canvasArray[3].itemconfig(self.handleLeft, state = "hidden")
+      self.canvasArray[5].itemconfig(self.handleRight, state = "hidden")
+      self.canvasArray[1].itemconfig(self.handleUp, state = "hidden")
+      self.canvasArray[7].itemconfig(self.handleDown, state = "hidden")
 
 
 
-
-
+  # ---------------------------------------------------------------------------
+  # METHOD Ruler.update()
+  # ---------------------------------------------------------------------------
   def bindHandle(self, handle, canvasId) :
+    """
+    TODO
+    """
     self.canvasArray[canvasId].tag_bind(handle, "<Button-1>", lambda event, id = canvasId : self.CLBK_onClick(event, id))
     self.canvasArray[canvasId].tag_bind(handle, "<B1-Motion>", lambda event, id = canvasId : self.CLBK_onDrag(event, id))
 
@@ -137,66 +187,38 @@ class Ruler :
 
 
   def CLBK_onDrag(self, event, canvasId) :
+    captureHeight = self.canvasArray[4].winfo_height()
+    captureWidth = self.canvasArray[4].winfo_width()
+    
     dx = event.x - self.dragData["x"]
     dy = event.y - self.dragData["y"]
     
     if (canvasId == 1) :
-      self.canvasArray[1].move(self.handleUp, dx, 0)
-      self.canvasArray[4].move(self.rulerLeft, dx, 0)
+      (rulerLeft_x, _, _, _) = self.canvasArray[4].coords(self.rulerLeft)
+      if (((rulerLeft_x + dx) >= 0) and ((rulerLeft_x + dx) < captureWidth)) :
+        self.canvasArray[1].move(self.handleUp, dx, 0)
+        self.canvasArray[4].move(self.rulerLeft, dx, 0)
     elif (canvasId == 3) :
-      self.canvasArray[3].move(self.handleLeft, 0, dy)
-      self.canvasArray[4].move(self.rulerUp, 0, dy)
+      (_, rulerUp_y, _, _) = self.canvasArray[4].coords(self.rulerUp)
+      if (((rulerUp_y + dy) >= 0) and ((rulerUp_y + dy) < captureHeight)) :
+        self.canvasArray[3].move(self.handleLeft, 0, dy)
+        self.canvasArray[4].move(self.rulerUp, 0, dy)
     elif (canvasId == 5) :
-      self.canvasArray[5].move(self.handleRight, 0, dy)
-      self.canvasArray[4].move(self.rulerDown, 0, dy)
+      (_, rulerDown_y, _, _) = self.canvasArray[4].coords(self.rulerDown)
+      if (((rulerDown_y + dy) >= 0) and ((rulerDown_y + dy) < captureHeight)) :
+        self.canvasArray[5].move(self.handleRight, 0, dy)
+        self.canvasArray[4].move(self.rulerDown, 0, dy)
     elif (canvasId == 7) :
-      self.canvasArray[7].move(self.handleDown, dx, 0)
-      self.canvasArray[4].move(self.rulerRight, dx, 0)
+      (rulerRight_x, _, _, _) = self.canvasArray[4].coords(self.rulerRight)
+      if (((rulerRight_x + dx) >= 0) and ((rulerRight_x + dx) < captureWidth)) :
+        self.canvasArray[7].move(self.handleDown, dx, 0)
+        self.canvasArray[4].move(self.rulerRight, dx, 0)
 
     self.dragData["x"] = event.x
     self.dragData["y"] = event.y
 
-  @property
-  def visible(self) :
-    return self._visible
-
-  @visible.setter
-  def visible(self, val) :
-    """
-    Setter for the 'visible' attribute.
-    This function is called every time the 'visible' attribute is set.
-    """
-    if val :
-      self.canvasArray[4].itemconfig(self.rulerLeft, state = "normal")
-      self.canvasArray[4].itemconfig(self.rulerRight, state = "normal")
-      self.canvasArray[4].itemconfig(self.rulerUp, state = "normal")
-      self.canvasArray[4].itemconfig(self.rulerDown, state = "normal")
-      
-      self.canvasArray[3].itemconfig(self.handleLeft, state = "normal")
-      self.canvasArray[5].itemconfig(self.handleRight, state = "normal")
-      self.canvasArray[1].itemconfig(self.handleUp, state = "normal")
-      self.canvasArray[7].itemconfig(self.handleDown, state = "normal")
-
-
-
-
-
-    else :
-      self.canvasArray[4].itemconfig(self.rulerLeft, state = "hidden")
-      self.canvasArray[4].itemconfig(self.rulerRight, state = "hidden")
-      self.canvasArray[4].itemconfig(self.rulerUp, state = "hidden")
-      self.canvasArray[4].itemconfig(self.rulerDown, state = "hidden")
-      
-      self.canvasArray[3].itemconfig(self.handleLeft, state = "hidden")
-      self.canvasArray[5].itemconfig(self.handleRight, state = "hidden")
-      self.canvasArray[1].itemconfig(self.handleUp, state = "hidden")
-      self.canvasArray[7].itemconfig(self.handleDown, state = "hidden")
-
-
-      # Change the "highlightbackground" property: it will show in the screeshot otherwise.
+  
     
-    self._visible = val
-
 
 
 # =============================================================================

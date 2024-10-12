@@ -121,15 +121,22 @@ class Ruler :
 
 
   def bindHandle(self, handle, canvasId) :
-    self.canvasArray[canvasId].tag_bind(handle, "<Button-1>", lambda event, id = canvasId : self.on_click(event, id))
-    self.canvasArray[canvasId].tag_bind(handle, "<B1-Motion>", lambda event, id = canvasId : self.on_drag(event, id))
+    self.canvasArray[canvasId].tag_bind(handle, "<Button-1>", lambda event, id = canvasId : self.CLBK_onClick(event, id))
+    self.canvasArray[canvasId].tag_bind(handle, "<B1-Motion>", lambda event, id = canvasId : self.CLBK_onDrag(event, id))
 
-  def on_click(self, event, canvasId) :
+
+
+  # ---------------------------------------------------------------------------
+  # Callbacks methods
+  # ---------------------------------------------------------------------------
+  def CLBK_onClick(self, event, canvasId) :
     self.dragData["x"] = event.x
     self.dragData["y"] = event.y
     self.dragData["id"] = canvasId
 
-  def on_drag(self, event, canvasId) :
+
+
+  def CLBK_onDrag(self, event, canvasId) :
     dx = event.x - self.dragData["x"]
     dy = event.y - self.dragData["y"]
     

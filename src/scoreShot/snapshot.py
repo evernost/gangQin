@@ -30,8 +30,9 @@
 # Main code
 # =============================================================================
 class Snapshot :
-  def __init__(self, name, index) :
+  def __init__(self) :
     
+    self.dir = ""                   # Directory of the snapshot
     self.file = ""                  # Name of the actual snapshot image file
     self.index = 0                  # Index of the image in the database
     
@@ -46,9 +47,6 @@ class Snapshot :
     
     self.needsRework = False        # Set to True if any issue has been reported in the player or in gangQin
     self.fileMissing = False        # Set to True if the image file could not be found
-  
-
-
 
 
   

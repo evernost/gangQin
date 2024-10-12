@@ -20,6 +20,7 @@ import database
 import os
 from PIL import ImageGrab, ImageTk, Image
 import ruler
+import snapshot
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
@@ -37,7 +38,7 @@ from tkinter import ttk
 # Zoom factor 250%: SCREEN_SCALING = 2.5
 SCREEN_SCALING = 1.0
 
-SCORE_DB_DIR = "./songs/scoreShotDB"
+SCORE_DB_DIR = "./snaps"
 
 BORDER_SIZE = 100
 
@@ -49,46 +50,44 @@ BORDER_SIZE = 100
 class EditorGUI :
 
   """
-  Class for the main GUI of the scoreShot (capture) app.
+  Defines the class for the main GUI of the scoreShot (capture) app.
   """  
   def __init__(self, root) :
     
     self.root = root
     
-    self.hasUnsavedChanges = False
-
-
-
-    # Main window properties
+    # [MAIN WINDOW] Properties
     self.root.geometry("1500x500")
     self.root.title("scoreShot - Capture database v0.1 [ALPHA] (September 2024)")
     self.root.resizable(0, 0)
 
-    # Add widgets
+    # [MAIN WINDOW] Widgets
     self.availableLbl = ttk.Label(self.root, text = "Snapshots:")
     self.captureListBox = tk.Listbox(self.root, width = 30, font = ("Consolas", 10))
     # x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/screenshot_0.png"))
     # imgbox = tk.Label(root, image = x)
     self.imgbox = tk.Label(self.root, text = "*** No signal ***")
     
-    # Main window layout
+    # [MAIN WINDOW] Layout
     self.root.grid_columnconfigure(0, minsize = 100)
     self.root.grid_columnconfigure(1, weight = 1)
     self.availableLbl.grid(column = 0, row = 0, columnspan = 1, rowspan = 1, sticky = "sw")
     self.captureListBox.grid(column = 0, row = 1, columnspan = 1, rowspan = 1)
     self.imgbox.grid(column = 1, row = 1, columnspan = 1, rowspan = 1)
 
+    # [MAIN WINDOW] Keyboard bindings
+    self.root.bind('<q>', self.CLBK_onQuit)
+    self.root.protocol("WM_DELETE_WINDOW", self.CLBK_onQuit)
 
 
-    # Capture window properties
+
+    # [CAPTURE WINDOW] Properties
     self.captureWin = tk.Toplevel(self.root)
     self.captureWin.geometry("1250x440")
     self.captureWin.title("scoreShot - Capture tool v0.1 [ALPHA] (October 2024)")
+    self.captureWin.attributes("-topmost", True)  # Make it always on top
 
-    # Make it always on top
-    self.captureWin.attributes("-topmost", True)
-
-    # Capture window layout
+    # [CAPTURE WINDOW] Layout
     self.captureWin.grid_columnconfigure(0, minsize = BORDER_SIZE)
     self.captureWin.grid_columnconfigure(1, weight = 1)
     self.captureWin.grid_columnconfigure(2, minsize = BORDER_SIZE)
@@ -97,9 +96,10 @@ class EditorGUI :
     self.captureWin.grid_rowconfigure(1, weight = 1)
     self.captureWin.grid_rowconfigure(2, minsize = BORDER_SIZE)
 
+    # [CAPTURE WINDOW] Widgets
     self.canvasArray = []
-    for row in range(3):
-      for col in range(3):
+    for row in range(3) :
+      for col in range(3) :
         i = (col + row*3)
         
         if (i == 4) :
@@ -125,13 +125,12 @@ class EditorGUI :
     # Bind the red color (unused in the palette) with the transparency property.
     self.captureWin.attributes("-transparentcolor", "red")
 
-    x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/screenshot_0.png"))
-    self.recallImg = tk.Label(self.captureWin, image = x)
-    self.recallImg.grid(row = 1, column = 1, sticky = "nsew")
-    self.recallImg.lower()
+    # Ruler widget
+    self.ruler = ruler.Ruler(self.canvasArray)
 
 
-    # Keyboard bindings
+    
+    # [CAPTURE WINDOW] Keyboard bindings
     self.captureWin.bind("<Up>", self.CLBK_onMoveWindow)
     self.captureWin.bind("<Down>", self.CLBK_onMoveWindow)
     self.captureWin.bind("<Left>", self.CLBK_onMoveWindow)
@@ -145,27 +144,18 @@ class EditorGUI :
 
     self.captureListBox.bind("<<ListboxSelect>>", self.CLBK_onSnapshotSel)
 
+  
 
-
-    self.ruler = ruler.Ruler(self.canvasArray)
-
-
-
-
-
-
-
-    # Keyboard bindings
-    self.root.bind('<q>', self.CLBK_onQuit)
-    self.root.protocol("WM_DELETE_WINDOW", self.CLBK_onQuit)
-
-
-
-
-  def initDB(self, songFile) :
+  # ---------------------------------------------------------------------------
+  # METHOD EditorGUI.loadDatabase()
+  # ---------------------------------------------------------------------------
+  def loadDatabase(self, songFile) :
+    """
+    Loads the snapshot database of the song.
+    """
     self.db = database.Database(songFile)
 
-    if (self.db.nSnapshots != 0) :
+    if not(self.db.isEmpty) :
       
       
       # Fill in the listbox
@@ -179,16 +169,34 @@ class EditorGUI :
 
 
       # Show the first image of the list
+      # TODO
+    
+      # Define the recall image
+      self._setRecallImage()
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD EditorGUI._setRecallImage()
+  # ---------------------------------------------------------------------------
+  def _setRecallImage(self) :
+    """
+    TODO
+    """
+    x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/screenshot_0.png"))
+    self.recallImg = tk.Label(self.captureWin, image = x)
+    self.recallImg.grid(row = 1, column = 1, sticky = "nsew")
+    self.recallImg.lower()
 
 
 
-
+  # ---------------------------------------------------------------------------
+  # METHOD EditorGUI._exitChecks()
+  # ---------------------------------------------------------------------------
   def _exitChecks(self) :
     """
     Define here all the actions to be done before leaving the app.
+    Typically, look for unsaved changes.
     """
     if self.hasUnsavedChanges :
       self.root.withdraw()
@@ -229,26 +237,28 @@ class EditorGUI :
 
 
   def CLBK_onScreenshot(self, event) :
-    # Define the coordinates of the aperture 
+    # Get the coordinates of the aperture 
     x1 = self.canvasArray[4].winfo_rootx()*SCREEN_SCALING
     y1 = self.canvasArray[4].winfo_rooty()*SCREEN_SCALING
     x2 = x1 + self.canvasArray[4].winfo_width()*SCREEN_SCALING
     y2 = y1 + self.canvasArray[4].winfo_height()*SCREEN_SCALING
 
-    # Turn off the rulers, we don't want them in the screenshot.
+    # Turn off the ruler display
+    # (We don't want them in the screenshot)
     self.ruler.visible = False
     self.canvasArray[4].config(highlightthickness = 0)
+    self.captureWin.update() # Force the update of the tkinter window
 
-    self.captureWin.update()
+    # Capture!
+    screenshotImg = ImageGrab.grab((x1,y1,x2,y2))
+    self.db.insert(screenshotImg)
 
-    screenshot = ImageGrab.grab((x1,y1,x2,y2))
-    screenshot.save(f"{SCORE_DB_DIR}/screenshot_0.png")
     
-    # Turn the rulers back on
+    # Turn on the ruler display
     self.ruler.visible = True
     self.canvasArray[4].config(highlightthickness = 2)
 
-    print(f"[DEBUG] Screenshot saved as 'screenshot_0.png'")
+    
 
 
 

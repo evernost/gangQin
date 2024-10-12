@@ -15,10 +15,8 @@
 # =============================================================================
 # Tasks
 # =============================================================================
-# - TODO: find the relation between Imagegrab and the window coordinates
-# - TODO: find how to show an image (what container)
-# - TODO: test how immediate a screenshot loading is
-# - TODO: see how to implement the drag and drop of the rulers
+# TODO: the handles for the rulers can go off-screen; is that normal?
+
 
 
 
@@ -79,6 +77,6 @@ songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
 root = tk.Tk()
 
 app = editorGUI.EditorGUI(root)
-app.initDB(songFile)
+app.loadDatabase(songFile)
 
 root.mainloop()

@@ -50,6 +50,8 @@ class Database :
     
     self.hasUnsavedChanges = False
 
+    self.indexLastInsertion = -1
+
     self._makeDatabaseFileName(prFile)
     self._init()
     self._sanityCheck()
@@ -113,12 +115,10 @@ class Database :
         # Create a brand new one
         # ...
         
-        
-      
       else : 
-        with open(self.file, "r") as jsonFile :
+        with open(self.jsonFile, "r") as jsonFile :
           data = json.load(jsonFile)
-        
+          self.fromDict(data)
         
 
 
@@ -147,43 +147,47 @@ class Database :
     If index = -1 (default) the image is inserted at the end of the list.
     """
     
-    # Get a name for the snapshot file
-    name = self.generateFileName()
+    # Invalid input detection
+    if (index < -1) :
+      print(f"[DEBUG] Database.insert: index cannot be less than -1 (got: {index})")
+      return None
+    elif (index > self.nSnapshots) :
+      print(f"[DEBUG] Database.insert: cannot insert beyond the last index (nSnapshots = {self.nSnapshots}, index = {index})")
+      return None
+    elif (index == -1) : 
+      insertIndex = self.nSnapshots
+    else : 
+      insertIndex = index
 
-    # Save the file
-    img.save(f"{self.snapFolder}/{name}.png")
-    print(f"[DEBUG] Screenshot saved as '{name}.png'")
+    # Get a name for the snapshot file
+    filename = self.generateFileName() + ".png"
+
+    # Save the snapshot image
+    img.save(f"{self.snapFolder}/{filename}")
+    print(f"[DEBUG] Screenshot saved as '{filename}'")
     
     # Create the snapshot object 
     s = snapshot.Snapshot()
     s.dir         = self.snapFolder
-    s.name        = name
-    s.index       = index
-    s.displayName = f"Capture {index}"
-
-    # Insert the snapshot in the list.
-    # If inserted before the end, all indices need to be updated.
-    if ((index >= 0) and (index <= (self.nSnapshots-2))) :
-      self.snapshots.insert(index, s)
-
-      for i in range(index+1, self.nSnapshots) :
+    s.file        = filename
+    s.index       = insertIndex
+    s.displayName = f"Capture {insertIndex+1}"
+    
+    # Insert the snapshot in the list
+    self.snapshots.insert(insertIndex, s)
+    
+    # If inserted before the end, all indices after need to be updated.
+    if ((insertIndex >= 0) and (insertIndex <= (self.nSnapshots-1))) :
+      for i in range(insertIndex+1, self.nSnapshots) :
         self.snapshots[i].index = i+1
-
-      self.nSnapshots += 1
-      self.hasUnsavedChanges = True
-
-    elif ((index == -1) or (index == (self.nSnapshots-1))) :
-      self.snapshots.insert(index, s)
-      self.nSnapshots += 1
-      self.hasUnsavedChanges = True
-
-    else :
-      print("[ERROR] Invalid index.")
+    
+    self.nSnapshots += 1
+    self.isEmpty = False
+    self.hasUnsavedChanges = True
 
     print(f"[DEBUG] nSnapshots = {self.nSnapshots}")
 
     
-
 
   # ---------------------------------------------------------------------------
   # METHOD Database.delete()
@@ -194,7 +198,11 @@ class Database :
     
     If index = -1 (default) the last item of the list is deleted.
     """
+  
     print("[WARNING] Method 'Database.delete' is not implemented yet.")
+
+    # Don't forget to update this flag
+    self.isEmpty = (self.nSnapshots == 0)
 
   
 
@@ -205,8 +213,8 @@ class Database :
     """
     Returns the list of items that need to be shown in the scoreShot GUI's listbox.
     """
-    print("[WARNING] Method 'Database.getListBoxDescriptor' is not implemented yet.")
-
+    L = [s.displayName for s in self.snapshots]
+    return L
   
   
 
@@ -224,7 +232,49 @@ class Database :
     # Restrain to a subset of chars 
     allowedChars = "ABCDEFGHKMNPQRTUVWXYZ" + "23456789"    
     return "".join(random.choice(allowedChars) for _ in range(6))
-  
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Database.fromDict()
+  # ---------------------------------------------------------------------------
+  def fromDict(self, data) :
+    """
+    Loads the content of the Database class from a dictionary for easier 
+    serialisation.
+    """
+    
+    self.nSnapshots         = data["nSnapshots"]
+    self.snapshots          = []
+    self.isEmpty            = data["isEmpty"]
+    self.songName           = data["songName"]
+    self.jsonName           = data["jsonName"]
+    self.jsonFile           = data["jsonFile"]
+    self.snapFolder         = data["snapFolder"]
+    self.hasUnsavedChanges  = data["hasUnsavedChanges"]
+    #self.indexLastInsertion = data["indexLastInsertion"]     # No need to retrieve that.
+    
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Database.toDict()
+  # ---------------------------------------------------------------------------
+  def toDict(self) :
+    """
+    Converts the content of the Database class to a dictionary for easier 
+    serialisation.
+    """
+    return {
+      "nSnapshots"        : self.nSnapshots,
+      "snapshots"         : [s.toDict() for s in self.snapshots],
+      "isEmpty"           : self.isEmpty,
+      "songName"          : self.songName,
+      "jsonName"          : self.jsonName,
+      "jsonFile"          : self.jsonFile,
+      "snapFolder"        : self.snapFolder,
+      "hasUnsavedChanges" : self.hasUnsavedChanges
+    }
+
 
 
   # ---------------------------------------------------------------------------
@@ -234,7 +284,9 @@ class Database :
     """
     Saves the current database state in a JSON file.
     """
-    print("[WARNING] Method 'Database.getListBoxDescriptor' is not implemented yet.")
+    d = self.toDict()
+    with open(self.jsonFile, "w") as jsonFile :
+      json.dump(d, jsonFile, indent = 2)
 
 
 

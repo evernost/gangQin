@@ -63,16 +63,14 @@ class EditorGUI :
 
     # [MAIN WINDOW] Widgets
     self.availableLbl = ttk.Label(self.root, text = "Snapshots:")
-    self.captureListBox = tk.Listbox(self.root, width = 30, font = ("Consolas", 10))
-    # x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/screenshot_0.png"))
-    # imgbox = tk.Label(root, image = x)
+    self.snapshotListbox = tk.Listbox(self.root, width = 30, font = ("Consolas", 10))
     self.imgbox = tk.Label(self.root, text = "*** No signal ***")
     
     # [MAIN WINDOW] Layout
     self.root.grid_columnconfigure(0, minsize = 100)
     self.root.grid_columnconfigure(1, weight = 1)
     self.availableLbl.grid(column = 0, row = 0, columnspan = 1, rowspan = 1, sticky = "sw")
-    self.captureListBox.grid(column = 0, row = 1, columnspan = 1, rowspan = 1)
+    self.snapshotListbox.grid(column = 0, row = 1, columnspan = 1, rowspan = 1)
     self.imgbox.grid(column = 1, row = 1, columnspan = 1, rowspan = 1)
 
     # [MAIN WINDOW] Keyboard bindings
@@ -97,6 +95,10 @@ class EditorGUI :
     self.captureWin.grid_rowconfigure(2, minsize = BORDER_SIZE)
 
     # [CAPTURE WINDOW] Widgets
+    self.recallImg = tk.Label(self.captureWin)
+    self.recallImg.grid(row = 1, column = 1, sticky = "nsew")
+    self.recallImg.lower()
+
     self.canvasArray = []
     for row in range(3) :
       for col in range(3) :
@@ -129,7 +131,10 @@ class EditorGUI :
     self.ruler = ruler.Ruler(self.canvasArray)
 
 
-    
+    # TODO
+    self.snapshotSelected = -1
+
+
     # [CAPTURE WINDOW] Keyboard bindings
     self.captureWin.bind("<Up>", self.CLBK_onMoveWindow)
     self.captureWin.bind("<Down>", self.CLBK_onMoveWindow)
@@ -142,7 +147,7 @@ class EditorGUI :
     self.captureWin.bind("<s>", self.CLBK_onScreenshot)
     self.captureWin.bind("<q>", self.CLBK_onQuit)
 
-    self.captureListBox.bind("<<ListboxSelect>>", self.CLBK_onSnapshotSel)
+    self.snapshotListbox.bind("<<ListboxSelect>>", self.CLBK_onSnapshotSel)
 
   
 
@@ -164,15 +169,40 @@ class EditorGUI :
       #   if fileName.endswith(".png"):
       #     captureList.append(fileName)
       # captureListVar = tk.StringVar(value = captureList)
-      # captureListBox = tk.Listbox(root, listvariable = captureListVar, width = 30, font = ("Consolas", 10))
+      # snapshotListbox = tk.Listbox(root, listvariable = captureListVar, width = 30, font = ("Consolas", 10))
       print("TODO")
 
 
       # Show the first image of the list
       # TODO
     
-      # Define the recall image
-      self._setRecallImage()
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD EditorGUI._updateListBox()
+  # ---------------------------------------------------------------------------
+  def _updateListBox(self) :
+    """
+    Updates the content of the snapshot listbox.
+    """
+
+    # Fill in the listbox
+    # captureList = []
+    # for fileName in os.listdir(SCORE_DB_DIR) :
+    #   if fileName.endswith(".png"):
+    #     captureList.append(fileName)
+    
+    L = self.db.getListBoxDescriptor()
+
+    # Clear any existing items in the listbox
+    self.snapshotListbox.delete(0, tk.END)
+    
+    # Insert each item from the list into the listbox
+    for item in L :
+      self.snapshotListbox.insert(tk.END, item)
+    
+    # snapshotListboxVar = tk.StringVar(value = captureList)
+    # snapshotListbox = tk.Listbox(root, listvariable = snapshotListboxVar, width = 30, font = ("Consolas", 10))
 
 
 
@@ -183,10 +213,13 @@ class EditorGUI :
     """
     TODO
     """
-    x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/screenshot_0.png"))
-    self.recallImg = tk.Label(self.captureWin, image = x)
-    self.recallImg.grid(row = 1, column = 1, sticky = "nsew")
-    self.recallImg.lower()
+    if not(self.db.isEmpty) :
+      s = self.db.snapshots[self.db.indexLastInsertion]
+      x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/screenshot_0.png"))
+
+
+    else :
+      print("[DEBUG] EditorGUI._setRecallImage: database is empty, no image to recall!")
 
 
 
@@ -199,14 +232,14 @@ class EditorGUI :
     Typically, look for unsaved changes.
     """
     if self.db.hasUnsavedChanges :
-      save = messagebox.askyesno("Exit", "Save the unsaved changes?")
+      saveReq = messagebox.askyesno("Exit", "Save the unsaved changes?")
 
-      # Save to JSON
-      # ...
+      if saveReq :
+        self.db.hasUnsavedChanges = False
+        self.db.save()
       
     self.root.withdraw()
     self.captureWin.withdraw()
-      
 
 
 
@@ -258,12 +291,12 @@ class EditorGUI :
     screenshotImg = ImageGrab.grab((x1,y1,x2,y2))
     self.db.insert(screenshotImg)
 
-    
     # Turn on the ruler display
     self.ruler.visible = True
     self.canvasArray[4].config(highlightthickness = 2)
 
-    
+    # Update the content of the snapshot listbox
+    self._updateListBox()
 
 
 
@@ -283,19 +316,26 @@ class EditorGUI :
 
 
   def CLBK_onSnapshotSel(self, event) :
-    index = self.captureListBox.curselection()
+    index = self.snapshotListbox.curselection()
+
     if index :
-      imgName = self.captureListBox.get(index)
-
-      x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/{imgName}"))
-
-      # TODO: resize so that the picture occupies the same real estate no
-      # matter what (even if there was some screen scaling)
-      # ...
+      self.snapshotSelected = index[0]
+      print(f"[DEBUG] Now selecting snapshot index: {self.snapshotSelected}")
 
 
-      self.imgbox.config(image = x)
-      self.imgbox.image = x
+      # imgName = self.snapshotListbox.get(index)
+
+      # x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/{imgName}"))
+
+      # # TODO: resize so that the picture occupies the same real estate no
+      # # matter what (even if there was some screen scaling)
+      # # ...
+
+
+      # self.imgbox.config(image = x)
+      # self.imgbox.image = x
+
+
 
 
 

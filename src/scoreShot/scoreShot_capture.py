@@ -15,8 +15,7 @@
 # =============================================================================
 # Tasks
 # =============================================================================
-# TODO: the handles for the rulers can go off-screen; is that normal?
-
+# TODO: on the main window, a scroll browses through the snapshots.
 
 
 
@@ -69,10 +68,6 @@ print("- 'q'                    : exit app")
 # It shall come from a selection GUI.
 # Only .pr files can be selected.
 songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
-
-# Try to load the snapshot database, create one if it doesn't exist.
-#db = database.Database(songFile)
-
 
 root = tk.Tk()
 

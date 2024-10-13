@@ -67,7 +67,9 @@ class Snapshot :
       "description"           : self.description,
       "cursorRange"           : self.cursorRange,
       "leftHandRectCoords"    : self.leftHandRectCoords,
-      "rightHandRectCoords"   : self.rightHandRectCoords
+      "rightHandRectCoords"   : self.rightHandRectCoords,
+      "needsRework"           : self.needsRework,
+      "fileMissing"           : self.fileMissing,
     } 
   
 

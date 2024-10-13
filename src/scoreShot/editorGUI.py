@@ -74,7 +74,8 @@ class EditorGUI :
     self.imgbox.grid(column = 1, row = 1, columnspan = 1, rowspan = 1)
 
     # [MAIN WINDOW] Keyboard bindings
-    self.root.bind('<q>', self.CLBK_onQuit)
+    self.root.bind("<q>", self.CLBK_onQuit)
+    self.root.bind("<Delete>", self.CLBK_onDel)
     self.root.protocol("WM_DELETE_WINDOW", self.CLBK_onQuit)
 
 
@@ -130,10 +131,8 @@ class EditorGUI :
     # Ruler widget
     self.ruler = ruler.Ruler(self.canvasArray)
 
-
     # TODO
     self.snapshotSelected = -1
-
 
     # [CAPTURE WINDOW] Keyboard bindings
     self.captureWin.bind("<Up>", self.CLBK_onMoveWindow)
@@ -161,20 +160,7 @@ class EditorGUI :
     self.db = database.Database(songFile)
 
     if not(self.db.isEmpty) :
-      
-      
-      # Fill in the listbox
-      # captureList = []
-      # for fileName in os.listdir(SCORE_DB_DIR) :
-      #   if fileName.endswith(".png"):
-      #     captureList.append(fileName)
-      # captureListVar = tk.StringVar(value = captureList)
-      # snapshotListbox = tk.Listbox(root, listvariable = captureListVar, width = 30, font = ("Consolas", 10))
-      print("TODO")
-
-
-      # Show the first image of the list
-      # TODO
+      self._updateListBox()
     
 
 
@@ -183,15 +169,9 @@ class EditorGUI :
   # ---------------------------------------------------------------------------
   def _updateListBox(self) :
     """
-    Updates the content of the snapshot listbox.
+    Updates the content of the snapshot selection listbox.
     """
 
-    # Fill in the listbox
-    # captureList = []
-    # for fileName in os.listdir(SCORE_DB_DIR) :
-    #   if fileName.endswith(".png"):
-    #     captureList.append(fileName)
-    
     L = self.db.getListBoxDescriptor()
 
     # Clear any existing items in the listbox
@@ -201,9 +181,6 @@ class EditorGUI :
     for item in L :
       self.snapshotListbox.insert(tk.END, item)
     
-    # snapshotListboxVar = tk.StringVar(value = captureList)
-    # snapshotListbox = tk.Listbox(root, listvariable = snapshotListboxVar, width = 30, font = ("Consolas", 10))
-
 
 
   # ---------------------------------------------------------------------------
@@ -216,7 +193,6 @@ class EditorGUI :
     if not(self.db.isEmpty) :
       s = self.db.snapshots[self.db.indexLastInsertion]
       x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/screenshot_0.png"))
-
 
     else :
       print("[DEBUG] EditorGUI._setRecallImage: database is empty, no image to recall!")
@@ -243,16 +219,26 @@ class EditorGUI :
 
 
 
+
+
+
   # ---------------------------------------------------------------------------
   # Callbacks methods
   # ---------------------------------------------------------------------------
+  
+  
+  # --------
+  # App exit
+  # --------
   def CLBK_onQuit(self, event = None) : 
     self._exitChecks()
     print("Exiting app...")
     self.root.destroy()
 
 
-
+  # -----------
+  # Mouse wheel 
+  # -----------
   def CLBK_onMouseWheel(self, event) :
     # Get the current coordinates of the snapshot window
     x = self.captureWin.winfo_x()
@@ -274,6 +260,9 @@ class EditorGUI :
 
 
 
+  # ------------
+  # 's' keypress
+  # ------------
   def CLBK_onScreenshot(self, event) :
     # Get the coordinates of the aperture 
     x1 = self.canvasArray[4].winfo_rootx()*SCREEN_SCALING
@@ -323,19 +312,24 @@ class EditorGUI :
       print(f"[DEBUG] Now selecting snapshot index: {self.snapshotSelected}")
 
 
+      imgName = self.db.getSnapshotNameByIndex(index[0])
+
       # imgName = self.snapshotListbox.get(index)
 
-      # x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/{imgName}"))
+      x = ImageTk.PhotoImage(Image.open(imgName))
 
       # # TODO: resize so that the picture occupies the same real estate no
       # # matter what (even if there was some screen scaling)
       # # ...
 
 
-      # self.imgbox.config(image = x)
-      # self.imgbox.image = x
+      self.imgbox.config(image = x)
+      self.imgbox.image = x
 
 
+
+  def CLBK_onDel(self, event) :
+    print("[DEBUG] 'Del' key is not handled yet.")
 
 
 

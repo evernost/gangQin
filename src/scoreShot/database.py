@@ -22,7 +22,6 @@ import json
 import os
 import random
 import snapshot
-import string
 
 
 
@@ -52,9 +51,12 @@ class Database :
 
     self.indexLastInsertion = -1
 
+    self.scoreShotWinShape = (0,0,0,0)        # Shape of the scoreShot app 
+    self.scoreShotHandlesCoord = (0,0,0,0)    # Coordinates of the handles for the ruler
+
     self._makeDatabaseFileName(prFile)
     self._init()
-    self._sanityCheck()
+    self._integrityCheck()
 
 
 
@@ -124,13 +126,13 @@ class Database :
 
     
   # ---------------------------------------------------------------------------
-  # METHOD Database._sanityCheck()
+  # METHOD Database._integrityCheck()
   # ---------------------------------------------------------------------------
-  def _sanityCheck(self) :
+  def _integrityCheck(self) :
     """
     Make sure the all the files listed in the database exist.
     """
-    print("[WARNING] Method 'Database._sanityCheck' is not implemented yet.")
+    print("[WARNING] Method 'Database._integrityCheck' is not implemented yet.")
   
   
   
@@ -216,7 +218,23 @@ class Database :
     L = [s.displayName for s in self.snapshots]
     return L
   
-  
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Database.getSnapshotNameByIndex()
+  # ---------------------------------------------------------------------------  
+  def getSnapshotNameByIndex(self, index) :
+    """
+    Returns the filename of the .png file from its index in the database.
+    """
+    
+    if ((index >= 0) and (index <= (self.nSnapshots-1))) :
+      s = self.snapshots[index]
+      return f"{s.dir}/{s.file}"
+    else :
+      return ""
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD Database.generateFileName()
@@ -245,7 +263,7 @@ class Database :
     """
     
     self.nSnapshots         = data["nSnapshots"]
-    self.snapshots          = []
+    self.snapshots          = [(s := snapshot.Snapshot()).fromDict(snapData) or s for snapData in data["snapshots"]]
     self.isEmpty            = data["isEmpty"]
     self.songName           = data["songName"]
     self.jsonName           = data["jsonName"]

@@ -16,6 +16,7 @@
 # =============================================================================
 # External libs 
 # =============================================================================
+import configparser
 import database
 import os
 from PIL import ImageGrab, ImageTk, Image
@@ -148,6 +149,12 @@ class EditorGUI :
 
     self.snapshotListbox.bind("<<ListboxSelect>>", self.CLBK_onSnapshotSel)
 
+    self.confGUIFile = ""
+
+
+
+
+
   
 
   # ---------------------------------------------------------------------------
@@ -155,13 +162,40 @@ class EditorGUI :
   # ---------------------------------------------------------------------------
   def loadDatabase(self, songFile) :
     """
-    Loads the snapshot database of the song.
+    Loads the snapshot database of the song and restore the application
+    settings.
     """
+    
+    # Try to load the database, creates one if it does not exist
     self.db = database.Database(songFile)
 
+    # Update the GUI listbox
     if not(self.db.isEmpty) :
       self._updateListBox()
     
+    # Load the previous application configuration
+    self._loadGUISettings()
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD EditorGUI._loadGUISettings()
+  # ---------------------------------------------------------------------------
+  def _loadGUISettings(self) :
+    """
+    Loads the application configuration file (window geometry, ruler position etc.)
+    and restore the last configuration.
+    """
+    
+    self.confGUIFile = f"{self.db.depotFolder}/confGUI.ini"
+
+    # Try to load a configuration file
+    configData = configparser.ConfigParser()
+    if os.path.exists(self.confGUIFile) :
+      configData.read(self.confGUIFile)
+
+
+
 
 
   # ---------------------------------------------------------------------------
@@ -200,6 +234,28 @@ class EditorGUI :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD EditorGUI._initConfigFile()
+  # ---------------------------------------------------------------------------
+  def _initConfigFile(self) :
+    """
+    """
+    print("[DEBUG] EditorGUI._initConfigFile: TODO")
+    # Save conf to the .ini file  
+    # configData["DEFAULT"] = {
+    #   "midi_interface": selectedDevice,
+    #   "song": selectedFile
+    #   }
+
+    # # Create the ./conf dir if it does not exist
+    # if not os.path.exists("./conf"):
+    #   os.makedirs("./conf")
+
+    # with open("./conf/conf.ini", "w") as configfile :
+    #   configData.write(configfile)
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD EditorGUI._exitChecks()
   # ---------------------------------------------------------------------------
   def _exitChecks(self) :
@@ -207,12 +263,27 @@ class EditorGUI :
     Define here all the actions to be done before leaving the app.
     Typically, look for unsaved changes.
     """
+    
+    # Look for modifications
     if self.db.hasUnsavedChanges :
       saveReq = messagebox.askyesno("Exit", "Save the unsaved changes?")
 
       if saveReq :
+        
+        # Save the database
         self.db.hasUnsavedChanges = False
         self.db.save()
+
+        # Save the GUI configuration file
+        configData = configparser.ConfigParser()
+        configData["DEFAULT"] = {
+          "windowWidth"   : self.captureWin.winfo_width,
+          "windowHeight"  : self.captureWin.winfo_height,
+          "rulersCoord"   : self.ruler.rulerLeft
+          }
+        with open(self.confGUIFile, "w") as configfile :
+          
+          configData.write(configfile)
       
     self.root.withdraw()
     self.captureWin.withdraw()
@@ -289,21 +360,9 @@ class EditorGUI :
 
 
 
-  def CLBK_onMoveWindow(self, event) :
-    x = self.captureWin.winfo_x()
-    y = self.captureWin.winfo_y()
-
-    if (event.keysym == "Up") :
-      self.captureWin.geometry(f"+{x}+{y-1}")
-    elif (event.keysym == "Down") :
-      self.captureWin.geometry(f"+{x}+{y+1}")
-    elif (event.keysym == "Left") :
-      self.captureWin.geometry(f"+{x-1}+{y}")
-    elif (event.keysym == "Right") :
-      self.captureWin.geometry(f"+{x+1}+{y}")
-
-
-
+  # ------------------------------
+  # Click event (snapshot Listbox)
+  # ------------------------------
   def CLBK_onSnapshotSel(self, event) :
     index = self.snapshotListbox.curselection()
 
@@ -328,35 +387,51 @@ class EditorGUI :
 
 
 
+  # ---------------
+  # 'Del' key press
+  # ---------------
   def CLBK_onDel(self, event) :
     print("[DEBUG] 'Del' key is not handled yet.")
 
 
-
+  # ---------------
+  # Key press (any)
+  # ---------------
   def CLBK_onKeyPress(self, event) :
-    if (event.char == 'r') :
+    if (event.char == "r") :
       self.recallImg.lift()
 
 
-
+  # -----------------
+  # Key release (any)
+  # -----------------
   def CLBK_onKeyRelease(self, event) :
     if (event.char == "r") :
       self.recallImg.lower()
 
 
 
+
+
+  def CLBK_onMoveWindow(self, event) :
+    x = self.captureWin.winfo_x()
+    y = self.captureWin.winfo_y()
+
+    if (event.keysym == "Up") :
+      self.captureWin.geometry(f"+{x}+{y-1}")
+    elif (event.keysym == "Down") :
+      self.captureWin.geometry(f"+{x}+{y+1}")
+    elif (event.keysym == "Left") :
+      self.captureWin.geometry(f"+{x-1}+{y}")
+    elif (event.keysym == "Right") :
+      self.captureWin.geometry(f"+{x+1}+{y}")
+
+
+
+
+
   def CLBK_onResize(self, event) :
     self.ruler.update()
-
-
-
-
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Database._makeDatabaseFileName()
-  # ---------------------------------------------------------------------------
 
 
 

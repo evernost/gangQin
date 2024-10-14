@@ -35,54 +35,57 @@ import snapshot
 # Main code
 # =============================================================================
 class Database :
+
+  """
+  Defines the class for the snapshot database.
+  """
   def __init__(self, prFile) :
     
     self.nSnapshots = 0
     self.snapshots = []
     self.isEmpty = True
     
-    self.songName = ""      # Name of the song file
-    self.jsonName = ""      # Name of the database file
-    self.jsonFile = ""      # Full name of the databse file (path + filename)
+    self.songName     = ""          # Name of the song file
+    self.jsonName     = ""          # Name of the database file
+    self.jsonFile     = ""          # Full name of the databse file (path + filename)
+    self.depotFolder  = ""          # Directory where all the snapshots of the song are stored
     
-    self.snapFolder = ""    # Directory where all the snapshots of the song are stored
-    
-    self.hasUnsavedChanges = False
+    self.hasUnsavedChanges = False  # Turns True if anything has been modified in the database
 
-    self.indexLastInsertion = -1
+    self.indexLastInsertion = -1    # Index where the last snapshot insertion occured
 
-    self.scoreShotWinShape = (0,0,0,0)        # Shape of the scoreShot app 
-    self.scoreShotHandlesCoord = (0,0,0,0)    # Coordinates of the handles for the ruler
 
-    self._makeDatabaseFileName(prFile)
-    self._init()
+    # Some initialisation procedures
+    self._loadNames(prFile)
+    self._loadJSON()
     self._integrityCheck()
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database._makeDatabaseFileName()
+  # METHOD Database._loadNames()
   # ---------------------------------------------------------------------------
-  def _makeDatabaseFileName(self, prFile) :
+  def _loadNames(self, prFile) :
     """
-    Generates the name of the database file based on the .pr file.
+    Generates the various names of files and directories associated with the 
+    database.
     """
     
     # TODO: forbid any whitespace in the name, or dots, commas, etc.
     
     (rootDir, rootNameExt) = os.path.split(prFile)
     (rootName, _) = os.path.splitext(rootNameExt)
-    self.songName   = rootNameExt
-    self.jsonName   = rootName + ".json"          # Example: "my_song.json"
-    self.jsonFile   = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
-    self.snapFolder = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
+    self.songName     = rootNameExt
+    self.jsonName     = rootName + ".json"          # Example: "my_song.json"
+    self.jsonFile     = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
+    self.depotFolder  = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database._init()
+  # METHOD Database._loadJSON()
   # ---------------------------------------------------------------------------
-  def _init(self) :
+  def _loadJSON(self) :
     """
     Loads the database file (JSON), creates one if it does not exist.
     
@@ -93,8 +96,8 @@ class Database :
     """
         
     # Snapshot folder inexistent: the JSON is discarded for a new one.
-    if not(os.path.exists(self.snapFolder)) :
-      os.makedirs(self.snapFolder)
+    if not(os.path.exists(self.depotFolder)) :
+      os.makedirs(self.depotFolder)
 
       # This is where we would eventually initialise the rest of the 
       # Database attributes. 
@@ -165,12 +168,12 @@ class Database :
     filename = self.generateFileName() + ".png"
 
     # Save the snapshot image
-    img.save(f"{self.snapFolder}/{filename}")
+    img.save(f"{self.depotFolder}/{filename}")
     print(f"[DEBUG] Screenshot saved as '{filename}'")
     
     # Create the snapshot object 
     s = snapshot.Snapshot()
-    s.dir         = self.snapFolder
+    s.dir         = self.depotFolder
     s.file        = filename
     s.index       = insertIndex
     s.displayName = f"Capture {insertIndex+1}"
@@ -262,13 +265,16 @@ class Database :
     serialisation.
     """
     
+    # TODO: iterate over the attributes (except for "snapshots" who's a bit of an oddity)
+    #       instead of manually listing all of them. 
+    #       The list tends to change regularly.
     self.nSnapshots         = data["nSnapshots"]
     self.snapshots          = [(s := snapshot.Snapshot()).fromDict(snapData) or s for snapData in data["snapshots"]]
     self.isEmpty            = data["isEmpty"]
     self.songName           = data["songName"]
     self.jsonName           = data["jsonName"]
     self.jsonFile           = data["jsonFile"]
-    self.snapFolder         = data["snapFolder"]
+    self.depotFolder        = data["depotFolder"]
     self.hasUnsavedChanges  = data["hasUnsavedChanges"]
     #self.indexLastInsertion = data["indexLastInsertion"]     # No need to retrieve that.
     
@@ -282,6 +288,8 @@ class Database :
     Converts the content of the Database class to a dictionary for easier 
     serialisation.
     """
+
+    # TODO: iterate over the attributes instead of manually listing all of them.
     return {
       "nSnapshots"        : self.nSnapshots,
       "snapshots"         : [s.toDict() for s in self.snapshots],
@@ -289,7 +297,7 @@ class Database :
       "songName"          : self.songName,
       "jsonName"          : self.jsonName,
       "jsonFile"          : self.jsonFile,
-      "snapFolder"        : self.snapFolder,
+      "depotFolder"       : self.depotFolder,
       "hasUnsavedChanges" : self.hasUnsavedChanges
     }
 
@@ -302,6 +310,7 @@ class Database :
     """
     Saves the current database state in a JSON file.
     """
+    
     d = self.toDict()
     with open(self.jsonFile, "w") as jsonFile :
       json.dump(d, jsonFile, indent = 2)

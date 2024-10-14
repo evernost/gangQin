@@ -32,16 +32,17 @@ HANDLE_HEIGHT = 10
 # =============================================================================
 class Ruler :
   
-  
-  
+  """
+  Defines the class for Ruler widgets in the capture window.
+  """  
   def __init__(self, canvasArray) :
     self.canvasArray = canvasArray
     
     # Lines for the rulers
-    self.rulerLeft  = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (2, 4))
-    self.rulerRight = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (2, 4))
-    self.rulerUp    = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (2, 4))
-    self.rulerDown  = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (4, 4))
+    self.lineLeft  = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (2, 4))
+    self.lineRight = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (2, 4))
+    self.lineUp    = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (2, 4))
+    self.lineDown  = self.canvasArray[4].create_line(0, 0, 0, 1, fill = "black", width = 1, dash = (4, 4))
 
     # Handles to drag and drop the rulers
     self.handleLeft   = self.canvasArray[3].create_rectangle(0, 0, 0, 1, fill = "grey", outline = "grey")
@@ -69,7 +70,7 @@ class Ruler :
   # ---------------------------------------------------------------------------
   def update(self) :
     """
-    Updates the ...
+    Updates the position of the rulers.
     This function must be called every time the capture window is resized or moved.
     """
     captureHeight = self.canvasArray[4].winfo_height()
@@ -83,10 +84,10 @@ class Ruler :
       
       # At init: give a first plausible position for the rulers/handles.
       if not(self._initDone) :
-        self.canvasArray[4].coords(self.rulerUp,     (0, 50, captureWidth, 50))
-        self.canvasArray[4].coords(self.rulerDown,   (0, captureHeight-50, captureWidth, captureHeight-50))
-        self.canvasArray[4].coords(self.rulerLeft,   (50, 0, 50, captureHeight))
-        self.canvasArray[4].coords(self.rulerRight,  (captureWidth-50, 0, captureWidth-50, captureHeight))
+        self.canvasArray[4].coords(self.lineUp,     (0, 50, captureWidth, 50))
+        self.canvasArray[4].coords(self.lineDown,   (0, captureHeight-50, captureWidth, captureHeight-50))
+        self.canvasArray[4].coords(self.lineLeft,   (50, 0, 50, captureHeight))
+        self.canvasArray[4].coords(self.lineRight,  (captureWidth-50, 0, captureWidth-50, captureHeight))
 
         self.canvasArray[1].coords(self.handleUp,    (50-5, 80, 50+5, 99))
         self.canvasArray[7].coords(self.handleDown,  (captureWidth-50-5, 0, captureWidth-50+5, 19))
@@ -96,28 +97,28 @@ class Ruler :
       
       # Afterwards: clamp the values to avoid losing the rulers/handles.
       else :
-        (_,y,_,_) = self.canvasArray[4].coords(self.rulerUp)
+        (_,y,_,_) = self.canvasArray[4].coords(self.lineUp)
         y = min(y, captureHeight-10)
         y = max(y, 10)
-        self.canvasArray[4].coords(self.rulerUp,     (0, y, captureWidth, y))
+        self.canvasArray[4].coords(self.lineUp,     (0, y, captureWidth, y))
         self.canvasArray[3].coords(self.handleLeft,  (80, y-5, 99, y+5))
         
-        (_,y,_,_) = self.canvasArray[4].coords(self.rulerDown)
+        (_,y,_,_) = self.canvasArray[4].coords(self.lineDown)
         y = min(y, captureHeight-10)
         y = max(y, 10)
-        self.canvasArray[4].coords(self.rulerDown,   (0, y, captureWidth, y))
+        self.canvasArray[4].coords(self.lineDown,   (0, y, captureWidth, y))
         self.canvasArray[5].coords(self.handleRight, (0, y-5, 19, y+5))
         
-        (x,_,_,_) = self.canvasArray[4].coords(self.rulerLeft)
+        (x,_,_,_) = self.canvasArray[4].coords(self.lineLeft)
         x = min(x, captureWidth-10)
         x = max(x, 10)
-        self.canvasArray[4].coords(self.rulerLeft,   (x, 0, x, captureHeight))
+        self.canvasArray[4].coords(self.lineLeft,   (x, 0, x, captureHeight))
         self.canvasArray[1].coords(self.handleUp,    (x-5, 80, x+5, 99))
         
-        (x,_,_,_) = self.canvasArray[4].coords(self.rulerRight)
+        (x,_,_,_) = self.canvasArray[4].coords(self.lineRight)
         x = min(x, captureWidth-10)
         x = max(x, 10)
-        self.canvasArray[4].coords(self.rulerRight,  (x, 0, x, captureHeight))
+        self.canvasArray[4].coords(self.lineRight,  (x, 0, x, captureHeight))
         self.canvasArray[7].coords(self.handleDown,  (x-5, 0, x+5, 19))
         
 
@@ -141,10 +142,10 @@ class Ruler :
     self._visible = val
     
     if val :
-      self.canvasArray[4].itemconfig(self.rulerLeft, state = "normal")
-      self.canvasArray[4].itemconfig(self.rulerRight, state = "normal")
-      self.canvasArray[4].itemconfig(self.rulerUp, state = "normal")
-      self.canvasArray[4].itemconfig(self.rulerDown, state = "normal")
+      self.canvasArray[4].itemconfig(self.lineLeft, state = "normal")
+      self.canvasArray[4].itemconfig(self.lineRight, state = "normal")
+      self.canvasArray[4].itemconfig(self.lineUp, state = "normal")
+      self.canvasArray[4].itemconfig(self.lineDown, state = "normal")
       
       self.canvasArray[3].itemconfig(self.handleLeft, state = "normal")
       self.canvasArray[5].itemconfig(self.handleRight, state = "normal")
@@ -152,10 +153,10 @@ class Ruler :
       self.canvasArray[7].itemconfig(self.handleDown, state = "normal")
 
     else :
-      self.canvasArray[4].itemconfig(self.rulerLeft, state = "hidden")
-      self.canvasArray[4].itemconfig(self.rulerRight, state = "hidden")
-      self.canvasArray[4].itemconfig(self.rulerUp, state = "hidden")
-      self.canvasArray[4].itemconfig(self.rulerDown, state = "hidden")
+      self.canvasArray[4].itemconfig(self.lineLeft, state = "hidden")
+      self.canvasArray[4].itemconfig(self.lineRight, state = "hidden")
+      self.canvasArray[4].itemconfig(self.lineUp, state = "hidden")
+      self.canvasArray[4].itemconfig(self.lineDown, state = "hidden")
       
       self.canvasArray[3].itemconfig(self.handleLeft, state = "hidden")
       self.canvasArray[5].itemconfig(self.handleRight, state = "hidden")
@@ -165,7 +166,7 @@ class Ruler :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Ruler.update()
+  # METHOD Ruler.bindHandle()
   # ---------------------------------------------------------------------------
   def bindHandle(self, handle, canvasId) :
     """
@@ -173,6 +174,30 @@ class Ruler :
     """
     self.canvasArray[canvasId].tag_bind(handle, "<Button-1>", lambda event, id = canvasId : self.CLBK_onClick(event, id))
     self.canvasArray[canvasId].tag_bind(handle, "<B1-Motion>", lambda event, id = canvasId : self.CLBK_onDrag(event, id))
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Ruler.setHandles
+  # ---------------------------------------------------------------------------
+  def setHandles(self) :
+    """
+    TODO
+    """
+    print("TODO")
+
+
+
+# ---------------------------------------------------------------------------
+  # METHOD Ruler.getHandles
+  # ---------------------------------------------------------------------------
+  def getHandles(self) :
+    """
+    TODO
+    """
+    print("TODO")
+
+
 
 
 
@@ -194,25 +219,25 @@ class Ruler :
     dy = event.y - self.dragData["y"]
     
     if (canvasId == 1) :
-      (rulerLeft_x, _, _, _) = self.canvasArray[4].coords(self.rulerLeft)
-      if (((rulerLeft_x + dx) >= 0) and ((rulerLeft_x + dx) < captureWidth)) :
+      (lineLeft_x, _, _, _) = self.canvasArray[4].coords(self.lineLeft)
+      if (((lineLeft_x + dx) >= 0) and ((lineLeft_x + dx) < captureWidth)) :
         self.canvasArray[1].move(self.handleUp, dx, 0)
-        self.canvasArray[4].move(self.rulerLeft, dx, 0)
+        self.canvasArray[4].move(self.lineLeft, dx, 0)
     elif (canvasId == 3) :
-      (_, rulerUp_y, _, _) = self.canvasArray[4].coords(self.rulerUp)
-      if (((rulerUp_y + dy) >= 0) and ((rulerUp_y + dy) < captureHeight)) :
+      (_, lineUp_y, _, _) = self.canvasArray[4].coords(self.lineUp)
+      if (((lineUp_y + dy) >= 0) and ((lineUp_y + dy) < captureHeight)) :
         self.canvasArray[3].move(self.handleLeft, 0, dy)
-        self.canvasArray[4].move(self.rulerUp, 0, dy)
+        self.canvasArray[4].move(self.lineUp, 0, dy)
     elif (canvasId == 5) :
-      (_, rulerDown_y, _, _) = self.canvasArray[4].coords(self.rulerDown)
-      if (((rulerDown_y + dy) >= 0) and ((rulerDown_y + dy) < captureHeight)) :
+      (_, lineDown_y, _, _) = self.canvasArray[4].coords(self.lineDown)
+      if (((lineDown_y + dy) >= 0) and ((lineDown_y + dy) < captureHeight)) :
         self.canvasArray[5].move(self.handleRight, 0, dy)
-        self.canvasArray[4].move(self.rulerDown, 0, dy)
+        self.canvasArray[4].move(self.lineDown, 0, dy)
     elif (canvasId == 7) :
-      (rulerRight_x, _, _, _) = self.canvasArray[4].coords(self.rulerRight)
-      if (((rulerRight_x + dx) >= 0) and ((rulerRight_x + dx) < captureWidth)) :
+      (lineRight_x, _, _, _) = self.canvasArray[4].coords(self.lineRight)
+      if (((lineRight_x + dx) >= 0) and ((lineRight_x + dx) < captureWidth)) :
         self.canvasArray[7].move(self.handleDown, dx, 0)
-        self.canvasArray[4].move(self.rulerRight, dx, 0)
+        self.canvasArray[4].move(self.lineRight, dx, 0)
 
     self.dragData["x"] = event.x
     self.dragData["y"] = event.y

@@ -10,12 +10,13 @@
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
 
+
+
 # =============================================================================
 # External libs 
 # =============================================================================
 import tkinter as tk
 from tkinter import ttk
-from PIL import ImageGrab, ImageTk, Image
 
 
 
@@ -180,22 +181,30 @@ class Ruler :
   # ---------------------------------------------------------------------------
   # METHOD Ruler.setHandles
   # ---------------------------------------------------------------------------
-  def setHandles(self) :
+  def setHandles(self, left, right, up, down) :
     """
-    TODO
+    One-liner to set the position of all the handles.
+    Position for each handle is given as argument.
+    This is primarily used to restore the app configuration after loading a
+    database.
     """
-    print("TODO")
+    
+    print("[DEBUG] Ruler.setHandles: function is TODO")
 
 
 
-# ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   # METHOD Ruler.getHandles
   # ---------------------------------------------------------------------------
   def getHandles(self) :
     """
-    TODO
+    One-liner to get the position of all the handles.
+    This is primarily used to restore the app configuration after loading a
+    database.
     """
-    print("TODO")
+    
+    print("[DEBUG] Ruler.getHandles: function is TODO")
+    return (0,0,0,0)
 
 
 
@@ -205,6 +214,9 @@ class Ruler :
   # Callbacks methods
   # ---------------------------------------------------------------------------
   def CLBK_onClick(self, event, canvasId) :
+    """
+    Records the click position (used for the drag'n'drop)
+    """
     self.dragData["x"] = event.x
     self.dragData["y"] = event.y
     self.dragData["id"] = canvasId
@@ -212,6 +224,9 @@ class Ruler :
 
 
   def CLBK_onDrag(self, event, canvasId) :
+    """
+    TODO
+    """
     captureHeight = self.canvasArray[4].winfo_height()
     captureWidth = self.canvasArray[4].winfo_width()
     

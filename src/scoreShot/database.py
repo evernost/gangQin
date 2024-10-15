@@ -12,9 +12,6 @@
 
 
 
-
-
-
 # =============================================================================
 # External libs 
 # =============================================================================
@@ -28,6 +25,7 @@ import snapshot
 # =============================================================================
 # Constants pool
 # =============================================================================
+# None.
 
 
 
@@ -38,6 +36,7 @@ class Database :
 
   """
   Defines the class for the snapshot database.
+  This class only manages the snapshots and their arrangement within the database.
   """
   def __init__(self, prFile) :
     

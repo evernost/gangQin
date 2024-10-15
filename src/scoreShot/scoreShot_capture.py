@@ -70,5 +70,6 @@ root = tk.Tk()
 
 app = editorGUI.EditorGUI(root)
 app.loadDatabase(songFile)
+app.loadGUIConfig()
 
 root.mainloop()

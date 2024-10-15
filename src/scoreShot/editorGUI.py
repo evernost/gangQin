@@ -21,7 +21,6 @@ import database
 import os
 from PIL import ImageGrab, ImageTk, Image
 import ruler
-import snapshot
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
@@ -39,8 +38,6 @@ from tkinter import ttk
 # Zoom factor 250%: SCREEN_SCALING = 2.5
 SCREEN_SCALING = 1.0
 
-SCORE_DB_DIR = "./snaps"
-
 BORDER_SIZE = 100
 
 
@@ -56,6 +53,12 @@ class EditorGUI :
   def __init__(self, root) :
     
     self.root = root
+
+    # TODO: save the name of the song
+    self.songName = ""
+
+
+
     
     # [MAIN WINDOW] Properties
     self.root.geometry("1500x500")
@@ -132,30 +135,24 @@ class EditorGUI :
     # Ruler widget
     self.ruler = ruler.Ruler(self.canvasArray)
 
-    # TODO
-    self.snapshotSelected = -1
-
     # [CAPTURE WINDOW] Keyboard bindings
-    self.captureWin.bind("<Up>", self.CLBK_onMoveWindow)
-    self.captureWin.bind("<Down>", self.CLBK_onMoveWindow)
-    self.captureWin.bind("<Left>", self.CLBK_onMoveWindow)
-    self.captureWin.bind("<Right>", self.CLBK_onMoveWindow)
-    self.captureWin.bind("<MouseWheel>", self.CLBK_onMouseWheel)
-    self.captureWin.bind("<Configure>", self.CLBK_onResize)
-    self.captureWin.bind('<KeyPress>', self.CLBK_onKeyPress)
-    self.captureWin.bind('<KeyRelease>', self.CLBK_onKeyRelease)
-    self.captureWin.bind("<s>", self.CLBK_onScreenshot)
-    self.captureWin.bind("<q>", self.CLBK_onQuit)
+    self.captureWin.bind("<Up>"         , self.CLBK_onMoveWindow)
+    self.captureWin.bind("<Down>"       , self.CLBK_onMoveWindow)
+    self.captureWin.bind("<Left>"       , self.CLBK_onMoveWindow)
+    self.captureWin.bind("<Right>"      , self.CLBK_onMoveWindow)
+    self.captureWin.bind("<MouseWheel>" , self.CLBK_onMouseWheel)
+    self.captureWin.bind("<Configure>"  , self.CLBK_onResize)
+    self.captureWin.bind('<KeyPress>'   , self.CLBK_onKeyPress)
+    self.captureWin.bind('<KeyRelease>' , self.CLBK_onKeyRelease)
+    self.captureWin.bind("<s>"          , self.CLBK_onScreenshot)
+    self.captureWin.bind("<q>"          , self.CLBK_onQuit)
 
-    self.snapshotListbox.bind("<<ListboxSelect>>", self.CLBK_onSnapshotSel)
+    self.snapshotListbox.bind("<<ListboxSelect>>", self.CLBK_snapshotListboxClick)
 
-    self.confGUIFile = ""
-
-
+    self.GUIConfigFile = ""
 
 
 
-  
 
   # ---------------------------------------------------------------------------
   # METHOD EditorGUI.loadDatabase()
@@ -169,30 +166,39 @@ class EditorGUI :
     # Try to load the database, creates one if it does not exist
     self.db = database.Database(songFile)
 
+    # Load the previous application configuration
+    # self.restoreGUISettings()
+
     # Update the GUI listbox
     if not(self.db.isEmpty) :
       self._updateListBox()
     
-    # Load the previous application configuration
-    self._loadGUISettings()
-
-
+    
 
   # ---------------------------------------------------------------------------
-  # METHOD EditorGUI._loadGUISettings()
+  # METHOD EditorGUI.loadGUIConfig()
   # ---------------------------------------------------------------------------
-  def _loadGUISettings(self) :
+  def loadGUIConfig(self) :
     """
-    Loads the application configuration file (window geometry, ruler position etc.)
-    and restore the last configuration.
+    Loads the GUI configuration file (window geometry, ruler position etc.)
+    so that it restore the last settings.
     """
     
-    self.confGUIFile = f"{self.db.depotFolder}/confGUI.ini"
+    # TODO: one configuration file, but several profiles.
+    # TODO: don't load from the depotFolder.
+    self.GUIConfigFile = f"{self.db.depotFolder}/GUIConfig.ini"
 
     # Try to load a configuration file
-    configData = configparser.ConfigParser()
-    if os.path.exists(self.confGUIFile) :
-      configData.read(self.confGUIFile)
+    GUIConfigData = configparser.ConfigParser()
+    if os.path.exists(self.GUIConfigFile) :
+      GUIConfigData.read(self.GUIConfigFile)
+
+      # Adjust the window
+      w = GUIConfigData["DEFAULT"]["window_width"]
+      h = GUIConfigData["DEFAULT"]["window_height"]
+      print(f"[DEBUG] w = {w}, h = {h}")
+
+      #self.captureWin.geometry(f"{w}x{h}")
 
 
 
@@ -203,15 +209,13 @@ class EditorGUI :
   # ---------------------------------------------------------------------------
   def _updateListBox(self) :
     """
-    Updates the content of the snapshot selection listbox.
+    Updates the content of the snapshot selection listbox with the current 
+    state of the database.
     """
 
     L = self.db.getListBoxDescriptor()
 
-    # Clear any existing items in the listbox
     self.snapshotListbox.delete(0, tk.END)
-    
-    # Insert each item from the list into the listbox
     for item in L :
       self.snapshotListbox.insert(tk.END, item)
     
@@ -222,36 +226,17 @@ class EditorGUI :
   # ---------------------------------------------------------------------------
   def _setRecallImage(self) :
     """
-    TODO
+    Loads the "recall image" with the appropriate image file.
     """
+    
     if not(self.db.isEmpty) :
       s = self.db.snapshots[self.db.indexLastInsertion]
-      x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/screenshot_0.png"))
+      
+      print("[DEBUG] EditorGUI._setRecallImage: section is TODO!")
+      #x = ImageTk.PhotoImage(Image.open(f"{SCORE_DB_DIR}/screenshot_0.png"))
 
     else :
       print("[DEBUG] EditorGUI._setRecallImage: database is empty, no image to recall!")
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD EditorGUI._initConfigFile()
-  # ---------------------------------------------------------------------------
-  def _initConfigFile(self) :
-    """
-    """
-    print("[DEBUG] EditorGUI._initConfigFile: TODO")
-    # Save conf to the .ini file  
-    # configData["DEFAULT"] = {
-    #   "midi_interface": selectedDevice,
-    #   "song": selectedFile
-    #   }
-
-    # # Create the ./conf dir if it does not exist
-    # if not os.path.exists("./conf"):
-    #   os.makedirs("./conf")
-
-    # with open("./conf/conf.ini", "w") as configfile :
-    #   configData.write(configfile)
 
 
 
@@ -264,10 +249,13 @@ class EditorGUI :
     Typically, look for unsaved changes.
     """
     
-    # Look for modifications
     if self.db.hasUnsavedChanges :
-      saveReq = messagebox.askyesno("Exit", "Save the unsaved changes?")
 
+      # Remove the app windows      
+      self.root.withdraw()
+      self.captureWin.withdraw()
+      
+      saveReq = messagebox.askyesno("Exit", "Save the unsaved changes?")
       if saveReq :
         
         # Save the database
@@ -275,21 +263,17 @@ class EditorGUI :
         self.db.save()
 
         # Save the GUI configuration file
-        configData = configparser.ConfigParser()
-        configData["DEFAULT"] = {
-          "windowWidth"   : self.captureWin.winfo_width,
-          "windowHeight"  : self.captureWin.winfo_height,
-          "rulersCoord"   : self.ruler.rulerLeft
-          }
-        with open(self.confGUIFile, "w") as configfile :
-          
-          configData.write(configfile)
+        # TODO: one configuration file, but several profiles.
+        GUIConfigData = configparser.ConfigParser()
+        GUIConfigData["DEFAULT"] = {
+          "window_width"  : self.captureWin.winfo_width(),
+          "window_height" : self.captureWin.winfo_height(),
+          "rulers_coord"  : self.ruler.getHandles()
+        }
+        with open(self.GUIConfigFile, "w") as configfile :
+          GUIConfigData.write(configfile)
       
-    self.root.withdraw()
-    self.captureWin.withdraw()
-
-
-
+    
 
 
 
@@ -363,13 +347,11 @@ class EditorGUI :
   # ------------------------------
   # Click event (snapshot Listbox)
   # ------------------------------
-  def CLBK_onSnapshotSel(self, event) :
+  def CLBK_snapshotListboxClick(self, event) :
     index = self.snapshotListbox.curselection()
 
     if index :
-      self.snapshotSelected = index[0]
-      print(f"[DEBUG] Now selecting snapshot index: {self.snapshotSelected}")
-
+      print(f"[DEBUG] Now selecting snapshot index: {index[0]}")
 
       imgName = self.db.getSnapshotNameByIndex(index[0])
 
@@ -377,9 +359,9 @@ class EditorGUI :
 
       x = ImageTk.PhotoImage(Image.open(imgName))
 
-      # # TODO: resize so that the picture occupies the same real estate no
-      # # matter what (even if there was some screen scaling)
-      # # ...
+      # TODO: resize so that the picture occupies the same real estate no
+      # matter what (even if there was some screen scaling)
+      # ...
 
 
       self.imgbox.config(image = x)

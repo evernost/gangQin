@@ -105,7 +105,8 @@ pianoArbiter = arbiter.Arbiter("permissive")
 
 
 # Create window
-pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{os.path.basename(selectedFile)}>")
+# pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{os.path.basename(selectedFile)}>")
+pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{userScore.songName}>")
 
 # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
 pygame.key.set_repeat(250, 50)

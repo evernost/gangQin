@@ -54,15 +54,9 @@ class EditorGUI :
     
     self.root = root
 
-    # TODO: save the name of the song
-    self.songName = ""
-
-
-
-    
     # [MAIN WINDOW] Properties
     self.root.geometry("1500x500")
-    self.root.title("scoreShot - Capture database v0.1 [ALPHA] (September 2024)")
+    self.root.title("scoreShot - Capture database v0.1 [ALPHA] (October 2024)")
     self.root.resizable(0, 0)
 
     # [MAIN WINDOW] Widgets
@@ -166,15 +160,12 @@ class EditorGUI :
     # Try to load the database, creates one if it does not exist
     self.db = database.Database(songFile)
 
-    # Load the previous application configuration
-    # self.restoreGUISettings()
-
     # Update the GUI listbox
     if not(self.db.isEmpty) :
       self._updateListBox()
-    
-    
 
+    
+    
   # ---------------------------------------------------------------------------
   # METHOD EditorGUI.loadGUIConfig()
   # ---------------------------------------------------------------------------
@@ -187,6 +178,7 @@ class EditorGUI :
     # TODO: one configuration file, but several profiles.
     # TODO: don't load from the depotFolder.
     self.GUIConfigFile = f"{self.db.depotFolder}/GUIConfig.ini"
+    songName = self.db.songName
 
     # Try to load a configuration file
     GUIConfigData = configparser.ConfigParser()
@@ -194,13 +186,14 @@ class EditorGUI :
       GUIConfigData.read(self.GUIConfigFile)
 
       # Adjust the window
-      w = GUIConfigData["DEFAULT"]["window_width"]
-      h = GUIConfigData["DEFAULT"]["window_height"]
-      print(f"[DEBUG] w = {w}, h = {h}")
+      if songName in GUIConfigData :
+        w = GUIConfigData["DEFAULT"]["window_width"]
+        h = GUIConfigData["DEFAULT"]["window_height"]
+        print(f"[DEBUG] w = {w}, h = {h}")
 
-      #self.captureWin.geometry(f"{w}x{h}")
+        #self.captureWin.geometry(f"{w}x{h}")
 
-
+        print("[INFO] Capture window settings restored. Press the ESC key to load defaults.")
 
 
 
@@ -255,7 +248,10 @@ class EditorGUI :
       self.root.withdraw()
       self.captureWin.withdraw()
       
-      saveReq = messagebox.askyesno("Exit", "Save the unsaved changes?")
+      if (len(self.changeLog) > 1) :
+        msgBox = "Save the following change? \n pouert"
+      
+      saveReq = messagebox.askyesno("Exit", "Save the unsaved changes?\SEins")
       if saveReq :
         
         # Save the database

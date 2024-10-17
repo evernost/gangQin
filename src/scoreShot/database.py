@@ -50,6 +50,7 @@ class Database :
     self.depotFolder  = ""          # Directory where all the snapshots of the song are stored
     
     self.hasUnsavedChanges = False  # Turns True if anything has been modified in the database
+    self.changeLog = []
 
     self.indexLastInsertion = -1    # Index where the last snapshot insertion occured
 
@@ -74,7 +75,8 @@ class Database :
     
     (rootDir, rootNameExt) = os.path.split(prFile)
     (rootName, _) = os.path.splitext(rootNameExt)
-    self.songName     = rootNameExt
+    self.songName     = rootName
+    self.songFile     = rootNameExt
     self.jsonName     = rootName + ".json"          # Example: "my_song.json"
     self.jsonFile     = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
     self.depotFolder  = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
@@ -188,6 +190,7 @@ class Database :
     self.nSnapshots += 1
     self.isEmpty = False
     self.hasUnsavedChanges = True
+    self.changeLog.append("- insertion")
 
     print(f"[DEBUG] nSnapshots = {self.nSnapshots}")
 
@@ -271,6 +274,7 @@ class Database :
     self.snapshots          = [(s := snapshot.Snapshot()).fromDict(snapData) or s for snapData in data["snapshots"]]
     self.isEmpty            = data["isEmpty"]
     self.songName           = data["songName"]
+    self.songFile           = data["songFile"]
     self.jsonName           = data["jsonName"]
     self.jsonFile           = data["jsonFile"]
     self.depotFolder        = data["depotFolder"]
@@ -294,6 +298,7 @@ class Database :
       "snapshots"         : [s.toDict() for s in self.snapshots],
       "isEmpty"           : self.isEmpty,
       "songName"          : self.songName,
+      "songFile"          : self.songFile,
       "jsonName"          : self.jsonName,
       "jsonFile"          : self.jsonFile,
       "depotFolder"       : self.depotFolder,

@@ -67,7 +67,9 @@ class Score :
   """
   def __init__(self) :
     
-    # General information about the score
+    self.songDir  = ""
+    self.songName = ""
+    
     self.nStaffs = 2
     self.avgNoteDuration = 0
     self.hasUnsavedChanges = False
@@ -98,20 +100,6 @@ class Score :
     self.keyList = []
 
     self.progressEnable = True
-    
-    # Combo!
-    # Resets every time a wrong note is played.
-    # Keeps track of the best scores achieved
-    # TODO: remove it from the Score class
-    # self.comboCount = 0
-    # self.comboDrop = False
-    # self.comboHighestSession = 0
-    # self.comboHighestAllTime = 0
-
-    # Some learning statistics
-    # self.statsLastCursor = -1
-    # self.statsSteadyCount = 0
-    # self.statsCursor = []
 
     # Loop practice feature
     self.loopEnable = False
@@ -125,13 +113,6 @@ class Score :
     # Tempo sections
     self.tempoReadFromScore = False
     self.tempoSections = [(1, 120)]
-
-    # Session info
-    # self.sessionCount = 0
-    # self.sessionStartTime = datetime.datetime.now()
-    # self.sessionStopTime = 0
-    # self.sessionTotalPracticeTime = 0
-    # self.sessionLog = []
 
 
 
@@ -1105,11 +1086,26 @@ class Score :
     elif (os.path.splitext(inputFile)[-1] == ".pr") :
       self._importFromPrFile(inputFile)
     else :
-      print("[ERROR] This file extension is not recognized.")
+      print("[ERROR] This file extension is not supported.")
       exit()
 
-    self.hasUnsavedChanges = False
 
+
+
+    (rootDir, rootNameExt) = os.path.split(inputFile)
+    (rootName, _) = os.path.splitext(rootNameExt)
+    # self.songName     = rootNameExt
+    # self.jsonName     = rootName + ".json"          # Example: "my_song.json"
+    # self.jsonFile     = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
+    # self.depotFolder  = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
+    
+    self.songDir = rootDir
+    self.songName = rootName
+    
+
+
+    self.hasUnsavedChanges = False
+    
 
 
   # ---------------------------------------------------------------------------

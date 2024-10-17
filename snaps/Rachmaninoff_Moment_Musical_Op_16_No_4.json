@@ -1,9 +1,9 @@
 {
-  "nSnapshots": 16,
+  "nSnapshots": 9,
   "snapshots": [
     {
       "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "R89N4D.png",
+      "file": "3N8W7Q.png",
       "index": 0,
       "displayName": "Capture 1",
       "description": "",
@@ -15,7 +15,7 @@
     },
     {
       "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "U86W86.png",
+      "file": "RWPR3P.png",
       "index": 1,
       "displayName": "Capture 2",
       "description": "",
@@ -27,7 +27,7 @@
     },
     {
       "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "DMQHPW.png",
+      "file": "95A4R8.png",
       "index": 2,
       "displayName": "Capture 3",
       "description": "",
@@ -39,7 +39,7 @@
     },
     {
       "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "PW42FM.png",
+      "file": "QRB9ZY.png",
       "index": 3,
       "displayName": "Capture 4",
       "description": "",
@@ -51,7 +51,7 @@
     },
     {
       "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "AWRNW2.png",
+      "file": "Q2M9CV.png",
       "index": 4,
       "displayName": "Capture 5",
       "description": "",
@@ -63,7 +63,7 @@
     },
     {
       "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "GFW3TB.png",
+      "file": "ADVRR4.png",
       "index": 5,
       "displayName": "Capture 6",
       "description": "",
@@ -75,7 +75,7 @@
     },
     {
       "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "BKRP95.png",
+      "file": "8MFDUT.png",
       "index": 6,
       "displayName": "Capture 7",
       "description": "",
@@ -87,7 +87,7 @@
     },
     {
       "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "MDU9CG.png",
+      "file": "DTNMX2.png",
       "index": 7,
       "displayName": "Capture 8",
       "description": "",
@@ -99,93 +99,9 @@
     },
     {
       "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "UVP49B.png",
+      "file": "P9U78C.png",
       "index": 8,
       "displayName": "Capture 9",
-      "description": "",
-      "cursorRange": [],
-      "leftHandRectCoords": [],
-      "rightHandRectCoords": [],
-      "needsRework": false,
-      "fileMissing": false
-    },
-    {
-      "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "MDTNFN.png",
-      "index": 9,
-      "displayName": "Capture 10",
-      "description": "",
-      "cursorRange": [],
-      "leftHandRectCoords": [],
-      "rightHandRectCoords": [],
-      "needsRework": false,
-      "fileMissing": false
-    },
-    {
-      "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "2N4DBF.png",
-      "index": 10,
-      "displayName": "Capture 11",
-      "description": "",
-      "cursorRange": [],
-      "leftHandRectCoords": [],
-      "rightHandRectCoords": [],
-      "needsRework": false,
-      "fileMissing": false
-    },
-    {
-      "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "TG9PMP.png",
-      "index": 11,
-      "displayName": "Capture 12",
-      "description": "",
-      "cursorRange": [],
-      "leftHandRectCoords": [],
-      "rightHandRectCoords": [],
-      "needsRework": false,
-      "fileMissing": false
-    },
-    {
-      "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "2T7R7M.png",
-      "index": 12,
-      "displayName": "Capture 13",
-      "description": "",
-      "cursorRange": [],
-      "leftHandRectCoords": [],
-      "rightHandRectCoords": [],
-      "needsRework": false,
-      "fileMissing": false
-    },
-    {
-      "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "F27QHC.png",
-      "index": 13,
-      "displayName": "Capture 14",
-      "description": "",
-      "cursorRange": [],
-      "leftHandRectCoords": [],
-      "rightHandRectCoords": [],
-      "needsRework": false,
-      "fileMissing": false
-    },
-    {
-      "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "TCG3TA.png",
-      "index": 14,
-      "displayName": "Capture 15",
-      "description": "",
-      "cursorRange": [],
-      "leftHandRectCoords": [],
-      "rightHandRectCoords": [],
-      "needsRework": false,
-      "fileMissing": false
-    },
-    {
-      "dir": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",
-      "file": "E8WXNH.png",
-      "index": 15,
-      "displayName": "Capture 16",
       "description": "",
       "cursorRange": [],
       "leftHandRectCoords": [],
@@ -195,7 +111,8 @@
     }
   ],
   "isEmpty": false,
-  "songName": "Rachmaninoff_Moment_Musical_Op_16_No_4.pr",
+  "songFile": "Rachmaninoff_Moment_Musical_Op_16_No_4.pr",
+  "songName": "Rachmaninoff_Moment_Musical_Op_16_No_4",
   "jsonName": "Rachmaninoff_Moment_Musical_Op_16_No_4.json",
   "jsonFile": "./snaps/Rachmaninoff_Moment_Musical_Op_16_No_4.json",
   "depotFolder": "./snaps/db__Rachmaninoff_Moment_Musical_Op_16_No_4",

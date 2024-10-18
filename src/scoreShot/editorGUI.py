@@ -72,8 +72,9 @@ class EditorGUI :
     self.imgbox.grid(column = 1, row = 1, columnspan = 1, rowspan = 1)
 
     # [MAIN WINDOW] Keyboard bindings
-    self.root.bind("<q>", self.CLBK_onQuit)
-    self.root.bind("<Delete>", self.CLBK_onDel)
+    self.root.bind("<q>"      , self.CLBK_onQuit)
+    self.root.bind("<Escape>" , self.CLBK_onEscPressed)
+    self.root.bind("<Delete>" , self.CLBK_onDel)
     self.root.protocol("WM_DELETE_WINDOW", self.CLBK_onQuit)
 
 
@@ -138,8 +139,11 @@ class EditorGUI :
     self.captureWin.bind("<Configure>"  , self.CLBK_onResize)
     self.captureWin.bind('<KeyPress>'   , self.CLBK_onKeyPress)
     self.captureWin.bind('<KeyRelease>' , self.CLBK_onKeyRelease)
+    self.captureWin.bind("<Escape>"     , self.CLBK_onEscPressed)
     self.captureWin.bind("<s>"          , self.CLBK_onScreenshot)
     self.captureWin.bind("<q>"          , self.CLBK_onQuit)
+    
+    
 
     self.snapshotListbox.bind("<<ListboxSelect>>", self.CLBK_snapshotListboxClick)
 
@@ -172,7 +176,7 @@ class EditorGUI :
   def loadGUIConfig(self) :
     """
     Loads the GUI configuration file (window geometry, ruler position etc.)
-    so that it restore the last settings.
+    in a .conf file that can be restored later.
     """
     
     # TODO: one configuration file, but several profiles.
@@ -187,14 +191,39 @@ class EditorGUI :
 
       # Adjust the window
       if songName in GUIConfigData :
-        w = GUIConfigData["DEFAULT"]["window_width"]
-        h = GUIConfigData["DEFAULT"]["window_height"]
+        w = GUIConfigData[songName]["window_width"]
+        h = GUIConfigData[songName]["window_height"]
         print(f"[DEBUG] w = {w}, h = {h}")
 
-        #self.captureWin.geometry(f"{w}x{h}")
+        self.captureWin.geometry(f"{w}x{h}")
 
-        print("[INFO] Capture window settings restored. Press the ESC key to load defaults.")
+        print("[INFO] Capture window settings restored from last session. Press the ESC key to load defaults.")
 
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD EditorGUI.saveGUIConfig()
+  # ---------------------------------------------------------------------------
+  def saveGUIConfig(self) :
+    """
+    Loads the GUI configuration file (window geometry, ruler position etc.)
+    so that it restore the last settings.
+    """
+    
+    geometry = self.captureWin.geometry()
+    width, height, x, y = map(int, geometry.replace('x', '+').split('+'))
+
+    
+    # TODO: one configuration file, but several profiles.
+    GUIConfigData = configparser.ConfigParser()
+    GUIConfigData[self.db.songName] = {
+      "window_width"  : width,
+      "window_height" : height,
+      "rulers_coord"  : self.ruler.getHandles()
+    }
+    with open(self.GUIConfigFile, "w") as configfile :
+      GUIConfigData.write(configfile)
+  
 
 
   # ---------------------------------------------------------------------------
@@ -248,45 +277,27 @@ class EditorGUI :
       self.root.withdraw()
       self.captureWin.withdraw()
       
-      if (len(self.changeLog) > 1) :
-        msgBox = "Save the following change? \n pouert"
+      if (len(self.db.changeLog) > 1) :
+        msg = "Save the following change?" + "\n" + self.db.changeLog[0]
       
-      saveReq = messagebox.askyesno("Exit", "Save the unsaved changes?\SEins")
+      else :
+        # TODO: limit the list of changes to 10 elements
+        msg = "Save the following changes?" + "\n"
+        for change in self.db.changeLog :
+          msg += change
+
+      saveReq = messagebox.askyesno("Exit", msg)
       if saveReq :
-        
-        # Save the database
-        self.db.hasUnsavedChanges = False
         self.db.save()
-
-        # Save the GUI configuration file
-        # TODO: one configuration file, but several profiles.
-        GUIConfigData = configparser.ConfigParser()
-        GUIConfigData["DEFAULT"] = {
-          "window_width"  : self.captureWin.winfo_width(),
-          "window_height" : self.captureWin.winfo_height(),
-          "rulers_coord"  : self.ruler.getHandles()
-        }
-        with open(self.GUIConfigFile, "w") as configfile :
-          GUIConfigData.write(configfile)
-      
-    
-
-
+        self.saveGUIConfig()
+        
+        
 
   # ---------------------------------------------------------------------------
   # Callbacks methods
   # ---------------------------------------------------------------------------
   
   
-  # --------
-  # App exit
-  # --------
-  def CLBK_onQuit(self, event = None) : 
-    self._exitChecks()
-    print("Exiting app...")
-    self.root.destroy()
-
-
   # -----------
   # Mouse wheel 
   # -----------
@@ -310,6 +321,12 @@ class EditorGUI :
         self.captureWin.geometry(f"+{x}+{y+1}")
 
 
+
+  # --------------
+  # 'ESC' keypress
+  # --------------
+  def CLBK_onEscPressed(self, event) :
+    print("[DEBUG] 'Del' key is not handled yet.")
 
   # ------------
   # 's' keypress
@@ -347,7 +364,7 @@ class EditorGUI :
     index = self.snapshotListbox.curselection()
 
     if index :
-      print(f"[DEBUG] Now selecting snapshot index: {index[0]}")
+      #print(f"[DEBUG] Now selecting snapshot index: {index[0]}")
 
       imgName = self.db.getSnapshotNameByIndex(index[0])
 
@@ -371,7 +388,6 @@ class EditorGUI :
   def CLBK_onDel(self, event) :
     print("[DEBUG] 'Del' key is not handled yet.")
 
-
   # ---------------
   # Key press (any)
   # ---------------
@@ -379,16 +395,12 @@ class EditorGUI :
     if (event.char == "r") :
       self.recallImg.lift()
 
-
   # -----------------
   # Key release (any)
   # -----------------
   def CLBK_onKeyRelease(self, event) :
     if (event.char == "r") :
       self.recallImg.lower()
-
-
-
 
 
   def CLBK_onMoveWindow(self, event) :
@@ -405,12 +417,18 @@ class EditorGUI :
       self.captureWin.geometry(f"+{x+1}+{y}")
 
 
-
-
-
   def CLBK_onResize(self, event) :
     self.ruler.update()
 
+
+
+  # --------
+  # App exit
+  # --------
+  def CLBK_onQuit(self, event = None) : 
+    self._exitChecks()
+    print("Exiting app...")
+    self.root.destroy()
 
 
 

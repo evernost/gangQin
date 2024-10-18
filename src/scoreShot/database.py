@@ -319,6 +319,21 @@ class Database :
     with open(self.jsonFile, "w") as jsonFile :
       json.dump(d, jsonFile, indent = 2)
 
+    self._changeLogClear()
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Database._changeLogClear()
+  # ---------------------------------------------------------------------------  
+  def _changeLogClear(self) :
+    """
+    Clears the change log.
+    """
+    
+    self.hasUnsavedChanges = False
+    self.changeLog = []
+    
 
 
 # =============================================================================

@@ -73,7 +73,7 @@ class EditorGUI :
 
     # [MAIN WINDOW] Keyboard bindings
     self.root.bind("<q>"      , self.CLBK_onQuit)
-    self.root.bind("<Escape>" , self.CLBK_onEscPressed)
+    self.root.bind("<Escape>" , self.CLBK_onEsc)
     self.root.bind("<Delete>" , self.CLBK_onDel)
     self.root.protocol("WM_DELETE_WINDOW", self.CLBK_onQuit)
 
@@ -139,7 +139,7 @@ class EditorGUI :
     self.captureWin.bind("<Configure>"  , self.CLBK_onResize)
     self.captureWin.bind('<KeyPress>'   , self.CLBK_onKeyPress)
     self.captureWin.bind('<KeyRelease>' , self.CLBK_onKeyRelease)
-    self.captureWin.bind("<Escape>"     , self.CLBK_onEscPressed)
+    self.captureWin.bind("<Escape>"     , self.CLBK_onEsc)
     self.captureWin.bind("<s>"          , self.CLBK_onScreenshot)
     self.captureWin.bind("<q>"          , self.CLBK_onQuit)
     
@@ -178,9 +178,7 @@ class EditorGUI :
     Loads the GUI configuration file (window geometry, ruler position etc.)
     in a .conf file that can be restored later.
     """
-    
-    # TODO: one configuration file, but several profiles.
-    # TODO: don't load from the depotFolder.
+      
     self.GUIConfigFile = f"{self.db.depotFolder}/GUIConfig.ini"
     songName = self.db.songName
 
@@ -191,11 +189,16 @@ class EditorGUI :
 
       # Adjust the window
       if songName in GUIConfigData :
-        w = GUIConfigData[songName]["window_width"]
-        h = GUIConfigData[songName]["window_height"]
-        print(f"[DEBUG] w = {w}, h = {h}")
-
-        self.captureWin.geometry(f"{w}x{h}")
+        windowWidth   = int(GUIConfigData[songName]["window_width"])
+        windowHeight  = int(GUIConfigData[songName]["window_height"])
+        handleLeft    = int(GUIConfigData[songName]["handle_left"])
+        handleRight   = int(GUIConfigData[songName]["handle_right"])
+        handleUp      = int(GUIConfigData[songName]["handle_up"])
+        handleDown    = int(GUIConfigData[songName]["handle_down"])
+        
+        self.captureWin.geometry(f"{windowWidth}x{windowHeight}")
+        self.captureWin.update()
+        self.ruler.setHandles(handleLeft, handleRight, handleUp, handleDown)
 
         print("[INFO] Capture window settings restored from last session. Press the ESC key to load defaults.")
 
@@ -206,20 +209,22 @@ class EditorGUI :
   # ---------------------------------------------------------------------------
   def saveGUIConfig(self) :
     """
-    Loads the GUI configuration file (window geometry, ruler position etc.)
-    so that it restore the last settings.
+    Saves the GUI settings (window geometry, ruler position etc.) to a configuration
+    file that can be restored upon next session.
     """
     
     geometry = self.captureWin.geometry()
-    width, height, x, y = map(int, geometry.replace('x', '+').split('+'))
+    (windowWidth, windowHeight, x, y) = map(int, geometry.replace("x", "+").split("+"))
+    (handleLeft, handleRight, handleUp, handleDown) = self.ruler.getHandles()
 
-    
-    # TODO: one configuration file, but several profiles.
     GUIConfigData = configparser.ConfigParser()
     GUIConfigData[self.db.songName] = {
-      "window_width"  : width,
-      "window_height" : height,
-      "rulers_coord"  : self.ruler.getHandles()
+      "window_width"  : windowWidth,
+      "window_height" : windowHeight,
+      "handle_left"   : handleLeft,
+      "handle_right"  : handleRight,
+      "handle_up"     : handleUp,
+      "handle_down"   : handleDown
     }
     with open(self.GUIConfigFile, "w") as configfile :
       GUIConfigData.write(configfile)
@@ -281,10 +286,13 @@ class EditorGUI :
         msg = "Save the following change?" + "\n" + self.db.changeLog[0]
       
       else :
-        # TODO: limit the list of changes to 10 elements
         msg = "Save the following changes?" + "\n"
-        for change in self.db.changeLog :
-          msg += change
+        for (index, change) in enumerate(self.db.changeLog) :
+          if (index >= 5) :
+            msg += "..."
+            break
+          else :
+            msg += change
 
       saveReq = messagebox.askyesno("Exit", msg)
       if saveReq :
@@ -325,8 +333,17 @@ class EditorGUI :
   # --------------
   # 'ESC' keypress
   # --------------
-  def CLBK_onEscPressed(self, event) :
-    print("[DEBUG] 'Del' key is not handled yet.")
+  def CLBK_onEsc(self, event) :
+    """
+    CALLBACK: on "Esc" key press
+    """
+    
+    self.captureWin.geometry("1250x440")
+    self.captureWin.update()
+    self.ruler.setHandlesDefault()
+    print("[INFO] Capture window reset to default size.")
+
+
 
   # ------------
   # 's' keypress
@@ -418,7 +435,7 @@ class EditorGUI :
 
 
   def CLBK_onResize(self, event) :
-    self.ruler.update()
+    self.ruler.updateOnResize()
 
 
 

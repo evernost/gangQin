@@ -190,7 +190,7 @@ class Database :
     self.nSnapshots += 1
     self.isEmpty = False
     self.hasUnsavedChanges = True
-    self.changeLog.append("- insertion")
+    self.changeLog.append(f"- snap insertion at {insertIndex}")
 
     print(f"[DEBUG] nSnapshots = {self.nSnapshots}")
 
@@ -199,7 +199,7 @@ class Database :
   # ---------------------------------------------------------------------------
   # METHOD Database.delete()
   # ---------------------------------------------------------------------------
-  def delete(self) :
+  def delete(self, index) :
     """
     Deletes the snapshot from the snapshot list at the specified index.
     
@@ -210,6 +210,8 @@ class Database :
 
     # Don't forget to update this flag
     self.isEmpty = (self.nSnapshots == 0)
+    
+    self.changeLog.append(f"- snap insertion at {index}")
 
   
 
@@ -315,13 +317,13 @@ class Database :
     Saves the current database state in a JSON file.
     """
     
+    self._changeLogClear()
+
     d = self.toDict()
     with open(self.jsonFile, "w") as jsonFile :
       json.dump(d, jsonFile, indent = 2)
 
-    self._changeLogClear()
-
-
+    
 
   # ---------------------------------------------------------------------------
   # METHOD Database._changeLogClear()

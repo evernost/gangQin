@@ -49,13 +49,16 @@ class Database :
     self.jsonFile     = ""          # Full name of the databse file (path + filename)
     self.depotFolder  = ""          # Directory where all the snapshots of the song are stored
     
+    self.description  = ""          # Description string for the database
+                                    # e.g. name of the PDF file for the score, display settings used etc.
+
     self.hasUnsavedChanges = False  # Turns True if anything has been modified in the database
     self.changeLog = []
 
     self.indexLastInsertion = -1    # Index where the last snapshot insertion occured
 
 
-    # Some initialisation procedures
+    # Initialisation procedures
     self._loadNames(prFile)
     self._loadJSON()
     self._integrityCheck()

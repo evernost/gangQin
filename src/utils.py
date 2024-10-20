@@ -14,7 +14,7 @@
 # External libs
 # =============================================================================
 # Project specific constants
-from commons import *
+from src.commons import *
 
 import colorsys
 

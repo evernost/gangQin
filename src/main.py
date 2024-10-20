@@ -472,7 +472,8 @@ while running :
   # Draw the keyboard on screen
   keyboardWidget.reset()
   keyboardWidget.drawKeys(screen)
-  
+
+  # Get the key the song is in   
   currKey = userScore.getCurrentKey()
   keyboardWidget.setKey(currKey)
   if (currKey != None) :

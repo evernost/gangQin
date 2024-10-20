@@ -14,15 +14,15 @@
 # External libs
 # =============================================================================
 # Project specific constants
-from commons import *
+from src.commons import *
 
 import pygame
-import text
+import src.text as text
 
 # For point in polygon test
 from shapely.geometry import Point, Polygon
 
-import utils
+import src.utils as utils
 
 
 

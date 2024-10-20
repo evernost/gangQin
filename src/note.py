@@ -15,9 +15,9 @@
 # External libs
 # =============================================================================
 # Project specific constants
-from commons import *
+from src.commons import *
 
-import utils
+import src.utils as utils
 
 
 # =============================================================================

@@ -15,9 +15,9 @@
 # External libs
 # =============================================================================
 # Project specific constants
-from commons import *
+from src.commons import *
 
-import note
+import src.note as note
 
 import datetime
 import copy

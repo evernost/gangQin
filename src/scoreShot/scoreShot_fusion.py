@@ -60,7 +60,7 @@ userScore.importFromFile(songFile)
 # Grand piano widget
 keyboardWidget = keyboard.Keyboard(loc = (10, 300))
 
-
+# 
 db = database.Database(songFile)
 
 
@@ -116,14 +116,12 @@ while running :
       # ----------------------------------
       if (keys[pygame.K_LEFT] and not(ctrlKey) and not(altKey)) :
         userScore.cursorStep(-1)
-        imgIndex -= 1
 
       # ----------------------------------
       # Right arrow: jump forward (1 step)
       # ----------------------------------
       if (keys[pygame.K_RIGHT] and not(ctrlKey) and not(altKey)) :
         userScore.cursorStep(1)
-        imgIndex += 1
 
       # -----------------------------------------
       # CTRL + Left arrow: fast rewind (10 steps)
@@ -160,6 +158,18 @@ while running :
       # -----------------------------
       if (keys[pygame.K_UP]) :
         userScore.gotoNextBookmark()
+
+      # ----------------------
+      # Page up: next snapshot
+      # ----------------------
+      if (keys[pygame.K_PAGEUP]) :
+        imgIndex += 1
+
+      # ----------------------------
+      # Page down: previous snapshot
+      # ----------------------------
+      if (keys[pygame.K_PAGEDOWN]) :
+        imgIndex -= 1
 
       
 

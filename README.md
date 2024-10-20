@@ -34,7 +34,7 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 
 | Key           | Function      |
 |:------------- |:-------------|
-| ←             |Previous  cursor|
+| ←             |Previous cursor|
 | →             |Next cursor     |
 | ↑             |Next bookmark   |
 | ↓             |Previous bookmark|

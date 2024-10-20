@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
 # Project       : gangQin
-# Module name   : scoreShot_player
-# File name     : scoreShot_player.py
-# Purpose       : 
+# Module name   : scoreShot_fusion
+# File name     : scoreShot_fusion.py
+# Purpose       : score snapshots / MIDI file merging tool
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : Saturday, 19 October 2024
 # -----------------------------------------------------------------------------
@@ -13,24 +13,24 @@
 # =============================================================================
 # External libs 
 # =============================================================================
-# Project specific constants
 from src.commons import *
 
-# For graphics
-import pygame
-
-
-from src.widgets import keyboard
-
-
-# Various utilities
-# import note
+import src.widgets.keyboard as keyboard
 import src.score as score
 import src.text as text
-# import utils
 
-# For file/path utilities
+import src.scoreShot.database as database
+
+import pygame
 import os
+
+
+
+# =============================================================================
+# Constants pool
+# =============================================================================
+TARGET_WIDTH = 1300
+TARGET_HEIGHT = 230
 
 
 
@@ -38,7 +38,7 @@ import os
 # Main code
 # =============================================================================
 
-
+# TODO: call a file selection GUI.
 songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
 
 
@@ -61,35 +61,27 @@ userScore.importFromFile(songFile)
 keyboardWidget = keyboard.Keyboard(loc = (10, 300))
 
 
-
-
-
-
-
+db = database.Database(songFile)
 
 
 # Create window
-pygame.display.set_caption(f"scoreShot Player - v0.1 [ALPHA] (October 2024) - <{os.path.basename(songFile)}>")
+pygame.display.set_caption(f"scoreShot Fusion - v0.1 [ALPHA] (October 2024) - <{os.path.basename(songFile)}>")
 
 # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
 pygame.key.set_repeat(250, 50)
 
 
+imgIndex = 0
 
-
-
-
-# =============================================================================
-# Main loop
-# =============================================================================
 running = True
 
 clickMsg = False
 ctrlKey  = False
 altKey   = False
 
-
-
+# =============================================================================
+# Main loop
+# =============================================================================
 while running :
   for event in pygame.event.get() :
     if (event.type == pygame.QUIT) :
@@ -124,12 +116,14 @@ while running :
       # ----------------------------------
       if (keys[pygame.K_LEFT] and not(ctrlKey) and not(altKey)) :
         userScore.cursorStep(-1)
+        imgIndex -= 1
 
       # ----------------------------------
       # Right arrow: jump forward (1 step)
       # ----------------------------------
       if (keys[pygame.K_RIGHT] and not(ctrlKey) and not(altKey)) :
         userScore.cursorStep(1)
+        imgIndex += 1
 
       # -----------------------------------------
       # CTRL + Left arrow: fast rewind (10 steps)
@@ -217,16 +211,44 @@ while running :
   keyboardWidget.reset()
   keyboardWidget.drawKeys(screen)
   
-  
-  
-  
-
-  # -------------------------------------------------
-  # Show the notes expected to be played at that time
-  # -------------------------------------------------
+  # Show the teacher notes on the keyboard widget
   teacherNotes = userScore.getTeacherNotes()
   keyboardWidget.keyPress(screen, teacherNotes)
-  
+
+  # Load the score image
+  imgName = db.getSnapshotNameByIndex(imgIndex)
+  if (imgName != "") :
+    img = pygame.image.load(imgName)
+    (imgWidth, imgHeight) = img.get_size()
+
+    sWidth = TARGET_WIDTH/imgWidth
+    sHeight = TARGET_HEIGHT/imgHeight
+
+    s = min(sWidth, sHeight)
+    
+    imgScaled = pygame.transform.smoothscale(img, (int(imgWidth*s), int(imgHeight*s)))
+
+    # Create a transparent surface (same size as the main window)
+    #transparent_surface = pygame.Surface(window_size, pygame.SRCALPHA)
+
+    # Define the rectangle color (RGBA format: R, G, B, A) with transparency
+    #transparent_color = (255, 0, 0, 128)  # Red with 50% transparency
+
+    # Define the rectangle's position and size (x, y, width, height)
+    #rect_position = (150, 200, 200, 100)
+
+    
+    # Display the image at the specified position
+    xCenter = (screenWidth-(int(imgWidth*s)))//2
+    screen.blit(imgScaled, (xCenter, 50))
+
+    # Clear the transparent surface (important if you redraw it each frame)
+    #transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
+
+
+
+
+
   
   # CURSOR
   text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)

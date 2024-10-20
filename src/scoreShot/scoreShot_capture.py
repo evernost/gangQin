@@ -24,7 +24,7 @@
 # =============================================================================
 # External libs 
 # =============================================================================
-import editorGUI
+import captureGUI
 import tkinter as tk
 
 
@@ -69,7 +69,7 @@ songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
 
 root = tk.Tk()
 
-app = editorGUI.EditorGUI(root)
+app = captureGUI.CaptureGUI(root)
 app.loadDatabase(songFile)
 app.loadGUIConfig()
 

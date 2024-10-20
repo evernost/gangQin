@@ -45,7 +45,7 @@ BORDER_SIZE = 100
 # =============================================================================
 # Main code
 # =============================================================================
-class EditorGUI :
+class CaptureGUI :
 
   """
   Defines the class for the main GUI of the scoreShot (capture) app.

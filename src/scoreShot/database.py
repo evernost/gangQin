@@ -243,6 +243,22 @@ class Database :
       return f"{s.dir}/{s.file}"
     else :
       return ""
+    
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Database.getIndexByCursor()
+  # ---------------------------------------------------------------------------  
+  def getIndexByCursor(self, cursor) :
+    """
+    Finds the snapshot in the database that covers the cursor value passed as argument.
+    Returns its index in the database if found, otherwise returns -1.
+    """
+    
+    print("[DEBUG] Database.getIndexByCursor() is TODO.")
+
+
+
 
 
 

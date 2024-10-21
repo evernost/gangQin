@@ -16,10 +16,11 @@
 from src.commons import *
 
 import src.widgets.keyboard as keyboard
+import src.widgets.staffScope as staffScope
 import src.score as score
 import src.text as text
 
-import src.scoreShot.database as database
+#import src.scoreShot.database as database
 
 import pygame
 import os
@@ -60,9 +61,9 @@ userScore.importFromFile(songFile)
 # Grand piano widget
 keyboardWidget = keyboard.Keyboard(loc = (10, 300))
 
-# 
-db = database.Database(songFile)
-
+# StaffScope widget
+staffScopeWidget = staffScope.StaffScope(songFile)
+staffScopeWidget.setScreen(screen)
 
 # Create window
 pygame.display.set_caption(f"scoreShot Fusion - v0.1 [ALPHA] (October 2024) - <{os.path.basename(songFile)}>")

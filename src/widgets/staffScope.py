@@ -21,18 +21,16 @@
 # =============================================================================
 # External libs 
 # =============================================================================
-
-
 import src.scoreShot.database as database
-
 import pygame
-import os
 
 
 
 # =============================================================================
 # Constants pool
 # =============================================================================
+TARGET_WIDTH = 1300
+TARGET_HEIGHT = 230
 
 
 
@@ -44,18 +42,20 @@ class StaffScope :
   """
   The StaffScope widget is ...
   """
-  def __init__(self, songFile) :
+  def __init__(self) :
     
     self.db = None
     
     self.screen = None
+    self.screenWidth = -1
+    self.screenHeight = -1
     
     self.img = None
     self.imgFile = ""
     self.imgSpan = [-1,-1]
 
 
-    self._indexLoaded = -1   # Index of the image loaded
+    self._indexLoaded = -1
 
 
 
@@ -64,47 +64,32 @@ class StaffScope :
     self.msgQueueOut = []
 
 
-    # Internal initialisation
-    self._loadDatabase(songFile)
-    self.loadByIndex(0)
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Database._loadDatabase()
-  # ---------------------------------------------------------------------------
-  def _loadDatabase(self, songFile) :
-    """
-    Generates the various names of files and directories associated with the 
-    database.
-    """
-    
-    self.db = database.Database(songFile)
-    
-    
-    # (rootDir, rootNameExt) = os.path.split(prFile)
-    # (rootName, _) = os.path.splitext(rootNameExt)
-    # self.songName     = rootName
-    # self.songFile     = rootNameExt
-    # self.jsonName     = rootName + ".json"          # Example: "my_song.json"
-    # self.jsonFile     = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
-    # self.depotFolder  = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
-
-
 
   # ---------------------------------------------------------------------------
   # METHOD Database.setScreen()
   # ---------------------------------------------------------------------------
-  def setScreen(self, screenObj) :
+  def setScreen(self, screenObj, width, height) :
     """
-    Creates an internal copy of the Pygame screen object of the main application
-    window.
+    Creates an internal copy of the Pygame screen parameters.
+    Required to draw and interact with the widget.
     """
+
     self.screen = screenObj
+    self.screenWidth = width
+    self.screenHeight = height
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD Database.load(<.pr filename string>)
+  # ---------------------------------------------------------------------------
+  def load(self, songFile) :
+    """
+    Loads the snapshot database associated with the filename given as argument.
+    """
 
+    self.db = database.Database(songFile)
+    self.loadByIndex(0)
 
 
 
@@ -134,12 +119,12 @@ class StaffScope :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database.nextStaff()
+  # METHOD StaffScope.nextStaff()
   # ---------------------------------------------------------------------------
   def nextStaff(self) :
     """
     Loads and shows the next staff.
-    Clamps to the last staff when reaching the end.
+    Clamps to the last staff when reaching the end of the score.
     """
     
     self.index += 1
@@ -147,12 +132,12 @@ class StaffScope :
 
     
 # ---------------------------------------------------------------------------
-  # METHOD Database.previousStaff()
+  # METHOD StaffScope.previousStaff()
   # ---------------------------------------------------------------------------
   def previousStaff(self) :
     """
     Loads and shows the previous staff.
-    Clamps to the first staff when reaching the beginning.
+    Clamps to the first staff when reaching the beginning of the score.
     """
     
     self.index -= 1
@@ -161,51 +146,38 @@ class StaffScope :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database.loadByIndex()
+  # METHOD StaffScope.loadByIndex()
   # ---------------------------------------------------------------------------
   def loadByIndex(self, index) :
     """
-    Loads and shows the staff at index "index" in the database.
-    
+    Loads and shows the content located at position "index" in the snapshot database.
     """
     
-    print("[DEBUG] StaffScope.nextStaff() is TODO.")
+    # TODO: check if the image is cached.
+    # ...
 
-    self.imgName = self.db.getSnapshotNameByIndex(index)
+    self.imgFile = self.db.getSnapshotFileByIndex(index)
     
-    if (self.imgName != "") :
-      img = pygame.image.load(imgName)
-      (imgWidth, imgHeight) = img.get_size()
+    if (self.imgFile != "") :
+      
+      # Load the file
+      self.img = pygame.image.load(self.imgFile)
+      (imgWidth, imgHeight) = self.img.get_size()
 
+      # Adjust the image to the widget target dimension
       sWidth = TARGET_WIDTH/imgWidth
       sHeight = TARGET_HEIGHT/imgHeight
+      s = min(sWidth, sHeight)      
+      self.imgScaled = pygame.transform.smoothscale(self.img, (int(imgWidth*s), int(imgHeight*s)))
 
-      s = min(sWidth, sHeight)
-      
-      imgScaled = pygame.transform.smoothscale(img, (int(imgWidth*s), int(imgHeight*s)))
-
-      # Create a transparent surface (same size as the main window)
-      #transparent_surface = pygame.Surface(window_size, pygame.SRCALPHA)
-
-      # Define the rectangle color (RGBA format: R, G, B, A) with transparency
-      #transparent_color = (255, 0, 0, 128)  # Red with 50% transparency
-
-      # Define the rectangle's position and size (x, y, width, height)
-      #rect_position = (150, 200, 200, 100)
-
-      
-      # Display the image at the specified position
-      xCenter = (screenWidth-(int(imgWidth*s)))//2
-      screen.blit(imgScaled, (xCenter, 50))
-
-      # Clear the transparent surface (important if you redraw it each frame)
-      #transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
-
+      # Display the image and center it
+      xCenter = (self.screenWidth-(int(imgWidth*s)))//2
+      self.screen.blit(self.imgScaled, (xCenter, 50))
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database.loadByCursor()
+  # METHOD StaffScope.loadByCursor()
   # ---------------------------------------------------------------------------
   def loadByCursor(self, cursor) :
     """
@@ -222,6 +194,34 @@ class StaffScope :
       self.loadByIndex(index)
 
     
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.loadByCursor()
+  # ---------------------------------------------------------------------------
+  def click(coord) :
+    """
+    Handles the mouse click with its coordinates.
+    Clicks outside the StaffScope widget are ignored.
+    """
+    print(f"[DEBUG] Click here: x = {coord[0]}, y = {coord[1]}")
+
+
+    # Create a transparent surface (same size as the main window)
+    #transparent_surface = pygame.Surface(window_size, pygame.SRCALPHA)
+
+    # Define the rectangle color (RGBA format: R, G, B, A) with transparency
+    #transparent_color = (255, 0, 0, 128)  # Red with 50% transparency
+
+    # Define the rectangle's position and size (x, y, width, height)
+    #rect_position = (150, 200, 200, 100)
+
+    
+    # Display the image at the specified position
+    # xCenter = (self.screenWidth-(int(imgWidth*s)))//2
+    # self.screen.blit(self.imgScaled, (xCenter, 50))
+
+    # Clear the transparent surface (important if you redraw it each frame)
+    #transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
 
 
 

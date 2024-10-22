@@ -30,8 +30,7 @@ import os
 # =============================================================================
 # Constants pool
 # =============================================================================
-TARGET_WIDTH = 1300
-TARGET_HEIGHT = 230
+# None.
 
 
 
@@ -62,8 +61,9 @@ userScore.importFromFile(songFile)
 keyboardWidget = keyboard.Keyboard(loc = (10, 300))
 
 # StaffScope widget
-staffScopeWidget = staffScope.StaffScope(songFile)
-staffScopeWidget.setScreen(screen)
+staffScopeWidget = staffScope.StaffScope()
+staffScopeWidget.setScreen(screen, screenWidth, screenHeight)
+staffScopeWidget.load(songFile)
 
 # Create window
 pygame.display.set_caption(f"scoreShot Fusion - v0.1 [ALPHA] (October 2024) - <{os.path.basename(songFile)}>")
@@ -72,11 +72,10 @@ pygame.display.set_caption(f"scoreShot Fusion - v0.1 [ALPHA] (October 2024) - <{
 pygame.key.set_repeat(250, 50)
 
 
-imgIndex = 0
 
 running = True
 
-clickMsg = False
+# TODO: get rid of these.
 ctrlKey  = False
 altKey   = False
 
@@ -164,13 +163,13 @@ while running :
       # Page up: next snapshot
       # ----------------------
       if (keys[pygame.K_PAGEUP]) :
-        imgIndex += 1
+        staffScopeWidget.nextStaff()
 
       # ----------------------------
       # Page down: previous snapshot
       # ----------------------------
       if (keys[pygame.K_PAGEDOWN]) :
-        imgIndex -= 1
+        staffScopeWidget.previousStaff()
 
       
 
@@ -194,9 +193,8 @@ while running :
       
       # Left click
       if (event.button == MOUSE_LEFT_CLICK) :
-        clickMsg = True
-        clickCoord = pygame.mouse.get_pos()
-        #print(f"[DEBUG] Click here: x = {clickCoord[0]}, y = {clickCoord[1]}")
+        coord = pygame.mouse.get_pos()
+        staffScopeWidget.click(coord)
       
       # Scroll up
       if (event.button == MOUSE_SCROLL_UP) :
@@ -226,41 +224,9 @@ while running :
   teacherNotes = userScore.getTeacherNotes()
   keyboardWidget.keyPress(screen, teacherNotes)
 
-  # Load the score image
-  imgName = db.getSnapshotNameByIndex(imgIndex)
-  if (imgName != "") :
-    img = pygame.image.load(imgName)
-    (imgWidth, imgHeight) = img.get_size()
+  # Load the staff display
+  #staffScopeWidget.loadByIndex()
 
-    sWidth = TARGET_WIDTH/imgWidth
-    sHeight = TARGET_HEIGHT/imgHeight
-
-    s = min(sWidth, sHeight)
-    
-    imgScaled = pygame.transform.smoothscale(img, (int(imgWidth*s), int(imgHeight*s)))
-
-    # Create a transparent surface (same size as the main window)
-    #transparent_surface = pygame.Surface(window_size, pygame.SRCALPHA)
-
-    # Define the rectangle color (RGBA format: R, G, B, A) with transparency
-    #transparent_color = (255, 0, 0, 128)  # Red with 50% transparency
-
-    # Define the rectangle's position and size (x, y, width, height)
-    #rect_position = (150, 200, 200, 100)
-
-    
-    # Display the image at the specified position
-    xCenter = (screenWidth-(int(imgWidth*s)))//2
-    screen.blit(imgScaled, (xCenter, 50))
-
-    # Clear the transparent surface (important if you redraw it each frame)
-    #transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
-
-
-
-
-
-  
   # CURSOR
   text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)
   

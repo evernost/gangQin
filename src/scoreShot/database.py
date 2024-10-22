@@ -231,16 +231,18 @@ class Database :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database.getSnapshotNameByIndex()
+  # METHOD Database.getSnapshotFileByIndex()
   # ---------------------------------------------------------------------------  
-  def getSnapshotNameByIndex(self, index) :
+  def getSnapshotFileByIndex(self, index) :
     """
-    Returns the filename of the .png file from its index in the database.
+    Returns the full name (path + file) of the .png from its index in the database.
+    Returns an empty string if the index is invalid.
     """
     
     if ((index >= 0) and (index <= (self.nSnapshots-1))) :
       s = self.snapshots[index]
       return f"{s.dir}/{s.file}"
+    
     else :
       return ""
     
@@ -269,15 +271,20 @@ class Database :
     """
     Generates a unique file name for a snapshot.
     
-    NOTE: generation shall be done at the database level (not Snapshot object level)
-    because unicity requires knowledge of all names in the db.
+    NOTE: generation shall be done here (at the database level) because unicity 
+    requires knowledge of all names in the db.
     """
 
     # Restrain to a subset of chars 
     allowedChars = "ABCDEFGHKMNPQRTUVWXYZ" + "23456789"    
+    
+    # TODO: make sure the name does not already exist
+    # ...
+    
+    
     return "".join(random.choice(allowedChars) for _ in range(6))
 
-
+    
 
   # ---------------------------------------------------------------------------
   # METHOD Database.fromDict()

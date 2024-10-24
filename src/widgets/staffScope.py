@@ -53,7 +53,9 @@ class StaffScope :
     self.img = None
     self.imgFile = ""
     self.imgSpan = [-1,-1]
-
+    self.imgHeight = -1
+    self.imgWidth = -1
+    self.imgScaling = 0
 
     self._indexLoaded = -1
 
@@ -93,30 +95,30 @@ class StaffScope :
 
 
 
-  # ---------------------------------------------------------------------------
-  # GETTER StaffScope.index
-  # ---------------------------------------------------------------------------
-  @property
-  def index(self) :
-    return self._indexLoaded
+  # # ---------------------------------------------------------------------------
+  # # GETTER StaffScope.index
+  # # ---------------------------------------------------------------------------
+  # @property
+  # def index(self) :
+  #   return self._indexLoaded
 
-  # ---------------------------------------------------------------------------
-  # SETTER StaffScope.index
-  # ---------------------------------------------------------------------------
-  @index.setter
-  def index(self, val) :
-    """
-    Setter for the 'index' attribute.
-    TODO
-    """
+  # # ---------------------------------------------------------------------------
+  # # SETTER StaffScope.index
+  # # ---------------------------------------------------------------------------
+  # @index.setter
+  # def index(self, val) :
+  #   """
+  #   Setter for the 'index' attribute.
+  #   TODO
+  #   """
     
-    if ((val > 0) and (val < self.db.nSnapshots)) :
-      self._indexLoaded = val
-      self.loadByIndex(self._indexLoaded)
+  #   print(f"[DEBUG] Calling the setter!")
+
+  #   if ((val >= 0) and (val <= (self.db.nSnapshots-1))) :
+  #     self._indexLoaded = val
+  #     self.loadByIndex(self._indexLoaded)
 
     
-    
-
 
   # ---------------------------------------------------------------------------
   # METHOD StaffScope.nextStaff()
@@ -127,7 +129,8 @@ class StaffScope :
     Clamps to the last staff when reaching the end of the score.
     """
     
-    self.index += 1
+    if ((self._indexLoaded + 1) <= (self.db.nSnapshots-1)) :
+      self.loadByIndex(self._indexLoaded+1)
 
 
     
@@ -140,8 +143,8 @@ class StaffScope :
     Clamps to the first staff when reaching the beginning of the score.
     """
     
-    self.index -= 1
-
+    if ((self._indexLoaded - 1) >= 0) :
+      self.loadByIndex(self._indexLoaded-1)
 
 
 
@@ -154,25 +157,42 @@ class StaffScope :
     """
     
     # TODO: check if the image is cached.
-    # ...
+    if (self._indexLoaded != index) :
 
-    self.imgFile = self.db.getSnapshotFileByIndex(index)
-    
-    if (self.imgFile != "") :
+      self.imgFile = self.db.getSnapshotFileByIndex(index)
       
-      # Load the file
-      self.img = pygame.image.load(self.imgFile)
-      (imgWidth, imgHeight) = self.img.get_size()
+      if (self.imgFile != "") :
+        
+        # Load the file
+        self.img = pygame.image.load(self.imgFile)
+        (self.imgWidth, self.imgHeight) = self.img.get_size()
 
-      # Adjust the image to the widget target dimension
-      sWidth = TARGET_WIDTH/imgWidth
-      sHeight = TARGET_HEIGHT/imgHeight
-      s = min(sWidth, sHeight)      
-      self.imgScaled = pygame.transform.smoothscale(self.img, (int(imgWidth*s), int(imgHeight*s)))
+        # Adjust the image to the widget target dimension
+        sWidth = TARGET_WIDTH/self.imgWidth
+        sHeight = TARGET_HEIGHT/self.imgHeight
+        self.imgScaling = min(sWidth, sHeight)      
+        self.imgScaled = pygame.transform.smoothscale(self.img, (int(self.imgWidth*self.imgScaling), int(self.imgHeight*self.imgScaling)))
 
-      # Display the image and center it
-      xCenter = (self.screenWidth-(int(imgWidth*s)))//2
-      self.screen.blit(self.imgScaled, (xCenter, 50))
+        # Display the image and center it
+        xCenter = (self.screenWidth-(int(self.imgWidth*self.imgScaling)))//2
+        self.screen.blit(self.imgScaled, (xCenter, 50))
+
+        self._indexLoaded = index
+
+      else : 
+
+        print(f"[DEBUG] Index = {index} has no image associated to it.")
+        self._indexLoaded = -1
+
+
+    else :
+      if (self.imgFile != "") :
+        
+        xCenter = (self.screenWidth-(int(self.imgWidth*self.imgScaling)))//2
+        self.screen.blit(self.imgScaled, (xCenter, 50))
+
+        
+
 
 
 
@@ -186,19 +206,21 @@ class StaffScope :
     Therefore, calls to the function have virtually no cost.
     """
     
-    if ((index >= self.imgSpan[0]) and (index <= self.imgSpan[1])) :
-      pass
+    # if ((index >= self.imgSpan[0]) and (index <= self.imgSpan[1])) :
+    #   pass
     
-    else :
-      index = self.db.getIndexByCursor(cursor)
-      self.loadByIndex(index)
+    # else :
+    #   index = self.db.getIndexByCursor(cursor)
+    #   self.loadByIndex(index)
+
+    self.loadByIndex(self._indexLoaded)
 
     
 
   # ---------------------------------------------------------------------------
   # METHOD StaffScope.loadByCursor()
   # ---------------------------------------------------------------------------
-  def click(coord) :
+  def click(self, coord) :
     """
     Handles the mouse click with its coordinates.
     Clicks outside the StaffScope widget are ignored.

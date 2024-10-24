@@ -171,12 +171,11 @@ while running :
       if (keys[pygame.K_PAGEDOWN]) :
         staffScopeWidget.previousStaff()
 
-      
-
       # ----------------
       # "s": export/save
       # ----------------
-      # if (keys[pygame.K_s]) :
+      if (keys[pygame.K_s]) :
+        print("[DEBUG] Saving is not supported yet.")
         # print("[INFO] Exporting piano roll...")
         # (rootDir, rootNameExt) = os.path.split(selectedFile)
         # (rootName, _) = os.path.splitext(rootNameExt)
@@ -225,7 +224,7 @@ while running :
   keyboardWidget.keyPress(screen, teacherNotes)
 
   # Load the staff display
-  #staffScopeWidget.loadByIndex()
+  staffScopeWidget.loadByCursor(userScore.getCursor())
 
   # CURSOR
   text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)

@@ -244,6 +244,7 @@ class Database :
       return f"{s.dir}/{s.file}"
     
     else :
+      print(f"[DEBUG] Database.getSnapshotFileByIndex(): requested index {index} cannot be loaded.")
       return ""
     
 

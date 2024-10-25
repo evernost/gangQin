@@ -57,8 +57,10 @@ class StaffScope :
     self.imgWidth = -1
     self.imgScaling = 0
 
-    self._indexLoaded = -1
+    self._indexLoaded = -1    # Index of the snapshot loaded
 
+    self.playGlowLeft = []
+    self.playGlowRight = []
 
 
     # User interaction queues
@@ -95,31 +97,6 @@ class StaffScope :
 
 
 
-  # # ---------------------------------------------------------------------------
-  # # GETTER StaffScope.index
-  # # ---------------------------------------------------------------------------
-  # @property
-  # def index(self) :
-  #   return self._indexLoaded
-
-  # # ---------------------------------------------------------------------------
-  # # SETTER StaffScope.index
-  # # ---------------------------------------------------------------------------
-  # @index.setter
-  # def index(self, val) :
-  #   """
-  #   Setter for the 'index' attribute.
-  #   TODO
-  #   """
-    
-  #   print(f"[DEBUG] Calling the setter!")
-
-  #   if ((val >= 0) and (val <= (self.db.nSnapshots-1))) :
-  #     self._indexLoaded = val
-  #     self.loadByIndex(self._indexLoaded)
-
-    
-
   # ---------------------------------------------------------------------------
   # METHOD StaffScope.nextStaff()
   # ---------------------------------------------------------------------------
@@ -153,14 +130,14 @@ class StaffScope :
   # ---------------------------------------------------------------------------
   def loadByIndex(self, index) :
     """
-    Loads and shows the content located at position "index" in the snapshot database.
+    Loads the content located at position "index" in the snapshot database.
+    Once loaded, the "_indexLoaded" is updated with the requested index.
     """
     
-    # TODO: check if the image is cached.
+    # Load only if not cached yet
     if (self._indexLoaded != index) :
 
       self.imgFile = self.db.getSnapshotFileByIndex(index)
-      
       if (self.imgFile != "") :
         
         # Load the file
@@ -173,37 +150,22 @@ class StaffScope :
         self.imgScaling = min(sWidth, sHeight)      
         self.imgScaled = pygame.transform.smoothscale(self.img, (int(self.imgWidth*self.imgScaling), int(self.imgHeight*self.imgScaling)))
 
-        # Display the image and center it
-        xCenter = (self.screenWidth-(int(self.imgWidth*self.imgScaling)))//2
-        self.screen.blit(self.imgScaled, (xCenter, 50))
-
         self._indexLoaded = index
 
       else : 
-
         print(f"[DEBUG] Index = {index} has no image associated to it.")
-        self._indexLoaded = -1
-
-
-    else :
-      if (self.imgFile != "") :
-        
-        xCenter = (self.screenWidth-(int(self.imgWidth*self.imgScaling)))//2
-        self.screen.blit(self.imgScaled, (xCenter, 50))
+        self.imgWidth = -1
+        self.imgHeight = -1
+        self._indexLoaded = index
 
         
-
-
-
 
   # ---------------------------------------------------------------------------
   # METHOD StaffScope.loadByCursor()
   # ---------------------------------------------------------------------------
   def loadByCursor(self, cursor) :
     """
-    Loads and shows the staff that covers the cursor value passed as argument.
-    The image is cached as long as the cursor requested stays in the capture's span.
-    Therefore, calls to the function have virtually no cost.
+    Loads the staff that covers the cursor value passed as argument.
     """
     
     # if ((index >= self.imgSpan[0]) and (index <= self.imgSpan[1])) :
@@ -213,37 +175,73 @@ class StaffScope :
     #   index = self.db.getIndexByCursor(cursor)
     #   self.loadByIndex(index)
 
+
+
+    # Temporary:
     self.loadByIndex(self._indexLoaded)
 
+
     
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.render(cursor)
+  # ---------------------------------------------------------------------------
+  def render(self, cursor) :
+    """
+    Renders the current configuration (staff + "playglows")
+    The function shall be called at each frame.
+    """
+    
+    # Fetch the staff from the database
+    self.loadByCursor(cursor)
+
+    # Show the staff
+    xCenter = (self.screenWidth-(int(self.imgWidth*self.imgScaling))) // 2
+    self.screen.blit(self.imgScaled, (xCenter, 50))
+    
+    # Show the "PlayGlows"
+    transparent_surface = pygame.Surface((self.screenWidth, self.screenHeight), pygame.SRCALPHA)
+    transparent_color = (255, 255, 0, 128)  # Red with 50% transparency
+    rect_position = (446, 181, 30, 50)
+    transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
+    pygame.draw.rect(transparent_surface, transparent_color, rect_position)
+    self.screen.blit(transparent_surface, (0, 0))
+
+
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.loadByCursor()
+  # METHOD StaffScope.click()
   # ---------------------------------------------------------------------------
   def click(self, coord) :
     """
     Handles the mouse click with its coordinates.
     Clicks outside the StaffScope widget are ignored.
     """
+    
     print(f"[DEBUG] Click here: x = {coord[0]}, y = {coord[1]}")
 
+    # # Create a transparent surface (same size as the main window)
+    # transparent_surface = pygame.Surface((self.screenWidth, self.screenHeight), pygame.SRCALPHA)
 
-    # Create a transparent surface (same size as the main window)
-    #transparent_surface = pygame.Surface(window_size, pygame.SRCALPHA)
+    # # Define the rectangle color (RGBA format: R, G, B, A) with transparency
+    # transparent_color = (255, 0, 0, 128)  # Red with 50% transparency
 
-    # Define the rectangle color (RGBA format: R, G, B, A) with transparency
-    #transparent_color = (255, 0, 0, 128)  # Red with 50% transparency
+    # # Define the rectangle's position and size (x, y, width, height)
+    # rect_position = (446, 181, 10, 50)
 
-    # Define the rectangle's position and size (x, y, width, height)
-    #rect_position = (150, 200, 200, 100)
+    # # Clear the transparent surface (important if you redraw it each frame)
+    # transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.populate(None)
+  # ---------------------------------------------------------------------------
+  def populate(self) :
+    """
+    Description is TODO.
+    """
+    
+    print("[DEBUG] StaffScope.populate() is TODO")
+
 
     
-    # Display the image at the specified position
-    # xCenter = (self.screenWidth-(int(imgWidth*s)))//2
-    # self.screen.blit(self.imgScaled, (xCenter, 50))
-
-    # Clear the transparent surface (important if you redraw it each frame)
-    #transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
-
-
-

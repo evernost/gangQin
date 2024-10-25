@@ -102,6 +102,12 @@ while running :
       altKey  = event.mod & pygame.KMOD_ALT
       shiftKey  = event.mod & pygame.KMOD_SHIFT
 
+      # ---------------------------
+      # "p": populate automatically
+      # ---------------------------
+      if keys[pygame.K_p] :
+        staffScopeWidget.populate()
+
       # -----------------
       # "q": exit the app
       # -----------------
@@ -223,8 +229,8 @@ while running :
   teacherNotes = userScore.getTeacherNotes()
   keyboardWidget.keyPress(screen, teacherNotes)
 
-  # Load the staff display
-  staffScopeWidget.loadByCursor(userScore.getCursor())
+  # Render the staff display
+  staffScopeWidget.render(userScore.getCursor())
 
   # CURSOR
   text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)

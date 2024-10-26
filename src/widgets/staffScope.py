@@ -50,6 +50,8 @@ class StaffScope :
     self.screenWidth = -1       # GUI width
     self.screenHeight = -1      # GUI height
     
+    self.cursor = -1
+
     self.img = None
     self.imgFile = ""
     self.imgSpan = [-1,-1]
@@ -93,10 +95,11 @@ class StaffScope :
   def load(self, songFile) :
     """
     Loads the snapshot database associated with the filename given as argument.
+    Displays the first staff available from the database.
     """
 
     self.db = database.Database(songFile)
-    self.loadByIndex(0)
+    self.loadStaffByIndex(0)
 
 
 
@@ -110,11 +113,11 @@ class StaffScope :
     """
     
     if ((self._indexLoaded + 1) <= (self.db.nSnapshots-1)) :
-      self.loadByIndex(self._indexLoaded+1)
+      self.loadStaffByIndex(self._indexLoaded+1)
 
 
     
-# ---------------------------------------------------------------------------
+  # ---------------------------------------------------------------------------
   # METHOD StaffScope.previousStaff()
   # ---------------------------------------------------------------------------
   def previousStaff(self) :
@@ -124,14 +127,14 @@ class StaffScope :
     """
     
     if ((self._indexLoaded - 1) >= 0) :
-      self.loadByIndex(self._indexLoaded-1)
+      self.loadStaffByIndex(self._indexLoaded-1)
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.loadByIndex()
+  # METHOD StaffScope.loadStaffByIndex()
   # ---------------------------------------------------------------------------
-  def loadByIndex(self, index) :
+  def loadStaffByIndex(self, index) :
     """
     Loads the content located at position "index" in the snapshot database.
     Once loaded, the "_indexLoaded" is updated with the requested index.
@@ -174,9 +177,9 @@ class StaffScope :
         
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.loadByCursor()
+  # METHOD StaffScope.loadStaffByCursor()
   # ---------------------------------------------------------------------------
-  def loadByCursor(self, cursor) :
+  def loadStaffByCursor(self, cursor) :
     """
     Loads the staff that covers the cursor value passed as argument.
     """
@@ -191,34 +194,40 @@ class StaffScope :
 
 
     # Temporary:
-    self.loadByIndex(self._indexLoaded)
+    self.loadStaffByIndex(self._indexLoaded)
+    self.cursor = cursor
 
 
     
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.render(cursor)
+  # METHOD StaffScope.render(None)
   # ---------------------------------------------------------------------------
-  def render(self, cursor) :
+  def render(self) :
     """
     Renders the current configuration (staff + "playglows")
     The function shall be called at each frame.
+    
+    A staff must have been loaded prior to calling this function 
+    ('loadStaffByIndex' or 'loadStaffByCursor')
     """
     
-    # Fetch the staff from the database
-    self.loadByCursor(cursor)
+    # Test if a staff has been loaded
+    # ...
 
     # Show the staff
     self.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))
     
     # Show the playGlows
-    transparent_surface = pygame.Surface((self.screenWidth, self.screenHeight), pygame.SRCALPHA)
-    transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
-    
-    transparent_color = (255, 255, 0, 128)
-    rect_position = (446, 181, 30, 50)
-    
-    pygame.draw.rect(transparent_surface, transparent_color, rect_position)
-    self.screen.blit(transparent_surface, (0, 0))
+    if (len(self.playGlowLeft) != 0) :
+      transparent_surface = pygame.Surface((self.screenWidth, self.screenHeight), pygame.SRCALPHA)
+      transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
+      
+      transparent_color = (255, 0, 0, 128)
+      #rect_position = (446, 181, 30, 50)
+      rect_position = (self.playGlowLeft[0], self.playGlowLeft[1], self.playGlowLeft[2], self.playGlowLeft[3])
+      
+      pygame.draw.rect(transparent_surface, transparent_color, rect_position)
+      self.screen.blit(transparent_surface, (0, 0))
 
 
 
@@ -237,11 +246,15 @@ class StaffScope :
     # Is a staff loaded?
     if (self._indexLoaded != -1) :
       
+      # Is the click on the widget?
       (img_xMin, img_yMin, img_xMax, img_yMax) = self.imgBox
-
-      # Is the click on the staff?
       if (((x >= img_xMin) and (x <= img_xMax)) and ((y >= img_yMin) and (y <= img_yMax))) :
-        print(f"[DEBUG] Click here: x = {coord[0]}, y = {coord[1]}")
+        
+        # Is the click on a playGlow?
+        # ...
+        
+        
+        self.playGlowLeft = [x-5, y-5, 10, 30]
 
 
 

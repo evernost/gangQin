@@ -230,7 +230,8 @@ while running :
   keyboardWidget.keyPress(screen, teacherNotes)
 
   # Render the staff display
-  staffScopeWidget.render(userScore.getCursor())
+  staffScopeWidget.loadStaffByCursor(userScore.getCursor())
+  staffScopeWidget.render()
 
   # CURSOR
   text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)

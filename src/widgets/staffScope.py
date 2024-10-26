@@ -47,17 +47,20 @@ class StaffScope :
     self.db = None
     
     self.screen = None
-    self.screenWidth = -1
-    self.screenHeight = -1
+    self.screenWidth = -1       # GUI width
+    self.screenHeight = -1      # GUI height
     
     self.img = None
     self.imgFile = ""
     self.imgSpan = [-1,-1]
     self.imgHeight = -1
     self.imgWidth = -1
+    self.imgCoordX = -1
+    self.imgCoordY = -1
+    self.imgBox = (-1, -1, -1, -1)
     self.imgScaling = 0
 
-    self._indexLoaded = -1    # Index of the snapshot loaded
+    self._indexLoaded = -1      # Index of the snapshot loaded (-1 when nothing is loaded)
 
     self.playGlowLeft = []
     self.playGlowRight = []
@@ -150,6 +153,16 @@ class StaffScope :
         self.imgScaling = min(sWidth, sHeight)      
         self.imgScaled = pygame.transform.smoothscale(self.img, (int(self.imgWidth*self.imgScaling), int(self.imgHeight*self.imgScaling)))
 
+        self.imgCoordX = (self.screenWidth-(int(self.imgWidth*self.imgScaling))) // 2
+        self.imgCoordY = 50
+
+        self.imgBox = (
+          self.imgCoordX, 
+          self.imgCoordY,
+          self.imgCoordX + int(self.imgWidth*self.imgScaling), 
+          self.imgCoordY + int(self.imgHeight*self.imgScaling)
+        )
+
         self._indexLoaded = index
 
       else : 
@@ -195,41 +208,40 @@ class StaffScope :
     self.loadByCursor(cursor)
 
     # Show the staff
-    xCenter = (self.screenWidth-(int(self.imgWidth*self.imgScaling))) // 2
-    self.screen.blit(self.imgScaled, (xCenter, 50))
+    self.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))
     
-    # Show the "PlayGlows"
+    # Show the playGlows
     transparent_surface = pygame.Surface((self.screenWidth, self.screenHeight), pygame.SRCALPHA)
-    transparent_color = (255, 255, 0, 128)  # Red with 50% transparency
-    rect_position = (446, 181, 30, 50)
     transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
+    
+    transparent_color = (255, 255, 0, 128)
+    rect_position = (446, 181, 30, 50)
+    
     pygame.draw.rect(transparent_surface, transparent_color, rect_position)
     self.screen.blit(transparent_surface, (0, 0))
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.click()
+  # METHOD StaffScope.click(mouse coordinates)
   # ---------------------------------------------------------------------------
   def click(self, coord) :
     """
-    Handles the mouse click with its coordinates.
+    Handles the mouse click based on its coordinates.
+    Clicks when no staff is loaded are ignored.
     Clicks outside the StaffScope widget are ignored.
     """
     
-    print(f"[DEBUG] Click here: x = {coord[0]}, y = {coord[1]}")
+    x = coord[0]; y = coord[1]
+    
+    # Is a staff loaded?
+    if (self._indexLoaded != -1) :
+      
+      (img_xMin, img_yMin, img_xMax, img_yMax) = self.imgBox
 
-    # # Create a transparent surface (same size as the main window)
-    # transparent_surface = pygame.Surface((self.screenWidth, self.screenHeight), pygame.SRCALPHA)
-
-    # # Define the rectangle color (RGBA format: R, G, B, A) with transparency
-    # transparent_color = (255, 0, 0, 128)  # Red with 50% transparency
-
-    # # Define the rectangle's position and size (x, y, width, height)
-    # rect_position = (446, 181, 10, 50)
-
-    # # Clear the transparent surface (important if you redraw it each frame)
-    # transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
+      # Is the click on the staff?
+      if (((x >= img_xMin) and (x <= img_xMax)) and ((y >= img_yMin) and (y <= img_yMax))) :
+        print(f"[DEBUG] Click here: x = {coord[0]}, y = {coord[1]}")
 
 
 

@@ -22,6 +22,7 @@
 # External libs 
 # =============================================================================
 import src.scoreShot.database as database
+import src.widgets.playGlow as playGlow
 import pygame
 
 
@@ -67,6 +68,7 @@ class StaffScope :
     self.playGlowLeft = []
     self.playGlowRight = []
 
+    self.activeHand = "L"
 
     # User interaction queues
     self.msgQueueIn = []
@@ -182,23 +184,40 @@ class StaffScope :
   def loadStaffByCursor(self, cursor) :
     """
     Loads the staff that covers the cursor value passed as argument.
+    Loading comes with a cache to avoid useless workload.
     """
     
-    # if ((index >= self.imgSpan[0]) and (index <= self.imgSpan[1])) :
-    #   pass
+    if (cursor != self.cursor) :
+      index = self.db.getIndexByCursor(cursor)
     
-    # else :
-    #   index = self.db.getIndexByCursor(cursor)
-    #   self.loadByIndex(index)
+      # The cursor is not linked to a staff:
+      # - load a default index (the one pointed by the user)
+      # - no playGlow is shown, waiting for user input.
+      if (index == -1) :
+        self.loadStaffByIndex(self._indexLoaded)
+        self.playGlowLeft = []
+        self.playGlowRight = []
+        print(f"[DEBUG] Cursor {cursor} is not linked to any staff. Proceed with playglow input")
+        
+      # The cursor is linked:
+      # - load the staff 
+      # - load the playglows (if any)
+      else :
+        self.loadStaffByIndex(index)
+
+        # Load the playGlows (left and right)
+        p = self.db.snapshots[index].getPlayGlowByCursor(cursor)
+        self.playGlowLeft = playGlow.PlayGlow()
+        self.playGlowRight = playGlow.PlayGlow()
+
+      self.cursor = cursor
+
+    # Cursor hasn't changed: read from cache.
+    else : 
+      pass
 
 
 
-    # Temporary:
-    self.loadStaffByIndex(self._indexLoaded)
-    self.cursor = cursor
-
-
-    
   # ---------------------------------------------------------------------------
   # METHOD StaffScope.render(None)
   # ---------------------------------------------------------------------------
@@ -246,7 +265,7 @@ class StaffScope :
     # Is a staff loaded?
     if (self._indexLoaded != -1) :
       
-      # Is the click on the widget?
+      # Is the click coordinates on the staff?
       (img_xMin, img_yMin, img_xMax, img_yMax) = self.imgBox
       if (((x >= img_xMin) and (x <= img_xMax)) and ((y >= img_yMin) and (y <= img_yMax))) :
         
@@ -255,6 +274,31 @@ class StaffScope :
         
         
         self.playGlowLeft = [x-5, y-5, 10, 30]
+
+
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope._getPlayGlowFromCursor(None)
+  # ---------------------------------------------------------------------------
+  def _getPlayGlowFromCursor(self) :
+    """
+    Description is TODO.
+    """
+    
+
+    # Read the content of the database at that cursor
+    if (self._indexLoaded != -1) :
+      s = self.db.snapshots[self._indexLoaded].leftHandRectCoords
+
+    # Convert to a playGlow object
+    # ...
+
+    print("[DEBUG] StaffScope._getPlayGlowFromCursor() is TODO")
+
+
 
 
 

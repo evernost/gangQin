@@ -258,10 +258,14 @@ class Database :
     Returns its index in the database if found, otherwise returns -1.
     """
     
-    print("[DEBUG] Database.getIndexByCursor() is TODO.")
-
-
-
+    for (index, s) in enumerate(self.snapshots) :
+      if (len(s.cursorRange) == 0) :
+        return -1
+      
+      else :
+        if ((cursor >= s.cursorRange[0]) and (cursor <= s.cursorRange[1])) :
+          return index
+    
 
 
 

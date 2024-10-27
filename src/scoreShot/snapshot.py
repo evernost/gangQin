@@ -40,10 +40,12 @@ class Snapshot :
 
     self.description = ""           # Description string of the snapshot (page number in the original score, any comment, etc.)
     
-    self.cursorRange = []           # Range of cursors (in the score) that is covered by this snapshot
+    self.cursorRange = []           # Range of cursors (in the score) that is covered by this snapshot (DEPRECATED)
+    self.cursorMin  = -1            # Min. cursor value covered by this snapshot
+    self.cursorMax  = -1            # Max. cursor value covered by this snapshot
     
-    self.leftHandRectCoords = []    # Coordinates of the rectangles highlighting the left hand notes
-    self.rightHandRectCoords = []   # Coordinates of the rectangles highlighting the right hand notes
+    self.playGlowsLeft = []         # List of tuples with the coordinates of the rectangles highlighting the left hand notes (one per cursor value)
+    self.playGlowsRight = []        # List of tuples with the coordinates of the rectangles highlighting the right hand notes (one per cursor value)
     
     self.needsRework = False        # Set to True if any issue has been reported in the player or in gangQin
     self.fileMissing = False        # Set to True if the image file could not be found
@@ -60,16 +62,17 @@ class Snapshot :
     """
 
     return {
-      "dir"                   : self.dir,
-      "file"                  : self.file,
-      "index"                 : self.index,
-      "displayName"           : self.displayName,
-      "description"           : self.description,
-      "cursorRange"           : self.cursorRange,
-      "leftHandRectCoords"    : self.leftHandRectCoords,
-      "rightHandRectCoords"   : self.rightHandRectCoords,
-      "needsRework"           : self.needsRework,
-      "fileMissing"           : self.fileMissing,
+      "dir"             : self.dir,
+      "file"            : self.file,
+      "index"           : self.index,
+      "displayName"     : self.displayName,
+      "description"     : self.description,
+      "cursorMin"       : self.cursorMin,
+      "cursorMax"       : self.cursorMax,
+      "playGlowsLeft"   : self.playGlowsLeft,
+      "playGlowsRight"  : self.playGlowsRight,
+      "needsRework"     : self.needsRework,
+      "fileMissing"     : self.fileMissing,
     } 
   
 
@@ -83,16 +86,31 @@ class Snapshot :
     serialisation.
     """
 
-    self.dir                  = data["dir"]
-    self.file                 = data["file"]
-    self.index                = data["index"]
-    self.displayName          = data["displayName"]
-    self.description          = data["description"]
-    self.cursorRange          = data["cursorRange"]
-    self.leftHandRectCoords   = data["leftHandRectCoords"]
-    self.rightHandRectCoords  = data["rightHandRectCoords"]
-    self.needsRework          = data["needsRework"]
-    self.fileMissing          = data["fileMissing"]
+    self.dir            = data["dir"]
+    self.file           = data["file"]
+    self.index          = data["index"]
+    self.displayName    = data["displayName"]
+    self.description    = data["description"]
+    self.cursorMin      = data["cursorMin"]
+    self.cursorMax      = data["cursorMax"]
+    self.playGlowsLeft  = data["playGlowsLeft"]
+    self.playGlowsRight = data["playGlowsRight"]
+    self.needsRework    = data["needsRework"]
+    self.fileMissing    = data["fileMissing"]
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Snapshot.getPlayGlowByCursor()
+  # ---------------------------------------------------------------------------
+  def getPlayGlowByCursor(self, cursor) :
+    """
+    Returns the playGlow coordinates (left and right hand) at a given cursor.
+    Returns None if no playGlow has been declared yet.
+    """
+
+    print("[DEBUG] Snapshot.getPlayGlowByCursor() is TODO")
+    return (None, None)
 
 
   

@@ -40,12 +40,11 @@ class Snapshot :
 
     self.description = ""           # Description string of the snapshot (page number in the original score, any comment, etc.)
     
-    self.cursorRange = []           # Range of cursors (in the score) that is covered by this snapshot (DEPRECATED)
-    self.cursorMin  = -1            # Min. cursor value covered by this snapshot
+    self.cursorMin  = 16384         # Min. cursor value covered by this snapshot (any big integer should do)
     self.cursorMax  = -1            # Max. cursor value covered by this snapshot
     
-    self.playGlowsLeft = []         # List of tuples with the coordinates of the rectangles highlighting the left hand notes (one per cursor value)
-    self.playGlowsRight = []        # List of tuples with the coordinates of the rectangles highlighting the right hand notes (one per cursor value)
+    self.playGlowsLeft = {}         # List of tuples with the coordinates of the rectangles highlighting the left hand notes (one per cursor value)
+    self.playGlowsRight = {}        # List of tuples with the coordinates of the rectangles highlighting the right hand notes (one per cursor value)
     
     self.needsRework = False        # Set to True if any issue has been reported in the player or in gangQin
     self.fileMissing = False        # Set to True if the image file could not be found
@@ -101,19 +100,49 @@ class Snapshot :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Snapshot.getPlayGlowByCursor()
+  # METHOD Snapshot.getPlayGlowAtCursor()
   # ---------------------------------------------------------------------------
-  def getPlayGlowByCursor(self, cursor) :
+  def getPlayGlowAtCursor(self, cursor) :
     """
     Returns the playGlow coordinates (left and right hand) at a given cursor.
     Returns None if no playGlow has been declared yet.
     """
 
-    print("[DEBUG] Snapshot.getPlayGlowByCursor() is TODO")
+    # TODO: return a PlayGlow object
+
+    print("[DEBUG] Snapshot.getPlayGlowAtCursor() is TODO")
     return (None, None)
 
 
-  
+
+  # ---------------------------------------------------------------------------
+  # METHOD Snapshot.setPlayGlowAtCursor()
+  # ---------------------------------------------------------------------------
+  def setPlayGlowAtCursor(self, cursor, playGlowObj) :
+    """
+    Sets the playglow attributes of the snapshot at a specific cursor.
+    """
+
+    if ((cursor < self.cursorMin) or (cursor > self.cursorMax)) :
+      print(f"[WARNING] Snapshot.setPlayGlowAtCursor(): the given cursor ({cursor}) is outside the range covered by this snapshot ({self.cursorMin} -> {self.cursorMax}).")
+
+    if (cursor > self.cursorMax) :
+      self.cursorMax = cursor
+
+    if (cursor < self.cursorMin) :
+      self.cursorMin = cursor
+
+    if (playGlowObj.hand == "L") :
+      self.playGlowsLeft[cursor] = playGlowObj.toTuple()
+
+    elif (playGlowObj.hand == "R") :
+      self.playGlowsRight[cursor] = playGlowObj.toTuple()
+
+    else : 
+      print("[DEBUG] Snapshot.setPlayGlowAtCursor(): invalid 'hand' attribute. Defaulting to left hand.")
+
+
+
 # =============================================================================
 # Unit tests
 # =============================================================================

@@ -38,8 +38,10 @@ class PlayGlow :
     
     self.hand = None
 
-
-
+    self.coord_xMin = -1
+    self.coord_xMax = -1
+    self.coord_yMin = -1
+    self.coord_yMax = -1
 
     self.hitBox_xMin = -1
     self.hitBox_xMax = -1
@@ -72,7 +74,35 @@ class PlayGlow :
     
     print("[DEBUG] PlayGlow.isClickOnBorder() is TODO")
   
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD PlayGlow.toTuple()
+  # ---------------------------------------------------------------------------
+  def toTuple(self) :
+    """
+    TODO
+    """
     
+    return (self.coord_xMin, self.coord_yMin, self.coord_xMax, self.coord_yMax)
+  
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD PlayGlow.loadFromTuple(coordinates tuple)
+  # ---------------------------------------------------------------------------
+  def loadFromTuple(self, coord) :
+    """
+    TODO
+    """
+    
+    (coord_xMin, coord_yMin, coord_xMax, coord_yMax) = coord
+
+    self.coord_xMin = coord_xMin
+    self.coord_xMax = coord_xMax
+    self.coord_yMin = coord_yMin
+    self.coord_yMax = coord_yMax
+
 
 
 # =============================================================================

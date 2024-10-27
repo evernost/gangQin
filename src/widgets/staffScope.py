@@ -190,7 +190,7 @@ class StaffScope :
     if (cursor != self.cursor) :
       index = self.db.getIndexByCursor(cursor)
     
-      # The cursor is not linked to a staff:
+      # The cursor is not linked to any staff:
       # - load a default index (the one pointed by the user)
       # - no playGlow is shown, waiting for user input.
       if (index == -1) :
@@ -199,14 +199,14 @@ class StaffScope :
         self.playGlowRight = []
         print(f"[DEBUG] Cursor {cursor} is not linked to any staff. Proceed with playglow input")
         
-      # The cursor is linked:
+      # The cursor is linked to a staff:
       # - load the staff 
       # - load the playglows (if any)
       else :
         self.loadStaffByIndex(index)
 
         # Load the playGlows (left and right)
-        p = self.db.snapshots[index].getPlayGlowByCursor(cursor)
+        p = self.db.snapshots[index].getPlayGlowAtCursor(cursor)
         self.playGlowLeft = playGlow.PlayGlow()
         self.playGlowRight = playGlow.PlayGlow()
 
@@ -269,11 +269,17 @@ class StaffScope :
       (img_xMin, img_yMin, img_xMax, img_yMax) = self.imgBox
       if (((x >= img_xMin) and (x <= img_xMax)) and ((y >= img_yMin) and (y <= img_yMax))) :
         
-        # Is the click on a playGlow?
+        p = playGlow.PlayGlow()
+        p.loadFromTuple((x-5, y-5, 10, 30))
+        p.hand = self.activeHand
+        self.db.snapshots[self._indexLoaded].setPlayGlowAtCursor(self.cursor, p)
+
+
+        # Is the click on a playGlow (drag&drop)
         # ...
         
         
-        self.playGlowLeft = [x-5, y-5, 10, 30]
+        #self.playGlowLeft = [x-5, y-5, 10, 30]
 
 
 

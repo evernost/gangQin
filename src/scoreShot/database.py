@@ -259,13 +259,10 @@ class Database :
     """
     
     for (index, s) in enumerate(self.snapshots) :
-      if (len(s.cursorRange) == 0) :
-        return -1
-      
-      else :
-        if ((cursor >= s.cursorRange[0]) and (cursor <= s.cursorRange[1])) :
-          return index
+      if ((cursor >= s.cursorMin) and (cursor <= s.cursorMax)) :
+        return index
     
+    return -1
 
 
 

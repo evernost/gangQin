@@ -40,7 +40,7 @@ class Snapshot :
 
     self.description = ""           # Description string of the snapshot (page number in the original score, any comment, etc.)
     
-    self.cursorMin  = 16384         # Min. cursor value covered by this snapshot (any big integer should do)
+    self.cursorMin  = -1            # Min. cursor value covered by this snapshot
     self.cursorMax  = -1            # Max. cursor value covered by this snapshot
     
     self.playGlowsLeft = {}         # List of tuples with the coordinates of the rectangles highlighting the left hand notes (one per cursor value)
@@ -108,10 +108,17 @@ class Snapshot :
     Returns None if no playGlow has been declared yet.
     """
 
-    # TODO: return a PlayGlow object
-
-    print("[DEBUG] Snapshot.getPlayGlowAtCursor() is TODO")
-    return (None, None)
+    if (cursor in self.playGlowsLeft) :
+      pgLeft = self.playGlowsLeft[cursor]
+    else :
+      pgLeft = ()
+    
+    if (cursor in self.playGlowsRight) :
+      pgRight = self.playGlowsRight[cursor]
+    else :
+      pgRight = ()
+    
+    return (pgLeft, pgRight)
 
 
 
@@ -123,8 +130,13 @@ class Snapshot :
     Sets the playglow attributes of the snapshot at a specific cursor.
     """
 
-    if ((cursor < self.cursorMin) or (cursor > self.cursorMax)) :
-      print(f"[WARNING] Snapshot.setPlayGlowAtCursor(): the given cursor ({cursor}) is outside the range covered by this snapshot ({self.cursorMin} -> {self.cursorMax}).")
+    # if ((cursor < self.cursorMin) or (cursor > self.cursorMax)) :
+    #   print(f"[WARNING] Snapshot.setPlayGlowAtCursor(): the given cursor ({cursor}) is outside the range covered by this snapshot ({self.cursorMin} -> {self.cursorMax}).")
+
+    # Snapshot with uninitialised cursors
+    if ((self.cursorMin == -1) and (self.cursorMax == -1)) :
+      self.cursorMin = cursor
+      self.cursorMax = cursor
 
     if (cursor > self.cursorMax) :
       self.cursorMax = cursor

@@ -181,6 +181,7 @@ while running :
       # "s": export/save
       # ----------------
       if (keys[pygame.K_s]) :
+        staffScopeWidget.db.save()
         print("[DEBUG] Saving is not supported yet.")
         # print("[INFO] Exporting piano roll...")
         # (rootDir, rootNameExt) = os.path.split(selectedFile)

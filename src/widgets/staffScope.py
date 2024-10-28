@@ -65,8 +65,8 @@ class StaffScope :
 
     self._indexLoaded = -1      # Index of the snapshot loaded (-1 when nothing is loaded)
 
-    self.playGlowLeft = []
-    self.playGlowRight = []
+    self.playGlowLeft  = ()
+    self.playGlowRight = ()
 
     self.activeHand = "L"
 
@@ -195,8 +195,8 @@ class StaffScope :
       # - no playGlow is shown, waiting for user input.
       if (index == -1) :
         self.loadStaffByIndex(self._indexLoaded)
-        self.playGlowLeft = []
-        self.playGlowRight = []
+        self.playGlowLeft  = ()
+        self.playGlowRight = ()
         print(f"[DEBUG] Cursor {cursor} is not linked to any staff. Proceed with playglow input")
         
       # The cursor is linked to a staff:
@@ -206,9 +206,9 @@ class StaffScope :
         self.loadStaffByIndex(index)
 
         # Load the playGlows (left and right)
-        p = self.db.snapshots[index].getPlayGlowAtCursor(cursor)
-        self.playGlowLeft = playGlow.PlayGlow()
-        self.playGlowRight = playGlow.PlayGlow()
+        (pgLeft, pgRight) = self.db.snapshots[index].getPlayGlowAtCursor(cursor)
+        self.playGlowLeft  = pgLeft
+        self.playGlowRight = pgRight
 
       self.cursor = cursor
 
@@ -237,16 +237,20 @@ class StaffScope :
     self.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))
     
     # Show the playGlows
-    if (len(self.playGlowLeft) != 0) :
-      transparent_surface = pygame.Surface((self.screenWidth, self.screenHeight), pygame.SRCALPHA)
-      transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
-      
+    transparent_surface = pygame.Surface((self.screenWidth, self.screenHeight), pygame.SRCALPHA)
+    transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
+    
+    if (len(self.playGlowLeft) > 0) : 
       transparent_color = (255, 0, 0, 128)
-      #rect_position = (446, 181, 30, 50)
-      rect_position = (self.playGlowLeft[0], self.playGlowLeft[1], self.playGlowLeft[2], self.playGlowLeft[3])
-      
-      pygame.draw.rect(transparent_surface, transparent_color, rect_position)
+      pygame.draw.rect(transparent_surface, transparent_color, self.playGlowLeft)
       self.screen.blit(transparent_surface, (0, 0))
+
+    if (len(self.playGlowRight) > 0) :  
+      transparent_color = (0, 255, 0, 128)
+      pygame.draw.rect(transparent_surface, transparent_color, self.playGlowRight)
+
+      # pygame.draw.rect(transparent_surface, transparent_color, rect_position)
+      # self.screen.blit(transparent_surface, (0, 0))
 
 
 
@@ -273,6 +277,11 @@ class StaffScope :
         p.loadFromTuple((x-5, y-5, 10, 30))
         p.hand = self.activeHand
         self.db.snapshots[self._indexLoaded].setPlayGlowAtCursor(self.cursor, p)
+
+        if (self.activeHand == "L") :
+          self.playGlowLeft  = p.toTuple()
+        elif (self.activeHand == "R") :
+          self.playGlowRight = p.toTuple()
 
 
         # Is the click on a playGlow (drag&drop)

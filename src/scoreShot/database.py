@@ -137,10 +137,16 @@ class Database :
   # ---------------------------------------------------------------------------
   def _integrityCheck(self) :
     """
-    Make sure the all the files listed in the database exist.
+    Runs some checks on the database before yielding control to the user:
+    - checks if all the snapshot files exist
+    - checks if cursor ranges are inconsistent
     """
+    
     print("[WARNING] Method 'Database._integrityCheck' is not implemented yet.")
   
+    
+
+
   
   
   # ---------------------------------------------------------------------------

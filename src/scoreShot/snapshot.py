@@ -46,6 +46,9 @@ class Snapshot :
     self.playGlowsLeft = {}         # List of tuples with the coordinates of the rectangles highlighting the left hand notes (one per cursor value)
     self.playGlowsRight = {}        # List of tuples with the coordinates of the rectangles highlighting the right hand notes (one per cursor value)
     
+    self.rulerLeftHand = (-1, -1, -1, -1)
+    self.rulerRightHand = (-1, -1, -1, -1)
+
     self.needsRework = False        # Set to True if any issue has been reported in the player or in gangQin
     self.fileMissing = False        # Set to True if the image file could not be found
 
@@ -108,13 +111,15 @@ class Snapshot :
     Returns None if no playGlow has been declared yet.
     """
 
-    if (cursor in self.playGlowsLeft) :
-      pgLeft = self.playGlowsLeft[cursor]
+    query = str(cursor)
+
+    if (query in self.playGlowsLeft) :
+      pgLeft = self.playGlowsLeft[query]
     else :
       pgLeft = ()
     
-    if (cursor in self.playGlowsRight) :
-      pgRight = self.playGlowsRight[cursor]
+    if (query in self.playGlowsRight) :
+      pgRight = self.playGlowsRight[query]
     else :
       pgRight = ()
     
@@ -144,11 +149,14 @@ class Snapshot :
     if (cursor < self.cursorMin) :
       self.cursorMin = cursor
 
+    print(f"[DEBUG] Snapshot.setPlayGlowAtCursor(): (min, max) = ({self.cursorMin}, {self.cursorMax})")
+
+    insertLoc = str(cursor)
     if (playGlowObj.hand == "L") :
-      self.playGlowsLeft[cursor] = playGlowObj.toTuple()
+      self.playGlowsLeft[insertLoc] = playGlowObj.toTuple()
 
     elif (playGlowObj.hand == "R") :
-      self.playGlowsRight[cursor] = playGlowObj.toTuple()
+      self.playGlowsRight[insertLoc] = playGlowObj.toTuple()
 
     else : 
       print("[DEBUG] Snapshot.setPlayGlowAtCursor(): invalid 'hand' attribute. Defaulting to left hand.")

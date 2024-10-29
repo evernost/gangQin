@@ -112,6 +112,11 @@ while running :
       # "q": exit the app
       # -----------------
       if keys[pygame.K_q] :
+        
+        # Look for unsaved changes
+        # ...
+        
+        
         print("")
         print("See you!")
         pygame.quit()
@@ -181,16 +186,10 @@ while running :
       # "s": export/save
       # ----------------
       if (keys[pygame.K_s]) :
+        print("[DEBUG] Requesting save from the database...")
         staffScopeWidget.db.save()
-        print("[DEBUG] Saving is not supported yet.")
-        # print("[INFO] Exporting piano roll...")
-        # (rootDir, rootNameExt) = os.path.split(selectedFile)
-        # (rootName, _) = os.path.splitext(rootNameExt)
-        # newName = rootDir + '/' + rootName + ".pr"
-        # userScore.exportToPrFile(newName)
-        # pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{rootName}.pr>")
+        
 
-      
 
     # -------------------------------------------------------------------------
     # Mouse click event handling

@@ -196,30 +196,30 @@ while running :
     # -------------------------------------------------------------------------
     elif (event.type == pygame.MOUSEBUTTONDOWN) :
       
-      # Left click
       if (event.button == MOUSE_LEFT_CLICK) :
         coord = pygame.mouse.get_pos()
-        staffScopeWidget.click(coord)
+        staffScopeWidget.clickDown(coord)
       
-      # Scroll up
       if (event.button == MOUSE_SCROLL_UP) :
         if ctrlKey :
           userScore.cursorStep(10)
         else :
           userScore.cursorStep(1)
 
-      # Scroll down
       if (event.button == MOUSE_SCROLL_DOWN) :
         if ctrlKey :
           userScore.cursorStep(-10)
         else :
           userScore.cursorStep(-1)
 
-    elif ((event.type == pygame.MOUSEBUTTONUP) and (event.button == 1)) :
-      print("[DEBUG] Mouse up!")
+    elif (event.type == pygame.MOUSEBUTTONUP) :
+      if (event.button == MOUSE_LEFT_CLICK) :
+        coord = pygame.mouse.get_pos()
+        staffScopeWidget.clickUp(coord)
 
     elif (event.type == pygame.MOUSEMOTION) :
-      pass
+      coord = pygame.mouse.get_pos()
+      staffScopeWidget.mouseMove(coord)
 
 
 

@@ -66,6 +66,8 @@ class StaffScope :
     self._snapshotIndex = -1      # Index of the snapshot loaded (-1 when nothing is loaded)
 
     self.playGlows = []
+    self.playGlowDragged = -1
+    self.playGlowDragInit = (-1,-1)
 
     self.activeHand = "L"
 
@@ -249,9 +251,9 @@ class StaffScope :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.click(mouse coordinates)
+  # METHOD StaffScope.clickDown(mouse coordinates)
   # ---------------------------------------------------------------------------
-  def click(self, coord) :
+  def clickDown(self, coord) :
     """
     Handles the mouse click based on its coordinates.
     Clicks when no staff is loaded are ignored.
@@ -259,6 +261,7 @@ class StaffScope :
     """
     
     x = coord[0]; y = coord[1]
+    self.playGlowDragged = -1
     
     # Is a staff loaded?
     if (self._snapshotIndex != -1) :
@@ -268,10 +271,12 @@ class StaffScope :
       if (((x >= img_xMin) and (x <= img_xMax)) and ((y >= img_yMin) and (y <= img_yMax))) :
         
         noHit = True
-        for p in self.playGlows :
+        for (i, p) in enumerate(self.playGlows) :
           if p.isClickInBox(coord) :
             noHit = False
             print("[DEBUG] move")
+            self.playGlowDragged = i
+            self.playGlowDragInit = (x,y)
 
           elif p.isClickOnBorder(coord) :
             noHit = False
@@ -288,6 +293,38 @@ class StaffScope :
           self.playGlows.append(p)
         
 
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.clickUp(mouse coordinates)
+  # ---------------------------------------------------------------------------
+  def clickUp(self, coord) :
+    """
+    
+    """
+    
+    x = coord[0]; y = coord[1]
+    
+    self.playGlowDragged = -1
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.mouseMove(mouse coordinates)
+  # ---------------------------------------------------------------------------
+  def mouseMove(self, coord) :
+    """
+    
+    """
+    
+    if (self.playGlowDragged != -1) :
+      (x0, y0) = self.playGlowDragInit
+      x = coord[0]; y = coord[1]
+      dx = x-x0; dy = y-y0
+      
+      print(f"[DEBUG] Dragging {self.playGlowDragged}")
+      self.playGlows[self.playGlowDragged].move(dx,dy)
+    
+    
 
   # ---------------------------------------------------------------------------
   # METHOD StaffScope._getPlayGlowFromCursor(None)

@@ -123,6 +123,26 @@ class PlayGlow :
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD PlayGlow.move(dx,dy)
+  # ---------------------------------------------------------------------------
+  def move(self, dx, dy) :
+    """
+    TODO
+    """
+    
+    self.coord_xMin += dx
+    self.coord_xMax += dx
+    self.coord_yMin += dy
+    self.coord_yMax += dy
+
+    self.hitBox_xMin += dx
+    self.hitBox_xMax += dx
+    self.hitBox_yMin += dy
+    self.hitBox_yMax += dy
+
+
+
 # =============================================================================
 # Unit tests
 # =============================================================================

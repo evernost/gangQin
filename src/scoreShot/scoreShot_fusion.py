@@ -215,6 +215,12 @@ while running :
         else :
           userScore.cursorStep(-1)
 
+    elif ((event.type == pygame.MOUSEBUTTONUP) and (event.button == 1)) :
+      print("[DEBUG] Mouse up!")
+
+    elif (event.type == pygame.MOUSEMOTION) :
+      pass
+
 
 
 

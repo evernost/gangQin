@@ -15,7 +15,7 @@
 # =============================================================================
 # External libs 
 # =============================================================================
-# None.
+import src.widgets.playGlow as playGlow
 
 
 
@@ -112,18 +112,21 @@ class Snapshot :
     """
 
     query = str(cursor)
+    output = []
 
     if (query in self.playGlowsLeft) :
-      pgLeft = self.playGlowsLeft[query]
-    else :
-      pgLeft = ()
+      p = playGlow.PlayGlow()
+      p.hand = "L"
+      p.load(self.playGlowsLeft[query])
+      output.append(p)
     
     if (query in self.playGlowsRight) :
-      pgRight = self.playGlowsRight[query]
-    else :
-      pgRight = ()
+      p = playGlow.PlayGlow()
+      p.hand = "R"
+      p.load(self.playGlowsRight[query])
+      output.append(p)
     
-    return (pgLeft, pgRight)
+    return output
 
 
 

@@ -38,10 +38,15 @@ class PlayGlow :
     
     self.hand = None
 
+    self.type = "active"   # Can be "active" or "passive"
+
     self.coord_xMin = -1
     self.coord_xMax = -1
     self.coord_yMin = -1
     self.coord_yMax = -1
+
+    self.width = -1
+    self.height = -1
 
     self.hitBox_xMin = -1
     self.hitBox_xMax = -1
@@ -53,20 +58,24 @@ class PlayGlow :
   # ---------------------------------------------------------------------------
   # METHOD PlayGlow.isClickInBox(click coordinates)
   # ---------------------------------------------------------------------------
-  def isClickInBox(self) :
+  def isClickInBox(self, coord) :
     """
     Returns True if a click occurs within the playGlow.
     Used to detect a drag&drop.
     """
     
-    print("[DEBUG] PlayGlow.isClickInBox() is TODO")
+    x = coord[0]; y = coord[1]
+
+    test_x = ((x >= self.hitBox_xMin) and (x <= self.hitBox_xMax))
+    test_y = ((y >= self.hitBox_yMin) and (y <= self.hitBox_yMax))
+    return (test_x and test_y)
 
 
 
   # ---------------------------------------------------------------------------
   # METHOD PlayGlow.isClickOnBorder(click coordinates)
   # ---------------------------------------------------------------------------
-  def isClickOnBorder(self) :
+  def isClickOnBorder(self, coord) :
     """
     Returns True if a click occurs within the playGlow.
     Used to detect a resize.
@@ -84,24 +93,33 @@ class PlayGlow :
     TODO
     """
     
-    return (self.coord_xMin, self.coord_yMin, self.coord_xMax, self.coord_yMax)
+    return (self.coord_xMin, self.coord_yMin, self.width, self.height)
   
 
 
   # ---------------------------------------------------------------------------
-  # METHOD PlayGlow.loadFromTuple(coordinates tuple)
+  # METHOD PlayGlow.load(coordinates tuple)
   # ---------------------------------------------------------------------------
-  def loadFromTuple(self, coord) :
+  def load(self, coords) :
     """
-    TODO
+    Initialises the fields based on the coordinates of the rectangle using a
+    start point (x0,y0) and a shape (width, height)
     """
     
-    (coord_xMin, coord_yMin, coord_xMax, coord_yMax) = coord
+    (x0, y0, width, height) = coords
 
-    self.coord_xMin = coord_xMin
-    self.coord_xMax = coord_xMax
-    self.coord_yMin = coord_yMin
-    self.coord_yMax = coord_yMax
+    self.coord_xMin = x0
+    self.coord_xMax = x0 + width
+    self.coord_yMin = y0
+    self.coord_yMax = y0 + height
+
+    self.width  = width
+    self.height = height
+
+    self.hitBox_xMin = x0
+    self.hitBox_xMax = x0 + width
+    self.hitBox_yMin = y0
+    self.hitBox_yMax = y0 + height
 
 
 

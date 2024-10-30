@@ -63,10 +63,9 @@ class StaffScope :
     self.imgBox = (-1, -1, -1, -1)
     self.imgScaling = 0
 
-    self._indexLoaded = -1      # Index of the snapshot loaded (-1 when nothing is loaded)
+    self._snapshotIndex = -1      # Index of the snapshot loaded (-1 when nothing is loaded)
 
-    self.playGlowLeft  = ()
-    self.playGlowRight = ()
+    self.playGlows = []
 
     self.activeHand = "L"
 
@@ -114,8 +113,8 @@ class StaffScope :
     Clamps to the last staff when reaching the end of the score.
     """
     
-    if ((self._indexLoaded + 1) <= (self.db.nSnapshots-1)) :
-      self.loadStaffByIndex(self._indexLoaded+1)
+    if ((self._snapshotIndex + 1) <= (self.db.nSnapshots-1)) :
+      self.loadStaffByIndex(self._snapshotIndex+1)
 
 
     
@@ -128,8 +127,8 @@ class StaffScope :
     Clamps to the first staff when reaching the beginning of the score.
     """
     
-    if ((self._indexLoaded - 1) >= 0) :
-      self.loadStaffByIndex(self._indexLoaded-1)
+    if ((self._snapshotIndex - 1) >= 0) :
+      self.loadStaffByIndex(self._snapshotIndex-1)
 
 
 
@@ -139,11 +138,11 @@ class StaffScope :
   def loadStaffByIndex(self, index) :
     """
     Loads the content located at position "index" in the snapshot database.
-    Once loaded, the "_indexLoaded" is updated with the requested index.
+    Once loaded, the "_snapshotIndex" is updated with the requested index.
     """
     
     # Load only if not cached yet
-    if (self._indexLoaded != index) :
+    if (self._snapshotIndex != index) :
 
       self.imgFile = self.db.getSnapshotFileByIndex(index)
       if (self.imgFile != "") :
@@ -168,13 +167,13 @@ class StaffScope :
           self.imgCoordY + int(self.imgHeight*self.imgScaling)
         )
 
-        self._indexLoaded = index
+        self._snapshotIndex = index
 
       else : 
         print(f"[DEBUG] Index = {index} has no image associated to it.")
         self.imgWidth = -1
         self.imgHeight = -1
-        self._indexLoaded = index
+        self._snapshotIndex = index
 
         
 
@@ -194,9 +193,9 @@ class StaffScope :
       # - load a default index (the one pointed by the user)
       # - no playGlow is shown, waiting for user input.
       if (index == -1) :
-        self.loadStaffByIndex(self._indexLoaded)
-        self.playGlowLeft  = ()
-        self.playGlowRight = ()
+        self.loadStaffByIndex(self._snapshotIndex)
+        
+        self.playGlows = []
         print(f"[DEBUG] Cursor {cursor} is not linked to any staff. Proceed with playglow input")
         
       # The cursor is linked to a staff:
@@ -204,11 +203,7 @@ class StaffScope :
       # - load the playglows (if any)
       else :
         self.loadStaffByIndex(index)
-
-        # Load the playGlows (left and right)
-        (pgLeft, pgRight) = self.db.snapshots[index].getPlayGlowAtCursor(cursor)
-        self.playGlowLeft  = pgLeft
-        self.playGlowRight = pgRight
+        self.playGlows = self.db.snapshots[index].getPlayGlowAtCursor(cursor)
 
       self.cursor = cursor
 
@@ -240,17 +235,16 @@ class StaffScope :
     transparent_surface = pygame.Surface((self.screenWidth, self.screenHeight), pygame.SRCALPHA)
     transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
     
-    if (len(self.playGlowLeft) > 0) : 
-      transparent_color = (255, 0, 0, 128)
-      pygame.draw.rect(transparent_surface, transparent_color, self.playGlowLeft)
-      self.screen.blit(transparent_surface, (0, 0))
+    for p in self.playGlows :
+      if (p.hand == "L") :
+        coords = p.toTuple()
+        pygame.draw.rect(transparent_surface, (255, 0, 0, 128), coords)
+        self.screen.blit(transparent_surface, (0, 0))
 
-    if (len(self.playGlowRight) > 0) :  
-      transparent_color = (0, 255, 0, 128)
-      pygame.draw.rect(transparent_surface, transparent_color, self.playGlowRight)
-
-      # pygame.draw.rect(transparent_surface, transparent_color, rect_position)
-      # self.screen.blit(transparent_surface, (0, 0))
+      elif (p.hand == "R") :
+        coords = p.toTuple()
+        pygame.draw.rect(transparent_surface, (0, 255, 0, 128), coords)
+        self.screen.blit(transparent_surface, (0, 0))
 
 
 
@@ -267,32 +261,32 @@ class StaffScope :
     x = coord[0]; y = coord[1]
     
     # Is a staff loaded?
-    if (self._indexLoaded != -1) :
+    if (self._snapshotIndex != -1) :
       
       # Is the click coordinates on the staff?
       (img_xMin, img_yMin, img_xMax, img_yMax) = self.imgBox
       if (((x >= img_xMin) and (x <= img_xMax)) and ((y >= img_yMin) and (y <= img_yMax))) :
         
-        p = playGlow.PlayGlow()
-        p.loadFromTuple((x-5, y-5, 10, 30))
-        p.hand = self.activeHand
-        self.db.snapshots[self._indexLoaded].setPlayGlowAtCursor(self.cursor, p)
+        noHit = True
+        for p in self.playGlows :
+          if p.isClickInBox(coord) :
+            noHit = False
+            print("[DEBUG] move")
 
-        if (self.activeHand == "L") :
-          self.playGlowLeft  = p.toTuple()
-        elif (self.activeHand == "R") :
-          self.playGlowRight = p.toTuple()
+          elif p.isClickOnBorder(coord) :
+            noHit = False
+            print("[DEBUG] resize")
 
+        # Create a playglow at the location of the click
+        if noHit :
+          p = playGlow.PlayGlow()
+          p.load((x-5, y-5, 10, 30))
+          p.hand = self.activeHand
+          self.db.snapshots[self._snapshotIndex].setPlayGlowAtCursor(self.cursor, p)
 
-        # Is the click on a playGlow (drag&drop)
-        # ...
+          self.playGlows = []
+          self.playGlows.append(p)
         
-        
-        #self.playGlowLeft = [x-5, y-5, 10, 30]
-
-
-
-
 
 
   # ---------------------------------------------------------------------------
@@ -305,8 +299,8 @@ class StaffScope :
     
 
     # Read the content of the database at that cursor
-    if (self._indexLoaded != -1) :
-      s = self.db.snapshots[self._indexLoaded].leftHandRectCoords
+    if (self._snapshotIndex != -1) :
+      s = self.db.snapshots[self._snapshotIndex].leftHandRectCoords
 
     # Convert to a playGlow object
     # ...

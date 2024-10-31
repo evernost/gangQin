@@ -255,7 +255,7 @@ class StaffScope :
   # ---------------------------------------------------------------------------
   def clickDown(self, coord) :
     """
-    Handles the mouse click based on its coordinates.
+    Handles the pressing event of a click (left button).
     Clicks when no staff is loaded are ignored.
     Clicks outside the StaffScope widget are ignored.
     """
@@ -300,55 +300,40 @@ class StaffScope :
   # ---------------------------------------------------------------------------
   def clickUp(self, coord) :
     """
-    
+    Handles the releasing event of a click (left button).
+    In this GUI, it is used to handle the drag&drop feature.
     """
-    
-    x = coord[0]; y = coord[1]
-    
+        
     self.playGlowDragged = -1
 
-    # Commit the changes
-
+    # TODO: commit the changes to the database
+    # ...
 
 
 
   # ---------------------------------------------------------------------------
   # METHOD StaffScope.mouseMove(mouse coordinates)
   # ---------------------------------------------------------------------------
-  def mouseMove(self, coord) :
+  def mouseMove(self, coord, ctrlKey) :
+    """
+    Handles a mouse move over the GUI.
+    In this GUI, it is used to handle the drag&drop feature.
     """
     
-    """
-    
+    # TODO: ensure continuity of the coordinates when switching from 
+    # 'coarse' move to 'fine' move (when CTRL key is pressed)
+
     if (self.playGlowDragged != -1) :
       (x0, y0) = self.playGlowDragInit
       x = coord[0]; y = coord[1]
-      dx = x-x0; dy = y-y0
-      
-      # print(f"[DEBUG] Dragging {self.playGlowDragged} (dx = {dx})")
-      self.playGlows[self.playGlowDragged].shift(dx,dy)
-      print(f"[DEBUG] Dragging (coord_xMin = {self.playGlows[self.playGlowDragged].coord_xMin})")
-    
-    
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD StaffScope.mouseMoveFine(mouse coordinates)
-  # ---------------------------------------------------------------------------
-  def mouseMoveFine(self, coord) :
-    """
-    
-    """
-    
-    if (self.playGlowDragged != -1) :
-      (x0, y0) = self.playGlowDragInit
-      x = coord[0]; y = coord[1]
-      dx = (x-x0) // 10; dy = (y-y0) // 10
+      if ctrlKey : 
+        dx = (x-x0) // 10; dy = (y-y0) // 10
+      else :
+        dx = x-x0; dy = y-y0
       
       self.playGlows[self.playGlowDragged].shift(dx,dy)
-      print(f"[DEBUG] Dragging (coord_xMin = {self.playGlows[self.playGlowDragged].coord_xMin})")
 
-
+    
 
   # ---------------------------------------------------------------------------
   # METHOD StaffScope._getPlayGlowFromCursor(None)

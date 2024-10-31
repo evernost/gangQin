@@ -219,11 +219,7 @@ while running :
 
     elif (event.type == pygame.MOUSEMOTION) :
       coord = pygame.mouse.get_pos()
-      if ctrlKey :
-        staffScopeWidget.mouseMoveFine(coord)
-      else :
-        staffScopeWidget.mouseMove(coord)
-
+      staffScopeWidget.mouseMove(coord, ctrlKey)
 
 
 

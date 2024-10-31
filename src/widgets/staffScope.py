@@ -266,10 +266,11 @@ class StaffScope :
     # Is a staff loaded?
     if (self._snapshotIndex != -1) :
       
-      # Is the click coordinates on the staff?
+      # Is the click on the staff?
       (img_xMin, img_yMin, img_xMax, img_yMax) = self.imgBox
       if (((x >= img_xMin) and (x <= img_xMax)) and ((y >= img_yMin) and (y <= img_yMax))) :
         
+        # Is the click on an existing playGlow?
         noHit = True
         for (i, p) in enumerate(self.playGlows) :
           if p.isClickInBox(coord) :
@@ -306,6 +307,9 @@ class StaffScope :
     
     self.playGlowDragged = -1
 
+    # Commit the changes
+
+
 
 
   # ---------------------------------------------------------------------------
@@ -321,10 +325,30 @@ class StaffScope :
       x = coord[0]; y = coord[1]
       dx = x-x0; dy = y-y0
       
-      print(f"[DEBUG] Dragging {self.playGlowDragged}")
-      self.playGlows[self.playGlowDragged].move(dx,dy)
+      # print(f"[DEBUG] Dragging {self.playGlowDragged} (dx = {dx})")
+      self.playGlows[self.playGlowDragged].shift(dx,dy)
+      print(f"[DEBUG] Dragging (coord_xMin = {self.playGlows[self.playGlowDragged].coord_xMin})")
     
     
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.mouseMoveFine(mouse coordinates)
+  # ---------------------------------------------------------------------------
+  def mouseMoveFine(self, coord) :
+    """
+    
+    """
+    
+    if (self.playGlowDragged != -1) :
+      (x0, y0) = self.playGlowDragInit
+      x = coord[0]; y = coord[1]
+      dx = (x-x0) // 10; dy = (y-y0) // 10
+      
+      self.playGlows[self.playGlowDragged].shift(dx,dy)
+      print(f"[DEBUG] Dragging (coord_xMin = {self.playGlows[self.playGlowDragged].coord_xMin})")
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD StaffScope._getPlayGlowFromCursor(None)

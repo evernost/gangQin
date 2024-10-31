@@ -53,6 +53,9 @@ class PlayGlow :
     self.hitBox_yMin = -1
     self.hitBox_yMax = -1
 
+    self.shift_x = 0
+    self.shift_y = 0
+
 
 
   # ---------------------------------------------------------------------------
@@ -93,7 +96,12 @@ class PlayGlow :
     TODO
     """
     
-    return (self.coord_xMin, self.coord_yMin, self.width, self.height)
+    return (
+      self.coord_xMin + self.shift_x, 
+      self.coord_yMin + self.shift_y, 
+      self.width, 
+      self.height
+    )
   
 
 
@@ -124,22 +132,15 @@ class PlayGlow :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD PlayGlow.move(dx,dy)
+  # METHOD PlayGlow.shift(dx,dy)
   # ---------------------------------------------------------------------------
-  def move(self, dx, dy) :
+  def shift(self, dx, dy) :
     """
     TODO
     """
     
-    self.coord_xMin += dx
-    self.coord_xMax += dx
-    self.coord_yMin += dy
-    self.coord_yMax += dy
-
-    self.hitBox_xMin += dx
-    self.hitBox_xMax += dx
-    self.hitBox_yMin += dy
-    self.hitBox_yMax += dy
+    self.shift_x = dx
+    self.shift_y = dy
 
 
 

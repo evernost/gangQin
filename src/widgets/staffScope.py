@@ -66,8 +66,7 @@ class StaffScope :
     self._snapshotIndex = -1      # Index of the snapshot loaded (-1 when nothing is loaded)
 
     self.playGlows = []
-    self.playGlowDragged = -1
-    self.playGlowDragInit = (-1,-1)
+    self.playGlowDragged = -1     # Index of the playGlow currently mouse dragged
 
     self.activeHand = "L"
 
@@ -185,27 +184,27 @@ class StaffScope :
   def loadStaffByCursor(self, cursor) :
     """
     Loads the staff that covers the cursor value passed as argument.
-    Loading comes with a cache to avoid useless workload.
+    Loads the playglows (left and right hand)
+    Loading has a cache to avoid useless workload.
     """
     
     if (cursor != self.cursor) :
       index = self.db.getIndexByCursor(cursor)
     
-      # The cursor is not linked to any staff:
-      # - load a default index (the one pointed by the user)
-      # - no playGlow is shown, waiting for user input.
-      if (index == -1) :
-        self.loadStaffByIndex(self._snapshotIndex)
-        
-        self.playGlows = []
-        print(f"[DEBUG] Cursor {cursor} is not linked to any staff. Proceed with playglow input")
-        
       # The cursor is linked to a staff:
       # - load the staff 
       # - load the playglows (if any)
-      else :
+      if (index != -1) :
         self.loadStaffByIndex(index)
         self.playGlows = self.db.snapshots[index].getPlayGlowAtCursor(cursor)
+        
+      # The cursor is not linked to any staff:
+      # - load a default index (the one pointed by the user)
+      # - no playglow is shown, waiting for user input.
+      else :
+        self.loadStaffByIndex(self._snapshotIndex)
+        self.playGlows = []
+        print(f"[DEBUG] Cursor {cursor} is not linked to any staff. Proceed with playglow input")
 
       self.cursor = cursor
 
@@ -230,10 +229,10 @@ class StaffScope :
     # Test if a staff has been loaded
     # ...
 
-    # Show the staff
+    # Render the staff
     self.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))
     
-    # Show the playGlows
+    # Render the playGlows
     transparent_surface = pygame.Surface((self.screenWidth, self.screenHeight), pygame.SRCALPHA)
     transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
     
@@ -274,22 +273,25 @@ class StaffScope :
         noHit = True
         for (i, p) in enumerate(self.playGlows) :
           if p.isClickInBox(coord) :
-            noHit = False
-            print("[DEBUG] move")
             self.playGlowDragged = i
-            self.playGlowDragInit = (x,y)
+            p.dragFrom(x,y)
+            noHit = False
+            print("[DEBUG] Move request")
 
           elif p.isClickOnBorder(coord) :
             noHit = False
-            print("[DEBUG] resize")
+            print("[DEBUG] Resize request")
 
         # Create a playglow at the location of the click
         if noHit :
+          print("[DEBUG] New playGlow")
           p = playGlow.PlayGlow()
           p.load((x-5, y-5, 10, 30))
           p.hand = self.activeHand
           self.db.snapshots[self._snapshotIndex].setPlayGlowAtCursor(self.cursor, p)
 
+          # Faux : il faut remplacer le playGlow 
+          # Là ils vont tous être effacés !
           self.playGlows = []
           self.playGlows.append(p)
         
@@ -303,8 +305,11 @@ class StaffScope :
     Handles the releasing event of a click (left button).
     In this GUI, it is used to handle the drag&drop feature.
     """
-        
+    
+    self.playGlows[self.playGlowDragged].shiftApply()
     self.playGlowDragged = -1
+
+    print("[DEBUG] End of move; pushing to the db!")
 
     # TODO: commit the changes to the database
     # ...
@@ -324,7 +329,8 @@ class StaffScope :
     # 'coarse' move to 'fine' move (when CTRL key is pressed)
 
     if (self.playGlowDragged != -1) :
-      (x0, y0) = self.playGlowDragInit
+      #(x0, y0) = self.playGlowDragInit
+      (x0, y0) = (self.playGlows[self.playGlowDragged].dragCoord_x, self.playGlows[self.playGlowDragged].dragCoord_y)
       x = coord[0]; y = coord[1]
       if ctrlKey : 
         dx = (x-x0) // 10; dy = (y-y0) // 10

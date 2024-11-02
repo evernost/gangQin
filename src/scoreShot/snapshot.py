@@ -135,11 +135,10 @@ class Snapshot :
   # ---------------------------------------------------------------------------
   def setPlayGlowAtCursor(self, cursor, playGlowObj) :
     """
-    Sets the playglow attributes of the snapshot at a specific cursor.
+    Sets the playglow attribute of the snapshot at a specific cursor.
+    Automatically assigns it to the left or right hand.
+    Note: the function overrides any playglow that has already been set.
     """
-
-    # if ((cursor < self.cursorMin) or (cursor > self.cursorMax)) :
-    #   print(f"[WARNING] Snapshot.setPlayGlowAtCursor(): the given cursor ({cursor}) is outside the range covered by this snapshot ({self.cursorMin} -> {self.cursorMax}).")
 
     # Snapshot with uninitialised cursors
     if ((self.cursorMin == -1) and (self.cursorMax == -1)) :
@@ -152,7 +151,7 @@ class Snapshot :
     if (cursor < self.cursorMin) :
       self.cursorMin = cursor
 
-    print(f"[DEBUG] Snapshot.setPlayGlowAtCursor(): (min, max) = ({self.cursorMin}, {self.cursorMax})")
+    print(f"[DEBUG] Assigning playglow to the db; new range: {self.cursorMin} -> {self.cursorMax}")
 
     insertLoc = str(cursor)
     if (playGlowObj.hand == "L") :

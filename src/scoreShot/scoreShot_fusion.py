@@ -238,13 +238,10 @@ while running :
   staffScopeWidget.loadStaffByCursor(userScore.getCursor())
   staffScopeWidget.render()
 
-  # CURSOR
+  # Render the text on screen
   text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)
-  
-  # BOOKMARK
   text.showBookmark(screen, userScore.getBookmarkIndex())
  
-
 
   clock.tick(FPS)
 

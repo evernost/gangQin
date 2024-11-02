@@ -306,13 +306,15 @@ class StaffScope :
     In this GUI, it is used to handle the drag&drop feature.
     """
     
-    self.playGlows[self.playGlowDragged].shiftApply()
+    # Apply the changes to the object
+    # self.playGlows[self.playGlowDragged].shiftApply()
+
+    # Commit the changes to the database
+    p = self.playGlows[self.playGlowDragged]
+    self.db.snapshots[self._snapshotIndex].setPlayGlowAtCursor(self.cursor, p)
+
+    # Close the drag&drop event
     self.playGlowDragged = -1
-
-    print("[DEBUG] End of move; pushing to the db!")
-
-    # TODO: commit the changes to the database
-    # ...
 
 
 

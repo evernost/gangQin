@@ -58,12 +58,14 @@ class Stats :
   Nothing is sent to a server for telemetry mumbo jumbo or any "improving user experience"
   kind of crap.
   """
+
   def __init__(self, songFile) :
+    self.logName = ""
     self.logFile = ""
     
-    self.scoreLength = 0
+    self.scoreLength = 0        
 
-    self.sessionCount = 1
+    self.sessionCount = 0           # Session counter, incremented at the beginning of the session.
     self.sessionLog = []            # Each entry is a string with the time, date and duration of the session
     self.sessionStartTime = datetime.datetime.now()
     self.sessionStopTime = 0
@@ -94,7 +96,7 @@ class Stats :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats._initFromFile()
+  # METHOD Stats._initFromFile(string)
   # ---------------------------------------------------------------------------
   def _initFromFile(self, songFile) :
     """
@@ -102,41 +104,64 @@ class Stats :
     a new one.
     """
     
-    # Build the name for the log file
+    # Build the name for the log file 
+    # File is stored in ./logs/
     (_, rootNameExt) = os.path.split(songFile)
     (rootName, _) = os.path.splitext(rootNameExt)
-    self.logFile = os.path.join(".", "logs", rootName + ".log")
+    self.songName   = rootName
+    self.songFile   = rootNameExt
+    self.logName    = rootName + ".log"         # Example: "my_song.log"
+    self.logFile    = f"./logs/{self.logName}"  # Example: "./logs/my_song.log"
     
+
+    # Log file exists: load it
     if os.path.isfile(self.logFile) :
       with open(self.logFile, "r") as jsonFile:
         data = json.load(jsonFile)
+ 
+      self._safePopulate(data)
 
-      # Load the fields
-      self.sessionCount = data["sessionCount"]
-      self.sessionLog = data["sessionLog"]
-
-      self.totalPracticeTimeSec = data["totalPracticeTimeSec"]
-
-      self.comboHighestAllTime = data["comboHighestAllTime"]
-
-      self.cursorHistogram = data["cursorHistogram"]
-      self.cursorWrongNoteCount = []
-
-      self.cursorStats = -1
-      self.statsSteadyCount = 0
-      self.statsCursor = []
-
-      # Prepare the new session
-      self.sessionCount += 1
-      if (self.sessionCount > 1) :
-        self.sessionAvgPracticeTime = round(self.totalPracticeTimeSec/(60*self.sessionCount))
-      else :
-        self.sessionAvgPracticeTime = 0.0
-
-
-
+    # Log file does not exist: create it.
     else :
-      print("[NOTE] No log file exists for this song. A new one will be created.")
+      print("[NOTE] Stats: no log file found. A new one will be created.")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats._safePopulate(json Object)
+  # ---------------------------------------------------------------------------
+  def _safePopulate(self, data) :
+    """
+    Populates the field of the object from a log file.
+    The function adds safety measures to handle missing fields and give them 
+    a default value.
+    Missing fields are quite common due to the updates between different 
+    versions of gangQin.
+    """
+    
+    print("[DEBUG] Stats._safePopulate() is TODO")
+
+    # self.sessionCount = data["sessionCount"]
+    # self.sessionLog = data["sessionLog"]
+
+    # self.totalPracticeTimeSec = data["totalPracticeTimeSec"]
+
+    # self.comboHighestAllTime = data["comboHighestAllTime"]
+
+    # self.cursorHistogram = data["cursorHistogram"]
+    # self.cursorWrongNoteCount = []
+
+    # self.cursorStats = -1
+    # self.statsSteadyCount = 0
+    # self.statsCursor = []
+
+    # # Prepare the new session
+    # self.sessionCount += 1
+    # if (self.sessionCount > 1) :
+    #   self.sessionAvgPracticeTime = round(self.totalPracticeTimeSec/(60*self.sessionCount))
+    # else :
+    #   self.sessionAvgPracticeTime = 0.0
+
 
 
   # ---------------------------------------------------------------------------
@@ -167,6 +192,7 @@ class Stats :
     The function is used to detect inactivity periods, measure time spent in a 
     given section etc.
     """
+
     print("tictoc!")
 
 

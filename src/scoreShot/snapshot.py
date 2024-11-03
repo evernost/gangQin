@@ -46,8 +46,8 @@ class Snapshot :
     self.playGlowsLeft = {}         # List of tuples with the coordinates of the rectangles highlighting the left hand notes (one per cursor value)
     self.playGlowsRight = {}        # List of tuples with the coordinates of the rectangles highlighting the right hand notes (one per cursor value)
     
-    self.rulerLeftHand = (-1, -1, -1, -1)
-    self.rulerRightHand = (-1, -1, -1, -1)
+    self.rulerLeftHand = [-1, -1, -1, -1]   
+    self.rulerRightHand = [-1, -1, -1, -1]
 
     self.needsRework = False        # Set to True if any issue has been reported in the player or in gangQin
     self.fileMissing = False        # Set to True if the image file could not be found

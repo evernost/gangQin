@@ -79,6 +79,9 @@ pianoRollWidget = pianoRoll.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
 pianoRollWidget.loadPianoRoll(userScore.pianoRoll)
 pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
 
+# Staffscope widget
+staffScopeVisible = False
+
 # Finger editor widget
 fingerSelWidget = fingerSelector.FingerSelector((490, 470))
 
@@ -100,7 +103,6 @@ pygame.time.set_timer(STATS_TASK, stats.TICK_INTERVAL_MS)
 
 # Create the arbiter
 pianoArbiter = arbiter.Arbiter("permissive")
-
 
 
 
@@ -402,6 +404,12 @@ while running :
         userScore.exportToPrFile(newName)
         pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{rootName}.pr>")
 
+      # -----------------------------------------
+      # "v": toggle view (pianoroll / staffScope)
+      # -----------------------------------------
+      if (keys[pygame.K_v]) :
+        staffScopeVisible = not(staffScopeVisible)
+
       # -------------------------
       # Space key: rehearsal mode
       # -------------------------
@@ -619,38 +627,25 @@ while running :
 
 
   # ---------------------------------------------
-  # Show some info relative to the current cursor
+  # Render text
   # ---------------------------------------------
-  # CURSOR
   text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)
-  
-  # BOOKMARK
   text.showBookmark(screen, userScore.getBookmarkIndex())
-
-  # ACTIVE HAND
   text.showActiveHands(screen, userScore.activeHands)
-
-  # LOOP SETTINGS
   text.showLoop(screen, userScore.loopEnable, userScore.loopStart, userScore.loopEnd, userScore.getCursor())
-  
-  # COMBO COUNT
   text.showCombo(screen, statsObj.comboCount, statsObj.comboHighestSession, statsObj.comboHighestAllTime)
-  
+  text.showMetronome(screen, metronomeObj)
+
   # FINGER SELECTION
   fingerSelWidget.show(screen)
   if (fingerSelWidget.getEditedNote() != None) :
     if (userScore.getCursor() != fingerSelWidget.editedCursor) :
       fingerSelWidget.resetEditedNote()
   
-  # METRONOME
-  text.showMetronome(screen, metronomeObj)
-  
   # Request to edit the fingersatz with automatic note highlighting
   if (setFingersatzMsg > 0) :
     fingerSelWidget.setFingerAutoHighlight(setFingersatzMsg, userScore.teacherNotes, userScore.activeHands)
     setFingersatzMsg = -1
-
-
 
   # Some statistics
   # userScore.updateStats()

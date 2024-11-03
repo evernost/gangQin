@@ -102,6 +102,12 @@ while running :
       altKey  = event.mod & pygame.KMOD_ALT
       shiftKey  = event.mod & pygame.KMOD_SHIFT
 
+      # ------------------------
+      # "g": toggle 'ghost' mode
+      # ------------------------
+      if keys[pygame.K_g] :
+        staffScopeWidget.ghostMode = not(staffScopeWidget.ghostMode)
+
       # ---------------------------
       # "p": populate automatically
       # ---------------------------
@@ -181,6 +187,12 @@ while running :
       # ----------------------------
       if (keys[pygame.K_PAGEDOWN]) :
         staffScopeWidget.previousStaff()
+
+      # ---------------------------
+      # Del: delete active playglow
+      # ---------------------------
+      if (keys[pygame.K_DELETE]) :
+        staffScopeWidget.deletePlayGlow()
 
       # ----------------
       # "s": export/save

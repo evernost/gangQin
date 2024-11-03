@@ -70,6 +70,8 @@ class StaffScope :
 
     self.activeHand = "L"
 
+    self.ghostMode = False
+
     # User interaction queues
     self.msgQueueIn = []
     self.msgQueueOut = []
@@ -331,7 +333,6 @@ class StaffScope :
     # 'coarse' move to 'fine' move (when CTRL key is pressed)
 
     if (self.playGlowDragged != -1) :
-      #(x0, y0) = self.playGlowDragInit
       (x0, y0) = (self.playGlows[self.playGlowDragged].dragCoord_x, self.playGlows[self.playGlowDragged].dragCoord_y)
       x = coord[0]; y = coord[1]
       if ctrlKey : 
@@ -342,6 +343,18 @@ class StaffScope :
       self.playGlows[self.playGlowDragged].shift(dx,dy)
 
     
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.deletePlayGlow(None)
+  # ---------------------------------------------------------------------------
+  def deletePlayGlow(self) :
+    """
+    Delete the active playglow shown on the GUI.
+    """
+    
+    print("[DEBUG] StaffScope.deletePlayGlow() is TODO")
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD StaffScope._getPlayGlowFromCursor(None)

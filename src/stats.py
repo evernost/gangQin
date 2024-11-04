@@ -67,7 +67,7 @@ class Stats :
 
     self.sessionCount = 0           # Session counter, incremented at the beginning of the session.
     self.sessionLog = []            # Each entry is a string with the time, date and duration of the session
-    self.sessionStartTime = datetime.datetime.now()
+    self.sessionStartTime = 0
     self.sessionStopTime = 0
     self.sessionAvgPracticeTime = 0
 
@@ -92,6 +92,7 @@ class Stats :
     self.msgQueueOut = []
 
     self._initFromFile(songFile)
+    self._sessionInit()
 
 
 
@@ -124,6 +125,7 @@ class Stats :
     # Log file does not exist: create it.
     else :
       print("[NOTE] Stats: no log file found. A new one will be created.")
+      self._safePopulate({})
 
 
 
@@ -135,32 +137,84 @@ class Stats :
     Populates the field of the object from a log file.
     The function adds safety measures to handle missing fields and give them 
     a default value.
-    Missing fields are quite common due to the updates between different 
-    versions of gangQin.
+    The feature is handy to maintain compatibility accross different versions
+    of gangQin, since the stat fields are very likely to evolve.
     """
     
     print("[DEBUG] Stats._safePopulate() is TODO")
 
-    # self.sessionCount = data["sessionCount"]
-    # self.sessionLog = data["sessionLog"]
+    # Defines a fallback dictionary, in case some fields do not exist.
+    attributesRef = {
+      "logName"                 : self.logName,
+      "logFile"                 : self.logFile,
+      "scoreLength"             : 0,
+      "sessionCount"            : 0,
+      "sessionLog"              : [],
+      "sessionStartTime"        : 0,
+      "sessionStopTime"         : 0,
+      "sessionAvgPracticeTime"  : 0,
+      "totalPracticeTimeSec"    : 0,
+      "comboCount"              : 0,
+      "comboDrop"               : False,
+      "comboHighestSession"     : 0,
+      "comboHighestAllTime"     : 0,
+      "cursorHistogram"         : [],
+      "cursorWrongNoteCount"    : [],
+      "cursorIdleTimer"         : 0,
+      "playedNotes"             : 0,
+      "playedNotesValid"        : 0,
+      "tickInterval_ms"         : 0
+    }
 
-    # self.totalPracticeTimeSec = data["totalPracticeTimeSec"]
+    # Try to load each field
+    for attr in attributesRef :
+      if attr in data :
+        attributesRef[attr] = data[attr]
 
-    # self.comboHighestAllTime = data["comboHighestAllTime"]
+      else :
+        print(f"[WARNING] Missing field '{attr}' in the log file will get a default value.")
 
-    # self.cursorHistogram = data["cursorHistogram"]
-    # self.cursorWrongNoteCount = []
 
-    # self.cursorStats = -1
-    # self.statsSteadyCount = 0
-    # self.statsCursor = []
+    # There might be a cleaner version to do that.
+    self.logName                = attributesRef["logName"]
+    self.logFile                = attributesRef["logFile"]
+    self.scoreLength            = attributesRef["scoreLength"]        
+    self.sessionCount           = attributesRef["sessionCount"]
+    self.sessionLog             = attributesRef["sessionLog"]
+    self.sessionStartTime       = attributesRef["sessionStartTime"]
+    self.sessionStopTime        = attributesRef["sessionStopTime"]
+    self.sessionAvgPracticeTime = attributesRef["sessionAvgPracticeTime"]
+    self.totalPracticeTimeSec   = attributesRef["totalPracticeTimeSec"]
+    self.comboCount             = attributesRef["comboCount"]
+    self.comboDrop              = attributesRef["comboDrop"]
+    self.comboHighestSession    = attributesRef["comboHighestSession"]
+    self.comboHighestAllTime    = attributesRef["comboHighestAllTime"]
+    self.cursorHistogram        = attributesRef["cursorHistogram"]
+    self.cursorWrongNoteCount   = attributesRef["cursorWrongNoteCount"]
+    self.cursorIdleTimer        = attributesRef["cursorIdleTimer"]
+    self.playedNotes            = attributesRef["playedNotes"]
+    self.playedNotesValid       = attributesRef["playedNotesValid"]
+    self.tickInterval_ms        = attributesRef["tickInterval_ms"]
 
-    # # Prepare the new session
-    # self.sessionCount += 1
-    # if (self.sessionCount > 1) :
-    #   self.sessionAvgPracticeTime = round(self.totalPracticeTimeSec/(60*self.sessionCount))
-    # else :
-    #   self.sessionAvgPracticeTime = 0.0
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats._sessionInit()
+  # ---------------------------------------------------------------------------
+  def _sessionInit(self) :
+    """
+    Sets the stat attributes for a new session.
+    """
+    
+    print("[DEBUG] Stats._sessionInit() is TODO")
+    self.sessionStartTime = datetime.datetime.now()
+    self.sessionStopTime = -1
+
+    self.sessionCount += 1
+    if (self.sessionCount > 1) :
+      self.sessionAvgPracticeTime = round(self.totalPracticeTimeSec/(60*self.sessionCount))
+    else :
+      self.sessionAvgPracticeTime = 0.0
 
 
 
@@ -172,6 +226,7 @@ class Stats :
     Prints a short summary of the current stats as introduction.
     This is usually called right after loading the practice session.
     """
+
     print("")
     print(f"[INFO] Get ready for session #{self.sessionCount}!")
     print(f"[INFO] Total practice time so far: {round(self.totalPracticeTimeSec/60)} minutes")

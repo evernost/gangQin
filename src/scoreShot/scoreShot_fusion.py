@@ -106,7 +106,7 @@ while running :
       # "g": toggle 'ghost' mode
       # ------------------------
       if keys[pygame.K_g] :
-        staffScopeWidget.ghostMode = not(staffScopeWidget.ghostMode)
+        staffScopeWidget.toggleGhostMode()
 
       # ---------------------------
       # "p": populate automatically
@@ -247,7 +247,7 @@ while running :
   keyboardWidget.keyPress(screen, teacherNotes)
 
   # Render the staff display
-  staffScopeWidget.loadStaffByCursor(userScore.getCursor())
+  staffScopeWidget.loadCursor(userScore.getCursor())
   staffScopeWidget.render()
 
   # Render the text on screen

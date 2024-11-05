@@ -38,7 +38,7 @@ class PlayGlow :
     
     self.hand = None
 
-    self.type = "active"   # Can be "active" or "passive"
+    self.active = True
 
     self.coord_xMin = -1
     self.coord_xMax = -1

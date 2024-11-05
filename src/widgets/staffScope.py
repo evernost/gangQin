@@ -71,6 +71,7 @@ class StaffScope :
     self.activeHand = "L"
 
     self.ghostMode = False
+    self._cacheCleanUp = False
 
     # User interaction queues
     self.msgQueueIn = []
@@ -181,16 +182,16 @@ class StaffScope :
         
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.loadStaffByCursor()
+  # METHOD StaffScope.loadCursor()
   # ---------------------------------------------------------------------------
-  def loadStaffByCursor(self, cursor) :
+  def loadCursor(self, cursor) :
     """
     Loads the staff that covers the cursor value passed as argument.
     Loads the playglows (left and right hand)
     Loading has a cache to avoid useless workload.
     """
     
-    if (cursor != self.cursor) :
+    if ((cursor != self.cursor) or self._cacheCleanUp) :
       index = self.db.getIndexByCursor(cursor)
     
       # The cursor is linked to a staff:
@@ -198,7 +199,10 @@ class StaffScope :
       # - load the playglows (if any)
       if (index != -1) :
         self.loadStaffByIndex(index)
-        self.playGlows = self.db.snapshots[index].getPlayGlowAtCursor(cursor)
+        if self.ghostMode :
+          self.playGlows = self.db.snapshots[index].getPlayGlowsInSnapshot(activeCursor = cursor)
+        else :
+          self.playGlows = self.db.snapshots[index].getPlayGlowsAtCursor(cursor)
         
       # The cursor is not linked to any staff:
       # - load a default index (the one pointed by the user)
@@ -209,6 +213,7 @@ class StaffScope :
         print(f"[DEBUG] Cursor {cursor} is not linked to any staff. Proceed with playglow input")
 
       self.cursor = cursor
+      self._cacheCleanUp = False
 
     # Cursor hasn't changed: read from cache.
     else : 
@@ -221,11 +226,14 @@ class StaffScope :
   # ---------------------------------------------------------------------------
   def render(self) :
     """
-    Renders the current configuration (staff + "playglows")
+    Renders on screen the score snapshot and the playglows.
     The function shall be called at each frame.
     
     A staff must have been loaded prior to calling this function 
     ('loadStaffByIndex' or 'loadStaffByCursor')
+
+    When the 'ghost mode' is ON, all the playglows of the snapshot are rendered.
+    A color scheme helps distinguish the active/inactive playglows.
     """
     
     # Test if a staff has been loaded
@@ -239,17 +247,23 @@ class StaffScope :
     transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
     
     for p in self.playGlows :
+      
+      if p.active :
+        alpha = 128
+      else :
+        alpha = 20
+      
       if (p.hand == "L") :
         coords = p.toTuple()
-        pygame.draw.rect(transparent_surface, (255, 0, 0, 128), coords)
-        self.screen.blit(transparent_surface, (0, 0))
+        pygame.draw.rect(transparent_surface, (255, 0, 0, alpha), coords)
+        # self.screen.blit(transparent_surface, (0, 0))
 
       elif (p.hand == "R") :
         coords = p.toTuple()
-        pygame.draw.rect(transparent_surface, (0, 255, 0, 128), coords)
-        self.screen.blit(transparent_surface, (0, 0))
+        pygame.draw.rect(transparent_surface, (0, 255, 0, alpha), coords)
+        # self.screen.blit(transparent_surface, (0, 0))
 
-
+    self.screen.blit(transparent_surface, (0, 0))
 
   # ---------------------------------------------------------------------------
   # METHOD StaffScope.clickDown(mouse coordinates)
@@ -387,6 +401,26 @@ class StaffScope :
     """
     
     print("[DEBUG] StaffScope.populate() is TODO")
+
+
+    
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.toggleGhostMode(None)
+  # ---------------------------------------------------------------------------
+  def toggleGhostMode(self) :
+    """
+    Description is TODO.
+    """
+    
+    if self.ghostMode :
+      print("[INFO] staffScope: 'ghost mode' is OFF.")
+    else :
+      print("[INFO] staffScope: 'ghost mode' is ON.")
+    
+    self.ghostMode = not(self.ghostMode)
+
+    # Clean the cache to force loading the staff and playglows
+    self._cacheCleanUp = True
 
 
     

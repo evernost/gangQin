@@ -103,12 +103,15 @@ class Snapshot :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Snapshot.getPlayGlowAtCursor()
+  # METHOD Snapshot.getPlayGlowsAtCursor()
   # ---------------------------------------------------------------------------
-  def getPlayGlowAtCursor(self, cursor) :
+  def getPlayGlowsAtCursor(self, cursor) :
     """
-    Returns the playGlow coordinates (left and right hand) at a given cursor.
-    Returns None if no playGlow has been declared yet.
+    Returns the list of playglows that need to be rendered at the specified 
+    cursor value (left and right hand)
+    Returns an empty list if no playglows have been linked to the cursor.
+
+    See also: 'getPlayGlowsInSnapshot'.
     """
 
     query = str(cursor)
@@ -163,6 +166,56 @@ class Snapshot :
     else : 
       print("[DEBUG] Snapshot.setPlayGlowAtCursor(): invalid 'hand' attribute. Defaulting to left hand.")
 
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Snapshot.getPlayGlowsInSnapshot()
+  # ---------------------------------------------------------------------------
+  def getPlayGlowsInSnapshot(self, activeCursor = -1) :
+    """
+    Returns the list of playglows of the entire snapshot.
+    Returns an empty list if there are none.
+
+    If activeCursor is specified, the playglows assigned to the cursor have 
+    their "active" attribute set to True. The rest is set to False.
+    """
+
+    if self.isUnlinked() :
+      return []
+
+    output = []
+    for cursor in range(self.cursorMin, self.cursorMax+1) :
+      query = str(cursor)
+      
+      if (query in self.playGlowsLeft) :
+        p = playGlow.PlayGlow()
+        p.hand = "L"
+        p.active = (cursor == activeCursor)
+        p.load(self.playGlowsLeft[query])
+        output.append(p)
+      
+      if (query in self.playGlowsRight) :
+        p = playGlow.PlayGlow()
+        p.hand = "R"
+        p.active = (cursor == activeCursor)
+        p.load(self.playGlowsRight[query])
+        output.append(p)
+      
+    return output
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Snapshot.isUnlinked()
+  # ---------------------------------------------------------------------------
+  def isUnlinked(self) :
+    """
+    Returns True if no cursor at all has been linked to the snapshot.
+    Otherwise, returns False.
+    """
+
+    return ((self.cursorMin == -1) and (self.cursorMax == -1))
+    
 
 
 # =============================================================================

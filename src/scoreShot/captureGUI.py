@@ -140,15 +140,16 @@ class CaptureGUI :
     self.captureWin.bind('<KeyPress>'   , self.CLBK_onKeyPress)
     self.captureWin.bind('<KeyRelease>' , self.CLBK_onKeyRelease)
     self.captureWin.bind("<Escape>"     , self.CLBK_onEsc)
+    self.captureWin.bind("<l>"          , self.CLKB_onToggleLock)
     self.captureWin.bind("<s>"          , self.CLBK_onScreenshot)
     self.captureWin.bind("<q>"          , self.CLBK_onQuit)
     
     
-
     self.snapshotListbox.bind("<<ListboxSelect>>", self.CLBK_snapshotListboxClick)
 
     self.GUIConfigFile = ""
 
+    self.GUIResizeLocked = False
 
 
 
@@ -383,9 +384,7 @@ class CaptureGUI :
     if index :
       #print(f"[DEBUG] Now selecting snapshot index: {index[0]}")
 
-      imgName = self.db.getSnapshotNameByIndex(index[0])
-
-      # imgName = self.snapshotListbox.get(index)
+      imgName = self.db.getSnapshotFileByIndex(index[0])
 
       x = ImageTk.PhotoImage(Image.open(imgName))
 
@@ -437,6 +436,15 @@ class CaptureGUI :
   def CLBK_onResize(self, event) :
     self.ruler.updateOnResize()
 
+
+  def CLKB_onToggleLock(self, event) :
+    if not(self.GUIResizeLocked) :
+      self.captureWin.resizable(False, False)
+      print("[DEBUG] Locked!")
+    else :
+      self.captureWin.resizable(True, True)
+
+    self.GUIResizeLocked = not(self.GUIResizeLocked)
 
 
   # --------

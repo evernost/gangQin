@@ -56,6 +56,7 @@ print("- Mouse wheel down       : move the capture window position down by 1 pix
 print("- Alt + Mouse wheel up   : move the capture window position left by 1 pixel")
 print("- Alt + Mouse wheel down : move the capture window position right by 1 pixel")
 print("- 'Esc'                  : restore the default size of the capture window")
+print("- 'l'                    : toggle the lock on the capture window resize")
 print("- 'r'                    : temporarily recall the last snaphost")
 print("- 's'                    : take snapshot")
 print("- 'q'                    : exit app")

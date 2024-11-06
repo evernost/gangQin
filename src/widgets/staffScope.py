@@ -73,6 +73,8 @@ class StaffScope :
     self.ghostMode = False
     self._cacheCleanUp = False
 
+    self.rulersVisible = False
+
     # User interaction queues
     self.msgQueueIn = []
     self.msgQueueOut = []
@@ -242,6 +244,15 @@ class StaffScope :
     # Render the staff
     self.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))
     
+    # Render the rulers
+    # TODO: add the handles.
+    # The handles must be outside the score image
+    if self.rulersVisible :
+      #self.db.snapshots[index].rulerLeftHand
+      pass
+
+
+
     # Render the playGlows
     transparent_surface = pygame.Surface((self.screenWidth, self.screenHeight), pygame.SRCALPHA)
     transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
@@ -255,15 +266,18 @@ class StaffScope :
       
       if (p.hand == "L") :
         coords = p.toTuple()
-        pygame.draw.rect(transparent_surface, (255, 0, 0, alpha), coords)
-        # self.screen.blit(transparent_surface, (0, 0))
+        r = pygame.draw.rect(transparent_surface, (255, 0, 0, alpha), coords)
+
+        if not(p.active) :
+          pygame.draw.rect(self.screen, (128, 128, 128), r, 1)
 
       elif (p.hand == "R") :
         coords = p.toTuple()
         pygame.draw.rect(transparent_surface, (0, 255, 0, alpha), coords)
-        # self.screen.blit(transparent_surface, (0, 0))
 
     self.screen.blit(transparent_surface, (0, 0))
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD StaffScope.clickDown(mouse coordinates)
@@ -390,8 +404,6 @@ class StaffScope :
 
 
 
-
-
   # ---------------------------------------------------------------------------
   # METHOD StaffScope.populate(None)
   # ---------------------------------------------------------------------------
@@ -409,13 +421,15 @@ class StaffScope :
   # ---------------------------------------------------------------------------
   def toggleGhostMode(self) :
     """
-    Description is TODO.
+    Toggles the 'ghost' mode i.e. switches between:
+    - showing all the playglows of the snapshot, highlighting the active one 
+    - showing the active playglow only.
     """
     
     if self.ghostMode :
-      print("[INFO] staffScope: 'ghost mode' is OFF.")
+      print("[INFO] staffScope: 'ghost' mode is OFF.")
     else :
-      print("[INFO] staffScope: 'ghost mode' is ON.")
+      print("[INFO] staffScope: 'ghost' mode is ON.")
     
     self.ghostMode = not(self.ghostMode)
 
@@ -423,4 +437,22 @@ class StaffScope :
     self._cacheCleanUp = True
 
 
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.toggleRulers(None)
+  # ---------------------------------------------------------------------------
+  def toggleRulers(self) :
+    """
+    Description is TODO.
+    """
     
+    if self.rulersVisible :
+      print("[INFO] staffScope: 'ghost mode' is OFF.")
+    else :
+      print("[INFO] staffScope: 'ghost mode' is ON.")
+    
+    self.rulersVisible = not(self.rulersVisible)
+
+  
+
+

@@ -108,11 +108,17 @@ while running :
       if keys[pygame.K_g] :
         staffScopeWidget.toggleGhostMode()
 
-      # ---------------------------
-      # "p": populate automatically
-      # ---------------------------
+      # -------------
+      # "p": populate
+      # -------------
       if keys[pygame.K_p] :
         staffScopeWidget.populate()
+
+      # ------------------
+      # "r": toggle rulers
+      # ------------------
+      if keys[pygame.K_r] :
+        staffScopeWidget.toggleRulers()
 
       # -----------------
       # "q": exit the app
@@ -253,6 +259,7 @@ while running :
   # Render the text on screen
   text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)
   text.showBookmark(screen, userScore.getBookmarkIndex())
+  text.showLeftRightSel(screen)
  
 
   clock.tick(FPS)

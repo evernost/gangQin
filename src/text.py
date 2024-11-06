@@ -542,7 +542,7 @@ CHAR_POLYGONS["]"] = [
 ]
 
 # -----------------------------------------------------------------------------
-# METHOD <renderText>
+# METHOD render
 # -----------------------------------------------------------------------------
 def render(screenInst, string, loc, size, col = (40, 50, 60), justify = LEFT_JUSTIFY) :
   """
@@ -574,7 +574,7 @@ def render(screenInst, string, loc, size, col = (40, 50, 60), justify = LEFT_JUS
 
 
 # -----------------------------------------------------------------------------
-# FUNCTION <showCursor>
+# FUNCTION showCursor
 # -----------------------------------------------------------------------------
 def showCursor(screen, cursor, scoreLength) :
   render(screen, f"CURSOR: {cursor} / {scoreLength}", (12, 20), 2, UI_TEXT_COLOR)
@@ -582,7 +582,7 @@ def showCursor(screen, cursor, scoreLength) :
 
 
 # -----------------------------------------------------------------------------
-# FUNCTION <showBookmark>
+# FUNCTION showBookmark
 # -----------------------------------------------------------------------------
 def showBookmark(screen, bookmarkIndex) :
   if (bookmarkIndex != -1) :
@@ -591,7 +591,7 @@ def showBookmark(screen, bookmarkIndex) :
 
 
 # -----------------------------------------------------------------------------
-# FUNCTION <showActiveHands>
+# FUNCTION showActiveHands
 # -----------------------------------------------------------------------------
 def showActiveHands(screen, activeHands) :
   render(screen, activeHands, (1288, 470), 2, UI_TEXT_COLOR)
@@ -599,7 +599,7 @@ def showActiveHands(screen, activeHands) :
 
 
 # -----------------------------------------------------------------------------
-# FUNCTION <showLoop>
+# FUNCTION showLoop
 # -----------------------------------------------------------------------------
 def showLoop(screen, loopEnable, loopStart, loopEnd, cursor) :
   if loopEnable :
@@ -614,7 +614,7 @@ def showLoop(screen, loopEnable, loopStart, loopEnd, cursor) :
 
 
 # -----------------------------------------------------------------------------
-# FUNCTION <showLoop>
+# FUNCTION showLoop
 # -----------------------------------------------------------------------------
 def showCombo(screen, comboCount, comboHighestSession, comboHighestAllTime) :
   render(screen, f"COMBO: {comboCount} (MAX: {comboHighestSession} / ALLTIME: {comboHighestAllTime})", (1312, 20), 2, UI_TEXT_COLOR, justify = RIGHT_JUSTIFY)
@@ -622,8 +622,17 @@ def showCombo(screen, comboCount, comboHighestSession, comboHighestAllTime) :
 
 
 # -----------------------------------------------------------------------------
-# FUNCTION <showMetronome>
+# FUNCTION showMetronome
 # -----------------------------------------------------------------------------
 def showMetronome(screen, metronomeObj) :
   if metronomeObj.enable :
     render(screen, f"BPM:{metronomeObj.bpm} - {metronomeObj.num}/{metronomeObj.denom} - {metronomeObj.counter}", (950, 470), 2, UI_TEXT_COLOR)
+
+
+
+# -----------------------------------------------------------------------------
+# FUNCTION showLeftRightSel
+# -----------------------------------------------------------------------------
+def showLeftRightSel(screen) :
+  pass
+

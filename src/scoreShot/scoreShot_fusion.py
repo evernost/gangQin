@@ -39,7 +39,8 @@ import os
 # =============================================================================
 
 # TODO: call a file selection GUI.
-songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
+#songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
+songFile = "./songs/Satie_Danses_de_travers_I.pr"
 
 
 
@@ -127,7 +128,6 @@ while running :
         
         # Look for unsaved changes
         # ...
-        
         
         print("")
         print("See you!")

@@ -138,13 +138,12 @@ class Snapshot :
   # ---------------------------------------------------------------------------
   def setPlayGlowAtCursor(self, cursor, playGlowObj) :
     """
-    Sets the playglow attribute of the snapshot at a specific cursor.
-    Automatically assigns it to the left or right hand.
-    Note: the function overrides any playglow that has already been set.
+    Links a playglow object to the staff at the indicated cursor.
+    It will erase any playglow previously linked to this cursor.
     """
 
     # Snapshot with uninitialised cursors
-    if ((self.cursorMin == -1) and (self.cursorMax == -1)) :
+    if self.isUnlinked() :
       self.cursorMin = cursor
       self.cursorMax = cursor
 
@@ -154,15 +153,18 @@ class Snapshot :
     if (cursor < self.cursorMin) :
       self.cursorMin = cursor
 
-    print(f"[DEBUG] Assigning playglow to the db; new range: {self.cursorMin} -> {self.cursorMax}")
-
     insertLoc = str(cursor)
+    if (((playGlowObj.hand == "L") and (insertLoc in self.playGlowsLeft)) or 
+        ((playGlowObj.hand == "R") and (insertLoc in self.playGlowsRight))) :
+      print(f"[DEBUG] Snapshot.setPlayGlowAtCursor(): edited playglow at cursor = {cursor}")
+    elif (playGlowObj.hand == "R") :
+      print(f"[DEBUG] Snapshot.setPlayGlowAtCursor(): new playglow at cursor = {cursor}")
+
+
     if (playGlowObj.hand == "L") :
       self.playGlowsLeft[insertLoc] = playGlowObj.toTuple()
-
     elif (playGlowObj.hand == "R") :
       self.playGlowsRight[insertLoc] = playGlowObj.toTuple()
-
     else : 
       print("[DEBUG] Snapshot.setPlayGlowAtCursor(): invalid 'hand' attribute. Defaulting to left hand.")
 

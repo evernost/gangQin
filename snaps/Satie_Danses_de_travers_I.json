@@ -1,0 +1,228 @@
+{
+  "nSnapshots": 11,
+  "snapshots": [
+    {
+      "dir": "./snaps/db__Satie_Danses_de_travers_I",
+      "file": "MGXRAC.png",
+      "index": 0,
+      "displayName": "Capture 1",
+      "description": "",
+      "cursorMin": 0,
+      "cursorMax": 14,
+      "playGlowsLeft": {
+        "0": [
+          332,
+          215,
+          10,
+          30
+        ],
+        "1": [
+          366,
+          199,
+          10,
+          30
+        ],
+        "2": [
+          401,
+          189,
+          10,
+          30
+        ],
+        "4": [
+          466,
+          210,
+          10,
+          30
+        ],
+        "5": [
+          499,
+          195,
+          10,
+          30
+        ],
+        "6": [
+          531,
+          183,
+          10,
+          30
+        ],
+        "8": [
+          599,
+          213,
+          10,
+          30
+        ],
+        "9": [
+          629,
+          193,
+          10,
+          30
+        ],
+        "10": [
+          661,
+          185,
+          10,
+          30
+        ],
+        "12": [
+          729,
+          205,
+          10,
+          30
+        ],
+        "13": [
+          762,
+          191,
+          10,
+          30
+        ],
+        "14": [
+          795,
+          181,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Satie_Danses_de_travers_I",
+      "file": "B6486K.png",
+      "index": 1,
+      "displayName": "Capture 2",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Satie_Danses_de_travers_I",
+      "file": "7VGUMF.png",
+      "index": 2,
+      "displayName": "Capture 3",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Satie_Danses_de_travers_I",
+      "file": "A4PAZF.png",
+      "index": 3,
+      "displayName": "Capture 4",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Satie_Danses_de_travers_I",
+      "file": "VXWR37.png",
+      "index": 4,
+      "displayName": "Capture 5",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Satie_Danses_de_travers_I",
+      "file": "WCAG93.png",
+      "index": 5,
+      "displayName": "Capture 6",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Satie_Danses_de_travers_I",
+      "file": "PBTHCR.png",
+      "index": 6,
+      "displayName": "Capture 7",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Satie_Danses_de_travers_I",
+      "file": "YCRV4F.png",
+      "index": 7,
+      "displayName": "Capture 8",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Satie_Danses_de_travers_I",
+      "file": "6M426D.png",
+      "index": 8,
+      "displayName": "Capture 9",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Satie_Danses_de_travers_I",
+      "file": "FG7UCF.png",
+      "index": 9,
+      "displayName": "Capture 10",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Satie_Danses_de_travers_I",
+      "file": "NVHPB7.png",
+      "index": 10,
+      "displayName": "Capture 11",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    }
+  ],
+  "isEmpty": false,
+  "songName": "Satie_Danses_de_travers_I",
+  "songFile": "Satie_Danses_de_travers_I.pr",
+  "jsonName": "Satie_Danses_de_travers_I.json",
+  "jsonFile": "./snaps/Satie_Danses_de_travers_I.json",
+  "depotFolder": "./snaps/db__Satie_Danses_de_travers_I",
+  "hasUnsavedChanges": false
+}

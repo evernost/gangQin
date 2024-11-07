@@ -547,10 +547,13 @@ CHAR_POLYGONS["]"] = [
 def render(screenInst, string, loc, size, col = (40, 50, 60), justify = LEFT_JUSTIFY) :
   """
   Prints a string on a pygame screen.
-  - "loc" = (x,y): coordinates of the first char
   - "size" (int): each element of charPolygon is drawn as a square of pixel
     This arguments defines the size of each square (in pixels)
   - "col" = (R,G,B): text color in RGB values
+  
+  In LEFT_JUSTIFY mode, the text starts at the coordinate pointed by 'loc'.
+  In RIGHT_JUSTIFY mode, the text ends at the coordinate pointed by 'loc'.
+  Default is LEFT_JUSTIFY mode.
   """
   x0 = loc[0]; y0 = loc[1]
   w = size; h = size
@@ -634,5 +637,19 @@ def showMetronome(screen, metronomeObj) :
 # FUNCTION showLeftRightSel
 # -----------------------------------------------------------------------------
 def showLeftRightSel(screen) :
-  pass
+  render(screen, "L - R", (1312, 470), 2, UI_TEXT_COLOR, justify = RIGHT_JUSTIFY)
+
+
+  # Ideally:
+  # render(screen, 
+  #        "L - R", 
+  #        "abbbc", ("a", (Ra, Ga, Ba), "b", (Rb, Gb, Bb), "c", (Rc, Gc, Bc))
+  #        "_    "
+  #        (1312, 470), 
+  #        2, 
+  #        justify = RIGHT_JUSTIFY
+  # )
+
+
+
 

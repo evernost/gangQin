@@ -306,15 +306,15 @@ class StaffScope :
             self.playGlowDragged = i
             p.dragFrom(x,y)
             noHit = False
-            print("[DEBUG] Move request")
+            print("[DEBUG] StaffScope.clickDown(): move request")
 
           elif p.isClickOnBorder(coord) :
             noHit = False
-            print("[DEBUG] Resize request")
+            print("[DEBUG] StaffScope.clickDown(): resize request")
 
         # Create a playglow at the location of the click
         if noHit :
-          print("[DEBUG] New playGlow")
+          print("[DEBUG] StaffScope.clickDown(): new playGlow")
           p = playGlow.PlayGlow()
           p.load((x-5, y-5, 10, 30))
           p.hand = self.activeHand
@@ -324,27 +324,6 @@ class StaffScope :
           # Là ils vont tous être effacés !
           self.playGlows = []
           self.playGlows.append(p)
-        
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD StaffScope.clickUp(mouse coordinates)
-  # ---------------------------------------------------------------------------
-  def clickUp(self, coord) :
-    """
-    Handles the releasing event of a click (left button).
-    In this GUI, it is used to handle the drag&drop feature.
-    """
-    
-    # Apply the changes to the object
-    # self.playGlows[self.playGlowDragged].shiftApply()
-
-    # Commit the changes to the database
-    p = self.playGlows[self.playGlowDragged]
-    self.db.snapshots[self._snapshotIndex].setPlayGlowAtCursor(self.cursor, p)
-
-    # Close the drag&drop event
-    self.playGlowDragged = -1
 
 
 
@@ -370,7 +349,28 @@ class StaffScope :
       
       self.playGlows[self.playGlowDragged].shift(dx,dy)
 
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.clickUp(mouse coordinates)
+  # ---------------------------------------------------------------------------
+  def clickUp(self, coord) :
+    """
+    Handles the releasing event of a click (left button).
+    In this GUI, it is used to handle the drag&drop feature.
+    """
     
+    # If something has been being dragged so far
+    if (self.playGlowDragged != -1) :
+    
+      # Commit the changes to the database
+      p = self.playGlows[self.playGlowDragged]
+      self.db.snapshots[self._snapshotIndex].setPlayGlowAtCursor(self.cursor, p)
+
+      # Close the drag&drop event
+      self.playGlowDragged = -1
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD StaffScope.deletePlayGlow(None)

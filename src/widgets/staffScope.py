@@ -308,9 +308,9 @@ class StaffScope :
             noHit = False
             print("[DEBUG] StaffScope.clickDown(): move request")
 
-          elif p.isClickOnBorder(coord) :
-            noHit = False
-            print("[DEBUG] StaffScope.clickDown(): resize request")
+          # elif p.isClickOnBorder(coord) :
+          #   noHit = False
+          #   print("[DEBUG] StaffScope.clickDown(): resize request")
 
         # Create a playglow at the location of the click
         if noHit :

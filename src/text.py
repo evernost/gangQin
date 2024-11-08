@@ -576,6 +576,34 @@ def render(screenInst, string, loc, size, col = (40, 50, 60), justify = LEFT_JUS
 
 
 
+def renderPlus(screenInst, string, colorSpec, colorDict, formatSpec, loc, size, justify = LEFT_JUSTIFY) :
+  """
+  Improved version of "render", with format specifiers.
+  """
+
+  x0 = loc[0]; y0 = loc[1]
+  w = size; h = size
+
+  if (justify == RIGHT_JUSTIFY) :
+    x0 = x0 - 6*w*len(string)
+
+  for (i, char) in enumerate(string) :
+    cS = colorSpec[i]
+    col = colorDict[cS]
+    for l in CHAR_POLYGONS[char] :
+      for c in l :
+        if (c > 0) :
+          squareCoord = [(x0, y0), (x0 + (w-1), y0), (x0 + (w-1), y0 + (h-1)), (x0, y0 + (h-1))]
+          pygame.draw.polygon(screenInst, col, squareCoord)
+
+        x0 += w
+      
+      x0 -= 5*w; y0 += h
+
+    x0 += 6*w; y0 = loc[1]
+
+
+
 # -----------------------------------------------------------------------------
 # FUNCTION showCursor
 # -----------------------------------------------------------------------------
@@ -617,7 +645,7 @@ def showLoop(screen, loopEnable, loopStart, loopEnd, cursor) :
 
 
 # -----------------------------------------------------------------------------
-# FUNCTION showLoop
+# FUNCTION showCombo
 # -----------------------------------------------------------------------------
 def showCombo(screen, comboCount, comboHighestSession, comboHighestAllTime) :
   render(screen, f"COMBO: {comboCount} (MAX: {comboHighestSession} / ALLTIME: {comboHighestAllTime})", (1312, 20), 2, UI_TEXT_COLOR, justify = RIGHT_JUSTIFY)
@@ -637,19 +665,16 @@ def showMetronome(screen, metronomeObj) :
 # FUNCTION showLeftRightSel
 # -----------------------------------------------------------------------------
 def showLeftRightSel(screen) :
-  render(screen, "L - R", (1312, 470), 2, UI_TEXT_COLOR, justify = RIGHT_JUSTIFY)
-
-
-  # Ideally:
-  # render(screen, 
-  #        "L - R", 
-  #        "abbbc", ("a", (Ra, Ga, Ba), "b", (Rb, Gb, Bb), "c", (Rc, Gc, Bc))
-  #        "_    "
-  #        (1312, 470), 
-  #        2, 
-  #        justify = RIGHT_JUSTIFY
-  # )
-
-
-
+  R = (226, 129, 253)
+  G = (129, 226, 129)
+  
+  renderPlus(
+    screen, 
+    "L - R", 
+    "gnnnn", {"r": R, "g": G, "n": UI_TEXT_COLOR}, 
+    "_    ",
+    (1312, 470),
+    2,
+    justify = RIGHT_JUSTIFY
+  )
 

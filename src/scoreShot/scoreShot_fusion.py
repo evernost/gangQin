@@ -218,6 +218,7 @@ while running :
         coord = pygame.mouse.get_pos()
         staffScopeWidget.clickDown(coord)
       
+      # TODO: disable scrolling if drag&drop is ongoing
       if (event.button == MOUSE_SCROLL_UP) :
         if ctrlKey :
           userScore.cursorStep(10)

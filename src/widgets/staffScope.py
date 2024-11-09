@@ -71,7 +71,7 @@ class StaffScope :
     self.activeHand = "L"
 
     self.ghostMode = False
-    self._cacheCleanUp = False
+    self._cacheClearReq = False
 
     self.rulersVisible = False
 
@@ -193,7 +193,7 @@ class StaffScope :
     Loading has a cache to avoid useless workload.
     """
     
-    if ((cursor != self.cursor) or self._cacheCleanUp) :
+    if ((cursor != self.cursor) or self._cacheClearReq) :
       index = self.db.getIndexByCursor(cursor)
     
       # The cursor is linked to a staff:
@@ -215,7 +215,7 @@ class StaffScope :
         print(f"[DEBUG] Cursor {cursor} is not linked to any staff. Proceed with playglow input")
 
       self.cursor = cursor
-      self._cacheCleanUp = False
+      self._cacheClearReq = False
 
     # Cursor hasn't changed: read from cache.
     else : 
@@ -250,7 +250,6 @@ class StaffScope :
     if self.rulersVisible :
       #self.db.snapshots[index].rulerLeftHand
       pass
-
 
 
     # Render the playGlows
@@ -360,12 +359,15 @@ class StaffScope :
     In this GUI, it is used to handle the drag&drop feature.
     """
     
-    # If something has been being dragged so far
+    # If something is being dragged
     if (self.playGlowDragged != -1) :
     
       # Commit the changes to the database
       p = self.playGlows[self.playGlowDragged]
       self.db.snapshots[self._snapshotIndex].setPlayGlowAtCursor(self.cursor, p)
+
+      # Force a reload from the database
+      self._cacheClearReq = True
 
       # Close the drag&drop event
       self.playGlowDragged = -1
@@ -434,7 +436,7 @@ class StaffScope :
     self.ghostMode = not(self.ghostMode)
 
     # Clean the cache to force loading the staff and playglows
-    self._cacheCleanUp = True
+    self._cacheClearReq = True
 
 
 

@@ -72,8 +72,24 @@ class PlayGlow :
     
     x = coord[0]; y = coord[1]
 
+    # print(f"[DEBUG] hitbox X: {self.hitBox_xMin}... {self.hitBox_xMax}")
+    # print(f"        hitbox Y: {self.hitBox_yMin}... {self.hitBox_yMax}")
+
+    # print(f"[DEBUG]  coord X: {self.coord_xMin}... {self.coord_xMax}")
+    # print(f"         coord Y: {self.coord_yMin}... {self.coord_yMax}")
+
+    # print(f"[DEBUG]  click X: {x}")
+    # print(f"         click Y: {y}")
+
     test_x = ((x >= self.hitBox_xMin) and (x <= self.hitBox_xMax))
     test_y = ((y >= self.hitBox_yMin) and (y <= self.hitBox_yMax))
+    
+    # if (test_x and test_y) :
+    #   print(f"[DEBUG] attached!")
+    # else :
+    #   print(f"[DEBUG] missed!")
+    # print("")
+    
     return (test_x and test_y)
 
 
@@ -96,7 +112,8 @@ class PlayGlow :
   # ---------------------------------------------------------------------------
   def toTuple(self) :
     """
-    TODO
+    Returns a tuple with the playglow coordinates, ready to be used in the 
+    "pygame.draw.rect" function.
     """
     
     return (

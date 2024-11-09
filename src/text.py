@@ -671,7 +671,7 @@ def showLeftRightSel(screen) :
   renderPlus(
     screen, 
     "L - R", 
-    "gnnnn", {"r": R, "g": G, "n": UI_TEXT_COLOR}, 
+    "rnnnn", {"r": R, "g": G, "n": UI_TEXT_COLOR}, 
     "_    ",
     (1312, 470),
     2,

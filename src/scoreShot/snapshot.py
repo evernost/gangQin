@@ -157,7 +157,7 @@ class Snapshot :
     if (((playGlowObj.hand == "L") and (insertLoc in self.playGlowsLeft)) or 
         ((playGlowObj.hand == "R") and (insertLoc in self.playGlowsRight))) :
       print(f"[DEBUG] Snapshot.setPlayGlowAtCursor(): edited playglow at cursor = {cursor}")
-    elif (playGlowObj.hand == "R") :
+    else :
       print(f"[DEBUG] Snapshot.setPlayGlowAtCursor(): new playglow at cursor = {cursor}")
 
 

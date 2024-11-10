@@ -221,7 +221,6 @@ while running :
         coord = pygame.mouse.get_pos()
         staffScopeWidget.clickDown(coord)
         handSelWidget.clickDown(coord)
-        print(f"[DEBUG] x = {coord[0]} y = {coord[1]}")
       
       # TODO: disable scrolling if drag&drop is ongoing
       if (event.button == MOUSE_SCROLL_UP) :

@@ -117,11 +117,9 @@ class handSelector :
     yMax_R = self.yMax + 2
 
     if ((x >= xMin_L) and (x <= xMax_L) and (y >= yMin_L) and (y <= yMax_L)) :
-      print(f"[DEBUG] L click")
       self.sel = "L"
 
     elif ((x >= xMin_R) and (x <= xMax_R) and (y >= yMin_R) and (y <= yMax_R)) :
-      print(f"[DEBUG] R click")
       self.sel = "R"
 
     

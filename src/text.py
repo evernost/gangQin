@@ -608,7 +608,7 @@ def renderPlus(screenInst, string, colorSpec, colorDict, formatSpec, loc, size, 
     # Draw the underline
     if (formatSpec[i] == "_") :
       y0 += h
-      for pixel in range(6) :
+      for pixel in range(5) :
         squareCoord = [(x0, y0), (x0 + (w-1), y0), (x0 + (w-1), y0 + (h-1)), (x0, y0 + (h-1))]
         pygame.draw.polygon(screenInst, color, squareCoord)
         x0 += w

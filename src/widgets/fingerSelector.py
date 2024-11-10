@@ -84,7 +84,7 @@ class FingerSelector :
   # ---------------------------------------------------------------------------
   def keyPress(self, pygameKeys) :
     """
-    todo
+    TODO
     """
 
     if pygameKeys[pygame.K_TAB] :      

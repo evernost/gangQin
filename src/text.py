@@ -576,6 +576,9 @@ def render(screenInst, string, loc, size, col = (40, 50, 60), justify = LEFT_JUS
 
 
 
+# -----------------------------------------------------------------------------
+# METHOD renderPlus
+# -----------------------------------------------------------------------------
 def renderPlus(screenInst, string, colorSpec, colorDict, formatSpec, loc, size, justify = LEFT_JUSTIFY) :
   """
   Improved version of "render", with format specifiers.
@@ -588,16 +591,29 @@ def renderPlus(screenInst, string, colorSpec, colorDict, formatSpec, loc, size, 
     x0 = x0 - 6*w*len(string)
 
   for (i, char) in enumerate(string) :
-    cS = colorSpec[i]
-    col = colorDict[cS]
-    for l in CHAR_POLYGONS[char] :
-      for c in l :
-        if (c > 0) :
+    cS    = colorSpec[i]
+    color = colorDict[cS]
+    
+    # Draw the character
+    for charLine in CHAR_POLYGONS[char] :
+      for pixel in charLine :
+        if (pixel > 0) :
           squareCoord = [(x0, y0), (x0 + (w-1), y0), (x0 + (w-1), y0 + (h-1)), (x0, y0 + (h-1))]
-          pygame.draw.polygon(screenInst, col, squareCoord)
-
+          pygame.draw.polygon(screenInst, color, squareCoord)
         x0 += w
       
+      # CR/LF
+      x0 -= 5*w; y0 += h
+
+    # Draw the underline
+    if (formatSpec[i] == "_") :
+      y0 += h
+      for pixel in range(6) :
+        squareCoord = [(x0, y0), (x0 + (w-1), y0), (x0 + (w-1), y0 + (h-1)), (x0, y0 + (h-1))]
+        pygame.draw.polygon(screenInst, color, squareCoord)
+        x0 += w
+      
+      # CR/LF
       x0 -= 5*w; y0 += h
 
     x0 += 6*w; y0 = loc[1]
@@ -660,21 +676,4 @@ def showMetronome(screen, metronomeObj) :
     render(screen, f"BPM:{metronomeObj.bpm} - {metronomeObj.num}/{metronomeObj.denom} - {metronomeObj.counter}", (950, 470), 2, UI_TEXT_COLOR)
 
 
-
-# -----------------------------------------------------------------------------
-# FUNCTION showLeftRightSel
-# -----------------------------------------------------------------------------
-def showLeftRightSel(screen) :
-  R = (226, 129, 253)
-  G = (129, 226, 129)
-  
-  renderPlus(
-    screen, 
-    "L - R", 
-    "rnnnn", {"r": R, "g": G, "n": UI_TEXT_COLOR}, 
-    "_    ",
-    (1312, 470),
-    2,
-    justify = RIGHT_JUSTIFY
-  )
 

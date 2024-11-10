@@ -17,10 +17,9 @@ from src.commons import *
 
 import src.widgets.keyboard as keyboard
 import src.widgets.staffScope as staffScope
+import src.widgets.handSelector as handSelector
 import src.score as score
 import src.text as text
-
-#import src.scoreShot.database as database
 
 import pygame
 import os
@@ -65,6 +64,10 @@ keyboardWidget = keyboard.Keyboard(loc = (10, 300))
 staffScopeWidget = staffScope.StaffScope()
 staffScopeWidget.setScreen(screen, screenWidth, screenHeight)
 staffScopeWidget.load(songFile)
+
+# Finger editor widget
+handSelWidget = handSelector.handSelector()
+handSelWidget.setScreen(screen)
 
 # Create window
 pygame.display.set_caption(f"scoreShot Fusion - v0.1 [ALPHA] (October 2024) - <{os.path.basename(songFile)}>")
@@ -217,6 +220,8 @@ while running :
       if (event.button == MOUSE_LEFT_CLICK) :
         coord = pygame.mouse.get_pos()
         staffScopeWidget.clickDown(coord)
+        handSelWidget.clickDown(coord)
+        print(f"[DEBUG] x = {coord[0]} y = {coord[1]}")
       
       # TODO: disable scrolling if drag&drop is ongoing
       if (event.button == MOUSE_SCROLL_UP) :
@@ -257,12 +262,13 @@ while running :
   staffScopeWidget.loadCursor(userScore.getCursor())
   staffScopeWidget.render()
 
+  # Render the left/right hand selector
+  handSelWidget.render()
+
   # Render the text on screen
   text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)
   text.showBookmark(screen, userScore.getBookmarkIndex())
-  text.showLeftRightSel(screen)
  
-
   clock.tick(FPS)
 
   # Update the display

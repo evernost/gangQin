@@ -221,6 +221,10 @@ while running :
         coord = pygame.mouse.get_pos()
         staffScopeWidget.clickDown(coord)
         handSelWidget.clickDown(coord)
+
+      if (event.button == MOUSE_RIGHT_CLICK) :
+        coord = pygame.mouse.get_pos()
+        handSelWidget.rightClickDown(coord)
       
       # TODO: disable scrolling if drag&drop is ongoing
       if (event.button == MOUSE_SCROLL_UP) :
@@ -268,6 +272,18 @@ while running :
   text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)
   text.showBookmark(screen, userScore.getBookmarkIndex())
  
+
+  for msg in handSelWidget.msgQueueOut :
+    if (msg == handSelector.Msg.SET_TO_RIGHT_HAND) :
+      staffScopeWidget.activeHand = "R"
+      handSelWidget.msgQueueOut = []
+  
+    elif (msg == handSelector.Msg.SET_TO_LEFT_HAND) :
+      staffScopeWidget.activeHand = "L"
+      handSelWidget.msgQueueOut = []
+    
+    
+
   clock.tick(FPS)
 
   # Update the display

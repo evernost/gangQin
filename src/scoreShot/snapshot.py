@@ -208,6 +208,34 @@ class Snapshot :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD Snapshot.delPlayGlowAtCursor()
+  # ---------------------------------------------------------------------------
+  def delPlayGlowAtCursor(self, cursor, hand) :
+    """
+    Delete the playglow at the specified cursor and hand
+    """
+
+    # Snapshot with uninitialised cursors
+    if self.isUnlinked() :
+      print(f"[DEBUG] Snapshot.delPlayGlowAtCursor(): that's quite odd, trying to delete from an unlinked cursor.")
+
+    delLoc = str(cursor)
+    
+    if (hand == "L") :
+      if delLoc in self.playGlowsLeft :
+        del self.playGlowsLeft[delLoc]
+      else :
+        print(f"[DEBUG] Snapshot.delPlayGlowAtCursor(): nothing to be deleted on the left hand here.")
+    
+    else :
+      if delLoc in self.playGlowsRight :
+        del self.playGlowsRight[delLoc]
+      else :
+        print(f"[DEBUG] Snapshot.delPlayGlowAtCursor(): nothing to be deleted on the right hand here.")
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD Snapshot.isUnlinked()
   # ---------------------------------------------------------------------------
   def isUnlinked(self) :

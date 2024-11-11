@@ -307,21 +307,22 @@ class StaffScope :
             noHit = False
             print("[DEBUG] StaffScope.clickDown(): move request")
 
-          # elif p.isClickOnBorder(coord) :
-          #   noHit = False
-          #   print("[DEBUG] StaffScope.clickDown(): resize request")
+          elif p.isClickOnBorder(coord) :
+            noHit = False
+            print("[DEBUG] StaffScope.clickDown(): resize request")
 
-        # Create a playglow at the location of the click
+        # Click in empty space
         if noHit :
+          for (i, p) in enumerate(self.playGlows) :
+            if (p.hand == self.activeHand) :
+              del self.playGlows[i]
+              break
+          
           print("[DEBUG] StaffScope.clickDown(): new playGlow")
           p = playGlow.PlayGlow()
           p.load((x-5, y-5, 10, 30))
           p.hand = self.activeHand
           self.db.snapshots[self._snapshotIndex].setPlayGlowAtCursor(self.cursor, p)
-
-          # Faux : il faut remplacer le playGlow 
-          # Là ils vont tous être effacés !
-          self.playGlows = []
           self.playGlows.append(p)
 
 
@@ -382,7 +383,14 @@ class StaffScope :
     Delete the active playglow shown on the GUI.
     """
     
-    print("[DEBUG] StaffScope.deletePlayGlow() is TODO")
+    for (i, p) in enumerate(self.playGlows) :
+      if (p.hand == self.activeHand) :
+        print(f"[INFO] Deleting playglow at cursor {self.cursor} (hand = '{self.activeHand}')")
+        del self.playGlows[i]
+        
+        self.db.snapshots[self._snapshotIndex].delPlayGlowAtCursor(self.cursor, p.hand)
+        
+        break
 
 
 

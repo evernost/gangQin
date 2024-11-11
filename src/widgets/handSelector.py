@@ -18,12 +18,16 @@ from src.commons import *
 
 import src.text as text
 
+from enum import Enum
+
 
 
 # =============================================================================
 # Constants pool
 # =============================================================================
-# None
+class Msg(Enum) :
+  SET_TO_LEFT_HAND  = 1
+  SET_TO_RIGHT_HAND = 2
 
 
 
@@ -118,13 +122,34 @@ class handSelector :
 
     if ((x >= xMin_L) and (x <= xMax_L) and (y >= yMin_L) and (y <= yMax_L)) :
       self.sel = "L"
+      self.msgQueueOut.append(Msg.SET_TO_LEFT_HAND)
 
     elif ((x >= xMin_R) and (x <= xMax_R) and (y >= yMin_R) and (y <= yMax_R)) :
       self.sel = "R"
+      self.msgQueueOut.append(Msg.SET_TO_RIGHT_HAND)
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD HandSelector.rightClickDown(mouse coordinates)
+  # ---------------------------------------------------------------------------
+  def rightClickDown(self, coord) :
+    """
+    Handles a right click on the widget.
+    """
+    
+    x = coord[0]; y = coord[1]
+    
+    if (self.sel == "L") :
+      self.sel = "R"
+      self.msgQueueOut.append(Msg.SET_TO_RIGHT_HAND)
+
+    elif (self.sel == "R") :
+      self.sel = "L"
+      self.msgQueueOut.append(Msg.SET_TO_LEFT_HAND)
+
 
     
-    
-
 # =============================================================================
 # Unit tests
 # =============================================================================

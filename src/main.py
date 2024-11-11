@@ -26,6 +26,7 @@ from widgets import keyboard
 from widgets import notify
 from widgets import pianoRoll
 from widgets import trackSelectGUI
+import src.widgets.staffScope as staffScope
 
 # Various utilities
 import arbiter
@@ -81,6 +82,9 @@ pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
 
 # Staffscope widget
 staffScopeVisible = False
+staffScopeWidget = staffScope.StaffScope()
+staffScopeWidget.setScreen(screen, screenWidth, screenHeight)
+staffScopeWidget.load(selectedFile)
 
 # Finger editor widget
 fingerSelWidget = fingerSelector.FingerSelector((490, 470))
@@ -488,7 +492,11 @@ while running :
     text.render(screen, f"KEY: {currKey.root.upper()} {currKey.mode.upper()}", (200, 470), 2, UI_TEXT_COLOR)
   
   # Draw the piano roll on screen
-  pianoRollWidget.drawPianoRoll(screen, userScore.getCurrentTimecode())
+  if staffScopeVisible :
+    staffScopeWidget.loadCursor(userScore.getCursor())
+    staffScopeWidget.render()
+  else :
+    pianoRollWidget.drawPianoRoll(screen, userScore.getCurrentTimecode())
 
   # -------------------------------------------------
   # Show the notes expected to be played at that time

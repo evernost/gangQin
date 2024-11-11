@@ -15,10 +15,12 @@
 # =============================================================================
 # External libs 
 # =============================================================================
+import src.scoreShot.snapshot as snapshot
+#import snapshot
+
 import json
 import os
 import random
-import snapshot
 
 
 

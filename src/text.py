@@ -624,7 +624,7 @@ def renderPlus(screenInst, string, colorSpec, colorDict, formatSpec, loc, size, 
 # FUNCTION showCursor
 # -----------------------------------------------------------------------------
 def showCursor(screen, cursor, scoreLength) :
-  render(screen, f"CURSOR: {cursor} / {scoreLength}", (12, 20), 2, UI_TEXT_COLOR)
+  render(screen, f"CURSOR: {cursor+1} / {scoreLength}", (12, 20), 2, UI_TEXT_COLOR)
 
 
 

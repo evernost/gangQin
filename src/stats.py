@@ -248,7 +248,8 @@ class Stats :
     given section etc.
     """
 
-    print("tictoc!")
+    #print("tictoc!")
+    pass
 
 
 

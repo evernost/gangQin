@@ -272,7 +272,8 @@ class PianoRoll :
     """
 
     if pygameKeys[pygame.K_LALT] :
-      print("[DEBUG] Keyrelease: '<'")
+      #print("[DEBUG] Keyrelease: '<'")
+      pass
 
     # if (key == pygame.K_m) :
 
@@ -290,7 +291,10 @@ class PianoRoll :
 
 
   def mouseEvent(self, event) :
-    print("[DEBUG] Keyrelease: '<'")
+    
+    pass
+    #print("[DEBUG] Keyrelease: '<'")
+
     # if (event.type == pygame.MOUSEBUTTONDOWN) :
     #   keys    = pygame.key.get_pressed()
     #   ctrlKey = event.mod & pygame.KMOD_CTRL

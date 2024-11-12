@@ -20,12 +20,12 @@ from commons import *
 import pygame
 
 # Widgets
-from widgets import fileSelectGUI
-from widgets import fingerSelector
-from widgets import keyboard
-from widgets import notify
-from widgets import pianoRoll
-from widgets import trackSelectGUI
+import src.widgets.fileSelectGUI as fileSelectGUI
+import src.widgets.fingerSelector as fingerSelector
+import src.widgets.keyboard as keyboard
+import src.widgets.notify as notify
+import src.widgets.pianoRoll as pianoRoll
+import src.widgets.trackSelectGUI as trackSelectGUI
 import src.widgets.staffScope as staffScope
 
 # Various utilities
@@ -547,7 +547,7 @@ while running :
     if (msg == arbiter.MSG_RESET_COMBO) :  
       
       # Combo is broken if it was non-zero: you can't break it twice.
-      isComboBroken = (userScore.comboCount != 0)
+      isComboBroken = (statsObj.comboCount != 0)
       soundNotify.wrongNote()
       
       # TODO: user score shall not be in charge of the combo.

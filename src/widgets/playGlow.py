@@ -84,12 +84,6 @@ class PlayGlow :
     test_x = ((x >= self.hitBox_xMin) and (x <= self.hitBox_xMax))
     test_y = ((y >= self.hitBox_yMin) and (y <= self.hitBox_yMax))
     
-    # if (test_x and test_y) :
-    #   print(f"[DEBUG] attached!")
-    # else :
-    #   print(f"[DEBUG] missed!")
-    # print("")
-    
     return (test_x and test_y)
 
 
@@ -103,7 +97,14 @@ class PlayGlow :
     Used to detect a resize.
     """
     
-    print("[DEBUG] PlayGlow.isClickOnBorder() is TODO")
+    x = coord[0]; y = coord[1]
+
+    test_x = ((x >= (self.hitBox_xMax-5)) and (x <= (self.hitBox_xMax+5)))
+    test_y = ((y >= (self.hitBox_yMax-5)) and (y <= (self.hitBox_yMax+5)))
+
+    print("[DEBUG] resize!")
+    
+    return (test_x and test_y)
   
 
 

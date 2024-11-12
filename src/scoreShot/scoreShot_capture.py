@@ -67,7 +67,8 @@ print("- 'q'                    : exit app")
 # It shall come from a selection GUI.
 # Only .pr files can be selected.
 #songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
-songFile = "./songs/Satie_Danses_de_travers_I.pr"
+#songFile = "./songs/Satie_Danses_de_travers_I.pr"
+songFile = "Rachmaninoff_Piano_Concerto_No2_Op18.pr"
 
 root = tk.Tk()
 

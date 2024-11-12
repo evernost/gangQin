@@ -308,6 +308,8 @@ class StaffScope :
             print("[DEBUG] StaffScope.clickDown(): move request")
 
           elif p.isClickOnBorder(coord) :
+            #self.playGlowDragged = i
+            p.dragFrom(x,y)
             noHit = False
             print("[DEBUG] StaffScope.clickDown(): resize request")
 

@@ -39,7 +39,8 @@ import os
 
 # TODO: call a file selection GUI.
 #songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
-songFile = "./songs/Satie_Danses_de_travers_I.pr"
+#songFile = "./songs/Satie_Danses_de_travers_I.pr"
+songFile = "./songs/Rachmaninoff_Piano_Concerto_No2_Op18.pr"
 
 
 
@@ -68,6 +69,10 @@ staffScopeWidget.load(songFile)
 # Finger editor widget
 handSelWidget = handSelector.handSelector()
 handSelWidget.setScreen(screen)
+
+# Score issue widget
+#scoreStatusWidget = ...
+
 
 # Create window
 pygame.display.set_caption(f"scoreShot Fusion - v0.1 [ALPHA] (October 2024) - <{os.path.basename(songFile)}>")

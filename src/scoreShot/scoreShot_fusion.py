@@ -260,7 +260,7 @@ while running :
 
   # Draw the keyboard on screen
   keyboardWidget.reset()
-  keyboardWidget.drawKeys(screen)
+  keyboardWidget.render(screen)
   
   # Show the teacher notes on the keyboard widget
   teacherNotes = userScore.getTeacherNotes()

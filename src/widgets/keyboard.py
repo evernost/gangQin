@@ -29,7 +29,7 @@ import src.utils as utils
 # =============================================================================
 # Constants pool
 # =============================================================================
-
+# None.
 
 
 
@@ -105,11 +105,13 @@ class Keyboard :
 
 
   # ---------------------------------------------------------------------------
-  # Method <makeKeyboardPolygons>
-  # Generates the polygons depicting all the notes of a MIDI keyboard (128 notes)
-  # For a grand piano, you'd use only polygons indexed from 21 (A0) to 108 (C8)
+  # METHOD: Keyboard.makeKeyboardPolygons()
   # ---------------------------------------------------------------------------
   def makeKeyboardPolygons(self, grandPianoMode = True) :
+    """
+    Generates the polygons depicting all the notes of a MIDI keyboard (128 notes)
+    For a grand piano, you'd use only polygons indexed from 21 (A0) to 108 (C8)
+    """
 
     self.keyboardPolygons = []
 
@@ -257,10 +259,12 @@ class Keyboard :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <drawKeys>
-  # Draw the keyboard using the polygons generated for each note.
+  # METHOD: Keyboard.render()
   # ---------------------------------------------------------------------------
-  def drawKeys(self, screenInst) :
+  def render(self, screenInst) :
+    """
+    Draw the keyboard using the polygons generated for each note.
+    """
 
     # Draw keys from MIDI code 21 (A0) to MIDI code 108 (C8) ie notes of a grand piano.
     

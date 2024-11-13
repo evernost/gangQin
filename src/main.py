@@ -111,8 +111,7 @@ pianoArbiter = arbiter.Arbiter("permissive")
 
 
 # Create window
-# pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{os.path.basename(selectedFile)}>")
-pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{userScore.songName}>")
+pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {userScore.songName}")
 
 # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
 pygame.key.set_repeat(250, 50)
@@ -431,7 +430,6 @@ while running :
       if (event.button == MOUSE_LEFT_CLICK) :
         clickMsg = True
         clickCoord = pygame.mouse.get_pos()
-        #print(f"[DEBUG] Click here: x = {clickCoord[0]}, y = {clickCoord[1]}")
       
       # Scroll up
       if (event.button == MOUSE_SCROLL_UP) :
@@ -481,17 +479,17 @@ while running :
   # Clear the screen
   screen.fill(BACKGROUND_COLOR)
 
-  # Draw the keyboard on screen
+  # Render the keyboard
   keyboardWidget.reset()
-  keyboardWidget.drawKeys(screen)
+  keyboardWidget.render(screen)
 
-  # Get the key the song is in   
+  # Show the key
   currKey = userScore.getCurrentKey()
   keyboardWidget.setKey(currKey)
   if (currKey != None) :
     text.render(screen, f"KEY: {currKey.root.upper()} {currKey.mode.upper()}", (200, 470), 2, UI_TEXT_COLOR)
   
-  # Draw the piano roll on screen
+  # Render the pianoroll / staffscope
   if staffScopeVisible :
     staffScopeWidget.loadCursor(userScore.getCursor())
     staffScopeWidget.render()
@@ -532,7 +530,7 @@ while running :
 
   for msg in arbiterMsgQueue :
     
-    # MSG_CURSOR_NEXT: the current input is valid
+    # Valid input
     if (msg == arbiter.MSG_CURSOR_NEXT) :
       userScore.cursorNext()
       
@@ -543,15 +541,12 @@ while running :
       
       soundNotify.wrongNoteReset()
 
-    # MSG_RESET_COMBO: the current input broke the combo
+    # Invalid input
     if (msg == arbiter.MSG_RESET_COMBO) :  
-      
-      # Combo is broken if it was non-zero: you can't break it twice.
       isComboBroken = (statsObj.comboCount != 0)
-      soundNotify.wrongNote()
+      statsObj.comboCount = 0
       
-      # TODO: user score shall not be in charge of the combo.
-      userScore.comboCount = 0
+      soundNotify.wrongNote()
       
       # Strict looped practice: a wrong note resets the cursor to the beginning of the loop.
       if (userScore.loopStrictMode) :

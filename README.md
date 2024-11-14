@@ -46,6 +46,7 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 | M             |Toggle metronome|
 | M+            |Increase metronome tempo|
 | M-            |Decrease metronome tempo|
+| V             |Toggle pianoroll/staffscope view|
 | F2            |Increase lookahead distance|
 | F3            |Toggle 'strict' mode in looped practice|
 | F9            |Set the beginning of the loop at the current cursor|

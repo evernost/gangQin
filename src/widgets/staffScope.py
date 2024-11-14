@@ -67,6 +67,7 @@ class StaffScope :
 
     self.playGlows = []
     self.playGlowDragged = -1     # Index of the playGlow currently mouse dragged
+    self.playGlowResized = -1     # Index of the playGlow currently resized
 
     self.activeHand = "L"
 
@@ -308,8 +309,8 @@ class StaffScope :
             print("[DEBUG] StaffScope.clickDown(): move request")
 
           elif p.isClickOnBorder(coord) :
-            #self.playGlowDragged = i
-            p.dragFrom(x,y)
+            self.playGlowResized = i
+            p.resizeFrom(x,y)
             noHit = False
             print("[DEBUG] StaffScope.clickDown(): resize request")
 
@@ -350,6 +351,22 @@ class StaffScope :
         dx = x-x0; dy = y-y0
       
       self.playGlows[self.playGlowDragged].shift(dx,dy)
+
+    elif (self.playGlowResized != -1) :
+      pass
+
+      # TODO
+      
+      # (x0, y0) = (self.playGlows[self.playGlowDragged].dragCoord_x, self.playGlows[self.playGlowDragged].dragCoord_y)
+      # x = coord[0]; y = coord[1]
+      # if ctrlKey : 
+      #   dx = (x-x0) // 10; dy = (y-y0) // 10
+      # else :
+      #   dx = x-x0; dy = y-y0
+      
+      # self.playGlows[self.playGlowDragged].shift(dx,dy)
+
+
 
 
 

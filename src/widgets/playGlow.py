@@ -72,15 +72,6 @@ class PlayGlow :
     
     x = coord[0]; y = coord[1]
 
-    # print(f"[DEBUG] hitbox X: {self.hitBox_xMin}... {self.hitBox_xMax}")
-    # print(f"        hitbox Y: {self.hitBox_yMin}... {self.hitBox_yMax}")
-
-    # print(f"[DEBUG]  coord X: {self.coord_xMin}... {self.coord_xMax}")
-    # print(f"         coord Y: {self.coord_yMin}... {self.coord_yMax}")
-
-    # print(f"[DEBUG]  click X: {x}")
-    # print(f"         click Y: {y}")
-
     test_x = ((x >= self.hitBox_xMin) and (x <= self.hitBox_xMax))
     test_y = ((y >= self.hitBox_yMin) and (y <= self.hitBox_yMax))
     
@@ -93,7 +84,7 @@ class PlayGlow :
   # ---------------------------------------------------------------------------
   def isClickOnBorder(self, coord) :
     """
-    Returns True if a click occurs within the playGlow.
+    Returns True if a click occurs at the bottom right of the playglow object.
     Used to detect a resize.
     """
     
@@ -101,8 +92,6 @@ class PlayGlow :
 
     test_x = ((x >= (self.hitBox_xMax-5)) and (x <= (self.hitBox_xMax+5)))
     test_y = ((y >= (self.hitBox_yMax-5)) and (y <= (self.hitBox_yMax+5)))
-
-    print("[DEBUG] resize!")
     
     return (test_x and test_y)
   
@@ -195,6 +184,19 @@ class PlayGlow :
     
     self.dragCoord_x = x
     self.dragCoord_y = y
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD PlayGlow.resizeFrom(x,y)
+  # ---------------------------------------------------------------------------
+  def resizeFrom(self, x, y) :
+    """
+    TODO
+    """
+    
+    self.dragCoord_x = x
+    self.dragCoord_y = y
+
 
 
 

@@ -74,7 +74,8 @@ class Stats :
     self.totalPracticeTimeSec = 0
 
     self.comboCount = 0
-    self.comboDrop = False
+    self.comboDrop = 0
+    self.isComboBroken = False
     self.comboHighestSession = 0
     self.comboHighestAllTime = 0
 
@@ -234,6 +235,36 @@ class Stats :
       print(f"[INFO] Average session time: {self.sessionAvgPracticeTime} minutes")
 
 
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats.correctNote()
+  # ---------------------------------------------------------------------------
+  def correctNote(self) :
+    """
+    TODO
+    """
+
+    self.comboCount += 1
+    self.isComboBroken = False
+    if (self.comboCount > self.comboHighestSession) :
+      self.comboHighestSession = self.comboCount
+
+    if (self.comboCount > self.comboHighestAllTime) :
+      self.comboHighestAllTime = self.comboCount
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats.wrongNote()
+  # ---------------------------------------------------------------------------
+  def wrongNote(self) :
+    """
+    TODO
+    """
+
+    self.isComboBroken = (self.comboCount != 0)
+    self.comboCount = 0
+    
+    
 
   # ---------------------------------------------------------------------------
   # METHOD Stats.tick()

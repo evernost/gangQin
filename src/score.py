@@ -422,17 +422,6 @@ class Score :
       self.cursorStep(1)
 
 
-    # Combo tracking
-    # TODO: move outside the Score object.
-    # Return a status instead
-    self.comboCount += 1
-    if (self.comboCount > self.comboHighestSession) :
-      self.comboHighestSession = self.comboCount
-
-    if (self.comboCount > self.comboHighestAllTime) :
-      self.comboHighestAllTime = self.comboCount
-
-
 
   # ---------------------------------------------------------------------------
   # METHOD Score.cursorAlignToActiveHand()

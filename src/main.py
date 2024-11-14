@@ -533,7 +533,8 @@ while running :
     # Valid input
     if (msg == arbiter.MSG_CURSOR_NEXT) :
       userScore.cursorNext()
-      
+      statsObj.correctNote()
+
       if (userScore.cursor == userScore.loopStart) :
         soundNotify.loopPassed()
       else :
@@ -543,9 +544,7 @@ while running :
 
     # Invalid input
     if (msg == arbiter.MSG_RESET_COMBO) :  
-      isComboBroken = (statsObj.comboCount != 0)
-      statsObj.comboCount = 0
-      
+      statsObj.wrongNote()
       soundNotify.wrongNote()
       
       # Strict looped practice: a wrong note resets the cursor to the beginning of the loop.
@@ -561,13 +560,13 @@ while running :
           if ((c >= userScore.loopStart) and (c <= userScore.loopEnd)) :
             userScore.setCursor(userScore.loopStart)
             
-            if (isComboBroken and (comboDropHeight > 3)) :
+            if (statsObj.isComboBroken and (comboDropHeight > 3)) :
               # NOTE: requiring a minimal "drop height" to print the message avoids 
               # flooding the console when many wrong notes are played at once.
               print(f"[INFO] Wrong note! loop reset :(   (combo: {comboDropHeight})")
 
           else : 
-            if isComboBroken :
+            if statsObj.isComboBroken :
               print("[INFO] Wrong note outside the looping range.")
 
         # Unbound looped practice (only the beginning of the loop is defined)
@@ -575,11 +574,11 @@ while running :
           if (c >= userScore.loopStart) :
             userScore.setCursor(userScore.loopStart)
             
-            if (isComboBroken and (comboDropHeight > 3)):
+            if (statsObj.isComboBroken and (comboDropHeight > 3)):
               print(f"[INFO] Wrong note! loop reset :(   (combo: {comboDropHeight})")
           
           else : 
-            if isComboBroken :
+            if statsObj.isComboBroken :
               print("[INFO] Wrong note outside the looping range.")
 
       # Disabled looped practice: a wrong note has no particular consequence.

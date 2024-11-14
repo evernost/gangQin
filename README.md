@@ -1,7 +1,7 @@
-# gangQin (v1.5)
+# gangQin v2.0 (alpha)
 Piano learning app, for those who struggle with the conventional music scores.
 
-![image](https://github.com/user-attachments/assets/0b3f73a9-8bc5-4def-a016-6dabc6d473cd)
+![image](https://github.com/user-attachments/assets/1cd22e89-eea6-40ad-90cc-525259448a2c)
 
 ## What do I need?
 A piano keyboard with MIDI output, plugged into a computer running your favorite Python interpreter.
@@ -20,9 +20,10 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 - **Lookahead view**: the keyboard shows the notes to be pressed, but also the upcoming ones with different shades for improved 'sightreading'. Lookahead distance can be adjusted.
 - **Metronome**: practice with perfect timing.
 - **Unbound looped practice**: define a start point and try to play. Any mistake jumps you back to the starting point
+- - **Direct view on the real score**: showing the actual score while playing is pretty cool
 
 ## Upcoming features (one day)
-- **Direct view on the real score**: showing the actual score while playing might be quite cool 🙂
+
 - **Enhanced _fingersatz_ edition**: more shortcuts, make it quicker and easier to edit
 - **More complete playing statistics**: provide some hindsight on the overall playing performance of a song
 - **Dynamic comments display**: a comment, or notes show at a certain cursor, for a certain section, like a copilot

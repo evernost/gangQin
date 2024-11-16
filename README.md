@@ -40,10 +40,10 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 | ↑             |Next bookmark   |
 | ↓             |Previous bookmark|
 | S             |Save to .pr file|
-| B             |Toggle bookmark on the current cursor|
-| L             |Toggle left hand practice|
-| R             |Toggle right hand practice|
-| M             |Toggle metronome|
+| B             |Bookmark the current cursor|
+| L             |Toggle ON/OFF left hand practice|
+| R             |Toggle ON/OFF right hand practice|
+| M             |Toggle ON/OFF the metronome|
 | M+            |Increase metronome tempo|
 | M-            |Decrease metronome tempo|
 | V             |Toggle pianoroll/staffscope view|

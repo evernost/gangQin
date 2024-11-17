@@ -241,7 +241,8 @@ class Stats :
   # ---------------------------------------------------------------------------
   def correctNote(self) :
     """
-    TODO
+    Updates the combo counter when the input is valid and triggers the next 
+    cursor.
     """
 
     self.comboCount += 1
@@ -258,7 +259,8 @@ class Stats :
   # ---------------------------------------------------------------------------
   def wrongNote(self) :
     """
-    TODO
+    Update the combo counter when an incorrect keyboard input is given.
+    Partial but correct inputs do not trigger a "wrong note" condition.
     """
 
     self.isComboBroken = (self.comboCount != 0)

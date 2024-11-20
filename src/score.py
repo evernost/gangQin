@@ -41,14 +41,14 @@ CURSOR_STEADY_COUNT_LIMIT = 300
 # =============================================================================
 class Score :
 
-  """  
+  """
   The Score objects contains a custom representation of the song that is suited
   for the gameplay. 
   
   It provides the necessary functions to get the notes to be played at a given
-  moment, load/save, etc.
+  moment, navigate through the score, edit metadata (bookmarks), load/save, etc.
   
-  Score is read from a MIDI file
+  Score is initialised from a MIDI file and saves to a .pr file
   
   In a MIDI file, each event (note on/note off) has a timestamp attached.
   
@@ -444,8 +444,8 @@ class Score :
     hand practice mode.
 
     When the user changes the active hands from 'both hands' to 'single hand' practice,
-    the cursor might becoome invalid.
-    E.g.: left hand practice requested, but there is no note played on the left hand at 
+    the cursor might become invalid.
+    E.g. left hand practice requested, but there is no note played on the left hand at 
     the current cursor. 
     
     There are different strategies to find a candidate:
@@ -500,9 +500,9 @@ class Score :
       
     delta = self.getCursor() - prevCursor
     if (delta > 0) :
-      print(f"[DEBUG] Cursor had to be adjusted because not aligned with the active hand (+{delta})")
+      print(f"[DEBUG] Cursor changed because it was not aligned with the requested active hand (+{delta})")
     elif (delta < 0) :
-      print(f"[DEBUG] Cursor had to be adjusted because not aligned with the active hand ({delta})")
+      print(f"[DEBUG] Cursor changed because it was not aligned with the requested active hand ({delta})")
     else :
       pass
 
@@ -719,7 +719,9 @@ class Score :
   # ---------------------------------------------------------------------------
   def resetCache(self) :
     """
-    Resets the cache of teacher notes.
+    Resets the teacher notes cache.
+    Teacher notes are determined once per cursor. Cacheing avoids doing this 
+    task multiple times when the cursor hasn't changed.
     """
     
     self.cachedCursor = -1
@@ -1493,9 +1495,9 @@ class Score :
     exportDict["bookmarks"]             = self.bookmarks
     exportDict["activeHands"]           = self.activeHands
     exportDict["comboHighestAllTime"]   = self.comboHighestAllTime
-    exportDict["statsSteadyCount"]      = self.statsSteadyCount
-    exportDict["statsLastCursor"]       = self.statsLastCursor
-    exportDict["statsCursor"]           = self.statsCursor
+    # exportDict["statsSteadyCount"]      = self.statsSteadyCount
+    # exportDict["statsLastCursor"]       = self.statsLastCursor
+    # exportDict["statsCursor"]           = self.statsCursor
 
     noteCount = 0
     exportDict["pianoRoll"] = []
@@ -1517,12 +1519,12 @@ class Score :
 
           exportDict["pianoRoll"].append(noteExportAttr)
 
-    # Export the current session statistics
-    self.sessionStopTime = datetime.datetime.now()
-    duration = self.sessionStopTime - self.sessionStartTime
-    exportDict["sessionCount"]              = self.sessionCount
-    exportDict["sessionTotalPracticeTime"]  = self.sessionTotalPracticeTime + round(duration.total_seconds())
-    exportDict["sessionLog"]                = self.sessionLog + [self.getSessionLog()]
+    # Export the current session statistics -> 'stats.py' is now in charge of that.
+    # self.sessionStopTime = datetime.datetime.now()
+    # duration = self.sessionStopTime - self.sessionStartTime
+    # exportDict["sessionCount"]              = self.sessionCount
+    # exportDict["sessionTotalPracticeTime"]  = self.sessionTotalPracticeTime + round(duration.total_seconds())
+    # exportDict["sessionLog"]                = self.sessionLog + [self.getSessionLog()]
     
     with open(pianoRollFile, "w") as fileHandler :
       json.dump(exportDict, fileHandler, indent = 2)

@@ -42,8 +42,11 @@ CURSOR_STEADY_COUNT_LIMIT = 300
 class Score :
 
   """  
-  The Score objects contains the music score, but also stores all the settings 
-  of the practice session.
+  The Score objects contains a custom representation of the song that is suited
+  for the gameplay. 
+  
+  It provides the necessary functions to get the notes to be played at a given
+  moment, load/save, etc.
   
   Score is read from a MIDI file
   
@@ -132,12 +135,15 @@ class Score :
   # ---------------------------------------------------------------------------
   def getCursorsLeftPointer(self, cursor, force = False) :
     """
-    Returns the value <p> such that cursorsLeft[p] is equal to the query <cursor>.
+    Returns the value 'p' such that cursorsLeft[p] is equal to the query 
+    value 'cursor'.
 
     If no such value exists, the function returns:
-    - -1 when <force> is False (default)
-    - <p> such that cursorsLeft[p] is the closest possible to <cursor> otherwise.
+    - -1 when 'force' is False (default)
+    - 'p' such that cursorsLeft[p] is the closest possible to 'cursor' otherwise.
+      In that case, cursorsLeft[p] can be either before or after 'cursor'.
     """
+    
     if (cursor in self.cursorsLeft) :
       index = self.cursorsLeft.index(cursor)
       return index
@@ -163,12 +169,15 @@ class Score :
   # ---------------------------------------------------------------------------
   def getCursorsRightPointer(self, cursor, force = False) :
     """
-    Returns the value <p> such that cursorsRight[p] is equal to the query <cursor>.
+    Returns the value 'p' such that cursorsRight[p] is equal to the query value
+    'cursor'.
 
     If no such value exists, the function returns:
     - -1 when <force> is False (default)
-    - <p> such that cursorsRight[p] is the closest possible to <cursor> otherwise.
+    - 'p' such that cursorsRight[p] is the closest possible to 'cursor' otherwise.
+       In that case, cursorsRight[p] can be either before or after 'cursor'.
     """
+    
     if (cursor in self.cursorsRight) :
       index = self.cursorsRight.index(cursor)
       return index
@@ -194,8 +203,11 @@ class Score :
   # ---------------------------------------------------------------------------
   def _buildCursorsLR(self) :
     """
-    todo
+    Populates the fields 'cursorsLeft' and 'cursorsRight' from the list of
+    'note ON' timecodes ('noteOnTimeCodes' dictionary).
+    This method is typically called after loading the .pr file.
     """
+    
     self.cursorsLeft = []; self.cursorsRight = []
 
     for (index, timecode) in enumerate(self.noteOnTimecodes["LR"]) :

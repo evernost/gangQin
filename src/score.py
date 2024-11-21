@@ -238,7 +238,6 @@ class Score :
 
     Setting the cursor must be done with this function exclusively.
     Manually setting the <cursor> attribute might cause crashes.
-
     """
 
     if (value < 0) :
@@ -413,15 +412,13 @@ class Score :
   # ---------------------------------------------------------------------------
   def cursorNext(self) :
     """
-    Jumps to the next cursor, wraps if any loop applies.
+    Jumps to the next cursor, wraps if looped practice is set.
     
-    The jump takes into account the active hands.
-    
-    The function takes into account the practice hands (both or single).
+    The function takes the active hands into account (both hands/single hand).
     In single hand practice mode, it jumps automatically to the 'correct' next
     cursor.
     
-    Equivalent to 'cursorStep(1)', but takes the loop into account.
+    Equivalent to 'cursorStep(1)', but includes the loop information.
     """
 
     if self.loopEnable :
@@ -517,6 +514,8 @@ class Score :
     
     If the end of the loop is already defined, this function also enables
     the loop practice mode.
+
+    TODO: rename to "loopSetStart"
     """
     
     # Loop end is not yet defined
@@ -541,6 +540,8 @@ class Score :
     
     If the beginning of the loop is already defined, this function also enables
     the loop practice mode.
+
+    TODO: rename to "loopSetEnd"
     """
     
     # Loop start is not yet defined
@@ -670,6 +671,7 @@ class Score :
     return (self.cursor in self.bookmarks)
   
 
+  
   # ---------------------------------------------------------------------------
   # METHOD Score.getBookmarkIndex()
   # ---------------------------------------------------------------------------
@@ -883,10 +885,10 @@ class Score :
   # ---------------------------------------------------------------------------
   def _updateLookaheadNotes(self) :
     """
-    todo
+    DEPRECATED
     """
     
-    print("todo!")
+    print("Score._updateLookaheadNotes is deprecated.")
 
 
 

@@ -865,7 +865,7 @@ class Score :
   # ---------------------------------------------------------------------------
   def getLookaheadNotes(self) :
     """
-    todo
+    DEPRECATED
     """
     
     if (self.cachedCursor == self.cursor) :
@@ -897,8 +897,9 @@ class Score :
   # ---------------------------------------------------------------------------
   def search(self, noteList, direction = 1) :
     """
-    Sets the cursor to the next location where the given query notes appear 
-    simultaneously in the score.
+    Finds the next location in the score where the query notes appear 
+    simultaneously.
+    Sets the cursor to the first matching location.
     
     Direction of search (before or after the current location) can be specified.
     
@@ -958,7 +959,7 @@ class Score :
     if found :
       # We must prevent the arbiter from taking this as a valid input
       # and move on to the next cursor
-      # All notes must be released before moving on.
+      # All notes must be released to exit the 'search' mode.
       self.cursor = foundCursor
       arbiterSuspendReq = True
       arbiterPitchListHold = pitchList.copy()
@@ -1013,7 +1014,7 @@ class Score :
   # ---------------------------------------------------------------------------
   def toggleNoteHand(self, noteObj) :
     """
-    Toggles the hand assigned to the note passed as argument and update the score
+    Changes the hand assigned to the note passed as argument and update the score
     accordingly.
     
     If the note is assigned to the left hand, it will now be assigned to the right

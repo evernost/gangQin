@@ -51,12 +51,12 @@ import os
 # =============================================================================
 
 # Open the MIDI interface file selection GUI
-(selectedDevice, selectedFile) = fileSelectGUI.show()
+(selectedDevice, songFile) = fileSelectGUI.show()
 
-if ((selectedFile == "") or (selectedFile == "None")) :
+if ((songFile == "") or (songFile == "None")) :
   exit()
 
-if selectedFile.endswith(".mid") :
+if songFile.endswith(".mid") :
   midiTracks = trackSelectGUI.show()
 
 # Define screen dimensions
@@ -70,7 +70,7 @@ clock = pygame.time.Clock()
 
 # Import file in the internal score representation
 userScore = score.Score()
-userScore.importFromFile(selectedFile)
+userScore.importFromFile(songFile)
 
 # Grand piano widget
 keyboardWidget = keyboard.Keyboard(loc = (10, 300))
@@ -84,7 +84,7 @@ pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
 staffScopeVisible = False
 staffScopeWidget = staffScope.StaffScope()
 staffScopeWidget.setScreen(screen, screenWidth, screenHeight)
-staffScopeWidget.load(selectedFile)
+staffScopeWidget.load(songFile)
 
 # Finger editor widget
 fingerSelWidget = fingerSelector.FingerSelector((490, 470))
@@ -100,7 +100,8 @@ pygame.time.set_timer(METRONOME_TASK, metronomeObj.getInterval_ms())
 pygame.mixer.init(frequency = 44100, size = -16, channels = 1, buffer = 512)
 
 # Statistics widget
-statsObj = stats.Stats(selectedFile)
+statsObj = stats.Stats()
+statsObj.load(songFile)
 statsObj.showIntroSummary()
 STATS_TASK = pygame.USEREVENT + 2
 pygame.time.set_timer(STATS_TASK, stats.TICK_INTERVAL_MS)
@@ -183,18 +184,6 @@ while running :
       metronomeObj.keyPress(keys)
       fingerSelWidget.keyPress(keys)
       pianoRollWidget.keyPress(keys)
-
-      # -----------------
-      # "q": exit the app
-      # -----------------
-      if keys[pygame.K_q] :
-        if (midiPort != None) :
-          midiPort.close()
-        
-        print("")
-        print("See you!")
-        pygame.quit()
-        raise SystemExit(0)
 
       # ----------------------------------
       # Left arrow: jump backward (1 step)
@@ -390,6 +379,20 @@ while running :
       if (keys[pygame.K_l]) :  
         userScore.toggleLeftHandPractice()
       
+      # -----------------
+      # "q": exit the app
+      # -----------------
+      if keys[pygame.K_q] :
+        if (midiPort != None) :
+          midiPort.close()
+        
+        statsObj.save()
+
+        print("")
+        print("See you!")
+        pygame.quit()
+        raise SystemExit(0)
+
       # -------------------------------
       # "r": toggle right hand practice
       # -------------------------------
@@ -401,11 +404,13 @@ while running :
       # ----------------
       if (keys[pygame.K_s]) :
         print("[INFO] Exporting piano roll...")
-        (rootDir, rootNameExt) = os.path.split(selectedFile)
+        (rootDir, rootNameExt) = os.path.split(songFile)
         (rootName, _) = os.path.splitext(rootNameExt)
         newName = rootDir + '/' + rootName + ".pr"
         userScore.exportToPrFile(newName)
         pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{rootName}.pr>")
+
+        statsObj.save()
 
       # -----------------------------------------
       # "v": toggle view (pianoroll / staffScope)

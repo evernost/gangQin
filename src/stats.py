@@ -51,7 +51,7 @@ class Stats :
   kind of crap.
   """
 
-  def __init__(self, songFile) :
+  def __init__(self) :
     self.logName = ""
     self.logFile = ""
     
@@ -67,7 +67,7 @@ class Stats :
 
     self.comboCount = 0
     self.comboDrop = 0
-    self.isComboBroken = False
+    self.comboFell = False
     self.comboHighestSession = 0
     self.comboHighestAllTime = 0
 
@@ -84,22 +84,22 @@ class Stats :
     self.msgQueueIn = []
     self.msgQueueOut = []
 
-    self._initFromFile(songFile)
-    self._sessionInit()
-
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats._initFromFile(string)
+  # METHOD Stats.load(<.pr filename string>)
   # ---------------------------------------------------------------------------
-  def _initFromFile(self, songFile) :
+  def load(self, songFile) :
     """
-    Initialises the log: load from a log file if it exists, otherwise create 
-    a new one.
+    Loads the statistics associated with the input song 'songFile'.
+    The statistics are read from a .log file whose name is automatically 
+    derived from 'songFile'.
+
+    If no .log exists, a new one will be created.
     """
-    
+
     # Build the name for the log file 
-    # File is stored in ./logs/
+    # File is stored in './logs'
     (_, rootNameExt) = os.path.split(songFile)
     (rootName, _) = os.path.splitext(rootNameExt)
     self.songName   = rootName
@@ -107,36 +107,40 @@ class Stats :
     self.logName    = rootName + ".log"         # Example: "my_song.log"
     self.logFile    = f"./logs/{self.logName}"  # Example: "./logs/my_song.log"
     
-
     # Log file exists: load it
     if os.path.isfile(self.logFile) :
-      with open(self.logFile, "r") as jsonFile:
+      print(f"[DEBUG] Stats: reading from '{self.logName}'...")
+      with open(self.logFile, "r") as jsonFile :
         data = json.load(jsonFile)
  
       self._safePopulate(data)
 
-    # Log file does not exist: create it.
+    # Log file does not exist: create it
     else :
-      print("[NOTE] Stats: no log file found. A new one will be created.")
-      self._safePopulate({})
+      print("[INFO] Stats: no log file found. A new one will be created.")
+      self._safePopulate()
+
+
+    # Initialise the fields of this new session
+    self._sessionInit()
 
 
 
   # ---------------------------------------------------------------------------
   # METHOD Stats._safePopulate(json Object)
   # ---------------------------------------------------------------------------
-  def _safePopulate(self, data) :
+  def _safePopulate(self, data = {}) :
     """
-    Populates the field of the object from a log file.
+    Populates the fields of the object from an imported json data structure.
+    If none is given, it is initialised with default values.
+
     The function adds safety measures to handle missing fields and give them 
     a default value.
     The feature is handy to maintain compatibility accross different versions
     of gangQin, since the stat fields are very likely to evolve.
     """
     
-    print("[DEBUG] Stats._safePopulate() is TODO")
-
-    # Defines a fallback dictionary, in case some fields do not exist.
+    # Define a 'fallback' dictionary, in case some fields do not exist.
     attributesRef = {
       "logName"                 : self.logName,
       "logFile"                 : self.logFile,
@@ -148,7 +152,8 @@ class Stats :
       "sessionAvgPracticeTime"  : 0,
       "totalPracticeTimeSec"    : 0,
       "comboCount"              : 0,
-      "comboDrop"               : False,
+      "comboDrop"               : 0,
+      "comboFell"               : False,
       "comboHighestSession"     : 0,
       "comboHighestAllTime"     : 0,
       "cursorHistogram"         : [],
@@ -165,7 +170,7 @@ class Stats :
         attributesRef[attr] = data[attr]
 
       else :
-        print(f"[WARNING] Missing field '{attr}' in the log file will get a default value.")
+        print(f"[INFO] Stats: field '{attr}' is missing in the log file and will get a default value.")
 
 
     # There might be a cleaner version to do that.
@@ -180,6 +185,7 @@ class Stats :
     self.totalPracticeTimeSec   = attributesRef["totalPracticeTimeSec"]
     self.comboCount             = attributesRef["comboCount"]
     self.comboDrop              = attributesRef["comboDrop"]
+    self.comboFell              = attributesRef["comboFell"]
     self.comboHighestSession    = attributesRef["comboHighestSession"]
     self.comboHighestAllTime    = attributesRef["comboHighestAllTime"]
     self.cursorHistogram        = attributesRef["cursorHistogram"]
@@ -196,10 +202,10 @@ class Stats :
   # ---------------------------------------------------------------------------
   def _sessionInit(self) :
     """
-    Sets the stat attributes for a new session.
+    Initialises the attributes.
+    This function must be called at the app start-up (new session)
     """
     
-    print("[DEBUG] Stats._sessionInit() is TODO")
     self.sessionStartTime = datetime.datetime.now()
     self.sessionStopTime = -1
 
@@ -246,6 +252,7 @@ class Stats :
       self.comboHighestAllTime = self.comboCount
 
 
+
   # ---------------------------------------------------------------------------
   # METHOD Stats.wrongNote()
   # ---------------------------------------------------------------------------
@@ -275,7 +282,6 @@ class Stats :
 
     #print("tictoc!")
     pass
-
 
 
 
@@ -338,6 +344,19 @@ class Stats :
     the input keyboard.
     """
     self.cursorIdleTimer = 0
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats.save()
+  # ---------------------------------------------------------------------------
+  def save(self) :
+    """
+    Saves the new statistics.
+    Saving updates the underlying .log file (json) that stores all the info.
+    """
+
+    print(f"[DEBUG] Stats.save() is TODO.")
 
 
 

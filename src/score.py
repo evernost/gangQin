@@ -1498,9 +1498,6 @@ class Score :
     exportDict["bookmarks"]             = self.bookmarks
     exportDict["activeHands"]           = self.activeHands
     exportDict["comboHighestAllTime"]   = self.comboHighestAllTime
-    # exportDict["statsSteadyCount"]      = self.statsSteadyCount
-    # exportDict["statsLastCursor"]       = self.statsLastCursor
-    # exportDict["statsCursor"]           = self.statsCursor
 
     noteCount = 0
     exportDict["pianoRoll"] = []
@@ -1522,13 +1519,6 @@ class Score :
 
           exportDict["pianoRoll"].append(noteExportAttr)
 
-    # Export the current session statistics -> 'stats.py' is now in charge of that.
-    # self.sessionStopTime = datetime.datetime.now()
-    # duration = self.sessionStopTime - self.sessionStartTime
-    # exportDict["sessionCount"]              = self.sessionCount
-    # exportDict["sessionTotalPracticeTime"]  = self.sessionTotalPracticeTime + round(duration.total_seconds())
-    # exportDict["sessionLog"]                = self.sessionLog + [self.getSessionLog()]
-    
     with open(pianoRollFile, "w") as fileHandler :
       json.dump(exportDict, fileHandler, indent = 2)
 

@@ -55,7 +55,9 @@ class Stats :
     self.logName = ""
     self.logFile = ""
     
-    self.scoreLength = 0        
+    self.scoreLength = 0
+
+    self.isEmpty = True             # True if a new statistics file has been created
 
     self.sessionCount = 0           # Session counter, incremented at the beginning of the session.
     self.sessionLog = []            # Each entry is a string with the time, date and duration of the session
@@ -114,12 +116,13 @@ class Stats :
         data = json.load(jsonFile)
  
       self._safePopulate(data)
+      self.isEmpty = False
 
     # Log file does not exist: create it
     else :
       print("[INFO] Stats: no log file found. A new one will be created.")
       self._safePopulate()
-
+      self.isEmpty = True
 
     # Initialise the fields of this new session
     self._sessionInit()
@@ -288,24 +291,24 @@ class Stats :
   # ---------------------------------------------------------------------------
   # METHOD Score.getSessionLog()
   # ---------------------------------------------------------------------------
-  # def getSessionLog(self) :
-  #   """
-  #   Generates the string with the information of the current session.
-  #   """
+  def getSessionLog(self) :
+    """
+    Packs the information of the current session in a human-readable string.
+    """
 
-  #   day = self.sessionStartTime.day
+    day = self.sessionStartTime.day
     
-  #   if ((4 <= day <= 20) or (24 <= day <= 30)) :
-  #     daySuffix = "th"
-  #   else:
-  #     daySuffix = ["st", "nd", "rd"][day % 10 - 1]
+    if ((4 <= day <= 20) or (24 <= day <= 30)) :
+      daySuffix = "th"
+    else:
+      daySuffix = ["st", "nd", "rd"][day % 10 - 1]
 
-  #   duration = self.sessionStopTime - self.sessionStartTime
-  #   duration = int(round(duration.total_seconds()))
-  #   durationStr = f"{duration // 60}min{duration % 60}s"
-  #   outputStr = self.sessionStartTime.strftime(f"Session {self.sessionCount}: %A, %B %d{daySuffix} at %H:%M. Duration: {durationStr}")
+    duration = self.sessionStopTime - self.sessionStartTime
+    duration = int(round(duration.total_seconds()))
+    durationStr = f"{duration // 60}min{duration % 60}s"
+    outputStr = self.sessionStartTime.strftime(f"Session {self.sessionCount}: %A, %B %d{daySuffix} at %H:%M. Duration: {durationStr}")
 
-  #   return outputStr
+    return outputStr
 
 
 
@@ -353,11 +356,24 @@ class Stats :
   def save(self) :
     """
     Saves the new statistics.
-    Saving updates the underlying .log file (json) that stores all the info.
+    The saving process updates the underlying .log file (json) that stores all 
+    the info.
     """
 
-    print(f"[DEBUG] Stats.save() is TODO.")
+    self.sessionStopTime = datetime.datetime.now()
+    duration = self.sessionStopTime - self.sessionStartTime
+    
+    exportDict = {}
+    exportDict["sessionCount"]              = self.sessionCount
+    exportDict["sessionLog"]                = self.sessionLog + [self.getSessionLog()]
+    exportDict["sessionAvgPracticeTime"]    = self.sessionAvgPracticeTime
+    exportDict["totalPracticeTimeSec"]      = self.totalPracticeTimeSec + round(duration.total_seconds())
+    
+    
 
+
+    with open(self.logFile, "w") as jsonFile :
+      json.dump(exportDict, jsonFile, indent = 2)
 
 
 # =============================================================================

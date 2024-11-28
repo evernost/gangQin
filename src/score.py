@@ -1479,13 +1479,16 @@ class Score :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <exportToPrFile>
-  #
-  # Export the piano roll and all metadata (finger, hand, comments etc.) in 
-  # a .pr file (JSON)
+  # METHOD Score.exportToPrFile()
   # ---------------------------------------------------------------------------
-  def exportToPrFile(self, pianoRollFile) :
-    
+  def exportToPrFile(self) :
+    """
+    Exports the piano roll and all metadata (finger, hand, comments etc.) in 
+    a .pr file (JSON) that can be imported later to restore the session.
+    """
+
+    print("[INFO] Exporting piano roll...")
+
     # Create the dictionnary containing all the things we want to save
     exportDict = {}
 
@@ -1519,38 +1522,13 @@ class Score :
 
           exportDict["pianoRoll"].append(noteExportAttr)
 
+    pianoRollFile = self.songDir + "/" + self.songName + ".pr"
     with open(pianoRollFile, "w") as fileHandler :
       json.dump(exportDict, fileHandler, indent = 2)
 
     currTime = datetime.datetime.now()
     print(f"[DEBUG] {noteCount} notes written in .pr file.")
     print(f"[INFO] Saved to '{pianoRollFile}' at {currTime.strftime('%H:%M:%S')}")
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.updateStats()
-  # ---------------------------------------------------------------------------
-  # def updateStats(self) :
-  #   """
-  #   Add the current cursor to the statistics.
-  #   """
-    
-  #   if (self.getCursor() != self.statsLastCursor) :
-  #     self.statsSteadyCount = 0
-  #     self.statsLastCursor = self.getCursor()
-
-  #   else :
-  #     if (self.statsSteadyCount < CURSOR_STEADY_COUNT_LIMIT) :
-  #       self.statsCursor[self.getCursor()] += 1
-  #       self.statsSteadyCount += 1
-
-  #     elif (self.statsSteadyCount == CURSOR_STEADY_COUNT_LIMIT) :
-  #       print(f"[DEBUG] Steady limit reached! (cursor = {self.getCursor()+1})")
-  #       self.statsSteadyCount += 1
-
-  #     else :
-  #       pass
 
 
 
@@ -1610,30 +1588,6 @@ class Score :
     self.progressEnable = not(self.progressEnable)
     print("[INFO] Rehearsal mode will be available in a future release.")
 
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.getSessionLog()
-  # ---------------------------------------------------------------------------
-  # def getSessionLog(self) :
-  #   """
-  #   Generates the string with the information of the current session.
-  #   """
-
-  #   day = self.sessionStartTime.day
-    
-  #   if ((4 <= day <= 20) or (24 <= day <= 30)) :
-  #     daySuffix = "th"
-  #   else:
-  #     daySuffix = ["st", "nd", "rd"][day % 10 - 1]
-
-  #   duration = self.sessionStopTime - self.sessionStartTime
-  #   duration = int(round(duration.total_seconds()))
-  #   durationStr = f"{duration // 60}min{duration % 60}s"
-  #   outputStr = self.sessionStartTime.strftime(f"Session {self.sessionCount}: %A, %B %d{daySuffix} at %H:%M. Duration: {durationStr}")
-
-  #   return outputStr
-    
 
 
 # =============================================================================

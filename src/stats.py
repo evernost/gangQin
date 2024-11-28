@@ -360,6 +360,8 @@ class Stats :
     the info.
     """
 
+    print("[INFO] Exporting stats...")
+
     self.sessionStopTime = datetime.datetime.now()
     duration = self.sessionStopTime - self.sessionStartTime
     
@@ -369,11 +371,11 @@ class Stats :
     exportDict["sessionAvgPracticeTime"]    = self.sessionAvgPracticeTime
     exportDict["totalPracticeTimeSec"]      = self.totalPracticeTimeSec + round(duration.total_seconds())
     
-    
-
-
     with open(self.logFile, "w") as jsonFile :
       json.dump(exportDict, jsonFile, indent = 2)
+
+    print(f"[INFO] Saved to '{self.logFile}'")
+
 
 
 # =============================================================================

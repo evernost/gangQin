@@ -402,17 +402,9 @@ while running :
       # ----------------
       # "s": export/save
       # ----------------
-      if (keys[pygame.K_s]) :
-        print("[INFO] Exporting piano roll...")
-        
-        # TODO: get this from a 'userScore' attribute
-        (rootDir, rootNameExt) = os.path.split(songFile)
-        (rootName, _) = os.path.splitext(rootNameExt)
-        newName = rootDir + '/' + rootName + ".pr"
-        
-        
-        userScore.exportToPrFile(newName)
-        pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{rootName}.pr>")
+      if (keys[pygame.K_s]) :        
+        userScore.exportToPrFile()
+        pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - <{userScore.songName}.pr>")
 
       # -----------------------------------------
       # "v": toggle view (pianoroll / staffScope)

@@ -1481,10 +1481,13 @@ class Score :
   # ---------------------------------------------------------------------------
   # METHOD Score.exportToPrFile()
   # ---------------------------------------------------------------------------
-  def exportToPrFile(self) :
+  def exportToPrFile(self, backup = False) :
     """
     Exports the piano roll and all metadata (finger, hand, comments etc.) in 
     a .pr file (JSON) that can be imported later to restore the session.
+
+    Call the function with 'backup' option set to True to save to a '.bak' 
+    extension instead. 
     """
 
     print("[INFO] Exporting piano roll...")
@@ -1522,13 +1525,21 @@ class Score :
 
           exportDict["pianoRoll"].append(noteExportAttr)
 
-    pianoRollFile = self.songDir + "/" + self.songName + ".pr"
+    if backup :
+      pianoRollFile = self.songDir + "/" + self.songName + ".bak"  
+    else :
+      pianoRollFile = self.songDir + "/" + self.songName + ".pr"
+    
     with open(pianoRollFile, "w") as fileHandler :
       json.dump(exportDict, fileHandler, indent = 2)
 
     currTime = datetime.datetime.now()
-    print(f"[DEBUG] {noteCount} notes written in .pr file.")
-    print(f"[INFO] Saved to '{pianoRollFile}' at {currTime.strftime('%H:%M:%S')}")
+    if backup :      
+      print(f"[INFO] Saved backup to '{pianoRollFile}'")
+    else :
+      currTime = datetime.datetime.now()
+      print(f"[DEBUG] {noteCount} notes written in .pr file.")
+      print(f"[INFO] Saved to '{pianoRollFile}' at {currTime.strftime('%H:%M:%S')}")
 
 
 

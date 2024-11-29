@@ -211,19 +211,16 @@ class PianoRoll :
     
 
   # ---------------------------------------------------------------------------
-  # METHOD <importPianoRoll>
-  #
-  # TODO
+  # METHOD PianoRoll.loadPianoRoll(noteArray)
   # ---------------------------------------------------------------------------
   def loadPianoRoll(self, noteArray) :
-    
+    """
+    TODO
+    """
+
     # Use .copy instead of direct assign for safety 
     # (we don't want the pianoroll widget to mess with the real score)
     self.noteArray = noteArray.copy()
-
-
-
-
 
 
 

@@ -387,6 +387,7 @@ while running :
           midiPort.close()
         
         statsObj.save()
+        userScore.exportToPrFile(backup = True)
 
         print("")
         print("See you!")

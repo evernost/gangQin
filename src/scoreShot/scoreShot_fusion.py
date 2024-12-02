@@ -18,6 +18,10 @@ from src.commons import *
 import src.widgets.keyboard as keyboard
 import src.widgets.staffScope as staffScope
 import src.widgets.handSelector as handSelector
+import src.widgets.scoreStatus as scoreStatus
+
+import src.scoreShot.fileSelectionGUI as fileSelectionGUI
+
 import src.score as score
 import src.text as text
 
@@ -38,6 +42,7 @@ import os
 # =============================================================================
 
 # TODO: call a file selection GUI.
+(selectedDevice, songFile) = fileSelectionGUI.show()
 #songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
 #songFile = "./songs/Satie_Danses_de_travers_I.pr"
 songFile = "./songs/Rachmaninoff_Piano_Concerto_No2_Op18.pr"
@@ -70,8 +75,10 @@ staffScopeWidget.load(songFile)
 handSelWidget = handSelector.handSelector()
 handSelWidget.setScreen(screen)
 
-# Score issue widget
-#scoreStatusWidget = ...
+# Score status widget
+scoreStatusWidget = scoreStatus.scoreStatus()
+scoreStatusWidget.setScreen(screen)
+
 
 
 # Create window

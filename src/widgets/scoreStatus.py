@@ -26,8 +26,8 @@ from enum import Enum
 # Constants pool
 # =============================================================================
 class Msg(Enum) :
-  SET_TO_LEFT_HAND  = 1
-  SET_TO_RIGHT_HAND = 2
+  SET_TO_OK = 0
+  SET_TO_KO = 1
 
 
 
@@ -41,12 +41,12 @@ class scoreStatus :
     self.screen = None
 
     self.loc = (1312, 470)  # Coordinates of the up right corner 
-    self.xMin = self.loc[0] - (5*5*2) - (5*2)   # 5 chars, 5 horiz pixel per char, 1 pixel has size 2
-    self.xMax = self.loc[0]
-    self.yMin = self.loc[1]
-    self.yMax = self.loc[1] + (7*2) + 2 + 2
+    # self.xMin = self.loc[0] - (5*5*2) - (5*2)   # 5 chars, 5 horiz pixel per char, 1 pixel has size 2
+    # self.xMax = self.loc[0]
+    # self.yMin = self.loc[1]
+    # self.yMax = self.loc[1] + (7*2) + 2 + 2
 
-    self.sel = "OK"
+    self.state = "OK"
     self.visible = True
 
     self.msgQueueIn = []

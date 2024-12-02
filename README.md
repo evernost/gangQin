@@ -20,7 +20,7 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 - **Lookahead view**: the keyboard shows the notes to be pressed, but also the upcoming ones with different shades for improved 'sightreading'. Lookahead distance can be adjusted.
 - **Metronome**: practice with perfect timing.
 - **Unbound looped practice**: define a start point and try to play. Any mistake jumps you back to the starting point
-- - **Direct view on the real score**: showing the actual score while playing is pretty cool
+- **Direct view on the real score**: see the actual score while playing.
 
 ## Upcoming features (one day)
 

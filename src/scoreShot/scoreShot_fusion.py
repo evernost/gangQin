@@ -41,8 +41,7 @@ import os
 # Main code
 # =============================================================================
 
-# TODO: call a file selection GUI.
-(selectedDevice, songFile) = fileSelectionGUI.show()
+# (selectedDevice, songFile) = fileSelectionGUI.show()
 #songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
 #songFile = "./songs/Satie_Danses_de_travers_I.pr"
 songFile = "./songs/Rachmaninoff_Piano_Concerto_No2_Op18.pr"

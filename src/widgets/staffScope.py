@@ -213,7 +213,7 @@ class StaffScope :
       else :
         self.loadStaffByIndex(self._snapshotIndex)
         self.playGlows = []
-        print(f"[DEBUG] Cursor {cursor} is not linked to any staff. Proceed with playglow input")
+        # print(f"[DEBUG] Cursor {cursor} is not linked to any staff. Proceed with playglow input")
 
       self.cursor = cursor
       self._cacheClearReq = False

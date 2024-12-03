@@ -334,8 +334,14 @@ while running :
       # --------------------------------
       # "d" + "-": shorten note duration
       # --------------------------------
-      if (keys[pygame.K_d] and keys[pygame.K_KP_MINUS]) :
-        print("[INFO] Note duration shortening will be added in a future release.")
+      # if (keys[pygame.K_d] and keys[pygame.K_KP_MINUS]) :
+      #   print("[INFO] Note duration shortening will be added in a future release.")
+      
+      # ------------------------------
+      # "e": report error in the score
+      # ------------------------------
+      if keys[pygame.K_e] :
+        print("[INFO] Error reporting will be added in a future release.")
 
       # ----------------------------
       # "h": (Hear) toggle play mode

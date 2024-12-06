@@ -94,8 +94,10 @@ for (i, track) in enumerate(mid.tracks) :
 
 
 
-
-def show() :
+# -----------------------------------------------------------------------------
+# Track selection GUI
+# -----------------------------------------------------------------------------
+def show(songFile) :
 
   global leftTrack; global rightTrack
   leftTrack = -1; rightTrack = -1

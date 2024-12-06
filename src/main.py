@@ -57,7 +57,10 @@ if ((songFile == "") or (songFile == "None")) :
   exit()
 
 if songFile.endswith(".mid") :
-  midiTracks = trackSelectGUI.show()
+  # trackSel = trackSelectGUI.new()
+  # trackSel.setFile(songFile)
+  # midiTracks = trackSelectGUI.show()
+  midiTracks = trackSelectGUI.show(songFile)
 
 # Define screen dimensions
 pygame.init()

@@ -1335,8 +1335,9 @@ class Score :
       (majorRev, minorRev) = (int(versionMatch.group(1)), int(versionMatch.group(2)))
 
     else :
-      print(f"[WARNING] No version could be read from the .pr file. Either it is corrupted or too old and this version does not speak Dinosaur anymore.")
       # At that point, the rest of the parsing might fail.
+      print(f"[WARNING] No version could be read from the .pr file. Either it is corrupted or too old and this version does not speak Dinosaur anymore.")
+      
 
     # Default dictionary, in case some fields do not exist.
     safeDict = {
@@ -1348,14 +1349,7 @@ class Score :
       "cursorsRight"              : [],
       "bookmarks"                 : [],
       "activeHands"               : "LR",
-      "comboHighestAllTime"       : 0,
-      "statsLastCursor"           : -1,
-      "statsSteadyCount"          : 0,
-      "statsCursor"               : [],
-      "tempoSections"             : [(1, 120)],
-      "sessionCount"              : 0,
-      "sessionTotalPracticeTime"  : 0,
-      "sessionLog"                : []
+      "tempoSections"             : [(1, 120)]
     }
   
     # Load every existing field
@@ -1369,13 +1363,6 @@ class Score :
     self.cursor                   = safeDict["cursor"]
     self.bookmarks                = safeDict["bookmarks"]
     self.activeHands              = safeDict["activeHands"]
-    self.comboHighestAllTime      = safeDict["comboHighestAllTime"]
-    self.statsLastCursor          = safeDict["statsLastCursor"]
-    self.statsSteadyCount         = safeDict["statsSteadyCount"]
-    self.statsCursor              = safeDict["statsCursor"]
-    self.sessionCount             = safeDict["sessionCount"]
-    self.sessionTotalPracticeTime = safeDict["sessionTotalPracticeTime"]
-    self.sessionLog               = safeDict["sessionLog"]
     
     # -----------------------------
     # Pianoroll import - v0.X style
@@ -1503,7 +1490,6 @@ class Score :
     exportDict["cursor"]                = self.cursor
     exportDict["bookmarks"]             = self.bookmarks
     exportDict["activeHands"]           = self.activeHands
-    exportDict["comboHighestAllTime"]   = self.comboHighestAllTime
 
     noteCount = 0
     exportDict["pianoRoll"] = []

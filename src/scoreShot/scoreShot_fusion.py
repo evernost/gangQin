@@ -283,17 +283,18 @@ while running :
   text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)
   text.showBookmark(screen, userScore.getBookmarkIndex())
  
+  # Change the mouse cursor 
+  coord = pygame.mouse.get_pos()
+  staffScopeWidget.setMouseCursor(coord)
 
-  for msg in handSelWidget.msgQueueOut :
-    if (msg == handSelector.Msg.SET_TO_RIGHT_HAND) :
-      staffScopeWidget.activeHand = "R"
-      handSelWidget.msgQueueOut = []
+  # for msg in handSelWidget.msgQueueOut :
+  #   if (msg == handSelector.Msg.SET_TO_RIGHT_HAND) :
+  #     staffScopeWidget.activeHand = "R"
+  #     handSelWidget.msgQueueOut = []
   
-    elif (msg == handSelector.Msg.SET_TO_LEFT_HAND) :
-      staffScopeWidget.activeHand = "L"
-      handSelWidget.msgQueueOut = []
-    
-    
+  #   elif (msg == handSelector.Msg.SET_TO_LEFT_HAND) :
+  #     staffScopeWidget.activeHand = "L"
+  #     handSelWidget.msgQueueOut = []
 
   clock.tick(FPS)
 

@@ -286,7 +286,7 @@ class StaffScope :
     """
     Handles the pressing event of a click (left button).
     Clicks when no staff is loaded are ignored.
-    Clicks outside the StaffScope widget are ignored.
+    Clicks outside the widget are ignored.
     """
     
     x = coord[0]; y = coord[1]
@@ -302,17 +302,19 @@ class StaffScope :
         # Is the click on an existing playGlow?
         noHit = True
         for (i, p) in enumerate(self.playGlows) :
-          if p.isClickInBox(coord) :
+          if p.isClickOnBorder(coord) :
+            self.playGlowResized = i
+            p.resizeFrom(x,y)
+            noHit = False
+            print("[DEBUG] StaffScope.clickDown(): resize request")
+          
+          elif p.isClickInBox(coord) :
             self.playGlowDragged = i
             p.dragFrom(x,y)
             noHit = False
             print("[DEBUG] StaffScope.clickDown(): move request")
 
-          elif p.isClickOnBorder(coord) :
-            self.playGlowResized = i
-            p.resizeFrom(x,y)
-            noHit = False
-            print("[DEBUG] StaffScope.clickDown(): resize request")
+          
 
         # Click in empty space
         if noHit :
@@ -395,11 +397,26 @@ class StaffScope :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD StaffScope.setMouseCursor(None)
+  # ---------------------------------------------------------------------------
+  def setMouseCursor(self) :
+    """
+    Sets the mouse cursor based on its location over the app:
+    - a reticle when over the staffScope
+    - a move arrow when over the hitbox of a playglow
+    - a resize arrow when in the resize hitbox of a playglow
+    """
+
+    pass
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD StaffScope.deletePlayGlow(None)
   # ---------------------------------------------------------------------------
   def deletePlayGlow(self) :
     """
-    Delete the active playglow shown on the GUI.
+    Deletes the active playglow shown on the GUI.
     """
     
     for (i, p) in enumerate(self.playGlows) :

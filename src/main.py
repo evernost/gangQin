@@ -25,8 +25,9 @@ import src.widgets.fingerSelector as fingerSelector
 import src.widgets.keyboard as keyboard
 import src.widgets.notify as notify
 import src.widgets.pianoRoll as pianoRoll
-import src.widgets.trackSelectGUI as trackSelectGUI
+import src.widgets.trackSelectionGUI as trackSelectionGUI
 import src.widgets.staffScope as staffScope
+# import src.widgets.testGUI as testGUI
 
 # Various utilities
 import arbiter
@@ -60,7 +61,7 @@ if songFile.endswith(".mid") :
   # trackSel = trackSelectGUI.new()
   # trackSel.setFile(songFile)
   # midiTracks = trackSelectGUI.show()
-  midiTracks = trackSelectGUI.show(songFile)
+  midiTracks = trackSelectionGUI.show(songFile)
 
 # Define screen dimensions
 pygame.init()
@@ -345,6 +346,7 @@ while running :
       # ------------------------------
       if keys[pygame.K_e] :
         print("[INFO] Error reporting will be added in a future release.")
+        errorCode = errorReportGuit
 
       # ----------------------------
       # "h": (Hear) toggle play mode

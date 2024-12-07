@@ -102,10 +102,10 @@ def show(songFile) :
   global leftTrack; global rightTrack
   leftTrack = -1; rightTrack = -1
 
-  def on_quit() : 
+  def CLBK_onQuit() :
     root.destroy()
 
-  def on_setLeft(event = None) : 
+  def CLBK_onLeftKey(event = None) : 
     global leftTrack
     ret = trackLst.curselection()
 
@@ -135,7 +135,7 @@ def show(songFile) :
 
 
 
-  def on_setRight(event = None) : 
+  def CLBK_onRightKey(event = None) : 
     global rightTrack
     
     ret = trackLst.curselection()
@@ -164,10 +164,10 @@ def show(songFile) :
     else : 
       print(f"Please select the track you want to assign to the right hand.")
 
-  def on_generate() :
+  def CLBK_onGenerate() :
     print("TODO")
 
-  def on_downKey(event) :
+  def CLBK_onDownKey(event) :
     if not trackLst.curselection() :
       trackLst.selection_set(0)
       trackLst.activate(0)
@@ -185,11 +185,11 @@ def show(songFile) :
   trackListVar = tk.StringVar(value = trackList)
   trackLst = tk.Listbox(content, listvariable = trackListVar, width = 50, font = ("Consolas", 10))
 
-  setLeftButton = ttk.Button(content, text = "Assign track to Left hand", command = on_setLeft)
-  setRightButton = ttk.Button(content, text = "Assign track to Right hand", command = on_setRight)
+  setLeftButton = ttk.Button(content, text = "Assign track to Left hand", command = CLBK_onLeftKey)
+  setRightButton = ttk.Button(content, text = "Assign track to Right hand", command = CLBK_onRightKey)
 
-  generateButton = ttk.Button(content, text = "Generate", command = on_generate, default = "active")
-  quitButton = ttk.Button(content, text = "Quit", command = on_quit)
+  generateButton = ttk.Button(content, text = "Generate", command = CLBK_onGenerate, default = "active")
+  quitButton = ttk.Button(content, text = "Quit", command = CLBK_onQuit)
 
   content.grid(column = 0, row = 0)
 
@@ -202,11 +202,11 @@ def show(songFile) :
 
 
   # Bindings
-  root.bind('<Escape>', lambda event: on_quit())
+  root.bind('<Escape>', lambda event: CLBK_onQuit())
   root.bind("<Return>", lambda event = None : generateButton.invoke())
-  root.bind('<Left>', on_setLeft)
-  root.bind('<Right>', on_setRight)
-  root.bind('<Down>', on_downKey)
+  root.bind('<Left>', CLBK_onLeftKey)
+  root.bind('<Right>', CLBK_onRightKey)
+  root.bind('<Down>', CLBK_onDownKey)
 
   centerWindow(root)
 

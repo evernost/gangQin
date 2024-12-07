@@ -58,10 +58,9 @@ if ((songFile == "") or (songFile == "None")) :
   exit()
 
 if songFile.endswith(".mid") :
-  # trackSel = trackSelectGUI.new()
-  # trackSel.setFile(songFile)
-  # midiTracks = trackSelectGUI.show()
-  midiTracks = trackSelectionGUI.show(songFile)
+  trackSel = trackSelectionGUI.new()
+  trackSel.load(songFile)
+  midiTracks = trackSel.show()
 
 # Define screen dimensions
 pygame.init()
@@ -346,7 +345,9 @@ while running :
       # ------------------------------
       if keys[pygame.K_e] :
         print("[INFO] Error reporting will be added in a future release.")
-        errorCode = errorReportGuit
+        #errSel = errorReportGUI.show()
+        # Pass the info to staffScope:
+        # ...
 
       # ----------------------------
       # "h": (Hear) toggle play mode

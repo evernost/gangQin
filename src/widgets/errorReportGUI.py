@@ -21,10 +21,11 @@ import tkinter as tk
 from tkinter import ttk
 
 # List of possible reports:
-# - wrong note
-# - playGlow: not placed accurately
-# - playGlow: missing
-# - other
+# 1 - Score: wrong note
+# 2 - Score: missing note
+# 3 - PlayGlow: not placed accurately
+# 4 - PlayGlow: missing
+# 5 - Other
 
 
 

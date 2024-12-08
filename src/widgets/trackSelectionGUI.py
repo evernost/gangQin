@@ -191,23 +191,21 @@ class TrackSelectionGUI :
       
       # Edit the 'new' left hand
       self.trackListWidget.delete(sel)
-      s = f"Track {sel} ({self.tracks[sel].nNotes} notes)"
+      s = f"Track {sel} - {self.tracks[sel].name} ({self.tracks[sel].nNotes} notes)"
       self.trackListWidget.insert(sel, f"{s : <35}{'[LEFT]' : >7}")
       self.trackListWidget.selection_set(sel)
       self.trackListWidget.activate(sel)
 
-      # Verify that left hand is not already assigned
+      # Edit the previous left hand if it was already assigned
       if (self.leftTrack != -1) :
-        # Edit the 'old' left hand
         self.trackListWidget.delete(self.leftTrack)
-        # s = f"Track {self.leftTrack} ({self.tracks[sel].nNotes} notes)"
         s = f"Track {self.leftTrack} - {self.tracks[self.leftTrack].name} ({self.tracks[self.leftTrack].nNotes} notes)"
         self.trackListWidget.insert(self.leftTrack, f"{s : <35}{'' : >7}")
         
       self.leftTrack = sel
 
     else : 
-      print(f"Please select the track you want to assign to the left hand.")
+      print(f"Please select a track before assigning.")
 
   # ---------------------------------------------------------------------------
   # METHOD trackSelectionGUI.CLBK_onRightKey()
@@ -222,23 +220,21 @@ class TrackSelectionGUI :
       
       # Edit the 'new' right hand
       self.trackListWidget.delete(sel)
-      s = f"Track {sel} ({self.tracks[sel].nNotes} notes)"
+      s = f"Track {sel} - {self.tracks[sel].name} ({self.tracks[sel].nNotes} notes)"
       self.trackListWidget.insert(sel, f"{s : <35}{'[RIGHT]' : >7}")
       self.trackListWidget.selection_set(sel)
       self.trackListWidget.activate(sel)
 
-      # Verify that right hand is not already assigned
+      # Edit the previous right hand if it was already assigned
       if (self.rightTrack != -1) :
-        # Edit the 'old' right hand
         self.trackListWidget.delete(self.rightTrack)
-        # s = f"Track {self.rightTrack} ({self.tracks[sel].nNotes} notes)"
         s = f"Track {self.rightTrack} - {self.tracks[self.rightTrack].name} ({self.tracks[self.rightTrack].nNotes} notes)"
         self.trackListWidget.insert(self.rightTrack, f"{s : <35}{'' : >7}")
         
       self.rightTrack = sel
 
     else : 
-      print(f"Please select the track you want to assign to the right hand.")
+      print(f"Please select a track before assigning.")
 
   # ---------------------------------------------------------------------------
   # METHOD trackSelectionGUI.CLBK_onGenerate()

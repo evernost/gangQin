@@ -107,7 +107,12 @@ class StaffScope :
     """
 
     self.db = database.Database(songFile)
-    self.loadStaffByIndex(0)
+    if (self.db.nSnapshots != 0) :
+      self.loadStaffByIndex(0)
+    
+    else :
+      print("[ERROR] Database is empty! Capture the score first before calling this tool.")
+      exit()
 
 
 

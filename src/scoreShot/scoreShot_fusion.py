@@ -41,10 +41,12 @@ import os
 # Main code
 # =============================================================================
 
-# (selectedDevice, songFile) = fileSelectionGUI.show()
+fileSel = fileSelectionGUI.new()
+songFile = fileSel.show()
 #songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
 #songFile = "./songs/Satie_Danses_de_travers_I.pr"
-songFile = "./songs/Rachmaninoff_Piano_Concerto_No2_Op18.pr"
+#songFile = "./songs/Rachmaninoff_Piano_Concerto_No2_Op18.pr"
+#songFile = "./songs/Rachmaninoff_Lullaby.pr"
 
 
 
@@ -285,16 +287,7 @@ while running :
  
   # Change the mouse cursor 
   coord = pygame.mouse.get_pos()
-  staffScopeWidget.setMouseCursor(coord)
-
-  # for msg in handSelWidget.msgQueueOut :
-  #   if (msg == handSelector.Msg.SET_TO_RIGHT_HAND) :
-  #     staffScopeWidget.activeHand = "R"
-  #     handSelWidget.msgQueueOut = []
-  
-  #   elif (msg == handSelector.Msg.SET_TO_LEFT_HAND) :
-  #     staffScopeWidget.activeHand = "L"
-  #     handSelWidget.msgQueueOut = []
+  # staffScopeWidget.setMouseCursor(coord)
 
   clock.tick(FPS)
 

@@ -41,14 +41,10 @@ import os
 # Main code
 # =============================================================================
 
+# Call the song file selection GUI
 fileSel = fileSelectionGUI.new()
+fileSel.setTitle("ScoreShot (Fusion) - New session")
 songFile = fileSel.show()
-#songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
-#songFile = "./songs/Satie_Danses_de_travers_I.pr"
-#songFile = "./songs/Rachmaninoff_Piano_Concerto_No2_Op18.pr"
-#songFile = "./songs/Rachmaninoff_Lullaby.pr"
-
-
 
 pygame.init()
 

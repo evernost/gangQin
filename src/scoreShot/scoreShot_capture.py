@@ -65,15 +65,11 @@ print("- 'q'                    : exit app")
 
 
 
-# The name of the song file (.pr file) is the only input for this interface.
-# It shall come from a selection GUI.
-# Only .pr files can be selected.
+# Call the song file selection GUI
 fileSel = fileSelectionGUI.new()
+fileSel.setTitle("ScoreShot (Capture) - New session")
 songFile = fileSel.show()
-#songFile = "./songs/Rachmaninoff_Moment_Musical_Op_16_No_4.pr"
-#songFile = "./songs/Satie_Danses_de_travers_I.pr"
-#songFile = "Rachmaninoff_Piano_Concerto_No2_Op18.pr"
-#songFile = "./songs/Rachmaninoff_Lullaby.pr"
+
 
 root = tk.Tk()
 

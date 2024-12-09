@@ -56,9 +56,22 @@ class FileSelectionGUI :
 
   def __init__(self) :
     self.songFile = ""
+    self.title = "Song selection"
     self.root = None
     
     self.songList = getFileListByExt(SONG_PATH, ".pr")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD FileSelectionGUI.setTitle()
+  # ---------------------------------------------------------------------------
+  def setTitle(self, title) :
+    """
+    Sets the title of the GUI.
+    """
+    
+    self.title = title
 
 
 
@@ -72,14 +85,13 @@ class FileSelectionGUI :
     """
     
     self.root = tk.Tk()
-    self.root.title("Song selection")
+    self.root.title(self.title)
     self.root.resizable(0, 0)
-
 
     fileSelFrame = ttk.LabelFrame(self.root, text = "File input")
     fileSelFrame.grid(row = 0, column = 0, columnspan = 3, padx = 10, pady = 5, sticky = "e")
     
-    label1 = tk.Label(fileSelFrame, text = "Select a File:")
+    label1 = tk.Label(fileSelFrame, text = "Select a song:")
     label1.grid(row = 2, column = 0, padx = 3, pady = 1, sticky = "w")
 
     self.comboFile = ttk.Combobox(fileSelFrame, values = [], state = "readonly")    
@@ -88,13 +100,13 @@ class FileSelectionGUI :
     self.comboFile["width"] = 80
     self.comboFile.grid(row = 3, column = 0, columnspan = 3, padx = 3, pady = 5, sticky = "e")
     
-    buttonOK = tk.Button(self.root, text = "Start", command = self.CLBK_onOK, default = tk.ACTIVE)
-    buttonOK.grid(row = 1, column = 1, padx = 10, pady = 20, sticky = "e")
-    buttonOK["width"] = 20
+    buttonStart = tk.Button(self.root, text = "Start", command = self.CLBK_onStart, default = tk.ACTIVE)
+    buttonStart.grid(row = 1, column = 2, padx = 10, pady = 20, sticky = "e")
+    buttonStart["width"] = 20
     if (len(self.songList) == 1 and self.songList[0] == "None") :
-      buttonOK.config(state = "disabled")
+      buttonStart.config(state = "disabled")
     else :
-      buttonOK.config(state = "normal")
+      buttonStart.config(state = "normal")
 
     buttonQuit = tk.Button(self.root, text = "Quit", command = self.CLBK_onQuit)
     buttonQuit.grid(row = 1, column = 0, padx = 10, pady = 20, sticky = "w")
@@ -104,7 +116,7 @@ class FileSelectionGUI :
     # Bindings
     self.root.bind("<Escape>",  self.CLBK_onQuit)
     self.root.bind("<q>",       self.CLBK_onQuit)
-    self.root.bind("<Return>",  self.CLBK_onOK)
+    self.root.bind("<Return>",  self.CLBK_onStart)
 
     self.centerWindow()
     self.root.mainloop()
@@ -143,9 +155,9 @@ class FileSelectionGUI :
     exit()
 
   # ---------------------------------------------------------------------------
-  # METHOD FileSelectionGUI.CLBK_onOK()
+  # METHOD FileSelectionGUI.CLBK_onStart()
   # ---------------------------------------------------------------------------
-  def CLBK_onOK(self, event = None) :
+  def CLBK_onStart(self, event = None) :
     self.songFile = self.songList[self.comboFile.current()]
     self.root.destroy()
 
@@ -158,5 +170,5 @@ class FileSelectionGUI :
 if (__name__ == "__main__") :
   gui = new()
   songFile = gui.show()
-  print(f"Selected song: {songFile}")
+  print(f"Selected song: '{songFile}'")
 

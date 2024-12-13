@@ -17,6 +17,9 @@
 # - draws the rectangle overlay on the score snapshot
 # - handles the user interactions
 
+# Combine with 'comboDropHistogram' from 'stats' to highlight the sections that 
+# cause the most trouble.
+
 
 # =============================================================================
 # External libs 

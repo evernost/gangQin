@@ -121,6 +121,8 @@ class FileSelectionGUI :
     self.centerWindow()
     self.root.mainloop()
     
+    self.saveDefault()
+
     return self.songFile
 
 
@@ -161,6 +163,29 @@ class FileSelectionGUI :
     self.songFile = self.songList[self.comboFile.current()]
     self.root.destroy()
 
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD FileSelectionGUI.loadDefault()
+  # ---------------------------------------------------------------------------
+  def loadDefault(self) :
+    """
+    Loads the file that has been selected last time the app was called, so 
+    that the selection menu can propose this one first.
+    """
+    print("[DEBUG] FileSelectionGUI.loadDefault(): todo!")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD FileSelectionGUI.saveDefault()
+  # ---------------------------------------------------------------------------
+  def saveDefault(self) :
+    """
+    Saves the selected file to a .ini file so that the app defaults to the 
+    last file upon next start.
+    """
+    print("[DEBUG] FileSelectionGUI.saveDefault(): todo!")
 
 
 

@@ -359,6 +359,8 @@ class Database :
     with open(self.jsonFile, "w") as jsonFile :
       json.dump(d, jsonFile, indent = 2)
 
+    print("Done.")
+
     
 
   # ---------------------------------------------------------------------------

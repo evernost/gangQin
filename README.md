@@ -30,7 +30,8 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 - **Flexible MIDI loading**: select the specific tracks you want to import (MIDI might have way more than 2)
 - **Metronome with dynamic tempo**: ajusts automatically throughout the score. Helps also to monitor your playing speed, hence your progress
 - **Semi-automated _fingersatz_ edition**: simplify the assignation of repeated sections (repeated chords, codas, etc.)
-- **Hard section highlighting**: in the staffScope view, shows the section of the score that caused the most troubles, according to the recent playing statistics.
+- **Auto-highlight of the complex secions**: in the staffScope view, a color code shows the section that caused the most trouble, based on the playing statistics.
+- **Time accuracy score display**: shows how well you play the notes at the right time
 
 ## Shortcuts
 

@@ -83,6 +83,11 @@ class Stats :
 
     self.tickInterval_ms = 0
 
+
+    self.intervalStartTime = 0
+    self.intervalStartTimecode = 0
+    self.intervalTicking = False
+
     # UI interaction queues
     self.msgQueueIn = []
     self.msgQueueOut = []
@@ -348,6 +353,47 @@ class Stats :
     the input keyboard.
     """
     self.cursorIdleTimer = 0
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats.startIntervalTimer()
+  # ---------------------------------------------------------------------------
+  def startIntervalTimer(self, scoreTimecode) :
+    """
+    
+    """
+    
+    self.intervalStartTime = time.perf_counter()
+    self.intervalStartTimecode = scoreTimecode
+    self.intervalTicking = True
+    
+    print(f"[DEBUG] Interval timer set with timecode = {scoreTimecode}")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats.stopIntervalTimer()
+  # ---------------------------------------------------------------------------
+  def stopIntervalTimer(self, scoreTimecode) :
+    """
+    
+    """
+    
+    if self.intervalTicking :
+      print(f"[DEBUG] Interval timer stopped with timecode = {scoreTimecode}")
+      elapsedTime = time.perf_counter() - self.intervalStartTime
+      elapsedTimecode = scoreTimecode - self.intervalStartTimecode
+      
+      if (elapsedTimecode > 0) :
+        print(f"[DEBUG] Performance ratio = {elapsedTime/elapsedTimecode}")
+      else :
+        print(f"[DEBUG] Stats.stopIntervalTimer(): null variation in the timecodes")  
+
+      self.intervalTicking = False
+
+    else :
+      print(f"[DEBUG] Stats.stopIntervalTimer(): timer is not ticking, nothing to stop.")
 
 
 

@@ -381,18 +381,14 @@ class Stats :
         self.intervalRatioAvg = self.intervalRatioSum/self.intervalMeasureCount
         print(f"[DEBUG] Normalised interval ratio = {intervalRatio/self.intervalRatioAvg:.2f} (avg = {self.intervalRatioAvg})")
         
-        self.intervalStartTime = time.perf_counter()
-        self.intervalStartTimecode = scoreTimecode
-
       else :
         print(f"[DEBUG] Stats.stopIntervalTimer(): null variation in the timecodes")  
 
-    else :      
-      self.intervalStartTime = time.perf_counter()
-      self.intervalStartTimecode = scoreTimecode
+    else :
       self.intervalTimerTicking = True
-    
-    # print(f"[DEBUG] Interval timer set with timecode = {scoreTimecode}")
+
+    self.intervalStartTime = time.perf_counter()
+    self.intervalStartTimecode = scoreTimecode
 
 
 

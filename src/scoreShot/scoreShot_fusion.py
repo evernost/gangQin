@@ -276,6 +276,11 @@ while running :
 
   # Render the left/right hand selector
   handSelWidget.render()
+  for msg in handSelWidget.msgQueueOut : 
+    if (msg == handSelector.Msg.SET_TO_LEFT_HAND) :
+      staffScopeWidget.activeHand = "L"
+    elif (msg == handSelector.Msg.SET_TO_RIGHT_HAND) :
+      staffScopeWidget.activeHand = "R"
 
   # Render the text on screen
   text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)

@@ -331,7 +331,7 @@ class StaffScope :
               del self.playGlows[i]
               break
           
-          print("[DEBUG] StaffScope.clickDown(): new playGlow")
+          print(f"[DEBUG] StaffScope.clickDown(): new playGlow (hand = {self.activeHand})")
           p = playGlow.PlayGlow()
           p.load((x-5, y-5, 10, 30))
           p.hand = self.activeHand

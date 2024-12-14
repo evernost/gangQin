@@ -545,8 +545,7 @@ while running :
     # Valid input
     if (msg == arbiter.MSG_CURSOR_NEXT) :
       userScore.cursorNext()
-      statsObj.stopIntervalTimer(userScore.getCurrentTimecode())
-      statsObj.startIntervalTimer(userScore.getCurrentTimecode())
+      statsObj.intervalTimerUpdate(userScore.getCurrentTimecode())
       statsObj.correctNote()
 
       if (userScore.cursor == userScore.loopStart) :

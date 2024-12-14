@@ -83,10 +83,12 @@ class Stats :
 
     self.tickInterval_ms = 0
 
-
-    self.intervalStartTime = 0
-    self.intervalStartTimecode = 0
-    self.intervalTicking = False
+    self.intervalStartTime = -1
+    self.intervalStartTimecode = -1
+    self.intervalTimerTicking = False
+    self.intervalMeasureCount = 0
+    self.intervalRatioSum = 0
+    self.intervalRatioAvg = 0
 
     # UI interaction queues
     self.msgQueueIn = []
@@ -357,43 +359,40 @@ class Stats :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats.startIntervalTimer()
+  # METHOD Stats.intervalTimerTick()
   # ---------------------------------------------------------------------------
-  def startIntervalTimer(self, scoreTimecode) :
+  def intervalTimerUpdate(self, scoreTimecode, loopWrap = False) :
+    """
+    Updates the interval time tracker with the current timecode in the score.
+    This function must be called on every correct note (i.e. cursor increase).
+    
+    In looped practice, set the flag 'loopWrap' to True when the loop wraps 
+    back to the beginning to avoid an erroneous measurement.
     """
     
-    """
-    
-    self.intervalStartTime = time.perf_counter()
-    self.intervalStartTimecode = scoreTimecode
-    self.intervalTicking = True
-    
-    print(f"[DEBUG] Interval timer set with timecode = {scoreTimecode}")
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Stats.stopIntervalTimer()
-  # ---------------------------------------------------------------------------
-  def stopIntervalTimer(self, scoreTimecode) :
-    """
-    
-    """
-    
-    if self.intervalTicking :
-      print(f"[DEBUG] Interval timer stopped with timecode = {scoreTimecode}")
+    if self.intervalTimerTicking :
       elapsedTime = time.perf_counter() - self.intervalStartTime
       elapsedTimecode = scoreTimecode - self.intervalStartTimecode
       
       if (elapsedTimecode > 0) :
-        print(f"[DEBUG] Performance ratio = {elapsedTime/elapsedTimecode}")
+        intervalRatio = elapsedTime/elapsedTimecode
+        self.intervalRatioSum += intervalRatio
+        self.intervalMeasureCount += 1
+        self.intervalRatioAvg = self.intervalRatioSum/self.intervalMeasureCount
+        print(f"[DEBUG] Normalised interval ratio = {intervalRatio/self.intervalRatioAvg:.2f} (avg = {self.intervalRatioAvg})")
+        
+        self.intervalStartTime = time.perf_counter()
+        self.intervalStartTimecode = scoreTimecode
+
       else :
         print(f"[DEBUG] Stats.stopIntervalTimer(): null variation in the timecodes")  
 
-      self.intervalTicking = False
-
-    else :
-      print(f"[DEBUG] Stats.stopIntervalTimer(): timer is not ticking, nothing to stop.")
+    else :      
+      self.intervalStartTime = time.perf_counter()
+      self.intervalStartTimecode = scoreTimecode
+      self.intervalTimerTicking = True
+    
+    # print(f"[DEBUG] Interval timer set with timecode = {scoreTimecode}")
 
 
 

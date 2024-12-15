@@ -376,10 +376,13 @@ class Stats :
       
       if (elapsedTimecode > 0) :
         intervalRatio = elapsedTime/elapsedTimecode
+        
+        # Note: use a windowed average instead
         self.intervalRatioSum += intervalRatio
         self.intervalMeasureCount += 1
         self.intervalRatioAvg = self.intervalRatioSum/self.intervalMeasureCount
-        print(f"[DEBUG] Normalised interval ratio = {intervalRatio/self.intervalRatioAvg:.2f} (avg = {self.intervalRatioAvg})")
+        
+        print(f"[DEBUG] Normalised interval ratio = {intervalRatio/self.intervalRatioAvg:.2f} (avg = {self.intervalRatioAvg:.5f})")
         
       else :
         print(f"[DEBUG] Stats.stopIntervalTimer(): null variation in the timecodes")  

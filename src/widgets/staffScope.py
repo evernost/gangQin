@@ -130,8 +130,11 @@ class StaffScope :
     
     if ((self._snapshotIndex + 1) <= (self.db.nSnapshots-1)) :
       self.loadStaffByIndex(self._snapshotIndex+1)
+    
+    else :
+      print("[DEBUG] StaffScope.nextStaff(): end of database reached. No more staff to show.")
 
-
+  
     
   # ---------------------------------------------------------------------------
   # METHOD StaffScope.previousStaff()

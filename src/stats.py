@@ -28,6 +28,7 @@ import time
 # Constants pool
 # =============================================================================
 TICK_INTERVAL_MS = 500
+MINIMAL_SESSION_DURATION_SEC = 60*5
 
 
 
@@ -89,6 +90,8 @@ class Stats :
     self.intervalMeasureCount = 0
     self.intervalRatioSum = 0
     self.intervalRatioAvg = 0
+
+    self.lastActivity = -1
 
     # UI interaction queues
     self.msgQueueIn = []
@@ -408,18 +411,25 @@ class Stats :
     print("[INFO] Exporting stats...")
 
     self.sessionStopTime = datetime.datetime.now()
-    duration = self.sessionStopTime - self.sessionStartTime
+    delta = self.sessionStopTime - self.sessionStartTime
+    duration = round(delta.total_seconds())
     
-    exportDict = {}
-    exportDict["sessionCount"]              = self.sessionCount
-    exportDict["sessionLog"]                = self.sessionLog + [self.getSessionLog()]
-    exportDict["sessionAvgPracticeTime"]    = self.sessionAvgPracticeTime
-    exportDict["totalPracticeTimeSec"]      = self.totalPracticeTimeSec + round(duration.total_seconds())
-    
-    with open(self.logFile, "w") as jsonFile :
-      json.dump(exportDict, jsonFile, indent = 2)
+    # Save log only if the session has a decent duration, otherwise it does not 
+    # make much sense.
+    if (duration > MINIMAL_SESSION_DURATION_SEC) :
+      exportDict = {}
+      exportDict["sessionCount"]              = self.sessionCount
+      exportDict["sessionLog"]                = self.sessionLog + [self.getSessionLog()]
+      exportDict["sessionAvgPracticeTime"]    = self.sessionAvgPracticeTime
+      exportDict["totalPracticeTimeSec"]      = self.totalPracticeTimeSec + duration
+      
+      with open(self.logFile, "w") as jsonFile :
+        json.dump(exportDict, jsonFile, indent = 2)
 
-    print(f"[INFO] Saved to '{self.logFile}'")
+      print(f"[INFO] Session stats saved to '{self.logFile}'")
+    
+    else :
+      print(f"[INFO] Session shorter than {MINIMAL_SESSION_DURATION_SEC}s are not saved to keep logs meaningful.")
 
 
 

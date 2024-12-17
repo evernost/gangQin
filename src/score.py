@@ -1477,7 +1477,10 @@ class Score :
     extension instead. 
     """
 
-    print("[INFO] Exporting piano roll...")
+    if backup :
+      print("[INFO] Exporting piano roll...")
+    else :
+      print("[INFO] Exporting a backup of the piano roll...")
 
     # Create the dictionnary containing all the things we want to save
     exportDict = {}
@@ -1520,7 +1523,7 @@ class Score :
       json.dump(exportDict, fileHandler, indent = 2)
 
     currTime = datetime.datetime.now()
-    if backup :      
+    if backup :
       print(f"[INFO] Saved backup to '{pianoRollFile}'")
     else :
       currTime = datetime.datetime.now()

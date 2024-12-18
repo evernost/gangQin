@@ -106,8 +106,8 @@ pygame.mixer.init(frequency = 44100, size = -16, channels = 1, buffer = 512)
 statsObj = stats.Stats()
 statsObj.load(songFile)
 statsObj.showIntroSummary()
-STATS_TASK = pygame.USEREVENT + 2
-pygame.time.set_timer(STATS_TASK, stats.TICK_INTERVAL_MS)
+#STATS_TASK = pygame.USEREVENT + 2
+#pygame.time.set_timer(STATS_TASK, stats.TICK_INTERVAL_MS)
 
 # Create the arbiter
 pianoArbiter = arbiter.Arbiter("permissive")
@@ -130,6 +130,7 @@ AUTOSAVE_TASK = pygame.USEREVENT + 3
 # =============================================================================
 def midiCallback(midiMessage) :
   pianoArbiter.updateMidiState(midiMessage)
+  statsObj.userActivity()
 
 
 
@@ -257,7 +258,7 @@ while running :
         else :
           userScore.lookAheadDistance += 1
 
-        print(f"[DEBUG] Lookahead distance set to {userScore.lookAheadDistance}")
+        print(f"[DEBUG] Lookahead distance set to {userScore.lookAheadDistance}/5")
 
       # --------------------------------
       # F3: toggle "strict mode" in loop
@@ -398,6 +399,7 @@ while running :
         if (midiPort != None) :
           midiPort.close()
         
+        statsObj.userActivity()
         statsObj.save()
         userScore.exportToPrFile(backup = True)
 
@@ -483,8 +485,8 @@ while running :
     elif (event.type == METRONOME_TASK) :
       metronomeObj.playTick()
 
-    elif (event.type == STATS_TASK) :
-      statsObj.tick()
+    # elif (event.type == STATS_TASK) :
+    #   statsObj.tick()
 
 
 

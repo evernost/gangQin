@@ -91,7 +91,8 @@ class Stats :
     self.intervalRatioSum = 0
     self.intervalRatioAvg = 0
 
-    self.lastActivity = -1
+    self.lastActivity = time.perf_counter()
+    self.totalInactivity_sec = 0
 
     # UI interaction queues
     self.msgQueueIn = []
@@ -350,6 +351,25 @@ class Stats :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD Stats.userActivity()
+  # ---------------------------------------------------------------------------
+  def userActivity(self) :
+    """
+    Resets the idle timer (inactivity detection) e.g. when there is some activity
+    going on.
+    This function is typically called every time there is MIDI activity.
+    """
+    
+    idleTime = round(time.perf_counter() - self.lastActivity)
+    if (idleTime > 10) :
+      self.totalInactivity_sec += idleTime
+      print("Welcome back, Cindarella :)")
+
+    self.lastActivity = time.perf_counter()
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD Stats.resetIdleTimer()
   # ---------------------------------------------------------------------------
   def resetIdleTimer(self) :
@@ -409,6 +429,8 @@ class Stats :
     """
 
     print("[INFO] Exporting stats...")
+
+    print(f"[INFO] Inactivity time: {self.totalInactivity_sec}s")
 
     self.sessionStopTime = datetime.datetime.now()
     delta = self.sessionStopTime - self.sessionStartTime

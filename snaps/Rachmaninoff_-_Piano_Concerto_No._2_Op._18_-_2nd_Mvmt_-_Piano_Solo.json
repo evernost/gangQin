@@ -1,0 +1,3496 @@
+{
+  "nSnapshots": 53,
+  "snapshots": [
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "R3W8T4.png",
+      "index": 0,
+      "displayName": "Capture 1",
+      "description": "",
+      "cursorMin": 0,
+      "cursorMax": 47,
+      "playGlowsLeft": {
+        "0": [
+          335,
+          195,
+          10,
+          30
+        ],
+        "32": [
+          815,
+          171,
+          10,
+          30
+        ],
+        "12": [
+          522,
+          192,
+          10,
+          30
+        ],
+        "20": [
+          640,
+          176,
+          10,
+          30
+        ],
+        "24": [
+          711,
+          194,
+          10,
+          30
+        ],
+        "36": [
+          898,
+          192,
+          10,
+          30
+        ],
+        "40": [
+          959,
+          181,
+          10,
+          30
+        ],
+        "44": [
+          1019,
+          179,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "0": [
+          325,
+          131,
+          10,
+          30
+        ],
+        "1": [
+          347,
+          131,
+          10,
+          30
+        ],
+        "2": [
+          360,
+          117,
+          10,
+          30
+        ],
+        "3": [
+          375,
+          105,
+          10,
+          30
+        ],
+        "4": [
+          386,
+          134,
+          10,
+          30
+        ],
+        "5": [
+          400,
+          116,
+          10,
+          30
+        ],
+        "6": [
+          414,
+          106,
+          10,
+          30
+        ],
+        "7": [
+          426,
+          101,
+          10,
+          30
+        ],
+        "8": [
+          445,
+          132,
+          10,
+          30
+        ],
+        "9": [
+          466,
+          114,
+          10,
+          30
+        ],
+        "10": [
+          478,
+          105,
+          10,
+          30
+        ],
+        "11": [
+          492,
+          101,
+          10,
+          30
+        ],
+        "12": [
+          521,
+          124,
+          10,
+          30
+        ],
+        "13": [
+          543,
+          114,
+          10,
+          30
+        ],
+        "14": [
+          557,
+          109,
+          10,
+          30
+        ],
+        "15": [
+          570,
+          102,
+          10,
+          30
+        ],
+        "16": [
+          581,
+          139,
+          10,
+          30
+        ],
+        "17": [
+          596,
+          112,
+          10,
+          30
+        ],
+        "18": [
+          608,
+          109,
+          10,
+          30
+        ],
+        "19": [
+          623,
+          105,
+          10,
+          30
+        ],
+        "20": [
+          640,
+          121,
+          10,
+          30
+        ],
+        "21": [
+          657,
+          117,
+          10,
+          30
+        ],
+        "22": [
+          670,
+          110,
+          10,
+          30
+        ],
+        "23": [
+          684,
+          104,
+          10,
+          30
+        ],
+        "24": [
+          712,
+          127,
+          10,
+          30
+        ],
+        "25": [
+          724,
+          120,
+          10,
+          30
+        ],
+        "26": [
+          736,
+          111,
+          10,
+          30
+        ],
+        "27": [
+          751,
+          104,
+          10,
+          30
+        ],
+        "28": [
+          762,
+          139,
+          10,
+          30
+        ],
+        "29": [
+          777,
+          118,
+          10,
+          30
+        ],
+        "30": [
+          789,
+          112,
+          10,
+          30
+        ],
+        "31": [
+          802,
+          108,
+          10,
+          30
+        ],
+        "32": [
+          815,
+          142,
+          10,
+          30
+        ],
+        "33": [
+          834,
+          117,
+          10,
+          30
+        ],
+        "35": [
+          866,
+          108,
+          10,
+          30
+        ],
+        "34": [
+          854,
+          116,
+          10,
+          30
+        ],
+        "36": [
+          899,
+          140,
+          10,
+          30
+        ],
+        "37": [
+          911,
+          117,
+          10,
+          30
+        ],
+        "38": [
+          922,
+          119,
+          10,
+          30
+        ],
+        "39": [
+          938,
+          113,
+          10,
+          30
+        ],
+        "40": [
+          956,
+          143,
+          10,
+          30
+        ],
+        "41": [
+          975,
+          120,
+          10,
+          30
+        ],
+        "42": [
+          989,
+          114,
+          10,
+          30
+        ],
+        "43": [
+          1004,
+          114,
+          10,
+          30
+        ],
+        "44": [
+          1017,
+          145,
+          10,
+          30
+        ],
+        "45": [
+          1028,
+          129,
+          10,
+          30
+        ],
+        "46": [
+          1040,
+          118,
+          10,
+          30
+        ],
+        "47": [
+          1056,
+          117,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "3WVPC6.png",
+      "index": 1,
+      "displayName": "Capture 2",
+      "description": "",
+      "cursorMin": 48,
+      "cursorMax": 95,
+      "playGlowsLeft": {
+        "48": [
+          332,
+          192,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "48": [
+          322,
+          134,
+          10,
+          30
+        ],
+        "49": [
+          346,
+          124,
+          10,
+          30
+        ],
+        "50": [
+          356,
+          114,
+          10,
+          30
+        ],
+        "51": [
+          367,
+          113,
+          10,
+          30
+        ],
+        "52": [
+          383,
+          120,
+          10,
+          30
+        ],
+        "53": [
+          395,
+          117,
+          10,
+          30
+        ],
+        "54": [
+          408,
+          107,
+          10,
+          30
+        ],
+        "55": [
+          418,
+          105,
+          10,
+          30
+        ],
+        "56": [
+          434,
+          120,
+          10,
+          30
+        ],
+        "57": [
+          457,
+          117,
+          10,
+          30
+        ],
+        "58": [
+          471,
+          112,
+          10,
+          30
+        ],
+        "59": [
+          481,
+          107,
+          10,
+          30
+        ],
+        "60": [
+          512,
+          123,
+          10,
+          30
+        ],
+        "61": [
+          530,
+          117,
+          10,
+          30
+        ],
+        "62": [
+          538,
+          114,
+          10,
+          30
+        ],
+        "63": [
+          556,
+          110,
+          10,
+          30
+        ],
+        "64": [
+          572,
+          132,
+          10,
+          30
+        ],
+        "65": [
+          582,
+          120,
+          10,
+          30
+        ],
+        "66": [
+          596,
+          115,
+          10,
+          30
+        ],
+        "67": [
+          608,
+          108,
+          10,
+          30
+        ],
+        "68": [
+          623,
+          133,
+          10,
+          30
+        ],
+        "69": [
+          649,
+          115,
+          10,
+          30
+        ],
+        "70": [
+          655,
+          112,
+          10,
+          30
+        ],
+        "71": [
+          665,
+          107,
+          10,
+          30
+        ],
+        "72": [
+          695,
+          138,
+          10,
+          30
+        ],
+        "73": [
+          708,
+          120,
+          10,
+          30
+        ],
+        "74": [
+          720,
+          115,
+          10,
+          30
+        ],
+        "75": [
+          738,
+          111,
+          10,
+          30
+        ],
+        "76": [
+          741,
+          136,
+          10,
+          30
+        ],
+        "77": [
+          755,
+          124,
+          10,
+          30
+        ],
+        "78": [
+          776,
+          113,
+          10,
+          30
+        ],
+        "79": [
+          780,
+          111,
+          10,
+          30
+        ],
+        "80": [
+          792,
+          122,
+          10,
+          30
+        ],
+        "81": [
+          806,
+          118,
+          10,
+          30
+        ],
+        "82": [
+          829,
+          115,
+          10,
+          30
+        ],
+        "83": [
+          840,
+          113,
+          10,
+          30
+        ],
+        "84": [
+          873,
+          142,
+          10,
+          30
+        ],
+        "85": [
+          894,
+          122,
+          10,
+          30
+        ],
+        "86": [
+          906,
+          117,
+          10,
+          30
+        ],
+        "87": [
+          919,
+          110,
+          10,
+          30
+        ],
+        "88": [
+          932,
+          143,
+          10,
+          30
+        ],
+        "89": [
+          946,
+          123,
+          10,
+          30
+        ],
+        "90": [
+          956,
+          140,
+          10,
+          30
+        ],
+        "91": [
+          973,
+          112,
+          10,
+          30
+        ],
+        "93": [
+          991,
+          143,
+          10,
+          30
+        ],
+        "94": [
+          1004,
+          118,
+          10,
+          30
+        ],
+        "95": [
+          1018,
+          125,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "BWCM37.png",
+      "index": 2,
+      "displayName": "Capture 3",
+      "description": "",
+      "cursorMin": 96,
+      "cursorMax": 97,
+      "playGlowsLeft": {},
+      "playGlowsRight": {
+        "97": [
+          337,
+          131,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "F93P2Q.png",
+      "index": 3,
+      "displayName": "Capture 4",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "EYQZBT.png",
+      "index": 4,
+      "displayName": "Capture 5",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "T8FCGD.png",
+      "index": 5,
+      "displayName": "Capture 6",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "V35B55.png",
+      "index": 6,
+      "displayName": "Capture 7",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "Q5GHPQ.png",
+      "index": 7,
+      "displayName": "Capture 8",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "HVPBTY.png",
+      "index": 8,
+      "displayName": "Capture 9",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "AX2EC8.png",
+      "index": 9,
+      "displayName": "Capture 10",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "9UC2VV.png",
+      "index": 10,
+      "displayName": "Capture 11",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "TQFG99.png",
+      "index": 11,
+      "displayName": "Capture 12",
+      "description": "",
+      "cursorMin": 449,
+      "cursorMax": 480,
+      "playGlowsLeft": {
+        "449": [
+          697,
+          181,
+          10,
+          30
+        ],
+        "450": [
+          711,
+          171,
+          10,
+          30
+        ],
+        "452": [
+          730,
+          166,
+          10,
+          30
+        ],
+        "453": [
+          744,
+          167,
+          10,
+          30
+        ],
+        "454": [
+          757,
+          164,
+          10,
+          30
+        ],
+        "456": [
+          771,
+          170,
+          10,
+          30
+        ],
+        "457": [
+          786,
+          153,
+          10,
+          30
+        ],
+        "458": [
+          798,
+          152,
+          10,
+          30
+        ],
+        "460": [
+          812,
+          162,
+          10,
+          30
+        ],
+        "461": [
+          825,
+          163,
+          10,
+          30
+        ],
+        "462": [
+          839,
+          162,
+          10,
+          30
+        ],
+        "464": [
+          854,
+          170,
+          10,
+          30
+        ],
+        "465": [
+          890,
+          154,
+          10,
+          30
+        ],
+        "466": [
+          900,
+          155,
+          10,
+          30
+        ],
+        "468": [
+          918,
+          166,
+          10,
+          30
+        ],
+        "469": [
+          932,
+          173,
+          10,
+          30
+        ],
+        "470": [
+          947,
+          162,
+          10,
+          30
+        ],
+        "472": [
+          958,
+          177,
+          10,
+          30
+        ],
+        "473": [
+          977,
+          171,
+          10,
+          30
+        ],
+        "474": [
+          988,
+          165,
+          10,
+          30
+        ],
+        "476": [
+          1003,
+          173,
+          10,
+          30
+        ],
+        "477": [
+          1015,
+          176,
+          10,
+          30
+        ],
+        "478": [
+          1035,
+          188,
+          10,
+          30
+        ],
+        "480": [
+          1049,
+          191,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "451": [
+          721,
+          85,
+          10,
+          30
+        ],
+        "453": [
+          745,
+          85,
+          10,
+          30
+        ],
+        "455": [
+          764,
+          83,
+          10,
+          30
+        ],
+        "457": [
+          786,
+          82,
+          10,
+          30
+        ],
+        "459": [
+          801,
+          80,
+          10,
+          30
+        ],
+        "461": [
+          824,
+          106,
+          10,
+          30
+        ],
+        "463": [
+          844,
+          87,
+          10,
+          30
+        ],
+        "465": [
+          885,
+          104,
+          10,
+          30
+        ],
+        "467": [
+          905,
+          90,
+          10,
+          30
+        ],
+        "469": [
+          932,
+          90,
+          10,
+          30
+        ],
+        "471": [
+          950,
+          93,
+          10,
+          30
+        ],
+        "473": [
+          973,
+          92,
+          10,
+          30
+        ],
+        "475": [
+          992,
+          92,
+          10,
+          30
+        ],
+        "477": [
+          1016,
+          108,
+          10,
+          30
+        ],
+        "479": [
+          1039,
+          93,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "3AY5ZN.png",
+      "index": 12,
+      "displayName": "Capture 13",
+      "description": "",
+      "cursorMin": 481,
+      "cursorMax": 515,
+      "playGlowsLeft": {
+        "481": [
+          326,
+          196,
+          10,
+          30
+        ],
+        "482": [
+          339,
+          180,
+          10,
+          30
+        ],
+        "484": [
+          352,
+          161,
+          10,
+          30
+        ],
+        "485": [
+          375,
+          169,
+          10,
+          30
+        ],
+        "486": [
+          388,
+          173,
+          10,
+          30
+        ],
+        "488": [
+          398,
+          180,
+          10,
+          30
+        ],
+        "489": [
+          419,
+          161,
+          10,
+          30
+        ],
+        "490": [
+          427,
+          164,
+          10,
+          30
+        ],
+        "492": [
+          441,
+          179,
+          10,
+          30
+        ],
+        "493": [
+          457,
+          169,
+          10,
+          30
+        ],
+        "494": [
+          470,
+          171,
+          10,
+          30
+        ],
+        "496": [
+          484,
+          196,
+          10,
+          30
+        ],
+        "497": [
+          512,
+          187,
+          10,
+          30
+        ],
+        "498": [
+          523,
+          184,
+          10,
+          30
+        ],
+        "499": [
+          538,
+          166,
+          10,
+          30
+        ],
+        "500": [
+          567,
+          168,
+          10,
+          30
+        ],
+        "504": [
+          596,
+          178,
+          10,
+          30
+        ],
+        "506": [
+          619,
+          172,
+          10,
+          30
+        ],
+        "508": [
+          635,
+          184,
+          10,
+          30
+        ],
+        "510": [
+          659,
+          173,
+          10,
+          30
+        ],
+        "512": [
+          682,
+          193,
+          10,
+          30
+        ],
+        "514": [
+          717,
+          179,
+          10,
+          30
+        ],
+        "515": [
+          731,
+          175,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "WW5W3M.png",
+      "index": 13,
+      "displayName": "Capture 14",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "25WCXA.png",
+      "index": 14,
+      "displayName": "Capture 15",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "4MHCMY.png",
+      "index": 15,
+      "displayName": "Capture 16",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "YX563D.png",
+      "index": 16,
+      "displayName": "Capture 17",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "4ZBQ3D.png",
+      "index": 17,
+      "displayName": "Capture 18",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "UT9UXB.png",
+      "index": 18,
+      "displayName": "Capture 19",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "4W2KXE.png",
+      "index": 19,
+      "displayName": "Capture 20",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "3ZYXAH.png",
+      "index": 20,
+      "displayName": "Capture 21",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "F6ZNXA.png",
+      "index": 21,
+      "displayName": "Capture 22",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "59QZAE.png",
+      "index": 22,
+      "displayName": "Capture 23",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "YCQ9Q7.png",
+      "index": 23,
+      "displayName": "Capture 24",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "RTYUNF.png",
+      "index": 24,
+      "displayName": "Capture 25",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "UUTRK6.png",
+      "index": 25,
+      "displayName": "Capture 26",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "9MPXZZ.png",
+      "index": 26,
+      "displayName": "Capture 27",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "RNP9GQ.png",
+      "index": 27,
+      "displayName": "Capture 28",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "Z92356.png",
+      "index": 28,
+      "displayName": "Capture 29",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "FETKMG.png",
+      "index": 29,
+      "displayName": "Capture 30",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "XPXPV5.png",
+      "index": 30,
+      "displayName": "Capture 31",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "RGUXUW.png",
+      "index": 31,
+      "displayName": "Capture 32",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "RRBP7N.png",
+      "index": 32,
+      "displayName": "Capture 33",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "DDKC3Q.png",
+      "index": 33,
+      "displayName": "Capture 34",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "CCPX2M.png",
+      "index": 34,
+      "displayName": "Capture 35",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "BBEKBV.png",
+      "index": 35,
+      "displayName": "Capture 36",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "XUNQY7.png",
+      "index": 36,
+      "displayName": "Capture 37",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "UG6VRV.png",
+      "index": 37,
+      "displayName": "Capture 38",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "V38ACV.png",
+      "index": 38,
+      "displayName": "Capture 39",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "F4QBRX.png",
+      "index": 39,
+      "displayName": "Capture 40",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "3FD37N.png",
+      "index": 40,
+      "displayName": "Capture 41",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "2VD9TY.png",
+      "index": 41,
+      "displayName": "Capture 42",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "N2DX6W.png",
+      "index": 42,
+      "displayName": "Capture 43",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "3RMZB7.png",
+      "index": 43,
+      "displayName": "Capture 44",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "VKV7WU.png",
+      "index": 44,
+      "displayName": "Capture 45",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "4GEERA.png",
+      "index": 45,
+      "displayName": "Capture 46",
+      "description": "",
+      "cursorMin": 2282,
+      "cursorMax": 2317,
+      "playGlowsLeft": {},
+      "playGlowsRight": {
+        "2317": [
+          1031,
+          111,
+          10,
+          30
+        ],
+        "2316": [
+          1017,
+          119,
+          10,
+          30
+        ],
+        "2315": [
+          1004,
+          91,
+          10,
+          30
+        ],
+        "2314": [
+          993,
+          109,
+          10,
+          30
+        ],
+        "2313": [
+          977,
+          123,
+          10,
+          30
+        ],
+        "2312": [
+          958,
+          127,
+          10,
+          30
+        ],
+        "2311": [
+          946,
+          107,
+          10,
+          30
+        ],
+        "2310": [
+          933,
+          121,
+          10,
+          30
+        ],
+        "2309": [
+          924,
+          95,
+          10,
+          30
+        ],
+        "2308": [
+          911,
+          105,
+          10,
+          30
+        ],
+        "2307": [
+          898,
+          109,
+          10,
+          30
+        ],
+        "2306": [
+          884,
+          113,
+          10,
+          30
+        ],
+        "2305": [
+          869,
+          103,
+          10,
+          30
+        ],
+        "2304": [
+          855,
+          113,
+          10,
+          30
+        ],
+        "2303": [
+          846,
+          95,
+          10,
+          30
+        ],
+        "2302": [
+          830,
+          106,
+          10,
+          30
+        ],
+        "2301": [
+          819,
+          109,
+          10,
+          30
+        ],
+        "2300": [
+          810,
+          114,
+          10,
+          30
+        ],
+        "2299": [
+          781,
+          100,
+          10,
+          30
+        ],
+        "2298": [
+          769,
+          121,
+          10,
+          30
+        ],
+        "2297": [
+          755,
+          95,
+          10,
+          30
+        ],
+        "2296": [
+          741,
+          103,
+          10,
+          30
+        ],
+        "2295": [
+          731,
+          114,
+          10,
+          30
+        ],
+        "2294": [
+          718,
+          120,
+          10,
+          30
+        ],
+        "2293": [
+          705,
+          112,
+          10,
+          30
+        ],
+        "2292": [
+          692,
+          113,
+          10,
+          30
+        ],
+        "2291": [
+          677,
+          96,
+          10,
+          30
+        ],
+        "2290": [
+          668,
+          111,
+          10,
+          30
+        ],
+        "2289": [
+          651,
+          118,
+          10,
+          30
+        ],
+        "2288": [
+          644,
+          129,
+          10,
+          30
+        ],
+        "2287": [
+          630,
+          111,
+          10,
+          30
+        ],
+        "2286": [
+          614,
+          120,
+          10,
+          30
+        ],
+        "2285": [
+          604,
+          105,
+          10,
+          30
+        ],
+        "2284": [
+          598,
+          114,
+          10,
+          30
+        ],
+        "2283": [
+          580,
+          121,
+          10,
+          30
+        ],
+        "2282": [
+          563,
+          130,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "NKKMDV.png",
+      "index": 46,
+      "displayName": "Capture 47",
+      "description": "",
+      "cursorMin": 2318,
+      "cursorMax": 2353,
+      "playGlowsLeft": {},
+      "playGlowsRight": {
+        "2353": [
+          1043,
+          80,
+          10,
+          30
+        ],
+        "2352": [
+          1027,
+          98,
+          10,
+          30
+        ],
+        "2351": [
+          1008,
+          105,
+          10,
+          30
+        ],
+        "2350": [
+          988,
+          110,
+          10,
+          30
+        ],
+        "2349": [
+          972,
+          117,
+          10,
+          30
+        ],
+        "2348": [
+          950,
+          132,
+          10,
+          30
+        ],
+        "2347": [
+          929,
+          115,
+          10,
+          30
+        ],
+        "2346": [
+          910,
+          118,
+          10,
+          30
+        ],
+        "2345": [
+          890,
+          126,
+          10,
+          30
+        ],
+        "2344": [
+          872,
+          114,
+          10,
+          30
+        ],
+        "2343": [
+          850,
+          118,
+          10,
+          30
+        ],
+        "2342": [
+          833,
+          122,
+          10,
+          30
+        ],
+        "2341": [
+          786,
+          119,
+          10,
+          30
+        ],
+        "2340": [
+          770,
+          118,
+          10,
+          30
+        ],
+        "2339": [
+          758,
+          109,
+          10,
+          30
+        ],
+        "2338": [
+          732,
+          122,
+          10,
+          30
+        ],
+        "2337": [
+          716,
+          125,
+          10,
+          30
+        ],
+        "2336": [
+          690,
+          127,
+          10,
+          30
+        ],
+        "2335": [
+          671,
+          113,
+          10,
+          30
+        ],
+        "2334": [
+          656,
+          116,
+          10,
+          30
+        ],
+        "2333": [
+          634,
+          103,
+          10,
+          30
+        ],
+        "2332": [
+          616,
+          109,
+          10,
+          30
+        ],
+        "2331": [
+          602,
+          109,
+          10,
+          30
+        ],
+        "2330": [
+          574,
+          120,
+          10,
+          30
+        ],
+        "2329": [
+          544,
+          115,
+          10,
+          30
+        ],
+        "2328": [
+          527,
+          116,
+          10,
+          30
+        ],
+        "2327": [
+          508,
+          99,
+          10,
+          30
+        ],
+        "2326": [
+          485,
+          117,
+          10,
+          30
+        ],
+        "2325": [
+          467,
+          113,
+          10,
+          30
+        ],
+        "2324": [
+          447,
+          114,
+          10,
+          30
+        ],
+        "2323": [
+          425,
+          113,
+          10,
+          30
+        ],
+        "2322": [
+          408,
+          113,
+          10,
+          30
+        ],
+        "2321": [
+          388,
+          97,
+          10,
+          30
+        ],
+        "2320": [
+          371,
+          117,
+          10,
+          30
+        ],
+        "2319": [
+          358,
+          117,
+          10,
+          30
+        ],
+        "2318": [
+          332,
+          123,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "7Q8ETK.png",
+      "index": 47,
+      "displayName": "Capture 48",
+      "description": "",
+      "cursorMin": 2354,
+      "cursorMax": 2393,
+      "playGlowsLeft": {
+        "2354": [
+          317,
+          228,
+          10,
+          30
+        ],
+        "2355": [
+          342,
+          211,
+          10,
+          30
+        ],
+        "2356": [
+          354,
+          199,
+          10,
+          30
+        ],
+        "2357": [
+          374,
+          178,
+          10,
+          30
+        ],
+        "2358": [
+          391,
+          164,
+          10,
+          30
+        ],
+        "2359": [
+          414,
+          171,
+          10,
+          30
+        ],
+        "2360": [
+          430,
+          178,
+          10,
+          30
+        ],
+        "2361": [
+          449,
+          199,
+          10,
+          30
+        ],
+        "2362": [
+          465,
+          215,
+          10,
+          30
+        ],
+        "2363": [
+          481,
+          226,
+          10,
+          30
+        ],
+        "2364": [
+          500,
+          239,
+          10,
+          30
+        ],
+        "2365": [
+          515,
+          207,
+          10,
+          30
+        ],
+        "2366": [
+          536,
+          195,
+          10,
+          30
+        ],
+        "2367": [
+          550,
+          181,
+          10,
+          30
+        ],
+        "2368": [
+          570,
+          164,
+          10,
+          30
+        ],
+        "2369": [
+          594,
+          172,
+          10,
+          30
+        ],
+        "2370": [
+          607,
+          181,
+          10,
+          30
+        ],
+        "2371": [
+          628,
+          195,
+          10,
+          30
+        ],
+        "2372": [
+          644,
+          215,
+          10,
+          30
+        ],
+        "2373": [
+          661,
+          225,
+          10,
+          30
+        ],
+        "2374": [
+          697,
+          233,
+          10,
+          30
+        ],
+        "2375": [
+          719,
+          203,
+          10,
+          30
+        ],
+        "2376": [
+          734,
+          199,
+          10,
+          30
+        ],
+        "2377": [
+          748,
+          187,
+          10,
+          30
+        ],
+        "2378": [
+          763,
+          178,
+          10,
+          30
+        ],
+        "2379": [
+          794,
+          171,
+          10,
+          30
+        ],
+        "2380": [
+          806,
+          188,
+          10,
+          30
+        ],
+        "2381": [
+          829,
+          189,
+          10,
+          30
+        ],
+        "2382": [
+          845,
+          197,
+          10,
+          30
+        ],
+        "2383": [
+          860,
+          210,
+          10,
+          30
+        ],
+        "2384": [
+          876,
+          225,
+          10,
+          30
+        ],
+        "2385": [
+          900,
+          203,
+          10,
+          30
+        ],
+        "2386": [
+          913,
+          188,
+          10,
+          30
+        ],
+        "2387": [
+          928,
+          179,
+          10,
+          30
+        ],
+        "2388": [
+          952,
+          173,
+          10,
+          30
+        ],
+        "2389": [
+          975,
+          172,
+          10,
+          30
+        ],
+        "2390": [
+          992,
+          188,
+          10,
+          30
+        ],
+        "2391": [
+          1010,
+          194,
+          10,
+          30
+        ],
+        "2392": [
+          1026,
+          201,
+          10,
+          30
+        ],
+        "2393": [
+          1044,
+          204,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "2354": [
+          324,
+          95,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "R4V93P.png",
+      "index": 48,
+      "displayName": "Capture 49",
+      "description": "",
+      "cursorMin": 2394,
+      "cursorMax": 2433,
+      "playGlowsLeft": {
+        "2394": [
+          319,
+          229,
+          10,
+          30
+        ],
+        "2395": [
+          336,
+          200,
+          10,
+          30
+        ],
+        "2396": [
+          356,
+          186,
+          10,
+          30
+        ],
+        "2397": [
+          375,
+          180,
+          10,
+          30
+        ],
+        "2398": [
+          390,
+          174,
+          10,
+          30
+        ],
+        "2399": [
+          414,
+          163,
+          10,
+          30
+        ],
+        "2400": [
+          432,
+          180,
+          10,
+          30
+        ],
+        "2401": [
+          449,
+          185,
+          10,
+          30
+        ],
+        "2402": [
+          464,
+          191,
+          10,
+          30
+        ],
+        "2403": [
+          484,
+          198,
+          10,
+          30
+        ],
+        "2404": [
+          496,
+          229,
+          10,
+          30
+        ],
+        "2405": [
+          515,
+          200,
+          10,
+          30
+        ],
+        "2406": [
+          534,
+          186,
+          10,
+          30
+        ],
+        "2407": [
+          551,
+          175,
+          10,
+          30
+        ],
+        "2408": [
+          563,
+          169,
+          10,
+          30
+        ],
+        "2409": [
+          591,
+          169,
+          10,
+          30
+        ],
+        "2410": [
+          605,
+          175,
+          10,
+          30
+        ],
+        "2411": [
+          624,
+          181,
+          10,
+          30
+        ],
+        "2412": [
+          641,
+          190,
+          10,
+          30
+        ],
+        "2413": [
+          662,
+          199,
+          10,
+          30
+        ],
+        "2414": [
+          696,
+          211,
+          10,
+          30
+        ],
+        "2415": [
+          715,
+          185,
+          10,
+          30
+        ],
+        "2416": [
+          737,
+          178,
+          10,
+          30
+        ],
+        "2417": [
+          754,
+          161,
+          10,
+          30
+        ],
+        "2418": [
+          771,
+          157,
+          10,
+          30
+        ],
+        "2419": [
+          794,
+          160,
+          10,
+          30
+        ],
+        "2420": [
+          808,
+          174,
+          10,
+          30
+        ],
+        "2421": [
+          823,
+          175,
+          10,
+          30
+        ],
+        "2422": [
+          848,
+          186,
+          10,
+          30
+        ],
+        "2423": [
+          864,
+          189,
+          10,
+          30
+        ],
+        "2424": [
+          879,
+          211,
+          10,
+          30
+        ],
+        "2425": [
+          895,
+          186,
+          10,
+          30
+        ],
+        "2426": [
+          916,
+          178,
+          10,
+          30
+        ],
+        "2427": [
+          934,
+          162,
+          10,
+          30
+        ],
+        "2428": [
+          960,
+          157,
+          10,
+          30
+        ],
+        "2429": [
+          976,
+          163,
+          10,
+          30
+        ],
+        "2430": [
+          992,
+          173,
+          10,
+          30
+        ],
+        "2431": [
+          1012,
+          178,
+          10,
+          30
+        ],
+        "2432": [
+          1030,
+          187,
+          10,
+          30
+        ],
+        "2433": [
+          1051,
+          192,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "YW8ZC7.png",
+      "index": 49,
+      "displayName": "Capture 50",
+      "description": "",
+      "cursorMin": 2434,
+      "cursorMax": 2473,
+      "playGlowsLeft": {
+        "2434": [
+          327,
+          197,
+          10,
+          30
+        ],
+        "2435": [
+          343,
+          189,
+          10,
+          30
+        ],
+        "2436": [
+          360,
+          180,
+          10,
+          30
+        ],
+        "2437": [
+          373,
+          172,
+          10,
+          30
+        ],
+        "2438": [
+          394,
+          160,
+          10,
+          30
+        ],
+        "2439": [
+          415,
+          160,
+          10,
+          30
+        ],
+        "2440": [
+          430,
+          176,
+          10,
+          30
+        ],
+        "2441": [
+          449,
+          178,
+          10,
+          30
+        ],
+        "2442": [
+          462,
+          188,
+          10,
+          30
+        ],
+        "2443": [
+          477,
+          207,
+          10,
+          30
+        ],
+        "2444": [
+          496,
+          210,
+          10,
+          30
+        ],
+        "2445": [
+          511,
+          184,
+          10,
+          30
+        ],
+        "2446": [
+          532,
+          172,
+          10,
+          30
+        ],
+        "2447": [
+          553,
+          166,
+          10,
+          30
+        ],
+        "2448": [
+          567,
+          159,
+          10,
+          30
+        ],
+        "2449": [
+          591,
+          163,
+          10,
+          30
+        ],
+        "2450": [
+          611,
+          175,
+          10,
+          30
+        ],
+        "2451": [
+          624,
+          179,
+          10,
+          30
+        ],
+        "2452": [
+          641,
+          187,
+          10,
+          30
+        ],
+        "2453": [
+          662,
+          195,
+          10,
+          30
+        ],
+        "2454": [
+          699,
+          217,
+          10,
+          30
+        ],
+        "2455": [
+          720,
+          185,
+          10,
+          30
+        ],
+        "2456": [
+          735,
+          173,
+          10,
+          30
+        ],
+        "2457": [
+          755,
+          166,
+          10,
+          30
+        ],
+        "2458": [
+          770,
+          156,
+          10,
+          30
+        ],
+        "2459": [
+          795,
+          161,
+          10,
+          30
+        ],
+        "2460": [
+          809,
+          172,
+          10,
+          30
+        ],
+        "2461": [
+          823,
+          179,
+          10,
+          30
+        ],
+        "2462": [
+          843,
+          182,
+          10,
+          30
+        ],
+        "2463": [
+          867,
+          186,
+          10,
+          30
+        ],
+        "2464": [
+          879,
+          210,
+          10,
+          30
+        ],
+        "2465": [
+          898,
+          180,
+          10,
+          30
+        ],
+        "2466": [
+          920,
+          171,
+          10,
+          30
+        ],
+        "2467": [
+          933,
+          164,
+          10,
+          30
+        ],
+        "2468": [
+          952,
+          159,
+          10,
+          30
+        ],
+        "2469": [
+          974,
+          161,
+          10,
+          30
+        ],
+        "2470": [
+          994,
+          170,
+          10,
+          30
+        ],
+        "2471": [
+          1010,
+          180,
+          10,
+          30
+        ],
+        "2472": [
+          1023,
+          181,
+          10,
+          30
+        ],
+        "2473": [
+          1044,
+          194,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "RNFANK.png",
+      "index": 50,
+      "displayName": "Capture 51",
+      "description": "",
+      "cursorMin": 2474,
+      "cursorMax": 2513,
+      "playGlowsLeft": {
+        "2474": [
+          323,
+          221,
+          10,
+          30
+        ],
+        "2475": [
+          337,
+          198,
+          10,
+          30
+        ],
+        "2476": [
+          357,
+          187,
+          10,
+          30
+        ],
+        "2477": [
+          372,
+          171,
+          10,
+          30
+        ],
+        "2478": [
+          389,
+          165,
+          10,
+          30
+        ],
+        "2479": [
+          411,
+          161,
+          10,
+          30
+        ],
+        "2480": [
+          431,
+          177,
+          10,
+          30
+        ],
+        "2481": [
+          445,
+          187,
+          10,
+          30
+        ],
+        "2482": [
+          462,
+          196,
+          10,
+          30
+        ],
+        "2483": [
+          480,
+          215,
+          10,
+          30
+        ],
+        "2484": [
+          501,
+          223,
+          10,
+          30
+        ],
+        "2485": [
+          518,
+          204,
+          10,
+          30
+        ],
+        "2486": [
+          532,
+          185,
+          10,
+          30
+        ],
+        "2487": [
+          549,
+          171,
+          10,
+          30
+        ],
+        "2488": [
+          566,
+          161,
+          10,
+          30
+        ],
+        "2489": [
+          588,
+          160,
+          10,
+          30
+        ],
+        "2490": [
+          605,
+          179,
+          10,
+          30
+        ],
+        "2491": [
+          621,
+          183,
+          10,
+          30
+        ],
+        "2492": [
+          634,
+          199,
+          10,
+          30
+        ],
+        "2493": [
+          654,
+          210,
+          10,
+          30
+        ],
+        "2494": [
+          691,
+          217,
+          10,
+          30
+        ],
+        "2495": [
+          711,
+          203,
+          10,
+          30
+        ],
+        "2496": [
+          729,
+          188,
+          10,
+          30
+        ],
+        "2497": [
+          747,
+          175,
+          10,
+          30
+        ],
+        "2498": [
+          762,
+          168,
+          10,
+          30
+        ],
+        "2499": [
+          792,
+          165,
+          10,
+          30
+        ],
+        "2500": [
+          803,
+          180,
+          10,
+          30
+        ],
+        "2501": [
+          824,
+          189,
+          10,
+          30
+        ],
+        "2502": [
+          840,
+          199,
+          10,
+          30
+        ],
+        "2503": [
+          855,
+          211,
+          10,
+          30
+        ],
+        "2504": [
+          874,
+          226,
+          10,
+          30
+        ],
+        "2505": [
+          896,
+          200,
+          10,
+          30
+        ],
+        "2506": [
+          912,
+          188,
+          10,
+          30
+        ],
+        "2507": [
+          926,
+          178,
+          10,
+          30
+        ],
+        "2508": [
+          951,
+          168,
+          10,
+          30
+        ],
+        "2509": [
+          977,
+          169,
+          10,
+          30
+        ],
+        "2510": [
+          991,
+          178,
+          10,
+          30
+        ],
+        "2511": [
+          1010,
+          183,
+          10,
+          30
+        ],
+        "2512": [
+          1029,
+          197,
+          10,
+          30
+        ],
+        "2513": [
+          1049,
+          212,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "DHZQFV.png",
+      "index": 51,
+      "displayName": "Capture 52",
+      "description": "",
+      "cursorMin": 2514,
+      "cursorMax": 2547,
+      "playGlowsLeft": {
+        "2514": [
+          322,
+          218,
+          10,
+          30
+        ],
+        "2515": [
+          349,
+          186,
+          10,
+          30
+        ],
+        "2516": [
+          367,
+          179,
+          10,
+          30
+        ],
+        "2517": [
+          385,
+          169,
+          10,
+          30
+        ],
+        "2518": [
+          408,
+          159,
+          10,
+          30
+        ],
+        "2519": [
+          431,
+          166,
+          10,
+          30
+        ],
+        "2520": [
+          456,
+          168,
+          10,
+          30
+        ],
+        "2521": [
+          472,
+          190,
+          10,
+          30
+        ],
+        "2522": [
+          491,
+          197,
+          10,
+          30
+        ],
+        "2523": [
+          518,
+          214,
+          10,
+          30
+        ],
+        "2524": [
+          530,
+          215,
+          10,
+          30
+        ],
+        "2525": [
+          554,
+          207,
+          10,
+          30
+        ],
+        "2526": [
+          572,
+          182,
+          10,
+          30
+        ],
+        "2527": [
+          593,
+          168,
+          10,
+          30
+        ],
+        "2529": [
+          636,
+          169,
+          10,
+          30
+        ],
+        "2530": [
+          654,
+          178,
+          10,
+          30
+        ],
+        "2531": [
+          676,
+          189,
+          10,
+          30
+        ],
+        "2532": [
+          718,
+          209,
+          10,
+          30
+        ],
+        "2533": [
+          739,
+          192,
+          10,
+          30
+        ],
+        "2534": [
+          768,
+          180,
+          10,
+          30
+        ],
+        "2535": [
+          789,
+          163,
+          10,
+          30
+        ],
+        "2536": [
+          814,
+          157,
+          10,
+          30
+        ],
+        "2537": [
+          832,
+          164,
+          10,
+          30
+        ],
+        "2538": [
+          851,
+          176,
+          10,
+          30
+        ],
+        "2539": [
+          871,
+          201,
+          10,
+          30
+        ],
+        "2540": [
+          890,
+          216,
+          10,
+          30
+        ],
+        "2541": [
+          912,
+          191,
+          10,
+          30
+        ],
+        "2542": [
+          929,
+          189,
+          10,
+          30
+        ],
+        "2543": [
+          957,
+          171,
+          10,
+          30
+        ],
+        "2544": [
+          979,
+          172,
+          10,
+          30
+        ],
+        "2545": [
+          999,
+          167,
+          10,
+          30
+        ],
+        "2546": [
+          1022,
+          178,
+          10,
+          30
+        ],
+        "2547": [
+          1043,
+          199,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+      "file": "5KU5AG.png",
+      "index": 52,
+      "displayName": "Capture 53",
+      "description": "",
+      "cursorMin": 2548,
+      "cursorMax": 2577,
+      "playGlowsLeft": {
+        "2548": [
+          317,
+          220,
+          10,
+          30
+        ],
+        "2549": [
+          333,
+          198,
+          10,
+          30
+        ],
+        "2550": [
+          345,
+          180,
+          10,
+          30
+        ],
+        "2551": [
+          359,
+          167,
+          10,
+          30
+        ],
+        "2552": [
+          373,
+          166,
+          10,
+          30
+        ],
+        "2553": [
+          384,
+          164,
+          10,
+          30
+        ],
+        "2554": [
+          398,
+          185,
+          10,
+          30
+        ],
+        "2555": [
+          412,
+          206,
+          10,
+          30
+        ],
+        "2556": [
+          423,
+          224,
+          10,
+          30
+        ],
+        "2557": [
+          437,
+          202,
+          10,
+          30
+        ],
+        "2558": [
+          450,
+          190,
+          10,
+          30
+        ],
+        "2559": [
+          466,
+          170,
+          10,
+          30
+        ],
+        "2560": [
+          477,
+          170,
+          10,
+          30
+        ],
+        "2561": [
+          488,
+          170,
+          10,
+          30
+        ],
+        "2562": [
+          508,
+          187,
+          10,
+          30
+        ],
+        "2563": [
+          519,
+          196,
+          10,
+          30
+        ],
+        "2564": [
+          545,
+          218,
+          10,
+          30
+        ],
+        "2565": [
+          555,
+          197,
+          10,
+          30
+        ],
+        "2566": [
+          566,
+          188,
+          10,
+          30
+        ],
+        "2567": [
+          583,
+          170,
+          10,
+          30
+        ],
+        "2568": [
+          590,
+          167,
+          10,
+          30
+        ],
+        "2569": [
+          609,
+          169,
+          10,
+          30
+        ],
+        "2570": [
+          620,
+          185,
+          10,
+          30
+        ],
+        "2571": [
+          634,
+          195,
+          10,
+          30
+        ],
+        "2572": [
+          645,
+          224,
+          10,
+          30
+        ],
+        "2573": [
+          662,
+          207,
+          10,
+          30
+        ],
+        "2574": [
+          672,
+          188,
+          10,
+          30
+        ],
+        "2575": [
+          682,
+          172,
+          10,
+          30
+        ],
+        "2576": [
+          701,
+          167,
+          10,
+          30
+        ],
+        "2577": [
+          712,
+          174,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    }
+  ],
+  "isEmpty": false,
+  "songName": "Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+  "songFile": "Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo.pr",
+  "jsonName": "Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo.json",
+  "jsonFile": "./snaps/Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo.json",
+  "depotFolder": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_2nd_Mvmt_-_Piano_Solo",
+  "hasUnsavedChanges": false
+}

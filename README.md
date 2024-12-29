@@ -18,7 +18,7 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 - **Quick find**: a given chord whose location is unknown can be found just pressing the query chord on the MIDI keyboard.
 - **Perfect loop practice**: in looped practice, progress can be reset as soon as a mistake is made 😈
 - **Lookahead view**: the keyboard shows the notes to be pressed, but also the upcoming ones with different shades for improved 'sightreading'. Lookahead distance can be adjusted.
-- **Metronome**: practice with perfect timing.
+- **Built-in metronome**: practice with perfect timing.
 - **Unbound looped practice**: define a start point and try to play. Any mistake jumps you back to the starting point
 - **Direct view on the real score**: see the actual score while playing.
 
@@ -28,9 +28,9 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 - **More complete playing statistics**: provide some hindsight on the overall playing performance of a song
 - **Dynamic comments display**: a comment, or notes show at a certain cursor, for a certain section, like a copilot
 - **Flexible MIDI loading**: select the specific tracks you want to import (MIDI might have way more than 2)
-- **Metronome with dynamic tempo**: ajusts automatically throughout the score. Helps also to monitor your playing speed, hence your progress
+- **Metronome with dynamic tempo**: tempo is adjusted automatically throughout the score. It also helps to monitor your playing speed, hence your progress
 - **Semi-automated _fingersatz_ edition**: simplify the assignation of repeated sections (repeated chords, codas, etc.)
-- **Auto-highlight of the complex secions**: in the staffScope view, a color code shows the section that caused the most trouble, based on the playing statistics.
+- **Auto-highlight of the complex sections**: in the staffScope view, a color code shows the section that caused the most trouble, based on the playing statistics
 - **Time accuracy score display**: shows how well you play the notes at the right time
 
 ## Shortcuts

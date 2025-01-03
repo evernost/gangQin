@@ -57,6 +57,7 @@ class StaffScope :
     self.cursor = -1
 
     self.img = None
+    self.imgScaled = None
     self.imgFile = ""
     self.imgSpan = [-1,-1]
     self.imgHeight = -1
@@ -112,10 +113,25 @@ class StaffScope :
     self.db = database.Database(songFile)
     if (self.db.nSnapshots != 0) :
       self.loadStaffByIndex(0)
-    
-    else :
-      print("[ERROR] Database is empty! Capture the score first before calling this tool.")
-      exit()
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Database.checkEmpty()
+  # ---------------------------------------------------------------------------
+  def checkEmpty(self, exitOnEmpty = True) :
+    """
+    Checks if the database is empty. 
+    Exits the app if the corresponding option is set.
+    """
+
+    if (self.db.nSnapshots == 0) :
+      if exitOnEmpty :
+        print("[ERROR] Staffscope database is empty! Capture the score first before calling this tool.")
+        exit()
+      
+      else :
+        print("[NOTE] Staffscope database is empty!")
 
 
 
@@ -189,6 +205,7 @@ class StaffScope :
 
       else : 
         print(f"[DEBUG] Index = {index} has no image associated to it.")
+        self.imgScaled = None
         self.imgWidth = -1
         self.imgHeight = -1
         self._snapshotIndex = index
@@ -251,7 +268,8 @@ class StaffScope :
     """
     
     # Test if a staff has been loaded
-    # ...
+    if (self.imgScaled == None) :
+      return
 
     # Render the staff
     self.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))

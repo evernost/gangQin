@@ -67,6 +67,7 @@ keyboardWidget = keyboard.Keyboard(loc = (10, 300))
 staffScopeWidget = staffScope.StaffScope()
 staffScopeWidget.setScreen(screen, screenWidth, screenHeight)
 staffScopeWidget.load(songFile)
+staffScopeWidget.checkEmpty()
 
 # Finger editor widget
 handSelWidget = handSelector.handSelector()

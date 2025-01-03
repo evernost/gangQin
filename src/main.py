@@ -88,6 +88,7 @@ staffScopeVisible = False
 staffScopeWidget = staffScope.StaffScope()
 staffScopeWidget.setScreen(screen, screenWidth, screenHeight)
 staffScopeWidget.load(songFile)
+staffScopeWidget.checkEmpty(exitOnEmpty = False)
 
 # Finger editor widget
 fingerSelWidget = fingerSelector.FingerSelector((490, 470))

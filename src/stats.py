@@ -70,7 +70,7 @@ class Stats :
 
     self.comboCount = 0
     self.comboDrop = 0
-    self.comboDropHistogram = []    # For each cursor value, keeps track of how many times there was a combo drop
+    self.comboDropHistogram = {}    # For each cursor value, keeps track of how many times there was a combo drop
     self.comboFell = False
     self.comboHighestSession = 0
     self.comboHighestAllTime = 0

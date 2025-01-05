@@ -55,7 +55,7 @@ class scoreStatus :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database.setScreen()
+  # METHOD ScoreStatus.setScreen()
   # ---------------------------------------------------------------------------
   def setScreen(self, screenObj) :
     """
@@ -68,7 +68,7 @@ class scoreStatus :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: FingerSelector.render()
+  # METHOD: ScoreStatus.render()
   # ---------------------------------------------------------------------------
   def render(self) :
     """
@@ -101,7 +101,7 @@ class scoreStatus :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD HandSelector.clickDown(mouse coordinates)
+  # METHOD ScoreStatus.clickDown(mouse coordinates)
   # ---------------------------------------------------------------------------
   def clickDown(self, coord) :
     """
@@ -131,7 +131,7 @@ class scoreStatus :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD HandSelector.rightClickDown(mouse coordinates)
+  # METHOD ScoreStatus.rightClickDown(mouse coordinates)
   # ---------------------------------------------------------------------------
   def rightClickDown(self, coord) :
     """
@@ -154,7 +154,7 @@ class scoreStatus :
 # Unit tests
 # =============================================================================
 if (__name__ == "__main__") :
-  print("[INFO] There are no unit tests available for 'handSelector.py'")
+  print("[INFO] There are no unit tests available for 'scoreStatus.py'")
 
 
 

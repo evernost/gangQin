@@ -107,8 +107,6 @@ pygame.mixer.init(frequency = 44100, size = -16, channels = 1, buffer = 512)
 statsObj = stats.Stats()
 statsObj.load(songFile)
 statsObj.showIntroSummary()
-#STATS_TASK = pygame.USEREVENT + 2
-#pygame.time.set_timer(STATS_TASK, stats.TICK_INTERVAL_MS)
 
 # Create the arbiter
 pianoArbiter = arbiter.Arbiter("permissive")
@@ -560,7 +558,7 @@ while running :
 
     # Invalid input
     if (msg == arbiter.MSG_RESET_COMBO) :  
-      statsObj.wrongNote()
+      statsObj.wrongNote(userScore.getCursor())
       soundNotify.wrongNote()
       
       # Strict looped practice: a wrong note resets the cursor to the beginning of the loop.

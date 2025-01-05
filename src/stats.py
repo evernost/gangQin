@@ -70,14 +70,15 @@ class Stats :
 
     self.comboCount = 0
     self.comboDrop = 0
-    self.comboDropHistogram = {}    # For each cursor value, keeps track of how many times there was a combo drop
+    self.comboDropHistogram = {}    # For each cursor value, keeps track of how many times there was a combo drop (deprecated?)
     self.comboFell = False
     self.comboHighestSession = 0
     self.comboHighestAllTime = 0
 
-    self.cursorHistogram = []       # For a given cursor: how many times this location was hit
-    self.cursorWrongNoteCount = []  # For a given cursor: how many times a wrong note was played
+    self.cursorHistogram = {}       # For a given cursor: how many times this location was hit
+    self.cursorWrongNoteCount = {}  # For a given cursor: how many times a wrong note was played
     self.cursorIdleTimer = 0        # Timer detecting a session on idle (user does not play anymore)
+    self.cursorLastWrongReport = -1
     
     self.playedNotes = 0            # Total number of correct notes played, regardless of the arbiter's decision
     self.playedNotesValid = 0       # Total number of correct notes played i.e. valid keyboard input that incremented the cursor
@@ -171,8 +172,8 @@ class Stats :
       "comboFell"               : False,
       "comboHighestSession"     : 0,
       "comboHighestAllTime"     : 0,
-      "cursorHistogram"         : [],
-      "cursorWrongNoteCount"    : [],
+      "cursorHistogram"         : {},
+      "cursorWrongNoteCount"    : {},
       "cursorIdleTimer"         : 0,
       "playedNotes"             : 0,
       "playedNotesValid"        : 0,
@@ -265,20 +266,31 @@ class Stats :
 
     if (self.comboCount > self.comboHighestAllTime) :
       self.comboHighestAllTime = self.comboCount
+    
+    self.cursorLastWrongReport = -1
 
 
 
   # ---------------------------------------------------------------------------
   # METHOD Stats.wrongNote()
   # ---------------------------------------------------------------------------
-  def wrongNote(self) :
+  def wrongNote(self, cursor) :
     """
-    Update the combo counter when an incorrect keyboard input is given.
+    Update the combo counter when the user plays a wrong note.
     Partial but correct inputs do not trigger a "wrong note" condition.
     """
 
     self.isComboBroken = (self.comboCount != 0)
     self.comboCount = 0
+    
+    if (cursor != self.cursorLastWrongReport) :
+      if not(cursor in self.cursorWrongNoteCount) :
+        self.cursorWrongNoteCount[cursor] = 1
+      else :
+        self.cursorWrongNoteCount[cursor] += 1
+      
+      self.cursorLastWrongReport = cursor
+      print(f"[DEBUG] Wrong note reported at cursor = {cursor} (count now: {self.cursorWrongNoteCount[cursor]})")
     
     
 
@@ -325,32 +337,6 @@ class Stats :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.updateStats()
-  # ---------------------------------------------------------------------------
-  # def updateStats(self) :
-  #   """
-  #   Add the current cursor to the statistics.
-  #   """
-    
-  #   if (self.getCursor() != self.statsLastCursor) :
-  #     self.statsSteadyCount = 0
-  #     self.statsLastCursor = self.getCursor()
-
-  #   else :
-  #     if (self.statsSteadyCount < CURSOR_STEADY_COUNT_LIMIT) :
-  #       self.statsCursor[self.getCursor()] += 1
-  #       self.statsSteadyCount += 1
-
-  #     elif (self.statsSteadyCount == CURSOR_STEADY_COUNT_LIMIT) :
-  #       print(f"[DEBUG] Steady limit reached! (cursor = {self.getCursor()+1})")
-  #       self.statsSteadyCount += 1
-
-  #     else :
-  #       pass
-
-
-
-  # ---------------------------------------------------------------------------
   # METHOD Stats.userActivity()
   # ---------------------------------------------------------------------------
   def userActivity(self) :
@@ -363,7 +349,7 @@ class Stats :
     idleTime = round(time.perf_counter() - self.lastActivity)
     if (idleTime > 10) :
       self.totalInactivity_sec += idleTime
-      print("Welcome back, Cindarella :)")
+      print("Welcome back, Sleeping Beauty :)")
 
     self.lastActivity = time.perf_counter()
 
@@ -440,10 +426,19 @@ class Stats :
     # make much sense.
     if (duration > MINIMAL_SESSION_DURATION_SEC) :
       exportDict = {}
-      exportDict["sessionCount"]              = self.sessionCount
-      exportDict["sessionLog"]                = self.sessionLog + [self.getSessionLog()]
-      exportDict["sessionAvgPracticeTime"]    = self.sessionAvgPracticeTime
-      exportDict["totalPracticeTimeSec"]      = self.totalPracticeTimeSec + duration
+      exportDict["logName"]                 = self.logName
+      exportDict["logFile"]                 = self.logFile
+      exportDict["scoreLength"]             = self.scoreLength
+      exportDict["sessionCount"]            = self.sessionCount
+      exportDict["sessionLog"]              = self.sessionLog + [self.getSessionLog()]
+      exportDict["sessionAvgPracticeTime"]  = self.sessionAvgPracticeTime
+      exportDict["totalPracticeTimeSec"]    = self.totalPracticeTimeSec + duration
+      exportDict["cursorHistogram"]         = self.cursorHistogram
+      exportDict["cursorWrongNoteCount"]    = self.cursorWrongNoteCount
+      exportDict["comboHighestSession"]     = self.comboHighestSession
+      exportDict["comboHighestAllTime"]     = self.comboHighestAllTime
+      exportDict["playedNotes"]             = self.playedNotes
+      exportDict["playedNotesValid"]        = self.playedNotesValid
       
       with open(self.logFile, "w") as jsonFile :
         json.dump(exportDict, jsonFile, indent = 2)
@@ -451,7 +446,7 @@ class Stats :
       print(f"[INFO] Session stats saved to '{self.logFile}'")
     
     else :
-      print(f"[INFO] Session shorter than {MINIMAL_SESSION_DURATION_SEC}s are not saved to keep logs meaningful.")
+      print(f"[INFO] Stats for this session won't be saved (shorter than {MINIMAL_SESSION_DURATION_SEC}s) to keep logs meaningful.")
 
 
 

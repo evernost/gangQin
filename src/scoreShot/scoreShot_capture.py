@@ -65,14 +65,13 @@ print("- 'q'                    : exit app")
 
 
 
-# Call the song file selection GUI
+# Show the song file selection GUI
 fileSel = fileSelectionGUI.new()
 fileSel.setTitle("ScoreShot (Capture) - New session")
 songFile = fileSel.show()
 
-
+# Show the capture GUI
 root = tk.Tk()
-
 app = captureGUI.CaptureGUI(root)
 app.loadDatabase(songFile)
 app.loadGUIConfig()

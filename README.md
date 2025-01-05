@@ -1,4 +1,4 @@
-# gangQin v2.0 (alpha)
+# gangQin v2.0 (beta)
 Piano learning app, for those who struggle with the conventional music scores.
 
 ![image](https://github.com/user-attachments/assets/1cd22e89-eea6-40ad-90cc-525259448a2c)
@@ -7,6 +7,7 @@ Piano learning app, for those who struggle with the conventional music scores.
 A piano keyboard with MIDI output, plugged into a computer running your favorite Python interpreter.
 
 ## Features (current release)
+
 - **MIDI import**: import your songs from standard MIDI files
 - **Bookmarking**: navigate quickly from one important section to the other without scrolling through the entire song
 - **_fingersatz_ edition**: edit and display the finger to use for each note
@@ -19,8 +20,8 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 - **Perfect loop practice**: in looped practice, progress can be reset as soon as a mistake is made 😈
 - **Lookahead view**: the keyboard shows the notes to be pressed, but also the upcoming ones with different shades for improved 'sightreading'. Lookahead distance can be adjusted.
 - **Built-in metronome**: practice with perfect timing.
-- **Unbound looped practice**: define a start point and try to play. Any mistake jumps you back to the starting point
-- **Direct view on the real score**: see the actual score while playing.
+- **Unbound looped practice**: define a start point and try to play from it on. Any mistake sends you back to the starting point.
+- **Direct view on the real score**: import the real score and have it displayed while playing.
 
 ## Upcoming features (one day)
 
@@ -68,3 +69,11 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 - **mido** (tested with version 1.3.2)
 - **rtmidi** (tested with version 1.5.8)
   - pip install python-rtmidi
+
+
+## TODO / Ideas
+
+Remaining tasks: 
+- [ ] staffscope: highlight the sections that causes the most trouble.
+- [ ] scoreShot-capture: on the capture window, show the snapshot count number.
+- [ ] staffscope: print a "no signal" message when there is no staff available for the current cursor

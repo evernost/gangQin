@@ -1,0 +1,13 @@
+{
+  "sessionCount": 6,
+  "sessionLog": [
+    "Session 1: Saturday, December 14th at 15:35. Duration: 2min33s",
+    "Session 2: Sunday, December 15th at 11:58. Duration: 5min14s",
+    "Session 3: Sunday, December 15th at 13:26. Duration: 17min6s",
+    "Session 4: Monday, December 16th at 23:45. Duration: 2min34s",
+    "Session 5: Friday, January 03rd at 23:23. Duration: 8min37s",
+    "Session 6: Sunday, January 05th at 00:52. Duration: 9min19s"
+  ],
+  "sessionAvgPracticeTime": 6,
+  "totalPracticeTimeSec": 2723
+}

@@ -1,0 +1,9 @@
+{
+  "sessionCount": 2,
+  "sessionLog": [
+    "Session 1: Saturday, January 04th at 13:37. Duration: 8min9s",
+    "Session 2: Sunday, January 05th at 00:27. Duration: 24min12s"
+  ],
+  "sessionAvgPracticeTime": 4,
+  "totalPracticeTimeSec": 1941
+}

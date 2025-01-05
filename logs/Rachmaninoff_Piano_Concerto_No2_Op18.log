@@ -1,5 +1,5 @@
 {
-  "sessionCount": 7,
+  "sessionCount": 29,
   "sessionLog": [
     "Session 1: Wednesday, November 27th at 23:15. Duration: 0min4s",
     "Session 2: Wednesday, November 27th at 23:15. Duration: 0min6s",
@@ -7,8 +7,30 @@
     "Session 4: Thursday, November 28th at 22:17. Duration: 0min5s",
     "Session 5: Thursday, November 28th at 23:11. Duration: 0min8s",
     "Session 6: Thursday, November 28th at 23:12. Duration: 1min9s",
-    "Session 7: Thursday, November 28th at 23:36. Duration: 0min3s"
+    "Session 7: Thursday, November 28th at 23:36. Duration: 0min3s",
+    "Session 8: Tuesday, December 03rd at 22:38. Duration: 24min25s",
+    "Session 9: Saturday, December 07th at 14:36. Duration: 16min34s",
+    "Session 10: Sunday, December 08th at 00:14. Duration: 30min50s",
+    "Session 11: Sunday, December 08th at 12:09. Duration: 35min57s",
+    "Session 12: Sunday, December 08th at 16:23. Duration: 21min28s",
+    "Session 13: Sunday, December 08th at 23:34. Duration: 16min40s",
+    "Session 14: Monday, December 09th at 23:37. Duration: 9min11s",
+    "Session 15: Thursday, December 12th at 23:11. Duration: 0min9s",
+    "Session 16: Thursday, December 12th at 23:12. Duration: 28min48s",
+    "Session 17: Friday, December 13th at 20:28. Duration: 14min18s",
+    "Session 18: Saturday, December 14th at 13:06. Duration: 2min15s",
+    "Session 19: Saturday, December 14th at 13:08. Duration: 12min29s",
+    "Session 20: Saturday, December 14th at 15:31. Duration: 3min42s",
+    "Session 21: Sunday, December 15th at 12:03. Duration: 19min47s",
+    "Session 22: Sunday, December 15th at 13:26. Duration: 0min1s",
+    "Session 23: Sunday, December 15th at 22:36. Duration: 21min56s",
+    "Session 24: Monday, December 16th at 23:25. Duration: 19min13s",
+    "Session 25: Tuesday, December 17th at 22:12. Duration: 25min25s",
+    "Session 26: Wednesday, December 18th at 23:47. Duration: 20min2s",
+    "Session 27: Friday, January 03rd at 22:55. Duration: 27min4s",
+    "Session 28: Saturday, January 04th at 13:46. Duration: 22min18s",
+    "Session 29: Sunday, January 05th at 00:13. Duration: 12min23s"
   ],
-  "sessionAvgPracticeTime": 0,
-  "totalPracticeTimeSec": 102
+  "sessionAvgPracticeTime": 13,
+  "totalPracticeTimeSec": 23197
 }

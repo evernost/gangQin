@@ -27,8 +27,9 @@ import time
 # =============================================================================
 # Constants pool
 # =============================================================================
-TICK_INTERVAL_MS = 500
-MINIMAL_SESSION_DURATION_SEC = 60*5
+TICK_INTERVAL_MS = 500                # Deprecated.
+MINIMAL_SESSION_DURATION_SEC = 60*5   # Minimal duration required for a session to have its stats saved
+IDLE_TIME_THRESHOLD_SEC = 20          # After this amount of time without any user activity, the inactivity time is deduced from the session time
 
 
 
@@ -347,7 +348,7 @@ class Stats :
     """
     
     idleTime = round(time.perf_counter() - self.lastActivity)
-    if (idleTime > 10) :
+    if (idleTime > IDLE_TIME_THRESHOLD_SEC) :
       self.totalInactivity_sec += idleTime
       print("Welcome back, Sleeping Beauty :)")
 

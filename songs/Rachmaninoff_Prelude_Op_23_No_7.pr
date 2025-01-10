@@ -2,13 +2,14 @@
   "revision": "v2.0",
   "nStaffs": 2,
   "avgNoteDuration": 310.03485103991005,
-  "cursor": 0,
+  "cursor": 1132,
   "bookmarks": [
     0,
     128,
     192,
     206,
     251,
+    379,
     443,
     510,
     574,
@@ -445,6 +446,21 @@
       "id": 1130
     },
     {
+      "pitch": 54,
+      "hand": 0,
+      "finger": 2,
+      "keyColor": 1,
+      "noteIndex": 1,
+      "startTime": 90480,
+      "stopTime": 90599,
+      "sustained": false,
+      "inactive": false,
+      "disabled": false,
+      "voice": 0,
+      "name": "Gb3",
+      "id": 1408
+    },
+    {
       "pitch": 55,
       "hand": 0,
       "finger": 0,
@@ -657,7 +673,7 @@
     {
       "pitch": 56,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 8,
       "startTime": 83880,
@@ -1780,6 +1796,21 @@
       "id": 1133
     },
     {
+      "pitch": 60,
+      "hand": 0,
+      "finger": 1,
+      "keyColor": 0,
+      "noteIndex": 2,
+      "startTime": 28680,
+      "stopTime": 28793,
+      "sustained": false,
+      "inactive": false,
+      "disabled": false,
+      "voice": 0,
+      "name": "C4",
+      "id": 1182
+    },
+    {
       "pitch": 61,
       "hand": 0,
       "finger": 2,
@@ -2022,7 +2053,7 @@
     {
       "pitch": 61,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 21,
       "startTime": 89640,
@@ -2742,7 +2773,7 @@
     {
       "pitch": 62,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 40,
       "startTime": 89520,
@@ -5997,7 +6028,7 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 29,
       "startTime": 58920,
@@ -8652,7 +8683,7 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "keyColor": 1,
       "noteIndex": 28,
       "startTime": 59040,
@@ -14637,7 +14668,7 @@
     {
       "pitch": 80,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 16,
       "startTime": 137040,
@@ -14937,7 +14968,7 @@
     {
       "pitch": 82,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 8,
       "startTime": 136920,
@@ -19241,21 +19272,6 @@
     },
     {
       "pitch": 54,
-      "hand": 0,
-      "finger": 2,
-      "keyColor": 1,
-      "noteIndex": 1,
-      "startTime": 90480,
-      "stopTime": 90599,
-      "sustained": false,
-      "inactive": false,
-      "disabled": false,
-      "voice": 0,
-      "name": "Gb3",
-      "id": 1408
-    },
-    {
-      "pitch": 54,
       "hand": 1,
       "finger": 0,
       "keyColor": 1,
@@ -20759,21 +20775,6 @@
       "hand": 1,
       "finger": 0,
       "keyColor": 1,
-      "noteIndex": 15,
-      "startTime": 99360,
-      "stopTime": 99599,
-      "sustained": false,
-      "inactive": false,
-      "disabled": false,
-      "voice": 0,
-      "name": "Bb3",
-      "id": 1453
-    },
-    {
-      "pitch": 58,
-      "hand": 1,
-      "finger": 0,
-      "keyColor": 1,
       "noteIndex": 16,
       "startTime": 104400,
       "stopTime": 104639,
@@ -20918,6 +20919,21 @@
       "voice": 0,
       "name": "Bb3",
       "id": 1747
+    },
+    {
+      "pitch": 59,
+      "hand": 1,
+      "finger": 0,
+      "keyColor": 0,
+      "noteIndex": 15,
+      "startTime": 99360,
+      "stopTime": 99599,
+      "sustained": false,
+      "inactive": false,
+      "disabled": false,
+      "voice": 0,
+      "name": "B3",
+      "id": 1453
     },
     {
       "pitch": 59,
@@ -21443,21 +21459,6 @@
       "voice": 0,
       "name": "C4",
       "id": 1180
-    },
-    {
-      "pitch": 60,
-      "hand": 0,
-      "finger": 1,
-      "keyColor": 0,
-      "noteIndex": 2,
-      "startTime": 28680,
-      "stopTime": 28793,
-      "sustained": false,
-      "inactive": false,
-      "disabled": false,
-      "voice": 0,
-      "name": "C4",
-      "id": 1182
     },
     {
       "pitch": 60,

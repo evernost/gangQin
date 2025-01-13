@@ -1,0 +1,43 @@
+{
+  "logName": "Erik_Satie_Priere.log",
+  "logFile": "./logs/Erik_Satie_Priere.log",
+  "scoreLength": 0,
+  "sessionCount": 1,
+  "sessionLog": [
+    "Session 1: Wednesday, January 08th at 22:21. Duration: 5min13s"
+  ],
+  "sessionAvgPracticeTime": 0.0,
+  "totalPracticeTimeSec": 313,
+  "cursorHistogram": {},
+  "cursorWrongNoteCount": {
+    "0": 1,
+    "1": 4,
+    "3": 3,
+    "4": 2,
+    "5": 1,
+    "6": 2,
+    "7": 1,
+    "10": 1,
+    "11": 3,
+    "13": 2,
+    "16": 1,
+    "18": 3,
+    "20": 2,
+    "25": 2,
+    "26": 2,
+    "2": 1,
+    "9": 1,
+    "24": 1,
+    "36": 1,
+    "37": 1,
+    "38": 1,
+    "39": 1,
+    "43": 1,
+    "45": 1,
+    "47": 1
+  },
+  "comboHighestSession": 10,
+  "comboHighestAllTime": 10,
+  "playedNotes": 0,
+  "playedNotesValid": 0
+}

@@ -74,6 +74,7 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 ## TODO / Ideas
 
 Remaining tasks: 
+- [ ] terminate properly when the last cursor is reached.
 - [ ] staffscope: highlight the sections that causes the most trouble.
 - [ ] scoreShot-capture: on the capture window, show the snapshot count number.
 - [ ] staffscope: print a "no signal" message when there is no staff available for the current cursor

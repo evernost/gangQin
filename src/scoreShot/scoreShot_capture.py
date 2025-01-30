@@ -13,15 +13,6 @@
 
 
 # =============================================================================
-# Tasks
-# =============================================================================
-# TODO: on the main window, a scroll browses through the snapshots.
-# TODO: restore the last position of the rulers, restore the dimension of the 
-#       capture window, the last position of the rulers etc.
-
-
-
-# =============================================================================
 # External libs 
 # =============================================================================
 import src.scoreShot.fileSelectionGUI as fileSelectionGUI

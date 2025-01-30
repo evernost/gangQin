@@ -91,8 +91,8 @@ class StaffScope :
   # ---------------------------------------------------------------------------
   def setScreen(self, screenObj, width, height) :
     """
-    Creates an internal copy of the Pygame screen parameters.
-    Required to draw and interact with the widget.
+    Creates an internal copy of the Pygame screen object and parameters.
+    This copy is required to draw and interact with the widget.
     """
 
     self.screen = screenObj
@@ -219,9 +219,12 @@ class StaffScope :
     """
     Loads the staff that covers the cursor value passed as argument.
     Loads the playglows (left and right hand)
-    Loading has a cache to avoid useless workload.
+    The function has a cache feature to avoid useless workload at each frame.
     """
     
+    # Load the staff if:
+    # - either the cursor changed
+    # - a "clear cache" request occured
     if ((cursor != self.cursor) or self._cacheClearReq) :
       index = self.db.getIndexByCursor(cursor)
     

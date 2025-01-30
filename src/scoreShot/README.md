@@ -24,4 +24,11 @@ This folder contains the source code for **scoreShot-Capture** and **scoreShot-F
 | Page Down     |Previous snapshot|
 
 
+## TODO / Ideas
+
+Remaining tasks: 
+- [ ] scoreShot-capture: in the main window, a scroll browses through the snapshots.
+- [ ] scoreShot-capture: in the capture window, show the snapshot count number.
+- [ ] scoreShot-capture: restore the last position of the rulers, the dimension of the capture window, the last position of the rulers etc.
+
 

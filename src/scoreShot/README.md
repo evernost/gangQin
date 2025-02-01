@@ -1,8 +1,8 @@
 # scoreShot (v0.1)
-Score capture tools for the gangQin app.
+Score capture and fusion tools for the gangQin app.
 
 ## Development status
-Project is under construction (not even an Alpha release)
+scoreShot tools are in beta release.
 
 ![image](https://github.com/user-attachments/assets/faa06ad1-e868-4bab-8b29-3b9e56fadcc8)
 
@@ -27,6 +27,7 @@ This folder contains the source code for **scoreShot-Capture** and **scoreShot-F
 ## TODO / Ideas
 
 Remaining tasks: 
+- [ ] scoreShot-fusion: indicate the percentage of the score that has been merged.
 - [ ] scoreShot-capture: in the main window, a scroll browses through the snapshots.
 - [ ] scoreShot-capture: in the capture window, show the snapshot count number.
 - [ ] scoreShot-capture: restore the last position of the rulers, the dimension of the capture window, the last position of the rulers etc.

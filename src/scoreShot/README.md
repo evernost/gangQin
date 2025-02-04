@@ -27,6 +27,8 @@ This folder contains the source code for **scoreShot-Capture** and **scoreShot-F
 ## TODO / Ideas
 
 Remaining tasks: 
+- [ ] scoreShot-fusion: make the 'ghost' mode more visible.
+- [ ] scoreShot-fusion: add the possibility to edit directly the locations of playglows in 'ghost' mode.
 - [ ] scoreShot-fusion: indicate the percentage of the score that has been merged.
 - [ ] scoreShot-capture: in the main window, a scroll browses through the snapshots.
 - [ ] scoreShot-capture: in the capture window, show the snapshot count number.

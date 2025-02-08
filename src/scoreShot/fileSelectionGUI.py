@@ -156,6 +156,8 @@ class FileSelectionGUI :
   def CLBK_onQuit(self, event = None) :
     exit()
 
+
+
   # ---------------------------------------------------------------------------
   # METHOD FileSelectionGUI.CLBK_onStart()
   # ---------------------------------------------------------------------------

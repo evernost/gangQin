@@ -21,15 +21,13 @@ import tkinter as tk
 from tkinter import ttk
 
 # List of possible reports:
-# 1 - Score: wrong note
+# 1 - Score: note with incorrect pitch
 # 2 - Score: missing note
+# 2 - Score: note in excess
 # 3 - PlayGlow: not placed accurately
 # 4 - PlayGlow: missing
-# 5 - Other
-
-
-
-
+# 5 - Fingersatz: value is dubious
+# 6 - Other
 
 
 

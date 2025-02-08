@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
 # Project       : gangQin
-# Module name   : editorGUI
-# File name     : editorGUI.py
+# Module name   : captureGUI
+# File name     : captureGUI.py
 # Purpose       : self-contained class with all the appropriate elements to 
 #                 interact with the GUI.
 # Author        : QuBi (nitrogenium@hotmail.com)

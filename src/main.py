@@ -212,17 +212,19 @@ while running :
       if (keys[pygame.K_RIGHT] and ctrlKey) :
         userScore.cursorStep(10)
 
-      # # ---------------------------------------------
-      # # Tab key: highlight the note above for editing
-      # # ---------------------------------------------
-      # if (keys[pygame.K_TAB] and not(shiftKey)) :
-      #   fingerSelWidget.keyPress(keys)
+      # ---------------------------------------------
+      # Tab key: highlight the note above for editing
+      # ---------------------------------------------
+      if (keys[pygame.K_TAB] and not(shiftKey)) :
+        print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
+        # fingerSelWidget.keyPress(keys)
 
-      # # -----------------------------------------------
-      # # Maj + tab: highlight the note before for editing
-      # # -----------------------------------------------
-      # if (keys[pygame.K_TAB] and shiftKey) :
-      #   print("[TODO] Highlight previous note for fingersatz edition using Tab key")
+      # -----------------------------------------------
+      # Maj + tab: highlight the note before for editing
+      # -----------------------------------------------
+      if (keys[pygame.K_TAB] and shiftKey) :
+        print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
+        # fingerSelWidget.keyPress(keys)
 
       # ---------------------------------------
       # HOME: jump to the beginning of the file
@@ -425,6 +427,10 @@ while running :
       # -----------------------------------------
       if (keys[pygame.K_v]) :
         staffScopeVisible = not(staffScopeVisible)
+        if (staffScopeVisible) :
+          print("[INFO] Staffscope view: ON")
+        else :
+          print("[INFO] Staffscope view: OFF")
 
       # -------------------------
       # Space key: rehearsal mode

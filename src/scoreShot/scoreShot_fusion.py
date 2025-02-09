@@ -3,6 +3,7 @@
 # Project       : gangQin
 # Module name   : scoreShot_fusion
 # File name     : scoreShot_fusion.py
+# File type     : Python script (Python 3)
 # Purpose       : score snapshots / MIDI file merging tool
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Saturday, 19 October 2024

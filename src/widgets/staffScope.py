@@ -3,23 +3,13 @@
 # Project       : gangQin
 # Module name   : 
 # File name     : staffScope.py
+# File type     : Python script (Python 3)
 # Purpose       : viewer widget on the actual music score
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Sunday, 20 October 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
-
-
-# Specs:
-# - draws the staffScope widget
-# - loads and resizes the score snapshot efficiently (loads and reshapes once)
-# - draws the rectangle overlay on the score snapshot
-# - handles the user interactions
-
-# Combine with 'comboDropHistogram' from 'stats' to highlight the sections that 
-# cause the most trouble.
-
 
 # =============================================================================
 # External libs 
@@ -226,25 +216,21 @@ class StaffScope :
     # - either the cursor changed
     # - a "clear cache" request occured
     if ((cursor != self.cursor) or self._cacheClearReq) :
-      index = self.db.getIndexByCursor(cursor)
+      dbIndex = self.db.getIndexByCursor(cursor)
     
-      # The cursor is linked to a staff:
-      # - load the staff 
-      # - load the playglows (if any)
-      if (index != -1) :
-        self.loadStaffByIndex(index)
+      if (dbIndex != -1) :
+        self.loadStaffByIndex(dbIndex)
         if self.ghostMode :
-          self.playGlows = self.db.snapshots[index].getPlayGlowsInSnapshot(activeCursor = cursor)
+          self.playGlows = self.db.snapshots[dbIndex].getPlayGlowsInSnapshot(activeCursor = cursor)
         else :
-          self.playGlows = self.db.snapshots[index].getPlayGlowsAtCursor(cursor)
+          self.playGlows = self.db.snapshots[dbIndex].getPlayGlowsAtCursor(cursor)
         
-      # The cursor is not linked to any staff:
-      # - load a default index (the one pointed by the user)
+      # The cursor is not linked to any staff (dbIndex = -1)
+      # - load a default dbIndex (the one pointed by the user)
       # - no playglow is shown, waiting for user input.
       else :
         self.loadStaffByIndex(self._snapshotIndex)
         self.playGlows = []
-        # print(f"[DEBUG] Cursor {cursor} is not linked to any staff. Proceed with playglow input")
 
       self.cursor = cursor
       self._cacheClearReq = False
@@ -253,6 +239,18 @@ class StaffScope :
     else : 
       pass
 
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.isStaffAvailable(cursor)
+  # ---------------------------------------------------------------------------
+  def isStaffAvailable(self, cursor) :
+    """
+    Returns True if the current cursor has a score associated to it.
+    """
+    
+    return (self.db.getIndexByCursor(cursor) != -1)
+    
 
 
   # ---------------------------------------------------------------------------

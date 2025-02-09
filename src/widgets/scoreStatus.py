@@ -3,6 +3,7 @@
 # Project       : gangQin
 # Module name   : scoreStatus
 # File name     : scoreStatus.py
+# File type     : Python script (Python 3)
 # Purpose       : widget showing the status of a score in the staffScope
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Thursday, 28 November 2024

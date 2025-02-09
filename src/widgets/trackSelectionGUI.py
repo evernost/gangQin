@@ -3,6 +3,7 @@
 # Project       : gangQin
 # Module name   : trackSelectionGUI
 # File name     : trackSelectionGUI.py
+# File type     : Python script (Python 3)
 # Purpose       : provides GUI to select the tracks in a MIDI file.
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Tuesday, 17 September 2024

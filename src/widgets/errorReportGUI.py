@@ -3,6 +3,7 @@
 # Project       : gangQin
 # Module name   : errorReportGUI
 # File name     : errorReportGUI.py
+# File type     : Python script (Python 3)
 # Purpose       : shows the error reporting GUI
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Tuesday, 03 December 2024
@@ -23,11 +24,12 @@ from tkinter import ttk
 # List of possible reports:
 # 1 - Score: note with incorrect pitch
 # 2 - Score: missing note
-# 2 - Score: note in excess
-# 3 - PlayGlow: not placed accurately
-# 4 - PlayGlow: missing
-# 5 - Fingersatz: value is dubious
-# 6 - Other
+# 3 - Score: note in excess
+# 4 - Score: note misplaced in time
+# 5 - PlayGlow: not placed accurately
+# 6 - PlayGlow: missing
+# 7 - Fingersatz: value is dubious
+# 8 - Other
 
 
 

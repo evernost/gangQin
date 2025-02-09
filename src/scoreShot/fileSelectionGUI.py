@@ -3,6 +3,7 @@
 # Project       : gangQin
 # Module name   : fileSelectionGUI
 # File name     : fileSelectionGUI.py
+# File type     : Python script (Python 3)
 # Purpose       : shows the song selection GUI for scoreShot_capture/fusion
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Sunday, 01 December 2024

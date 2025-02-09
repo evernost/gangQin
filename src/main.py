@@ -3,6 +3,7 @@
 # Project       : gangQin
 # Module name   : main
 # File name     : main.py
+# File type     : Python script (Python 3)
 # Purpose       : application entry point
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Friday, 1 Sept 2023
@@ -509,8 +510,11 @@ while running :
   
   # Render the pianoroll / staffscope
   if staffScopeVisible :
-    staffScopeWidget.loadCursor(userScore.getCursor())
-    staffScopeWidget.render()
+    if staffScopeWidget.isStaffAvailable(userScore.getCursor()) :
+      staffScopeWidget.loadCursor(userScore.getCursor())
+      staffScopeWidget.render()
+    else :
+      pianoRollWidget.drawPianoRoll(screen, userScore.getCurrentTimecode())  
   else :
     pianoRollWidget.drawPianoRoll(screen, userScore.getCurrentTimecode())
 

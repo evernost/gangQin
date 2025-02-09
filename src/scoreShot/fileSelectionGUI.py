@@ -4,7 +4,7 @@
 # Module name   : fileSelectionGUI
 # File name     : fileSelectionGUI.py
 # Purpose       : shows the song selection GUI for scoreShot_capture/fusion
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Sunday, 01 December 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)

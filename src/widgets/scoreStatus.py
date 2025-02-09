@@ -4,7 +4,7 @@
 # Module name   : scoreStatus
 # File name     : scoreStatus.py
 # Purpose       : widget showing the status of a score in the staffScope
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Thursday, 28 November 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)

@@ -5,7 +5,7 @@
 # File name     : score.py
 # File type     : Python script (Python 3)
 # Purpose       : provides the functions to interact with the music score
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Thursday, 5 October 2023
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)

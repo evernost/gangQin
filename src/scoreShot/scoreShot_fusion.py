@@ -4,7 +4,7 @@
 # Module name   : scoreShot_fusion
 # File name     : scoreShot_fusion.py
 # Purpose       : score snapshots / MIDI file merging tool
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Saturday, 19 October 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)

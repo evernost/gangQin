@@ -4,7 +4,7 @@
 # Module name   : scoreShot_capture
 # File name     : scoreShot_capture.py
 # Purpose       : application entry point for the scoreShot capturing tool
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Monday, 24 September 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)

@@ -4,7 +4,7 @@
 # Module name   : main
 # File name     : main.py
 # Purpose       : application entry point
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Friday, 1 Sept 2023
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
@@ -27,7 +27,6 @@ import src.widgets.notify as notify
 import src.widgets.pianoRoll as pianoRoll
 import src.widgets.trackSelectionGUI as trackSelectionGUI
 import src.widgets.staffScope as staffScope
-# import src.widgets.testGUI as testGUI
 
 # Various utilities
 import arbiter
@@ -38,11 +37,11 @@ import stats
 import text
 import utils
 
-# For MIDI
+# MIDI
 import mido
 import rtmidi
 
-# For file/path utilities
+# File/path utilities
 import os
 
 

@@ -5,7 +5,7 @@
 # File name     : stats.py
 # File type     : Python script (Python 3)
 # Purpose       : generates statistics about the user practice of the song.
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Sunday, 15 September 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)

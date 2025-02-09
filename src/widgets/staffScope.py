@@ -4,7 +4,7 @@
 # Module name   : 
 # File name     : staffScope.py
 # Purpose       : viewer widget on the actual music score
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Sunday, 20 October 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)

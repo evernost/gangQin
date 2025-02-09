@@ -4,7 +4,7 @@
 # Module name   : errorReportGUI
 # File name     : errorReportGUI.py
 # Purpose       : shows the error reporting GUI
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Tuesday, 03 December 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)

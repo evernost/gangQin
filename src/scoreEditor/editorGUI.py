@@ -4,7 +4,7 @@
 # Module name   : editorGUI
 # File name     : editorGUI.py
 # Purpose       : GUI definition for the score editor
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Sunday, 09 February 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)

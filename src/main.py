@@ -555,14 +555,14 @@ while running :
     # Valid input
     if (msg == arbiter.MSG_CURSOR_NEXT) :
       userScore.cursorNext()
-      statsObj.intervalTimerUpdate(userScore.getCurrentTimecode())
+      # statsObj.intervalTimerUpdate(userScore.getCurrentTimecode())
       statsObj.correctNote()
 
       if (userScore.cursor == userScore.loopStart) :
         soundNotify.loopPassed()
       else :
         soundNotify.loopPassedReset()
-      
+
       soundNotify.wrongNoteReset()
 
     # Invalid input

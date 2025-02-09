@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
 # Project       : gangQin
-# Module name   : 
+# Module name   : staffScope
 # File name     : staffScope.py
 # File type     : Python script (Python 3)
-# Purpose       : viewer widget on the actual music score
+# Purpose       : viewer widget showing the actual score as the user plays
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Sunday, 20 October 2024
 # -----------------------------------------------------------------------------
@@ -92,7 +92,7 @@ class StaffScope :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database.load(<.pr filename string>)
+  # METHOD Database.load(string)
   # ---------------------------------------------------------------------------
   def load(self, songFile) :
     """

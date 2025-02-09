@@ -30,9 +30,9 @@
 # ----------------------
 REV_MAJOR = 2
 REV_MINOR = 0
-REV_TYPE = "ALPHA" # "ALPHA", "BETA", "STABLE"
-REV_YEAR = 2024
-REV_MONTH = "November"
+REV_TYPE = "BETA" # "ALPHA", "BETA", "STABLE"
+REV_YEAR = 2025
+REV_MONTH = "February"
 
 # Piano roll settings
 # Defines (roughly) the number of notes to be displayed ahead from the current cursor 

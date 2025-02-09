@@ -3,20 +3,18 @@
 # Project       : gangQin
 # Module name   : database
 # File name     : database.py
+# File type     : Python script (Python 3)
 # Purpose       : score capture database class
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Tuesday, 01 October 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
 
-
-
 # =============================================================================
 # External libs 
 # =============================================================================
 import src.scoreShot.snapshot as snapshot
-#import snapshot
 
 import json
 import os
@@ -37,8 +35,9 @@ import random
 class Database :
 
   """
-  Defines the class for the snapshot database.
-  This class only manages the snapshots and their arrangement within the database.
+  Class definition for the snapshot database.
+  This class only manages the snapshots files and their arrangement within 
+  the database.
   """
   def __init__(self, prFile) :
     
@@ -233,6 +232,7 @@ class Database :
     """
     Returns the list of items that need to be shown in the scoreShot GUI's listbox.
     """
+    
     L = [s.displayName for s in self.snapshots]
     return L
   

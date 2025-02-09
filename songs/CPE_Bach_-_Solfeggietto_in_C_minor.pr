@@ -2,8 +2,10 @@
   "revision": "v2.0",
   "nStaffs": 2,
   "avgNoteDuration": 130.43169398907105,
-  "cursor": 11,
-  "bookmarks": [],
+  "cursor": 0,
+  "bookmarks": [
+    0
+  ],
   "activeHands": "LR",
   "pianoRoll": [
     {

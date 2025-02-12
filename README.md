@@ -74,6 +74,7 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 ## TODO / Ideas
 
 Remaining tasks: 
+- [ ] CTRL+ and CTRL- adjust the view span in pianoroll mode.
 - [ ] terminate properly when the last cursor is reached.
 - [ ] staffscope: highlight the sections that causes the most trouble.
 - [ ] scoreShot-capture: on the capture window, show the snapshot count number.

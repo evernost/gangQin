@@ -5,11 +5,17 @@
 # File name     : arbiter.py
 # File type     : Python script (Python 3)
 # Purpose       : decision machinery to approve or reject the keyboard input.
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Friday, 26 July 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
+
+# =============================================================================
+# TODO
+# =============================================================================
+# - use a specific function to declare the teacher notes, instead of passing
+#   them in 'eval'
 
 # =============================================================================
 # External libs
@@ -22,6 +28,7 @@ from commons import *
 # =============================================================================
 # Constants pool
 # =============================================================================
+# Messages returned by the arbiter
 MSG_CURSOR_NEXT = 0
 MSG_RESET_COMBO = 1
 
@@ -55,12 +62,15 @@ class Arbiter :
   - midiAssociatedID: TODO
 
 
+  Mode of operation
+  - declare what happened on the MIDI interface using 'updateMidiState'
+  - indicate the expected notes using 'eval'
+
 
   NOTES
   Modes "exact" and "exact with sustain" came up with the very first releases 
   of gangQin, and have been refined since then because of several flaws.
   They will be removed in future releases.
-
   """
   
   
@@ -103,6 +113,18 @@ class Arbiter :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD: Arbiter.hasActiveMidiInput()
+  # ---------------------------------------------------------------------------
+  def hasActiveMidiInput(self) :
+    """
+    Returns True if notes are currently being played on the keyboard.
+    """
+    
+    return (max(self.midiCurr) == 1)
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD: Arbiter.suspendReq(pitchList)
   # ---------------------------------------------------------------------------
   def suspendReq(self, queryNotesPitch) :
@@ -125,9 +147,7 @@ class Arbiter :
     Evaluates the decision based on the current input with respect to the 
     expected notes.
 
-    <teacherNotes> is a list of all the expected notes.
-    <midiCurr> is the current MIDI input in format TODO
-
+    'teacherNotes' is the list of all the expected notes.
     """
 
     # Reformat the teacher notes, keep the 'new' notes only
@@ -138,49 +158,6 @@ class Arbiter :
         teacherNotesAsMidiArray[noteObj.pitch] = 1
     
     msgQueue = []
-
-    # STRATEGY: EXACT MODE (deprecated)
-    # if (self.comparisonMode == "exact") :
-    #   if (teacherNotesMidi == midiCurr) :
-    #     msgQueue.append(MSG_CURSOR_NEXT)
-    #     return ARBITER_DECISION_OK
-
-    # STRATEGY: EXACT WITH SUSTAIN (deprecated)
-    # if (self.comparisonMode == "exactWithSustain") :
-    #   allowProgress = True
-    #   for pitch in GRAND_PIANO_MIDI_RANGE :
-
-    #     # Case 1: the right note is pressed, but is actually an "old" key press (sustained note)
-    #     if ((teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 1)) :
-    #       allowProgress = False
-
-    #     # Case 2: a note is missing
-    #     if ((teacherNotesMidi[pitch] == 1) and (midiCurr[pitch] == 0) and (self.midiSustained[pitch] == 0)) :
-    #       allowProgress = False
-        
-    #     # Case 3: a wrong note is pressed 
-    #     if ((teacherNotesMidi[pitch] == 0) and (midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 0)) :
-    #       allowProgress = False
-
-    #   # Case 4: progress disabled because the "note finding" feature is still active
-    #   if (userScore.arbiterSuspendReq) :
-    #     allDown = True
-    #     for x in userScore.arbiterPitchListHold :
-    #       if (self.midiCurr[x] == 1) :
-    #         allDown = False
-
-    #     if allDown :
-    #       userScore.arbiterSuspendReq = False
-    #     else :
-    #       allowProgress = False
-
-    #   if allowProgress :
-    #     self.status = ARBITER_DECISION_OK
-        
-    #     # Take snapshot
-    #     for pitch in range(128) :
-    #       if ((teacherNotesMidi[pitch] == 1) and (self.midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 0)) :
-    #         self.midiSustained[pitch] = 1
 
     # STRATEGY: PERMISSIVE
     # Progress as long as the expected notes are pressed. 
@@ -271,4 +248,5 @@ class Arbiter :
 # Unit tests
 # =============================================================================
 if (__name__ == "__main__") :
-  print("[WARNING] This lib is not intended to be called as a main.")
+  print("[INFO] There are no unit tests available for 'arbiter.py'")
+

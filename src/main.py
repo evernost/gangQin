@@ -457,7 +457,7 @@ while running :
         # the current notes being pressed.
         # Note : use a copy of the MIDI notes list to prevent the 
         #        MIDI callback to mess with the function.
-        if (max(pianoArbiter.midiCurr) == 1) :
+        if (pianoArbiter.hasActiveMidiInput()) :
           print("[INFO] Backward search requested...")
           (suspendReq, pitchListHold) = userScore.search(pianoArbiter.midiCurr.copy())
           if suspendReq :
@@ -472,7 +472,7 @@ while running :
       if (event.button == MOUSE_SCROLL_DOWN) :
         
         # Find feature
-        if (max(pianoArbiter.midiCurr) == 1) :
+        if (pianoArbiter.hasActiveMidiInput()) :
           print("[INFO] Forward search requested...")
           (suspendReq, pitchListHold) = userScore.search(pianoArbiter.midiCurr.copy(), direction = -1)
           if suspendReq :

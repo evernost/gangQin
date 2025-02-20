@@ -256,8 +256,11 @@ class Stats :
   # ---------------------------------------------------------------------------
   def correctNote(self) :
     """
-    Updates the combo counter when the input is valid and triggers the next 
-    cursor.
+    This function must be called every time the user plays a correct input.
+    
+    Updates the stats with a correct input:
+    - increase the combo counter
+    - update the highest combo value ever reached
     """
 
     self.comboCount += 1
@@ -277,8 +280,11 @@ class Stats :
   # ---------------------------------------------------------------------------
   def wrongNote(self, cursor) :
     """
-    Update the combo counter when the user plays a wrong note.
-    Partial but correct inputs do not trigger a "wrong note" condition.
+    This function must be called every time the user plays an incorrect input.
+    
+    Updates the stats with an incorrect input:
+    - reset the combo counter
+    - update the wrong note counter at this cursor
     """
 
     self.isComboBroken = (self.comboCount != 0)
@@ -291,7 +297,7 @@ class Stats :
         self.cursorWrongNoteCount[cursor] += 1
       
       self.cursorLastWrongReport = cursor
-      print(f"[DEBUG] Wrong note reported at cursor = {cursor} (count now: {self.cursorWrongNoteCount[cursor]})")
+      print(f"[DEBUG] Wrong note! Total count: {self.cursorWrongNoteCount[cursor]}")
     
     
 
@@ -314,9 +320,9 @@ class Stats :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.getSessionLog()
+  # METHOD Score.generateSessionLog()
   # ---------------------------------------------------------------------------
-  def getSessionLog(self) :
+  def generateSessionLog(self) :
     """
     Packs the information of the current session in a human-readable string.
     """
@@ -431,7 +437,7 @@ class Stats :
       exportDict["logFile"]                 = self.logFile
       exportDict["scoreLength"]             = self.scoreLength
       exportDict["sessionCount"]            = self.sessionCount
-      exportDict["sessionLog"]              = self.sessionLog + [self.getSessionLog()]
+      exportDict["sessionLog"]              = self.sessionLog + [self.generateSessionLog()]
       exportDict["sessionAvgPracticeTime"]  = self.sessionAvgPracticeTime
       exportDict["totalPracticeTimeSec"]    = self.totalPracticeTimeSec + duration
       exportDict["cursorHistogram"]         = self.cursorHistogram

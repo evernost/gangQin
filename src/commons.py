@@ -104,7 +104,8 @@ SONG_PATH = "./songs"
 AUTOSAVE_INTERVAL_SEC = 90
 AUTOSAVE_BACKUP_PATH = "./backup"
 
-
+# Define if the staffscope is displayed by default at startup
+STAFFSCOPE_DEFAULT_VISIBILITY = True
 
 
 

@@ -84,7 +84,7 @@ pianoRollWidget.loadPianoRoll(userScore.pianoRoll)
 pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
 
 # Staffscope widget
-staffScopeVisible = False
+staffScopeVisible = STAFFSCOPE_DEFAULT_VISIBILITY
 staffScopeWidget = staffScope.StaffScope()
 staffScopeWidget.setScreen(screen, screenWidth, screenHeight)
 staffScopeWidget.load(songFile)
@@ -508,10 +508,16 @@ while running :
   if (currKey != None) :
     text.render(screen, f"KEY: {currKey.root.upper()} {currKey.mode.upper()}", (200, 470), 2, UI_TEXT_COLOR)
   
-  # Render the pianoroll / staffscope
+  # --------------------------------
+  # Staffscope / pianoroll rendering
+  # --------------------------------
   if staffScopeVisible :
     if staffScopeWidget.isStaffAvailable(userScore.getCursor()) :
       staffScopeWidget.loadCursor(userScore.getCursor())
+
+      # TODO: send the wrong note stats to the staffScope
+      # staffScopeWidget.setStatData()
+
       staffScopeWidget.render()
     else :
       pianoRollWidget.drawPianoRoll(screen, userScore.getCurrentTimecode())  
@@ -545,9 +551,11 @@ while running :
   upcomingNotes = userScore.getUpcomingNotes()
   keyboardWidget.keyPress(screen, upcomingNotes)
 
-  # -----------------------------------------------------------------------
-  # Decide whether to move forward in the score depending on the user input
-  # -----------------------------------------------------------------------
+
+
+  # --------------------------
+  # Keyboard input arbitration
+  # --------------------------
   arbiterMsgQueue = pianoArbiter.eval(teacherNotes)
 
   for msg in arbiterMsgQueue :
@@ -610,12 +618,13 @@ while running :
   
 
 
-  # ------------------------------------------------------
-  # Show pointing hand when hovering over an editable note
-  # ------------------------------------------------------
+  # ----------------------
+  # Mouse cursor modifiers
+  # ----------------------
   (mouse_x, mouse_y) = pygame.mouse.get_pos()
   
   # Is the cursor somewhere above the keyboard?
+  # TODO: remove absolute coordinates, infer them from geometry
   if ((10 <= mouse_x <= 1310) and (300 <= mouse_y <= 450)) :  
     detectedNote = keyboardWidget.isActiveNoteClicked(pygame.mouse.get_pos())
     if detectedNote :
@@ -627,9 +636,9 @@ while running :
 
 
 
-  # -----------------------
-  # Note properties edition
-  # -----------------------
+  # --------------------
+  # Mouse click handling
+  # --------------------
   if clickMsg :
     
     # Click on a note on the keyboard
@@ -651,9 +660,9 @@ while running :
 
 
 
-  # ---------------------------------------------
-  # Render text
-  # ---------------------------------------------
+  # -----------------------------------
+  # Render text on screen (bitmap font)
+  # -----------------------------------
   text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)
   text.showBookmark(screen, userScore.getBookmarkIndex())
   text.showActiveHands(screen, userScore.activeHands)
@@ -661,8 +670,13 @@ while running :
   text.showCombo(screen, statsObj.comboCount, statsObj.comboHighestSession, statsObj.comboHighestAllTime)
   text.showMetronome(screen, metronomeObj)
 
-  # FINGER SELECTION
+
+
+  # -----------------------
+  # Finger selection widget
+  # -----------------------
   fingerSelWidget.show(screen)
+  
   if (fingerSelWidget.getEditedNote() != None) :
     if (userScore.getCursor() != fingerSelWidget.editedCursor) :
       fingerSelWidget.resetEditedNote()
@@ -672,9 +686,11 @@ while running :
     fingerSelWidget.setFingerAutoHighlight(setFingersatzMsg, userScore.teacherNotes, userScore.activeHands)
     setFingersatzMsg = -1
 
-  # Some statistics
-  # userScore.updateStats()
 
+
+  # ----------------
+  # Metronome widget
+  # ----------------
   # Read metronome messages
   if (len(metronomeObj.msgQueue) > 0) :
     for msg in metronomeObj.msgQueue :

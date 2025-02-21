@@ -207,8 +207,10 @@ class StaffScope :
   # ---------------------------------------------------------------------------
   def loadCursor(self, cursor) :
     """
-    Loads the staff that covers the cursor value passed as argument.
-    Loads the playglows (left and right hand)
+    Sets the staffscope content according to the input cursor:
+    - load the staff image file that covers the cursor
+    - load the playglows (left and right hand)
+    
     The function has a cache feature to avoid useless workload at each frame.
     """
     
@@ -305,6 +307,38 @@ class StaffScope :
         coords = p.toTuple()
         pygame.draw.rect(transparent_surface, (0, 255, 0, alpha), coords)
 
+
+
+    # Render the stats
+    minCursor = self.db.snapshots[self._snapshotIndex].cursorMin
+    maxCursor = self.db.snapshots[self._snapshotIndex].cursorMax
+    left_x = []; left_y = []
+    right_x = []; right_y = []
+    for n in range(minCursor, maxCursor + 1) :
+      playglows = self.db.snapshots[self._snapshotIndex].getPlayGlowsAtCursor(n)
+      for p in playglows :
+        if p.active :
+          if (p.hand == 'L') :
+            left_y += [p.coord_yMin, p.coord_yMax]
+          else :
+            right_y += [p.coord_yMin, p.coord_yMax]
+
+    left_yMin = min(left_y); left_yMax = max(left_y)
+    right_yMin = min(right_y); right_yMax = max(right_y)
+
+    for n in range(minCursor, maxCursor + 1) :
+      playglows = self.db.snapshots[self._snapshotIndex].getPlayGlowsAtCursor(n)
+      for p in playglows :
+        if p.active :
+          coords = p.toTuple()
+          if (p.hand == 'L') :
+            coords = (coords[0], max([left_yMin, right_yMax]), coords[2], left_yMax - left_yMin)
+            r = pygame.draw.rect(transparent_surface, (0, 0, 250, 50), coords)
+
+          else :
+            coords = (coords[0], right_yMin, coords[2], min([right_yMax, left_yMin]) - right_yMin)
+            r = pygame.draw.rect(transparent_surface, (0, 250, 250, 50), coords)
+            
     self.screen.blit(transparent_surface, (0, 0))
 
 
@@ -377,10 +411,16 @@ class StaffScope :
     if (self.playGlowDragged != -1) :
       (x0, y0) = (self.playGlows[self.playGlowDragged].dragCoord_x, self.playGlows[self.playGlowDragged].dragCoord_y)
       x = coord[0]; y = coord[1]
+      
+      # CTRL + click = precision move
       if ctrlKey : 
-        dx = (x-x0) // 10; dy = (y-y0) // 10
+        dx = (x-x0) // 10 
+        dy = (y-y0) // 10
+      
+      # Click = basic move
       else :
-        dx = x-x0; dy = y-y0
+        dx = x-x0 
+        dy = y-y0
       
       self.playGlows[self.playGlowDragged].shift(dx,dy)
 
@@ -389,14 +429,6 @@ class StaffScope :
 
       # TODO
       
-      # (x0, y0) = (self.playGlows[self.playGlowDragged].dragCoord_x, self.playGlows[self.playGlowDragged].dragCoord_y)
-      # x = coord[0]; y = coord[1]
-      # if ctrlKey : 
-      #   dx = (x-x0) // 10; dy = (y-y0) // 10
-      # else :
-      #   dx = x-x0; dy = y-y0
-      
-      # self.playGlows[self.playGlowDragged].shift(dx,dy)
 
 
 
@@ -468,7 +500,6 @@ class StaffScope :
     Description is TODO.
     """
     
-
     # Read the content of the database at that cursor
     if (self._snapshotIndex != -1) :
       s = self.db.snapshots[self._snapshotIndex].leftHandRectCoords
@@ -485,7 +516,11 @@ class StaffScope :
   # ---------------------------------------------------------------------------
   def populate(self) :
     """
-    Description is TODO.
+    Infers the location of playglows at the cursor location in-between 2 bounding
+    cursor values (beginning and end) by a simple interpolation method.
+
+    Use this function to preset the playglows. There is not garantee that the 
+    proposed locations are correct, but it is a first placing.
     """
     
     print("[DEBUG] StaffScope.populate() is TODO")
@@ -531,4 +566,16 @@ class StaffScope :
 
   
 
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.declareStats(cursorWrongNoteCount)
+  # ---------------------------------------------------------------------------
+  def declareStats(self, cursorWrongNoteCount) :
+    """
+    Description is TODO.
+    """
+
+    minCursor = self.db.snapshots[self._snapshotIndex].cursorMin
+    maxCursor = self.db.snapshots[self._snapshotIndex].cursorMax
+
+    pass
 

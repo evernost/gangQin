@@ -428,7 +428,10 @@ while running :
       if (keys[pygame.K_v]) :
         staffScopeVisible = not(staffScopeVisible)
         if (staffScopeVisible) :
-          print("[INFO] Staffscope view: ON")
+          if staffScopeWidget.isStaffAvailable(userScore.getCursor()) :
+            print("[INFO] Staffscope view: ON")
+          else :
+            print("[INFO] Staffscope view: ON (but no data available!)")
         else :
           print("[INFO] Staffscope view: OFF")
 
@@ -514,10 +517,7 @@ while running :
   if staffScopeVisible :
     if staffScopeWidget.isStaffAvailable(userScore.getCursor()) :
       staffScopeWidget.loadCursor(userScore.getCursor())
-
-      # TODO: send the wrong note stats to the staffScope
-      # staffScopeWidget.setStatData()
-
+      staffScopeWidget.declareStats(statsObj.cursorWrongNoteCount)
       staffScopeWidget.render()
     else :
       pianoRollWidget.drawPianoRoll(screen, userScore.getCurrentTimecode())  
@@ -564,7 +564,7 @@ while running :
     if (msg == arbiter.MSG_CURSOR_NEXT) :
       userScore.cursorNext()
       # statsObj.intervalTimerUpdate(userScore.getCurrentTimecode())
-      statsObj.correctNote()
+      statsObj.reportCorrectNote()
 
       if (userScore.cursor == userScore.loopStart) :
         soundNotify.loopPassed()
@@ -575,9 +575,10 @@ while running :
 
     # Invalid input
     if (msg == arbiter.MSG_RESET_COMBO) :  
-      statsObj.wrongNote(userScore.getCursor())
+      statsObj.reportWrongNote(userScore.getCursor())
       soundNotify.wrongNote()
       
+      # TODO: MOVE THIS SECTION TO THE 'SCORE' OBJECT ↓↓↓
       # Strict looped practice: a wrong note resets the cursor to the beginning of the loop.
       if (userScore.loopStrictMode) :
         c = userScore.getCursor()

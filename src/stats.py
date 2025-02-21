@@ -252,9 +252,9 @@ class Stats :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats.correctNote()
+  # METHOD Stats.reportCorrectNote()
   # ---------------------------------------------------------------------------
-  def correctNote(self) :
+  def reportCorrectNote(self) :
     """
     This function must be called every time the user plays a correct input.
     
@@ -276,9 +276,9 @@ class Stats :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats.wrongNote()
+  # METHOD Stats.reportWrongNote()
   # ---------------------------------------------------------------------------
-  def wrongNote(self, cursor) :
+  def reportWrongNote(self, cursor) :
     """
     This function must be called every time the user plays an incorrect input.
     

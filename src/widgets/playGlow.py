@@ -109,7 +109,7 @@ class PlayGlow :
     return (
       self.coord_xMin + self.shift_x, 
       self.coord_yMin + self.shift_y, 
-      self.width, 
+      self.width,
       self.height
     )
   

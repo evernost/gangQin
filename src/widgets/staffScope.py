@@ -277,6 +277,8 @@ class StaffScope :
     # Render the staff
     self.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))
     
+
+
     # Render the rulers
     # TODO: add the handles.
     # The handles must be outside the score image
@@ -290,7 +292,6 @@ class StaffScope :
     transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
     
     for p in self.playGlows :
-      
       if p.active :
         alpha = 128
       else :
@@ -312,9 +313,12 @@ class StaffScope :
     # Render the stats
     minCursor = self.db.snapshots[self._snapshotIndex].cursorMin
     maxCursor = self.db.snapshots[self._snapshotIndex].cursorMax
-    left_x = []; left_y = []
-    right_x = []; right_y = []
+    left_y = []
+    right_y = []
+    wrongNotesHist = []
     for n in range(minCursor, maxCursor + 1) :
+      if str(n) in self.cursorWrongNoteCount :
+        wrongNotesHist.append(self.cursorWrongNoteCount[str(n)])
       playglows = self.db.snapshots[self._snapshotIndex].getPlayGlowsAtCursor(n)
       for p in playglows :
         if p.active :
@@ -328,16 +332,27 @@ class StaffScope :
 
     for n in range(minCursor, maxCursor + 1) :
       playglows = self.db.snapshots[self._snapshotIndex].getPlayGlowsAtCursor(n)
+      if str(n) in self.cursorWrongNoteCount :
+        if (min(wrongNotesHist) != max(wrongNotesHist)) :
+          alphaMin = 10
+          alphaMax = 100
+          w = self.cursorWrongNoteCount[str(n)]
+          alpha = alphaMin + int((w - min(wrongNotesHist))*(alphaMax-alphaMin)/(max(wrongNotesHist) - min(wrongNotesHist)))
+      else :
+        alpha = 0
+
       for p in playglows :
         if p.active :
           coords = p.toTuple()
           if (p.hand == 'L') :
-            coords = (coords[0], max([left_yMin, right_yMax]), coords[2], left_yMax - left_yMin)
-            r = pygame.draw.rect(transparent_surface, (0, 0, 250, 50), coords)
+            # coords = (coords[0], max([left_yMin, right_yMax]), coords[2], left_yMax - left_yMin)
+            coords = (coords[0], left_yMax, coords[2], 10)
+            r = pygame.draw.rect(transparent_surface, (255, 127, 0, alpha), coords)
 
           else :
-            coords = (coords[0], right_yMin, coords[2], min([right_yMax, left_yMin]) - right_yMin)
-            r = pygame.draw.rect(transparent_surface, (0, 250, 250, 50), coords)
+            # coords = (coords[0], right_yMin, coords[2], min([right_yMax, left_yMin]) - right_yMin)
+            coords = (coords[0], right_yMin - 10, coords[2], 10)
+            r = pygame.draw.rect(transparent_surface, (0, 255, 127, alpha), coords)
             
     self.screen.blit(transparent_surface, (0, 0))
 
@@ -574,8 +589,6 @@ class StaffScope :
     Description is TODO.
     """
 
-    minCursor = self.db.snapshots[self._snapshotIndex].cursorMin
-    maxCursor = self.db.snapshots[self._snapshotIndex].cursorMax
+    self.cursorWrongNoteCount = cursorWrongNoteCount
 
-    pass
 

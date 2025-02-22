@@ -137,7 +137,12 @@ def midiCallback(midiMessage) :
 # Navigation mode
 # =============================================================================
 if (selectedDevice != "None") :
-  midiPort = mido.open_input(selectedDevice, callback = midiCallback)
+  try :
+    midiPort = mido.open_input(selectedDevice, callback = midiCallback)
+  except Exception as e:
+    print("[WARNING] Failed to open the MIDI device (it is used by another software?): running in navigation mode.")
+    midiPort = None  
+
 else :
   print("[NOTE] No MIDI interface selected: running in navigation mode.")
   midiPort = None

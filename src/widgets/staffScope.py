@@ -274,12 +274,16 @@ class StaffScope :
     if (self.imgScaled == None) :
       return
 
+    # ----------------
     # Render the staff
+    # ----------------
     self.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))
     
 
 
+    # -----------------
     # Render the rulers
+    # -----------------
     # TODO: add the handles.
     # The handles must be outside the score image
     if self.rulersVisible :
@@ -287,7 +291,10 @@ class StaffScope :
       pass
 
 
+
+    # --------------------
     # Render the playGlows
+    # --------------------
     transparent_surface = pygame.Surface((self.screenWidth, self.screenHeight), pygame.SRCALPHA)
     transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
     
@@ -310,50 +317,54 @@ class StaffScope :
 
 
 
-    # Render the stats
-    minCursor = self.db.snapshots[self._snapshotIndex].cursorMin
-    maxCursor = self.db.snapshots[self._snapshotIndex].cursorMax
-    left_y = []
-    right_y = []
-    wrongNotesHist = []
-    for n in range(minCursor, maxCursor + 1) :
-      if str(n) in self.cursorWrongNoteCount :
-        wrongNotesHist.append(self.cursorWrongNoteCount[str(n)])
-      playglows = self.db.snapshots[self._snapshotIndex].getPlayGlowsAtCursor(n)
-      for p in playglows :
-        if p.active :
-          if (p.hand == 'L') :
-            left_y += [p.coord_yMin, p.coord_yMax]
-          else :
-            right_y += [p.coord_yMin, p.coord_yMax]
+    # --------------------------------
+    # Render the visual cues for stats
+    # --------------------------------
+    if (len(self.playGlows) > 0) :
+      minCursor = self.db.snapshots[self._snapshotIndex].cursorMin
+      maxCursor = self.db.snapshots[self._snapshotIndex].cursorMax
+      left_y = []
+      right_y = []
+      wrongNotesHist = []
+      for n in range(minCursor, maxCursor + 1) :
+        if str(n) in self.cursorWrongNoteCount :
+          wrongNotesHist.append(self.cursorWrongNoteCount[str(n)])
+        playglows = self.db.snapshots[self._snapshotIndex].getPlayGlowsAtCursor(n)
+        for p in playglows :
+          if p.active :
+            if (p.hand == 'L') :
+              left_y += [p.coord_yMin, p.coord_yMax]
+            else :
+              right_y += [p.coord_yMin, p.coord_yMax]
 
-    left_yMin = min(left_y); left_yMax = max(left_y)
-    right_yMin = min(right_y); right_yMax = max(right_y)
+      left_yMax = max(left_y)
+      right_yMin = min(right_y)
 
-    for n in range(minCursor, maxCursor + 1) :
-      playglows = self.db.snapshots[self._snapshotIndex].getPlayGlowsAtCursor(n)
-      if str(n) in self.cursorWrongNoteCount :
-        if (min(wrongNotesHist) != max(wrongNotesHist)) :
-          alphaMin = 10
-          alphaMax = 100
-          w = self.cursorWrongNoteCount[str(n)]
-          alpha = alphaMin + int((w - min(wrongNotesHist))*(alphaMax-alphaMin)/(max(wrongNotesHist) - min(wrongNotesHist)))
-      else :
-        alpha = 0
+      for n in range(minCursor, maxCursor + 1) :
+        playglows = self.db.snapshots[self._snapshotIndex].getPlayGlowsAtCursor(n)
+        if str(n) in self.cursorWrongNoteCount :
+          if (min(wrongNotesHist) != max(wrongNotesHist)) :
+            alphaMin = 10
+            alphaMax = 100
+            w = self.cursorWrongNoteCount[str(n)]
+            alpha = alphaMin + int((w - min(wrongNotesHist))*(alphaMax-alphaMin)/(max(wrongNotesHist) - min(wrongNotesHist)))
+        else :
+          alpha = 0
 
-      for p in playglows :
-        if p.active :
-          coords = p.toTuple()
-          if (p.hand == 'L') :
-            # coords = (coords[0], max([left_yMin, right_yMax]), coords[2], left_yMax - left_yMin)
-            coords = (coords[0], left_yMax, coords[2], 10)
-            r = pygame.draw.rect(transparent_surface, (255, 127, 0, alpha), coords)
+        for p in playglows :
+          if p.active :
+            coords = p.toTuple()
+            if (p.hand == 'L') :
+              coords = (coords[0], left_yMax, coords[2], 10)
+              r = pygame.draw.rect(transparent_surface, (255, 127, 0, alpha), coords)
 
-          else :
-            # coords = (coords[0], right_yMin, coords[2], min([right_yMax, left_yMin]) - right_yMin)
-            coords = (coords[0], right_yMin - 10, coords[2], 10)
-            r = pygame.draw.rect(transparent_surface, (0, 255, 127, alpha), coords)
-            
+            elif (p.hand == 'R') :
+              coords = (coords[0], right_yMin - 10, coords[2], 10)
+              r = pygame.draw.rect(transparent_surface, (0, 255, 127, alpha), coords)
+              
+            else :
+              pass
+
     self.screen.blit(transparent_surface, (0, 0))
 
 

@@ -329,6 +329,12 @@ while running :
             else :
               fingerSelWidget.setFinger(index)
       
+      # --------------------------------------
+      # "a": start special mode of the arbiter
+      # --------------------------------------
+      if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_a]) :
+        print("[INFO] Special mode for the arbiter will be available in a future release.")
+
       # ----------------------------------------
       # "b": toggle a bookmark on this timestamp
       # ----------------------------------------

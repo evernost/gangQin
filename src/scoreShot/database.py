@@ -288,11 +288,13 @@ class Database :
     # Restrain to a subset of chars 
     allowedChars = "ABCDEFGHKMNPQRTUVWXYZ" + "23456789"    
     
-    # TODO: make sure the name does not already exist
-    # ...
+    fileList = [f for f in os.listdir(self.depotFolder) if f.endswith(".png")]
+    while True :
+      generatedName = "".join(random.choice(allowedChars) for _ in range(6))
+      if not(generatedName in fileList) :
+        break
     
-    
-    return "".join(random.choice(allowedChars) for _ in range(6))
+    return generatedName
 
     
 

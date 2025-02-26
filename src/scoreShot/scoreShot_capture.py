@@ -36,24 +36,26 @@ SCREEN_SCALING = 1.0
 # Main code
 # =============================================================================
 
-
-
 print(f"================================================================================")
-print(f"SCORESHOT CAPTURE - v0.1 (September 2024)")
+print(f"SCORESHOT CAPTURE - {captureGUI.CREDITS}")
 print(f"================================================================================")
-print("Shortcuts:")
+print("Capture window shortcuts:")
 print("- Left/Right/Up/Down     : move the capture window pixel by pixel")
 print("- Mouse wheel up         : move the capture window position up by 1 pixel")
 print("- Mouse wheel down       : move the capture window position down by 1 pixel")
 print("- Alt + Mouse wheel up   : move the capture window position left by 1 pixel")
 print("- Alt + Mouse wheel down : move the capture window position right by 1 pixel")
-print("- 'Esc'                  : restore the default size of the capture window")
-print("- 'l'                    : toggle the lock on the capture window resize")
-print("- 'r'                    : temporarily recall the last snaphost")
-print("- 's'                    : take snapshot")
+print("- Esc                    : restore the default size of the capture window, ignore value stored in configuration file")
+print("- 'c'                    : take snapshot")
+print("- 'l'                    : enable/disable resizing the capture window")
 print("- 'q'                    : exit app")
-
-
+print("- 'r'                    : temporarily recall the last snapshot")
+print("- 's'                    : save database")
+print("")
+print("Main window shortcuts:")
+print("- Del                    : delete the selected snapshot [NOT IMPLEMENTED YET]")
+print("- 'q'                    : exit app")
+print("- 's'                    : save database")
 
 # Show the song file selection GUI
 fileSel = fileSelectionGUI.new()

@@ -3,6 +3,7 @@
 # Project       : gangQin
 # Module name   : captureGUI
 # File name     : captureGUI.py
+# File type     : Python script (Python 3)
 # Purpose       : self-contained class with all the appropriate elements to 
 #                 interact with the GUI.
 # Author        : QuBi (nitrogenium@hotmail.com)
@@ -39,6 +40,7 @@ from tkinter import ttk
 SCREEN_SCALING = 1.0
 
 BORDER_SIZE = 100
+CREDITS = "v0.2 [ALPHA] (February 2025)"
 
 
 
@@ -56,7 +58,7 @@ class CaptureGUI :
 
     # [MAIN WINDOW] Properties
     self.root.geometry("1500x500")
-    self.root.title("scoreShot - Capture database v0.1 [ALPHA] (October 2024)")
+    self.root.title(f"scoreShot - Capture (browser) - {CREDITS}")
     self.root.resizable(0, 0)
 
     # [MAIN WINDOW] Widgets
@@ -72,9 +74,9 @@ class CaptureGUI :
     self.imgbox.grid(column = 1, row = 1, columnspan = 1, rowspan = 1)
 
     # [MAIN WINDOW] Keyboard bindings
-    self.root.bind("<q>"      , self.CLBK_onQuit)
-    self.root.bind("<Escape>" , self.CLBK_onEsc)
     self.root.bind("<Delete>" , self.CLBK_onDel)
+    self.root.bind("<q>"      , self.CLBK_onQuit)
+    self.root.bind("<s>"      , self.CLBK_onSave)
     self.root.protocol("WM_DELETE_WINDOW", self.CLBK_onQuit)
 
 
@@ -82,7 +84,7 @@ class CaptureGUI :
     # [CAPTURE WINDOW] Properties
     self.captureWin = tk.Toplevel(self.root)
     self.captureWin.geometry("1250x440")
-    self.captureWin.title("scoreShot - Capture tool v0.1 [ALPHA] (October 2024)")
+    self.captureWin.title(f"scoreShot - Capture (tool) - {CREDITS}")
     self.captureWin.attributes("-topmost", True)  # Make it always on top
 
     # [CAPTURE WINDOW] Layout
@@ -140,10 +142,12 @@ class CaptureGUI :
     self.captureWin.bind('<KeyPress>'   , self.CLBK_onKeyPress)
     self.captureWin.bind('<KeyRelease>' , self.CLBK_onKeyRelease)
     self.captureWin.bind("<Escape>"     , self.CLBK_onEsc)
-    self.captureWin.bind("<l>"          , self.CLKB_onToggleLock)
-    self.captureWin.bind("<s>"          , self.CLBK_onScreenshot)
+    self.captureWin.bind("<c>"          , self.CLBK_onScreenshot)
+    self.captureWin.bind("<l>"          , self.CLBK_onToggleLock)
     self.captureWin.bind("<q>"          , self.CLBK_onQuit)
-    
+    self.captureWin.bind("<r>"          , self.CLBK_onKeyPress)
+    self.captureWin.bind("<s>"          , self.CLBK_onSave)
+    self.keyHeld = ""
     
     self.snapshotListbox.bind("<<ListboxSelect>>", self.CLBK_snapshotListboxClick)
 
@@ -347,7 +351,7 @@ class CaptureGUI :
 
 
   # ------------
-  # 's' keypress
+  # 'c' keypress
   # ------------
   def CLBK_onScreenshot(self, event) :
     # Get the coordinates of the aperture 
@@ -382,8 +386,6 @@ class CaptureGUI :
     index = self.snapshotListbox.curselection()
 
     if index :
-      #print(f"[DEBUG] Now selecting snapshot index: {index[0]}")
-
       imgName = self.db.getSnapshotFileByIndex(index[0])
 
       x = ImageTk.PhotoImage(Image.open(imgName))
@@ -404,17 +406,35 @@ class CaptureGUI :
   def CLBK_onDel(self, event) :
     print("[DEBUG] 'Del' key is not handled yet.")
 
+
   # ---------------
   # Key press (any)
   # ---------------
   def CLBK_onKeyPress(self, event) :
+    
+    # Recall of the last snapshot (show)
     if (event.char == "r") :
-      self.recallImg.lift()
+      if (self.keyHeld == "") :
+        print(f"[INFO] Recalling last snapshot in the database")
+        
+        s = self.db.snapshots[0].dir + "/" + self.db.snapshots[0].file
+        img = Image.open(s)
+        img = img.resize((self.recallImg.winfo_width(), self.recallImg.winfo_height()), Image.Resampling.LANCZOS)
+        imgTk = ImageTk.PhotoImage(img)
+
+        self.recallImg.config(image = imgTk)
+        self.recallImg.lift()
+        self.keyHeld = "r"
+
 
   # -----------------
   # Key release (any)
   # -----------------
   def CLBK_onKeyRelease(self, event) :
+    
+    self.keyHeld = ""
+
+    # Recall of the last snapshot (stow)
     if (event.char == "r") :
       self.recallImg.lower()
 
@@ -437,7 +457,7 @@ class CaptureGUI :
     self.ruler.updateOnResize()
 
 
-  def CLKB_onToggleLock(self, event) :
+  def CLBK_onToggleLock(self, event) :
     if not(self.GUIResizeLocked) :
       self.captureWin.resizable(False, False)
       print("[DEBUG] Locked!")
@@ -445,6 +465,11 @@ class CaptureGUI :
       self.captureWin.resizable(True, True)
 
     self.GUIResizeLocked = not(self.GUIResizeLocked)
+
+
+  def CLBK_onSave(self, event) :
+    self.db.save()
+    self.db.hasUnsavedChanges = False
 
 
   # --------

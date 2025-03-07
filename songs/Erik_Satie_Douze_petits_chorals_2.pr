@@ -10,21 +10,6 @@
   "activeHands": "LR",
   "pianoRoll": [
     {
-      "pitch": 55,
-      "hand": 0,
-      "finger": 0,
-      "keyColor": 0,
-      "noteIndex": 0,
-      "startTime": 12960,
-      "stopTime": 13415,
-      "sustained": false,
-      "inactive": false,
-      "disabled": false,
-      "voice": 0,
-      "name": "G3",
-      "id": 34
-    },
-    {
       "pitch": 58,
       "hand": 0,
       "finger": 1,
@@ -147,7 +132,7 @@
     {
       "pitch": 62,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 4,
       "startTime": 11520,
@@ -717,7 +702,7 @@
     {
       "pitch": 70,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 7,
       "startTime": 17280,
@@ -927,7 +912,7 @@
     {
       "pitch": 46,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 0,
       "startTime": 17280,
@@ -1032,7 +1017,7 @@
     {
       "pitch": 51,
       "hand": 1,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 1,
       "startTime": 13440,
@@ -1092,7 +1077,7 @@
     {
       "pitch": 53,
       "hand": 1,
-      "finger": 0,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 0,
       "startTime": 11520,
@@ -1227,6 +1212,21 @@
     {
       "pitch": 55,
       "hand": 1,
+      "finger": 1,
+      "keyColor": 0,
+      "noteIndex": 0,
+      "startTime": 12960,
+      "stopTime": 13415,
+      "sustained": false,
+      "inactive": false,
+      "disabled": false,
+      "voice": 0,
+      "name": "G3",
+      "id": 34
+    },
+    {
+      "pitch": 55,
+      "hand": 1,
       "finger": 2,
       "keyColor": 0,
       "noteIndex": 0,
@@ -1302,7 +1302,7 @@
     {
       "pitch": 55,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 5,
       "startTime": 10560,
@@ -1317,7 +1317,7 @@
     {
       "pitch": 55,
       "hand": 1,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 6,
       "startTime": 12480,
@@ -1332,7 +1332,7 @@
     {
       "pitch": 55,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 7,
       "startTime": 13440,
@@ -1497,7 +1497,7 @@
     {
       "pitch": 58,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 5,
       "startTime": 10560,
@@ -1527,7 +1527,7 @@
     {
       "pitch": 59,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 0,
       "startTime": 11520,

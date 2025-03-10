@@ -99,7 +99,7 @@ class CaptureGUI :
     # [CAPTURE WINDOW] Widgets
     self.recallImg = tk.Label(self.captureWin)
     self.recallImg.grid(row = 1, column = 1, sticky = "nsew")
-    self.recallImg.lower()
+    #self.recallImg.lower()
 
     self.canvasArray = []
     for row in range(3) :
@@ -415,15 +415,21 @@ class CaptureGUI :
     # Recall of the last snapshot (show)
     if (event.char == "r") :
       if (self.keyHeld == "") :
-        print(f"[INFO] Recalling last snapshot in the database")
-        
-        s = self.db.snapshots[0].dir + "/" + self.db.snapshots[0].file
+        s = self.db.snapshots[-1].dir + "/" + self.db.snapshots[-1].file
         img = Image.open(s)
         img = img.resize((self.recallImg.winfo_width(), self.recallImg.winfo_height()), Image.Resampling.LANCZOS)
         imgTk = ImageTk.PhotoImage(img)
+        print(f"[INFO] Recalling last snapshot in the database ({s})")
 
-        self.recallImg.config(image = imgTk)
-        self.recallImg.lift()
+        self.recallImg.configure(image = imgTk)
+        #self.recallImg.lift()
+        # self.canvasArray[4].lower(self.background_frame)
+        self.canvasArray[4].grid_remove()
+
+
+        # self.recallImg.update_idletasks()
+        # self.captureWin.update_idletasks()
+        # self.captureWin.update()
         self.keyHeld = "r"
 
 
@@ -436,7 +442,8 @@ class CaptureGUI :
 
     # Recall of the last snapshot (stow)
     if (event.char == "r") :
-      self.recallImg.lower()
+      # self.recallImg.lower()
+      self.canvasArray[4].grid()
 
 
   def CLBK_onMoveWindow(self, event) :

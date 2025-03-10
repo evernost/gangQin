@@ -79,3 +79,4 @@ Remaining tasks:
 - [ ] staffscope: highlight the sections that causes the most trouble.
 - [ ] scoreShot-capture: on the capture window, show the snapshot count number.
 - [ ] staffscope: print a "no signal" message when there is no staff available for the current cursor
+- [ ] add a perspective to the pianoroll view

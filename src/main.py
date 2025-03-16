@@ -333,7 +333,7 @@ while running :
       # "a": start special mode of the arbiter
       # --------------------------------------
       if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_a]) :
-        print("[INFO] Special mode for the arbiter will be available in a future release.")
+        userScore.setWeakArbitration()
 
       # ----------------------------------------
       # "b": toggle a bookmark on this timestamp
@@ -567,6 +567,9 @@ while running :
   # --------------------------
   # Keyboard input arbitration
   # --------------------------
+  # if userScore.hasWeakArbitration() :
+  #   pianoArbiter.setWeakArbitrationNotes(userScore.getUnarbitredNotes())
+  
   arbiterMsgQueue = pianoArbiter.eval(teacherNotes)
 
   for msg in arbiterMsgQueue :

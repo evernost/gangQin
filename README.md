@@ -3,6 +3,29 @@ Piano learning app, for those who struggle with the conventional music scores.
 
 ![image](https://github.com/user-attachments/assets/1cd22e89-eea6-40ad-90cc-525259448a2c)
 
+## Principle
+Look on the Internet for a MIDI file version of the song you want to learn.
+Copy this file in the `/songs` directory.
+
+Run the `main.py`in a Python interpreter, select you digital keyboard and select you MIDI file. The main app loads.
+
+The interface shows a virtual keyboard and a pianoroll view. Everything you play on your input keyboard is mirrored on the virtual keyboard.
+
+But most importantly, the virtual keyboard also shows the notes you are supposed to play to follow the song.
+
+### How to get the StaffScope view
+Instead of showing a pianoroll view, gangQin can also show the **actual score** in the `staffScope view`.
+
+This view loads and displays the printed score right at the location where you are playing. 
+
+Of course, the staffScope view requires more than just the MIDI file to be available. 
+But as soon as you have a digital version of the printed score handy, you can import it in the staffScope viewer.
+The scoreShot tools will help you to do that import.
+
+> [!NOTE]
+> Refer to the sources in `/scoreShot` for more information about the database elaboration process.
+
+
 ## What do I need?
 A piano keyboard with MIDI output, plugged into a computer running your favorite Python interpreter.
 
@@ -34,7 +57,16 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 - **Auto-highlight of the complex sections**: in the staffScope view, a color code shows the section that caused the most trouble, based on the playing statistics
 - **Time accuracy score display**: shows how well you play the notes at the right time
 
-## Shortcuts
+## Development status 
+- the gameplay has been tested extensively for 50+ hours on various songs
+  - arbitration process (what is a good/wrong input) is tested and reliable, but can fail for arpegios. Upcoming updates in March 2025 will fix this
+  - no *fatal flaw* (crash with loss of information) has been reported since a few updates
+
+Known limitations:
+- Edition of the internal score representation (.pr file) is limited to pitch adjustment
+- MIDI import interface allows to select the tracks but is not fully operational yet
+
+## Software shortcuts
 
 | Key           | Function      |
 |:------------- |:-------------|
@@ -72,11 +104,10 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 
 
 ## TODO / Ideas
-
-Remaining tasks: 
+- [ ] add a weak arbitration mode
 - [ ] CTRL+ and CTRL- adjust the view span in pianoroll mode.
 - [ ] terminate properly when the last cursor is reached.
-- [ ] staffscope: highlight the sections that causes the most trouble.
 - [ ] scoreShot-capture: on the capture window, show the snapshot count number.
-- [ ] staffscope: print a "no signal" message when there is no staff available for the current cursor
-- [ ] add a perspective to the pianoroll view
+- [ ] add a perspective effect to the pianoroll view
+- [X] staffscope: highlight the sections that causes the most trouble.
+- [X] staffscope: print a "no signal" message when there is no staff available for the current cursor

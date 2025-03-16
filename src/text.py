@@ -590,13 +590,18 @@ def renderPlus(screenInst, string, colorSpec, colorDict, formatSpec, loc, size, 
   if (justify == RIGHT_JUSTIFY) :
     x0 = x0 - 6*w*len(string)
 
+  # Loop on the characters in the string
   for (i, char) in enumerate(string) :
     cS    = colorSpec[i]
     color = colorDict[cS]
     
     # Draw the character
-    for charLine in CHAR_POLYGONS[char] :
-      for pixel in charLine :
+    for (y,charLine) in enumerate(CHAR_POLYGONS[char]) :
+      for (x,pixel) in enumerate(charLine) :
+        
+        # Strike line: combine the char with "/"
+        # TODO
+        
         if (pixel > 0) :
           squareCoord = [(x0, y0), (x0 + (w-1), y0), (x0 + (w-1), y0 + (h-1)), (x0, y0 + (h-1))]
           pygame.draw.polygon(screenInst, color, squareCoord)

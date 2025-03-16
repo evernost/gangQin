@@ -42,7 +42,7 @@ CURSOR_STEADY_COUNT_LIMIT = 300
 class Score :
 
   """
-  The Score objects contains a custom representation of the song that is suited
+  The Score objects is a custom representation of the song that is suited
   for the gameplay. 
   
   It provides the necessary functions to get the notes to be played at a given
@@ -59,7 +59,7 @@ class Score :
   Every time a note starts playing in the song, a cursor is assigned to it.
   
   Description of the attributes:
-  - <noteOnTimecodes>: dictionary containing the following subsets:
+  - 'noteOnTimecodes': dictionary containing the following subsets:
     - "LR_full" : full list of the note start timecodes (including duplicates)
     - "LR"      : same as "LR", without the duplicate values
     - "L"       : list of the note start timecodes (left hand only), duplicates removed
@@ -117,6 +117,9 @@ class Score :
     self.tempoReadFromScore = False
     self.tempoSections = [(1, 120)]
 
+    # Weak arbitration sections
+    self.weakArbitrationSections = []
+
 
 
   # ---------------------------------------------------------------------------
@@ -126,6 +129,7 @@ class Score :
     """
     Returns the value of the cursor at the current location in the score.
     """
+    
     return self.cursor
   
 
@@ -780,32 +784,6 @@ class Score :
       print(f"[WARNING] Corrupted database: timecode is listed (t = {self.getCurrentTimecode()}), but no note was found starting at that moment.")
 
 
-    # Lookahead feature: show also the upcoming notes 
-    # to help with the hand placement.
-    
-    # STEP 1: get the N notes that will be triggered 
-    # after the current cursor
-    # These notes shall be taken within a certain timecode 
-    # limit from the current location.
-    # for n in range(5) :
-    #   if ((self.getCursor() + n) < self.cursorMax) :
-    #     for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
-    #       for (staffIndex, _) in enumerate(self.pianoRoll) :
-    #         for noteObj in self.pianoRoll[staffIndex][pitch] :
-
-    #           # Detect a note pressed at this timecode
-    #           if (noteObj.startTime == (self.noteOnTimecodes["LR"][self.cursor] + n)) :
-    #             print("found")
-    #             noteObj.upcoming = True
-
-    # STEP 2: edit their lookahead property to tell Keyboard
-    # that they should be displayed in a certain way.
-
-    # TODO: instead of showing the notes ahead in a certain window,
-    # maybe a sort of "slur" function should be added so that 
-    # only the notes in the slur are shown in the lookahead.
-
-
 
   # ---------------------------------------------------------------------------
   # METHOD Score.getUpcomingNotes()
@@ -1037,8 +1015,8 @@ class Score :
         self.noteOnTimecodes["R"].append(noteObj.startTime)
         self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
         
-        # Note: <self.noteOnTimecodes["LR_full"]> remains invariant in the process
-        # Note: <self.noteOnTimecodes["LR"]> remains invariant in the process
+        # Note: 'self.noteOnTimecodes["LR_full"]' remains invariant in the process
+        # Note: 'self.noteOnTimecodes["LR"]' remains invariant in the process
 
       else :
         print("[INTERNAL ERROR] Score.toggleNoteHand: database is not consistent.")
@@ -1056,8 +1034,8 @@ class Score :
         self.noteOnTimecodes["L"].append(noteObj.startTime)
         self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
         
-        # Note: <self.noteOnTimecodes["LR_full"]> remains invariant in the process
-        # Note: <self.noteOnTimecodes["LR"]> remains invariant in the process
+        # Note: 'self.noteOnTimecodes["LR_full"]' remains invariant in the process
+        # Note: 'self.noteOnTimecodes["LR"]' remains invariant in the process
 
       else :
         print("[INTERNAL ERROR] Score.toggleNoteHand: database is not consistent.")
@@ -1094,7 +1072,6 @@ class Score :
     else :
       print("[ERROR] This file extension is not supported.")
       exit()
-
 
 
 
@@ -1200,9 +1177,6 @@ class Score :
               self.pianoRoll[trackNumber][pitch].append(note.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
               
               # Append the timecode of this keypress
-              # TODO: not sure this check on every single note is efficient
-              # if not(currTime in self.noteOntimecodes[trackNumber]) : 
-              #   self.noteOntimecodes[trackNumber].append(currTime)
               if (trackNumber == LEFT_HAND) :
                 self.noteOnTimecodes["L"].append(currTime)
               elif (trackNumber == RIGHT_HAND) :
@@ -1274,23 +1248,6 @@ class Score :
     # Build <cursorsLeft> and <cursorsRight>
     self._buildCursorsLR()
 
-    # Merge note ON time codes from both staves
-    # timecodesMerged = [item for sublist in self.noteOntimecodes for item in sublist]    # What the hell is that?
-    # timecodesMerged = list(set(timecodesMerged))
-    # self.noteOntimecodesMerged = sorted(timecodesMerged)
-    
-    # The variable pointing in the <noteOntimecodesMerged> is called the "cursor" of the score.
-    # This section lists the values of the cursor for which a noteOn event occured 
-    # specifically on one hand or the other.
-    # This is needed for the single hand practice mode.
-    # self.cursorsLeft = []; self.cursorsRight = []
-    # for (cursor, timecode) in enumerate(self.noteOntimecodesMerged) :
-    #   if (timecode in self.noteOntimecodes[RIGHT_HAND]) :
-    #     self.cursorsRight.append(cursor)
-
-    #   if (timecode in self.noteOntimecodes[LEFT_HAND]) :
-    #     self.cursorsLeft.append(cursor)
-
     # Estimate average note duration (needed for the piano roll display)
     self.avgNoteDuration = noteDuration/nNotes
     
@@ -1349,7 +1306,8 @@ class Score :
       "cursorsRight"              : [],
       "bookmarks"                 : [],
       "activeHands"               : "LR",
-      "tempoSections"             : [(1, 120)]
+      "tempoSections"             : [(1, 120)],
+      "weakArbitrationSections"   : []
     }
   
     # Load every existing field
@@ -1456,12 +1414,6 @@ class Score :
     print(f"[INFO] Score length: {self.scoreLength} steps")
     
     print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")
-    
-    # If the cursor statistics are inexistant, initialize them.
-    # if (len(self.statsCursor) == 0) :
-    #   self.statsCursor = [0 for _ in range(self.scoreLength)]
-    # else :
-    #   print(f"[DEBUG] Hardest section: at cursor {self.statsCursor.index(max(self.statsCursor))+1}")
 
 
 
@@ -1587,6 +1539,26 @@ class Score :
     
     self.progressEnable = not(self.progressEnable)
     print("[INFO] Rehearsal mode will be available in a future release.")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Score.setWeakArbitration(cursor)
+  # ---------------------------------------------------------------------------
+  def setWeakArbitration(self) :
+    """
+    Sends a weak arbitration request starting/ending at the current cursor.
+    
+    'Weak arbitration' mode is when the arbiter, for a specific section, 
+    waits for the notes in the section to be played but does care about their
+    sequencing or timing anymore. In short, notes can be played in any order
+    you like in this section.
+
+    Call this function to declare the boundaries of a section with weak 
+    arbitration. 
+    """
+
+    print("[WARNING] 'setWeakArbitration' is TODO")
 
 
 

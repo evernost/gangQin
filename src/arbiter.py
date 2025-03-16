@@ -134,6 +134,7 @@ class Arbiter :
     some "query" notes on the keyboard and wants to know where these notes 
     appear in the score.
     """
+
     self.suspended = True
     self.queryNotesPitch = queryNotesPitch
 
@@ -144,10 +145,12 @@ class Arbiter :
   # ---------------------------------------------------------------------------
   def eval(self, teacherNotes) :
     """
-    Evaluates the decision based on the current input with respect to the 
-    expected notes.
-
-    'teacherNotes' is the list of all the expected notes.
+    Compares the notes currently played on the keyboard ('self.midiCurr') with 
+    the notes expected ('teacherNotes') and returns the decision in the 
+    message queue 'msgQueue'.
+    Decision can either be
+    - MSG_CURSOR_NEXT: valid input
+    - MSG_RESET_COMBO: invalid input
     """
 
     # Reformat the teacher notes, keep the 'new' notes only

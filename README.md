@@ -104,6 +104,8 @@ Known limitations:
 
 
 ## TODO / Ideas
+- [ ] catalog of exercise sessions: add the possibility to save the current location + loop settings + hand practice to a catalog, so that it can be restored later
+- [ ] add a rehearsal mode, where inputs don't trigger anything (i.e. practice without wrong note count)
 - [ ] add a weak arbitration mode
 - [ ] CTRL+ and CTRL- adjust the view span in pianoroll mode.
 - [ ] terminate properly when the last cursor is reached.

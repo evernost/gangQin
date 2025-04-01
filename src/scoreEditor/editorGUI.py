@@ -248,7 +248,7 @@ while running :
 
 
   # Clear the screen
-  screen.fill(BACKGROUND_COLOR)
+  screen.fill(GUI_BACKGROUND_COLOR)
 
   # Draw the keyboard on screen
   keyboardWidget.reset()
@@ -278,7 +278,7 @@ while running :
   coord = pygame.mouse.get_pos()
   # staffScopeWidget.setMouseCursor(coord)
 
-  clock.tick(FPS)
+  clock.tick(GUI_FPS)
 
   # Update the display
   pygame.display.flip()

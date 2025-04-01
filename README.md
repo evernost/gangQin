@@ -1,4 +1,4 @@
-# gangQin v2.0 (beta)
+# gangQin v2.1 (STABLE)
 Piano learning app, for those who struggle with the conventional music scores.
 
 ![image](https://github.com/user-attachments/assets/1cd22e89-eea6-40ad-90cc-525259448a2c)
@@ -104,12 +104,11 @@ Known limitations:
 
 
 ## TODO / Ideas
+- [ ] add a weak arbitration mode
 - [ ] catalog of exercise sessions: add the possibility to save the current location + loop settings + hand practice to a catalog, so that it can be restored later
 - [ ] add a rehearsal mode, where inputs don't trigger anything (i.e. practice without wrong note count)
-- [ ] add a weak arbitration mode
+- [ ] make the widgets inherit from a parent class containing basic operations, like text display and keyboard interaction
 - [ ] CTRL+ and CTRL- adjust the view span in pianoroll mode.
 - [ ] terminate properly when the last cursor is reached.
 - [ ] scoreShot-capture: on the capture window, show the snapshot count number.
 - [ ] add a perspective effect to the pianoroll view
-- [X] staffscope: highlight the sections that causes the most trouble.
-- [X] staffscope: print a "no signal" message when there is no staff available for the current cursor

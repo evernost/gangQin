@@ -256,11 +256,11 @@ class StaffScope :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.render(None)
+  # METHOD StaffScope.render
   # ---------------------------------------------------------------------------
   def render(self) :
     """
-    Renders on screen the score snapshot and the playglows.
+    Renders on screen the snapshot of the score and the playglows.
     The function shall be called at each frame.
     
     A staff must have been loaded prior to calling this function 

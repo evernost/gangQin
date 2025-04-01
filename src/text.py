@@ -629,7 +629,7 @@ def renderPlus(screenInst, string, colorSpec, colorDict, formatSpec, loc, size, 
 # FUNCTION showCursor
 # -----------------------------------------------------------------------------
 def showCursor(screen, cursor, scoreLength) :
-  render(screen, f"CURSOR: {cursor+1} / {scoreLength}", (12, 20), 2, UI_TEXT_COLOR)
+  render(screen, f"CURSOR: {cursor+1} / {scoreLength}", (12, 20), 2, GUI_TEXT_COLOR)
 
 
 
@@ -638,7 +638,7 @@ def showCursor(screen, cursor, scoreLength) :
 # -----------------------------------------------------------------------------
 def showBookmark(screen, bookmarkIndex) :
   if (bookmarkIndex != -1) :
-    render(screen, f"BOOKMARK #{bookmarkIndex}", (10, 470), 2, UI_TEXT_COLOR)
+    render(screen, f"BOOKMARK #{bookmarkIndex}", (10, 470), 2, GUI_TEXT_COLOR)
 
 
 
@@ -646,7 +646,7 @@ def showBookmark(screen, bookmarkIndex) :
 # FUNCTION showActiveHands
 # -----------------------------------------------------------------------------
 def showActiveHands(screen, activeHands) :
-  render(screen, activeHands, (1288, 470), 2, UI_TEXT_COLOR)
+  render(screen, activeHands, (1288, 470), 2, GUI_TEXT_COLOR)
 
 
 
@@ -655,13 +655,13 @@ def showActiveHands(screen, activeHands) :
 # -----------------------------------------------------------------------------
 def showLoop(screen, loopEnable, loopStart, loopEnd, cursor) :
   if loopEnable :
-    render(screen, f"LOOP: [{loopStart+1} ... {cursor+1} ... {loopEnd+1}]", (400, 20), 2, UI_TEXT_COLOR)
+    render(screen, f"LOOP: [{loopStart+1} ... {cursor+1} ... {loopEnd+1}]", (400, 20), 2, GUI_TEXT_COLOR)
   else :
     if (loopStart >= 0) :
-      render(screen, f"LOOP: [{loopStart+1} ... {cursor+1} ... _]", (400, 20), 2, UI_TEXT_COLOR)
+      render(screen, f"LOOP: [{loopStart+1} ... {cursor+1} ... _]", (400, 20), 2, GUI_TEXT_COLOR)
 
     if (loopEnd >= 0) :
-      render(screen, f"LOOP: [_  ... {cursor+1} ... {loopEnd+1}]", (400, 20), 2, UI_TEXT_COLOR)
+      render(screen, f"LOOP: [_  ... {cursor+1} ... {loopEnd+1}]", (400, 20), 2, GUI_TEXT_COLOR)
 
 
 
@@ -669,7 +669,7 @@ def showLoop(screen, loopEnable, loopStart, loopEnd, cursor) :
 # FUNCTION showCombo
 # -----------------------------------------------------------------------------
 def showCombo(screen, comboCount, comboHighestSession, comboHighestAllTime) :
-  render(screen, f"COMBO: {comboCount} (MAX: {comboHighestSession} / ALLTIME: {comboHighestAllTime})", (1312, 20), 2, UI_TEXT_COLOR, justify = RIGHT_JUSTIFY)
+  render(screen, f"COMBO: {comboCount} (MAX: {comboHighestSession} / ALLTIME: {comboHighestAllTime})", (1312, 20), 2, GUI_TEXT_COLOR, justify = RIGHT_JUSTIFY)
 
 
 
@@ -678,7 +678,7 @@ def showCombo(screen, comboCount, comboHighestSession, comboHighestAllTime) :
 # -----------------------------------------------------------------------------
 def showMetronome(screen, metronomeObj) :
   if metronomeObj.enable :
-    render(screen, f"BPM:{metronomeObj.bpm} - {metronomeObj.num}/{metronomeObj.denom} - {metronomeObj.counter}", (950, 470), 2, UI_TEXT_COLOR)
+    render(screen, f"BPM:{metronomeObj.bpm} - {metronomeObj.num}/{metronomeObj.denom} - {metronomeObj.counter}", (950, 470), 2, GUI_TEXT_COLOR)
 
 
 

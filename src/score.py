@@ -68,7 +68,7 @@ class Score :
   - <cursorsLeft>   : list of cursors values where a note is pressed on the left hand
   - <cursorsRight>  : list of cursors values where a note is pressed on the right hand
   """
-  def __init__(self) :
+  def __init__(self, songFile) :
     
     self.songDir  = ""
     self.songName = ""
@@ -119,6 +119,440 @@ class Score :
 
     # Weak arbitration sections
     self.weakArbitrationSections = []
+
+    self.importFromFile(songFile)
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.importFromFile
+  # ---------------------------------------------------------------------------
+  def importFromFile(self, inputFile) :
+    """
+    Loads the internal piano roll from an external file (.mid or .pr)
+    """
+  
+    if (os.path.splitext(inputFile)[-1] == ".mid") :
+      self._importFromMIDIFile(inputFile)
+    elif (os.path.splitext(inputFile)[-1] == ".pr") :
+      self._importFromPrFile(inputFile)
+    else :
+      print("[ERROR] This file extension is not supported.")
+      exit()
+
+
+
+    (rootDir, rootNameExt) = os.path.split(inputFile)
+    (rootName, _) = os.path.splitext(rootNameExt)
+    # self.songName     = rootNameExt
+    # self.jsonName     = rootName + ".json"          # Example: "my_song.json"
+    # self.jsonFile     = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
+    # self.depotFolder  = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
+    
+    self.songDir = rootDir
+    self.songName = rootName
+    
+
+
+    self.hasUnsavedChanges = False
+    
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.importFromMIDIFile(midiFileName)
+  # ---------------------------------------------------------------------------
+  def _importFromMIDIFile(self, midiFile) :
+    """
+    Builds the internal score structure from a MIDI file.
+    
+    A score is stored in the object in the <pianoRoll> variable and looks like:
+    pianoRoll.noteArray[t][p] = [note0, note1, ...]
+    
+    It is basically the list of all notes played on track <t>, on pitch <p>. 
+    
+    Each element of the list is a Note object.
+    
+    A Note() object has attributes:
+    - noteXXX.start/.end (integer) : timestamp of its beginning/end
+    - noteXXX.hand (string: "l", "r" or ""): hand used to play the note.
+    Please refer to note.py for more information on the Note objects.
+    
+    pianoRoll.noteOntimecodes[t] = [t0, t1, ...]
+    """
+
+    print("[INFO] Processing .mid file... ", end = "")
+    startTime = time.time()
+
+    mid = mido.MidiFile(midiFile)
+
+    # TODO: give more flexibility when opening MIDI files
+    # It is assumed here that the MIDI file has 2 tracks.
+    # But in general MIDI files might contain more than that.
+    # And in general, the user might want to map specific tracks to the staffs
+    # and not only track 0 and 1.
+    # print(f"[INFO] [MIDI import] Tracks found: {len(mid.tracks)}")
+    
+    # Only 2 staves are supported for now.
+    # The app focuses on piano practice: there is no plan to support more than
+    # 2 staves in the near future.
+    if (len(mid.tracks) > 2) :
+      print("[WARNING] The MIDI file has more than 2 tracks. Tracks beyond the first 2 will be ignored.")
+    self.nStaffs = 2
+    
+    # Allocate outputs
+    self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
+    self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
+
+    nNotes = 0; noteDuration = 0
+    
+    # Each note is assigned to a unique identifier (simple counter)
+    id = 0
+
+    # Loop on the tracks, decode the MIDI messages
+    for (trackNumber, track) in enumerate(mid.tracks) :
+      if (trackNumber < 2) :
+        currTime = 0
+        for msg in track :
+
+          # Update the current date ---------------------------------------------
+          currTime += msg.time
+          
+          # Keypress event ------------------------------------------------------
+          if ((msg.type == 'note_on') and (msg.velocity > 0)) :
+            
+            pitch = msg.note
+            
+            # Inspect the previous notes with the same pitch
+            if (len(self.pianoRoll[trackNumber][pitch]) > 0) :
+              
+              # Detect if among these notes, one is still held
+              for currNote in self.pianoRoll[trackNumber][pitch] :
+                if (currNote.stopTime < 0) :
+                  print(f"[WARNING] Ambiguous note at t = {currTime} ({note.getFriendlyName(pitch)}): a keypress overlaps a hanging keypress on the same note.")
+
+                  # New note detected: close the previous note.
+                  # That is one strategy, but it might be wrong. It depends on the song.
+                  # User should decide here.
+                  currNote.stopTime = currTime
+                  noteDuration += (currNote.stopTime - currNote.startTime)
+                  nNotes += 1.0
+                  id += 1
+
+              # Append the new note to the list
+              # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
+              insertIndex = len(self.pianoRoll[trackNumber][pitch])
+              self.pianoRoll[trackNumber][pitch].append(note.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
+              
+              # Append the timecode of this keypress
+              if (trackNumber == LEFT_HAND) :
+                self.noteOnTimecodes["L"].append(currTime)
+              elif (trackNumber == RIGHT_HAND) :
+                self.noteOnTimecodes["R"].append(currTime)
+              else :
+                print("[INTERNAL ERROR] Invalid track number.")
+
+              self.noteOnTimecodes["LR_full"].append(currTime)
+            
+            # First note with this pitch
+            else :
+              
+              # Append the new note to the list
+              # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
+              insertIndex = len(self.pianoRoll[trackNumber][pitch])
+              self.pianoRoll[trackNumber][pitch].append(note.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
+              
+              # Append the timecode of this keypress
+              # if not(currTime in self.noteOntimecodes[trackNumber]) : 
+              #   self.noteOntimecodes[trackNumber].append(currTime)
+
+              if (trackNumber == LEFT_HAND) :
+                self.noteOnTimecodes["L"].append(currTime)
+              elif (trackNumber == RIGHT_HAND) :
+                self.noteOnTimecodes["R"].append(currTime)
+              else :
+                print("[INTERNAL ERROR] Invalid track number.")
+
+              self.noteOnTimecodes["LR_full"].append(currTime)
+
+          # Keyrelease event ----------------------------------------------------
+          # NOTE: in some files, 'NOTE OFF' message is mimicked using a 'NOTE ON' with null velocity.
+          if ((msg.type == 'note_off') or ((msg.type == 'note_on') and (msg.velocity == 0))) :
+            
+            pitch = msg.note
+
+            # Take the latest event in the piano roll for this note
+            noteObj = self.pianoRoll[trackNumber][pitch][-1]
+            
+            # Close it
+            noteObj.stopTime = currTime
+            noteObj.id = id
+            
+            noteDuration += (noteObj.stopTime - noteObj.startTime)
+            nNotes += 1.0
+            id += 1
+
+            # Quite common apparently. Is that really an error case?
+            # if (noteObj.startTime == noteObj.stopTime) :
+            #   print(f"[WARNING] [MIDI import] MIDI note {pitch} ({note.getFriendlyName(pitch)}) has null duration (start time = stop time = {noteObj.startTime})")
+            #   self.pianoRoll[trackNumber][pitch].pop()
+
+
+
+          # Others --------------------------------------------------------------
+          # Other MIDI events are ignored.
+
+
+    # Tidy up:
+    # - sort the timecodes by ascending values
+    # - remove duplicate entries
+    self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
+    self.noteOnTimecodes["LR_full"].sort()
+
+    self.noteOnTimecodes["LR"] = set(self.noteOnTimecodes["LR_full"])
+    self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
+    self.noteOnTimecodes["LR"].sort()
+
+    # Build <cursorsLeft> and <cursorsRight>
+    self._buildCursorsLR()
+
+    # Estimate average note duration (needed for the piano roll display)
+    self.avgNoteDuration = noteDuration/nNotes
+    
+    self.scoreLength = len(self.noteOnTimecodes["LR"])
+    self.cursorMax = self.scoreLength-1
+    
+    # Statistics are inexistant, initialize them
+    self.statsCursor = [0 for _ in range(self.scoreLength)]
+    self.sessionCount = 1
+    self.sessionStartTime = datetime.datetime.now()
+    self.sessionStopTime = -1
+    self.sessionTotalPracticeTime = 0
+    self.sessionLog = []
+    
+    # DEBUG
+    print(f"[DEBUG] Score length: {self.scoreLength} steps")
+
+    stopTime = time.time()
+    print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
+    
+    print("")
+    print(f"[INFO] Get ready for the first session!")
+    
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score._importFromPrFile(fileName)
+  # ---------------------------------------------------------------------------
+  def _importFromPrFile(self, pianoRollFile) :
+    """
+    Imports the score and all metadata (finger, hand, bookmarks etc.)
+    from a .pr file (JSON) and restores the last session.
+    """
+    
+    startTime = time.time()
+    with open(pianoRollFile, "r") as fileHandler :
+      importDict = json.load(fileHandler)
+
+    # Read the revision
+    versionMatch = re.match(r"^v(\d+)\.(\d+)$", importDict["revision"])
+    if versionMatch :
+      (majorRev, minorRev) = (int(versionMatch.group(1)), int(versionMatch.group(2)))
+
+    else :
+      # At that point, the rest of the parsing might fail.
+      print(f"[WARNING] No version could be read from the .pr file. Either it is corrupted or too old and this version does not speak Dinosaur anymore.")
+    
+    # Default dictionary, in case some fields do not exist.
+    safeDict = {
+      "revision"                  : "v0.0",
+      "nStaffs"                   : 2,
+      "avgNoteDuration"           : 100.0,
+      "cursor"                    : 0,
+      "cursorsLeft"               : [],
+      "cursorsRight"              : [],
+      "bookmarks"                 : [],
+      "activeHands"               : "LR",
+      "tempoSections"             : [(1, 120)],
+      "weakArbitrationSections"   : []
+    }
+  
+    # Load every existing field
+    for currKey in safeDict :
+      if currKey in importDict :
+        safeDict[currKey] = importDict[currKey]
+
+    # Initialize the object  
+    self.nStaffs                  = safeDict["nStaffs"]
+    self.avgNoteDuration          = safeDict["avgNoteDuration"]
+    self.cursor                   = safeDict["cursor"]
+    self.bookmarks                = safeDict["bookmarks"]
+    self.activeHands              = safeDict["activeHands"]
+    
+    # -----------------------------
+    # Pianoroll import - v0.X style
+    # -----------------------------
+    if (majorRev == 0) :
+      print("[INFO] Importing dinosaur .pr file (versions v0.X) has been deprecated since gangQin v1.6")
+      exit()
+      
+    # ---------------------------------
+    # Pianoroll import - v1.0 and above
+    # ---------------------------------
+    # From version 1.0, the pianoroll is flattened.
+    # From version 1.3, the variables:
+    # - <noteOntimecodes>, 
+    # - <noteOntimecodesMerged>, 
+    # - <cursorsLeft>, 
+    # - <cursorsRight>
+    # are rebuilt from the notes properties in the pianoroll.
+    else :
+      
+      self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
+      self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
+      noteCount = 0
+      masteredNoteCount = 0
+
+      for noteObjImported in importDict["pianoRoll"] :
+
+        # Create the object
+        noteObj = note.Note(0)
+        
+        # List of all properties in a Note object, make a dictionary out of it.
+        noteAttrDict = noteObj.__dict__.copy()
+        
+        # Make sure the ID is treated first, so that the warning later in the for loop
+        # can display the ID of the edited note.
+        noteObj.id = noteObjImported["id"]; del noteAttrDict["id"]
+
+        # Detect manual editions
+        noteNameExpected = note.getFriendlyName(noteObjImported["pitch"])
+        noteNameActual   = noteObjImported["name"]
+        newColor = WHITE_KEY if ((noteObjImported["pitch"] % 12) in WHITE_NOTES_CODE_MOD12) else BLACK_KEY
+        if (noteNameExpected != noteNameActual) :
+          print(f"[INFO] Note ID {noteObj.id}: manual edition detected.")
+          print(f"Following fields will be replaced:")
+          print(f"- note name: {noteNameActual} -> {noteNameExpected}")
+          print(f"- key color: {newColor}")
+          noteObjImported["name"]     = noteNameExpected
+          noteObjImported["keyColor"] = newColor
+
+        # Loop on the attributes of the Note object
+        # Set the attribute by string
+        for noteAttr in noteAttrDict :
+          if noteAttr in noteObjImported :
+            setattr(noteObj, noteAttr, noteObjImported[noteAttr])
+        
+        if (noteObj.finger != 0) :
+          masteredNoteCount += 1
+
+        self.pianoRoll[noteObjImported["hand"]][noteObjImported["pitch"]].append(noteObj)
+        
+        if (noteObjImported["hand"] == LEFT_HAND) :
+          self.noteOnTimecodes["L"].append(noteObj.startTime)
+        elif (noteObjImported["hand"] == RIGHT_HAND) :
+          self.noteOnTimecodes["R"].append(noteObj.startTime)
+
+        self.noteOnTimecodes["LR_full"].append(noteObj.startTime)
+        
+        noteCount += 1
+        
+    # Tidy up:
+    # - sort the timecodes by ascending values
+    # - remove duplicate entries
+    self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
+    self.noteOnTimecodes["LR_full"].sort()
+
+    self.noteOnTimecodes["LR"] = set(self.noteOnTimecodes["LR_full"])
+    self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
+    self.noteOnTimecodes["LR"].sort()
+
+    # Build "cursorsLeft" and "cursorsRight".
+    # Each one is a list of all cursors where something has to be played 
+    # either on the left (cursorsLeft) or right hand (cursorsRight)
+    self._buildCursorsLR()
+
+    self.scoreLength = len(self.noteOnTimecodes["LR"])
+    self.cursorMax = self.scoreLength-1
+
+    stopTime = time.time()
+    print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
+    print(f"[INFO] {noteCount} notes read from .pr file.")
+    print(f"[INFO] Score length: {self.scoreLength} steps")
+    
+    print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.exportToPrFile()
+  # ---------------------------------------------------------------------------
+  def exportToPrFile(self, backup = False) :
+    """
+    Exports the piano roll and all metadata (finger, hand, comments etc.) in 
+    a .pr file (JSON) that can be imported later to restore the session.
+
+    Call the function with 'backup' option set to True to save to a '.bak' 
+    extension instead. 
+    """
+
+    if backup :
+      print("[INFO] Exporting piano roll...")
+    else :
+      print("[INFO] Exporting a backup of the piano roll...")
+
+    # Create the dictionnary containing all the things we want to save
+    exportDict = {}
+
+    # Export "manually" elements of the PianoRoll object to the export dictionary.
+    # Not ideal but does the job for now as there aren't too many properties.
+    exportDict["revision"]              = f"v{REV_MAJOR}.{REV_MINOR}"
+    exportDict["nStaffs"]               = self.nStaffs
+    exportDict["avgNoteDuration"]       = self.avgNoteDuration
+    exportDict["cursor"]                = self.cursor
+    exportDict["bookmarks"]             = self.bookmarks
+    exportDict["activeHands"]           = self.activeHands
+
+    noteCount = 0
+    exportDict["pianoRoll"] = []
+    for notesInTrack in self.pianoRoll :
+      for notesInPitch in notesInTrack :
+        for noteObj in notesInPitch :
+          noteCount += 1
+          
+          noteObjCopy = copy.deepcopy(noteObj)
+          noteExportAttr = noteObjCopy.__dict__
+
+          # Filter out some note attributes that need not to be exported
+          del noteExportAttr["highlight"]
+          del noteExportAttr["upcoming"]
+          del noteExportAttr["upcomingDistance"]
+          del noteExportAttr["fromKeyboardInput"]
+          del noteExportAttr["lookAheadDistance"]
+          del noteExportAttr["visible"]
+
+          exportDict["pianoRoll"].append(noteExportAttr)
+
+    if backup :
+      pianoRollFile = self.songDir + "/" + self.songName + ".bak"  
+    else :
+      pianoRollFile = self.songDir + "/" + self.songName + ".pr"
+    
+    with open(pianoRollFile, "w") as fileHandler :
+      json.dump(exportDict, fileHandler, indent = 2)
+
+    currTime = datetime.datetime.now()
+    if backup :
+      print(f"[INFO] Saved backup to '{pianoRollFile}'")
+    else :
+      currTime = datetime.datetime.now()
+      print(f"[DEBUG] {noteCount} notes written in .pr file.")
+      print(f"[INFO] Saved to '{pianoRollFile}' at {currTime.strftime('%H:%M:%S')}")
+
+
+
+
+
+
 
 
 
@@ -1057,430 +1491,7 @@ class Score :
     
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD Score.importFromFile(fileName)
-  # ---------------------------------------------------------------------------
-  def importFromFile(self, inputFile) :
-    """
-    Loads the internal piano roll from an external file (.mid or .pr)
-    """
   
-    if (os.path.splitext(inputFile)[-1] == ".mid") :
-      self._importFromMIDIFile(inputFile)
-    elif (os.path.splitext(inputFile)[-1] == ".pr") :
-      self._importFromPrFile(inputFile)
-    else :
-      print("[ERROR] This file extension is not supported.")
-      exit()
-
-
-
-    (rootDir, rootNameExt) = os.path.split(inputFile)
-    (rootName, _) = os.path.splitext(rootNameExt)
-    # self.songName     = rootNameExt
-    # self.jsonName     = rootName + ".json"          # Example: "my_song.json"
-    # self.jsonFile     = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
-    # self.depotFolder  = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
-    
-    self.songDir = rootDir
-    self.songName = rootName
-    
-
-
-    self.hasUnsavedChanges = False
-    
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.importFromMIDIFile(midiFileName)
-  # ---------------------------------------------------------------------------
-  def _importFromMIDIFile(self, midiFile) :
-    """
-    Builds the internal score structure from a MIDI file.
-    
-    A score is stored in the object in the <pianoRoll> variable and looks like:
-    pianoRoll.noteArray[t][p] = [note0, note1, ...]
-    
-    It is basically the list of all notes played on track <t>, on pitch <p>. 
-    
-    Each element of the list is a Note object.
-    
-    A Note() object has attributes:
-    - noteXXX.start/.end (integer) : timestamp of its beginning/end
-    - noteXXX.hand (string: "l", "r" or ""): hand used to play the note.
-    Please refer to note.py for more information on the Note objects.
-    
-    pianoRoll.noteOntimecodes[t] = [t0, t1, ...]
-    """
-
-    print("[INFO] Processing .mid file... ", end = "")
-    startTime = time.time()
-
-    mid = mido.MidiFile(midiFile)
-
-    # TODO: give more flexibility when opening MIDI files
-    # It is assumed here that the MIDI file has 2 tracks.
-    # But in general MIDI files might contain more than that.
-    # And in general, the user might want to map specific tracks to the staffs
-    # and not only track 0 and 1.
-    # print(f"[INFO] [MIDI import] Tracks found: {len(mid.tracks)}")
-    
-    # Only 2 staves are supported for now.
-    # The app focuses on piano practice: there is no plan to support more than
-    # 2 staves in the near future.
-    if (len(mid.tracks) > 2) :
-      print("[WARNING] The MIDI file has more than 2 tracks. Tracks beyond the first 2 will be ignored.")
-    self.nStaffs = 2
-    
-    # Allocate outputs
-    self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
-    self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
-
-    nNotes = 0; noteDuration = 0
-    
-    # Each note is assigned to a unique identifier (simple counter)
-    id = 0
-
-    # Loop on the tracks, decode the MIDI messages
-    for (trackNumber, track) in enumerate(mid.tracks) :
-      if (trackNumber < 2) :
-        currTime = 0
-        for msg in track :
-
-          # Update the current date ---------------------------------------------
-          currTime += msg.time
-          
-          # Keypress event ------------------------------------------------------
-          if ((msg.type == 'note_on') and (msg.velocity > 0)) :
-            
-            pitch = msg.note
-            
-            # Inspect the previous notes with the same pitch
-            if (len(self.pianoRoll[trackNumber][pitch]) > 0) :
-              
-              # Detect if among these notes, one is still held
-              for currNote in self.pianoRoll[trackNumber][pitch] :
-                if (currNote.stopTime < 0) :
-                  print(f"[WARNING] Ambiguous note at t = {currTime} ({note.getFriendlyName(pitch)}): a keypress overlaps a hanging keypress on the same note.")
-
-                  # New note detected: close the previous note.
-                  # That is one strategy, but it might be wrong. It depends on the song.
-                  # User should decide here.
-                  currNote.stopTime = currTime
-                  noteDuration += (currNote.stopTime - currNote.startTime)
-                  nNotes += 1.0
-                  id += 1
-
-              # Append the new note to the list
-              # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
-              insertIndex = len(self.pianoRoll[trackNumber][pitch])
-              self.pianoRoll[trackNumber][pitch].append(note.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
-              
-              # Append the timecode of this keypress
-              if (trackNumber == LEFT_HAND) :
-                self.noteOnTimecodes["L"].append(currTime)
-              elif (trackNumber == RIGHT_HAND) :
-                self.noteOnTimecodes["R"].append(currTime)
-              else :
-                print("[INTERNAL ERROR] Invalid track number.")
-
-              self.noteOnTimecodes["LR_full"].append(currTime)
-            
-            # First note with this pitch
-            else :
-              
-              # Append the new note to the list
-              # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
-              insertIndex = len(self.pianoRoll[trackNumber][pitch])
-              self.pianoRoll[trackNumber][pitch].append(note.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
-              
-              # Append the timecode of this keypress
-              # if not(currTime in self.noteOntimecodes[trackNumber]) : 
-              #   self.noteOntimecodes[trackNumber].append(currTime)
-
-              if (trackNumber == LEFT_HAND) :
-                self.noteOnTimecodes["L"].append(currTime)
-              elif (trackNumber == RIGHT_HAND) :
-                self.noteOnTimecodes["R"].append(currTime)
-              else :
-                print("[INTERNAL ERROR] Invalid track number.")
-
-              self.noteOnTimecodes["LR_full"].append(currTime)
-
-          # Keyrelease event ----------------------------------------------------
-          # NOTE: in some files, 'NOTE OFF' message is mimicked using a 'NOTE ON' with null velocity.
-          if ((msg.type == 'note_off') or ((msg.type == 'note_on') and (msg.velocity == 0))) :
-            
-            pitch = msg.note
-
-            # Take the latest event in the piano roll for this note
-            noteObj = self.pianoRoll[trackNumber][pitch][-1]
-            
-            # Close it
-            noteObj.stopTime = currTime
-            noteObj.id = id
-            
-            noteDuration += (noteObj.stopTime - noteObj.startTime)
-            nNotes += 1.0
-            id += 1
-
-            # Quite common apparently. Is that really an error case?
-            # if (noteObj.startTime == noteObj.stopTime) :
-            #   print(f"[WARNING] [MIDI import] MIDI note {pitch} ({note.getFriendlyName(pitch)}) has null duration (start time = stop time = {noteObj.startTime})")
-            #   self.pianoRoll[trackNumber][pitch].pop()
-
-
-
-          # Others --------------------------------------------------------------
-          # Other MIDI events are ignored.
-
-
-    # Tidy up:
-    # - sort the timecodes by ascending values
-    # - remove duplicate entries
-    self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
-    self.noteOnTimecodes["LR_full"].sort()
-
-    self.noteOnTimecodes["LR"] = set(self.noteOnTimecodes["LR_full"])
-    self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
-    self.noteOnTimecodes["LR"].sort()
-
-    # Build <cursorsLeft> and <cursorsRight>
-    self._buildCursorsLR()
-
-    # Estimate average note duration (needed for the piano roll display)
-    self.avgNoteDuration = noteDuration/nNotes
-    
-    self.scoreLength = len(self.noteOnTimecodes["LR"])
-    self.cursorMax = self.scoreLength-1
-    
-    # Statistics are inexistant, initialize them
-    self.statsCursor = [0 for _ in range(self.scoreLength)]
-    self.sessionCount = 1
-    self.sessionStartTime = datetime.datetime.now()
-    self.sessionStopTime = -1
-    self.sessionTotalPracticeTime = 0
-    self.sessionLog = []
-    
-    # DEBUG
-    print(f"[DEBUG] Score length: {self.scoreLength} steps")
-
-    stopTime = time.time()
-    print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
-    
-    print("")
-    print(f"[INFO] Get ready for the first session!")
-    
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score._importFromPrFile(fileName)
-  # ---------------------------------------------------------------------------
-  def _importFromPrFile(self, pianoRollFile) :
-    """
-    Imports the score and all metadata (finger, hand, bookmarks etc.)
-    from a .pr file (JSON) and restores the last session.
-    """
-    
-    startTime = time.time()
-    with open(pianoRollFile, "r") as fileHandler :
-      importDict = json.load(fileHandler)
-
-    # Read the revision
-    versionMatch = re.match(r"^v(\d+)\.(\d+)$", importDict["revision"])
-    if versionMatch :
-      (majorRev, minorRev) = (int(versionMatch.group(1)), int(versionMatch.group(2)))
-
-    else :
-      # At that point, the rest of the parsing might fail.
-      print(f"[WARNING] No version could be read from the .pr file. Either it is corrupted or too old and this version does not speak Dinosaur anymore.")
-      
-
-    # Default dictionary, in case some fields do not exist.
-    safeDict = {
-      "revision"                  : "v0.0",
-      "nStaffs"                   : 2,
-      "avgNoteDuration"           : 100.0,
-      "cursor"                    : 0,
-      "cursorsLeft"               : [],
-      "cursorsRight"              : [],
-      "bookmarks"                 : [],
-      "activeHands"               : "LR",
-      "tempoSections"             : [(1, 120)],
-      "weakArbitrationSections"   : []
-    }
-  
-    # Load every existing field
-    for currKey in safeDict :
-      if currKey in importDict :
-        safeDict[currKey] = importDict[currKey]
-
-    # Initialize the object  
-    self.nStaffs                  = safeDict["nStaffs"]
-    self.avgNoteDuration          = safeDict["avgNoteDuration"]
-    self.cursor                   = safeDict["cursor"]
-    self.bookmarks                = safeDict["bookmarks"]
-    self.activeHands              = safeDict["activeHands"]
-    
-    # -----------------------------
-    # Pianoroll import - v0.X style
-    # -----------------------------
-    if (majorRev == 0) :
-      print("[INFO] Importing dinosaur .pr file (versions v0.X) has been deprecated since gangQin v1.6")
-      exit()
-      
-    # ---------------------------------
-    # Pianoroll import - v1.0 and above
-    # ---------------------------------
-    # From version 1.0, the pianoroll is flattened.
-    # From version 1.3, the variables:
-    # - <noteOntimecodes>, 
-    # - <noteOntimecodesMerged>, 
-    # - <cursorsLeft>, 
-    # - <cursorsRight>
-    # are rebuilt from the notes properties in the pianoroll.
-    else :
-      
-      self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
-      self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
-      noteCount = 0
-      masteredNoteCount = 0
-
-      for noteObjImported in importDict["pianoRoll"] :
-
-        # Create the object
-        noteObj = note.Note(0)
-        
-        # List of all properties in a Note object, make a dictionary out of it.
-        noteAttrDict = noteObj.__dict__.copy()
-        
-        # Make sure the ID is treated first, so that the warning later in the for loop
-        # can display the ID of the edited note.
-        noteObj.id = noteObjImported["id"]; del noteAttrDict["id"]
-
-        # Detect manual editions
-        noteNameExpected = note.getFriendlyName(noteObjImported["pitch"])
-        noteNameActual   = noteObjImported["name"]
-        newColor = WHITE_KEY if ((noteObjImported["pitch"] % 12) in WHITE_NOTES_CODE_MOD12) else BLACK_KEY
-        if (noteNameExpected != noteNameActual) :
-          print(f"[INFO] Note ID {noteObj.id}: manual edition detected.")
-          print(f"Following fields will be replaced:")
-          print(f"- note name: {noteNameActual} -> {noteNameExpected}")
-          print(f"- key color: {newColor}")
-          noteObjImported["name"]     = noteNameExpected
-          noteObjImported["keyColor"] = newColor
-
-        # Loop on the attributes of the Note object
-        # Set the attribute by string
-        for noteAttr in noteAttrDict :
-          if noteAttr in noteObjImported :
-            setattr(noteObj, noteAttr, noteObjImported[noteAttr])
-        
-        if (noteObj.finger != 0) :
-          masteredNoteCount += 1
-
-        self.pianoRoll[noteObjImported["hand"]][noteObjImported["pitch"]].append(noteObj)
-        
-        if (noteObjImported["hand"] == LEFT_HAND) :
-          self.noteOnTimecodes["L"].append(noteObj.startTime)
-        elif (noteObjImported["hand"] == RIGHT_HAND) :
-          self.noteOnTimecodes["R"].append(noteObj.startTime)
-
-        self.noteOnTimecodes["LR_full"].append(noteObj.startTime)
-        
-        noteCount += 1
-        
-    # Tidy up:
-    # - sort the timecodes by ascending values
-    # - remove duplicate entries
-    self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
-    self.noteOnTimecodes["LR_full"].sort()
-
-    self.noteOnTimecodes["LR"] = set(self.noteOnTimecodes["LR_full"])
-    self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
-    self.noteOnTimecodes["LR"].sort()
-
-    # Build "cursorsLeft" and "cursorsRight".
-    # Each one is a list of all cursors where something has to be played 
-    # either on the left (cursorsLeft) or right hand (cursorsRight)
-    self._buildCursorsLR()
-
-    self.scoreLength = len(self.noteOnTimecodes["LR"])
-    self.cursorMax = self.scoreLength-1
-
-    stopTime = time.time()
-    print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
-    print(f"[INFO] {noteCount} notes read from .pr file.")
-    print(f"[INFO] Score length: {self.scoreLength} steps")
-    
-    print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.exportToPrFile()
-  # ---------------------------------------------------------------------------
-  def exportToPrFile(self, backup = False) :
-    """
-    Exports the piano roll and all metadata (finger, hand, comments etc.) in 
-    a .pr file (JSON) that can be imported later to restore the session.
-
-    Call the function with 'backup' option set to True to save to a '.bak' 
-    extension instead. 
-    """
-
-    if backup :
-      print("[INFO] Exporting piano roll...")
-    else :
-      print("[INFO] Exporting a backup of the piano roll...")
-
-    # Create the dictionnary containing all the things we want to save
-    exportDict = {}
-
-    # Export "manually" elements of the PianoRoll object to the export dictionary.
-    # Not ideal but does the job for now as there aren't too many properties.
-    exportDict["revision"]              = f"v{REV_MAJOR}.{REV_MINOR}"
-    exportDict["nStaffs"]               = self.nStaffs
-    exportDict["avgNoteDuration"]       = self.avgNoteDuration
-    exportDict["cursor"]                = self.cursor
-    exportDict["bookmarks"]             = self.bookmarks
-    exportDict["activeHands"]           = self.activeHands
-
-    noteCount = 0
-    exportDict["pianoRoll"] = []
-    for notesInTrack in self.pianoRoll :
-      for notesInPitch in notesInTrack :
-        for noteObj in notesInPitch :
-          noteCount += 1
-          
-          noteObjCopy = copy.deepcopy(noteObj)
-          noteExportAttr = noteObjCopy.__dict__
-
-          # Filter out some note attributes that need not to be exported
-          del noteExportAttr["highlight"]
-          del noteExportAttr["upcoming"]
-          del noteExportAttr["upcomingDistance"]
-          del noteExportAttr["fromKeyboardInput"]
-          del noteExportAttr["lookAheadDistance"]
-          del noteExportAttr["visible"]
-
-          exportDict["pianoRoll"].append(noteExportAttr)
-
-    if backup :
-      pianoRollFile = self.songDir + "/" + self.songName + ".bak"  
-    else :
-      pianoRollFile = self.songDir + "/" + self.songName + ".pr"
-    
-    with open(pianoRollFile, "w") as fileHandler :
-      json.dump(exportDict, fileHandler, indent = 2)
-
-    currTime = datetime.datetime.now()
-    if backup :
-      print(f"[INFO] Saved backup to '{pianoRollFile}'")
-    else :
-      currTime = datetime.datetime.now()
-      print(f"[DEBUG] {noteCount} notes written in .pr file.")
-      print(f"[INFO] Saved to '{pianoRollFile}' at {currTime.strftime('%H:%M:%S')}")
 
 
 

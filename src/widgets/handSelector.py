@@ -91,7 +91,7 @@ class handSelector :
       text.renderPlus(
         self.screen, 
         "L - R", 
-        colorSpec, {"r": R, "g": G, "n": UI_TEXT_COLOR}, 
+        colorSpec, {"r": R, "g": G, "n": GUI_TEXT_COLOR}, 
         formatSpec,
         (1312, 470),
         2,

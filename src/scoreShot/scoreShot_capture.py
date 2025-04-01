@@ -26,16 +26,16 @@ import tkinter as tk
 # =============================================================================
 # Some high resolution screens use a scaling factor that messes with the 
 # coordinates of 'Imagegrab'.
-# Zoom factor 100%: SCREEN_SCALING = 1.0
-# Zoom factor 250%: SCREEN_SCALING = 2.5
+# You might need to adjust depending on this scaling factor:
+# - zoom factor 100%: SCREEN_SCALING = 1.0
+# - zoom factor 250%: SCREEN_SCALING = 2.5
 SCREEN_SCALING = 1.0
 
 
 
 # =============================================================================
-# Main code
+# DISPLAY SHORTCUTS
 # =============================================================================
-
 print(f"================================================================================")
 print(f"SCORESHOT CAPTURE - {captureGUI.CREDITS}")
 print(f"================================================================================")
@@ -57,7 +57,10 @@ print("- Del                    : delete the selected snapshot [NOT IMPLEMENTED 
 print("- 'q'                    : exit app")
 print("- 's'                    : save database")
 
-# Show the song file selection GUI
+# =============================================================================
+# CAPTURE GUI
+# =============================================================================
+# Open the song file selection GUI
 fileSel = fileSelectionGUI.new()
 fileSel.setTitle("ScoreShot (Capture) - New session")
 songFile = fileSel.show()

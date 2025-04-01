@@ -69,10 +69,10 @@ class FingerSelector :
 
     # *** Graphical properties ***
     (self.locX, self.locY) = loc
-    self.textColor = UI_TEXT_COLOR
+    self.textColor = GUI_TEXT_COLOR
     self.textColorL = (145, 7, 0)
     self.textColorR = (0, 145, 7)
-    self.lineColor = UI_TEXT_COLOR
+    self.lineColor = GUI_TEXT_COLOR
     
     self.textColorSelL = (244, 13, 0)
     self.textColorSelR = (0, 244, 13)

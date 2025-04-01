@@ -356,6 +356,8 @@ class Stats :
     idleTime = round(time.perf_counter() - self.lastActivity)
     if (idleTime > IDLE_TIME_THRESHOLD_SEC) :
       self.totalInactivity_sec += idleTime
+
+    if (idleTime > 180) :
       print("Welcome back, Sleeping Beauty :)")
 
     self.lastActivity = time.perf_counter()

@@ -58,8 +58,7 @@ screen = pygame.display.set_mode((screenWidth, screenHeight))
 clock = pygame.time.Clock()
 
 # Import file in the internal score representation
-userScore = score.Score()
-userScore.importFromFile(songFile)
+userScore = score.Score(songFile)
 
 # Grand piano widget
 keyboardWidget = keyboard.Keyboard(loc = (10, 300))
@@ -262,7 +261,7 @@ while running :
 
 
   # Clear the screen
-  screen.fill(BACKGROUND_COLOR)
+  screen.fill(GUI_BACKGROUND_COLOR)
 
   # Draw the keyboard on screen
   keyboardWidget.reset()
@@ -292,7 +291,7 @@ while running :
   coord = pygame.mouse.get_pos()
   # staffScopeWidget.setMouseCursor(coord)
 
-  clock.tick(FPS)
+  clock.tick(GUI_FPS)
 
   # Update the display
   pygame.display.flip()

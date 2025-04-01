@@ -17,7 +17,7 @@
 # Project specific constants
 from commons import *
 
-# For graphics
+# Graphic interface
 import pygame
 
 # Widgets
@@ -29,7 +29,7 @@ import src.widgets.pianoRoll as pianoRoll
 import src.widgets.trackSelectionGUI as trackSelectionGUI
 import src.widgets.staffScope as staffScope
 
-# Various utilities
+# Utilities
 import arbiter
 import metronome
 import note
@@ -42,13 +42,10 @@ import utils
 import mido
 import rtmidi
 
-# File/path utilities
-import os
-
 
 
 # =============================================================================
-# Main code
+# SESSION INIT: FILE SELECTION
 # =============================================================================
 
 # Open the MIDI interface file selection GUI
@@ -57,58 +54,58 @@ import os
 if ((songFile == "") or (songFile == "None")) :
   exit()
 
+# If a MIDI file is selected, show the track selection GUI
 if songFile.endswith(".mid") :
   trackSel = trackSelectionGUI.new()
   trackSel.load(songFile)
   midiTracks = trackSel.show()
 
-# Define screen dimensions
-pygame.init()
-screenWidth = 1320
-screenHeight = 500
-screen = pygame.display.set_mode((screenWidth, screenHeight))
 
-# Time management
+
+# =============================================================================
+# MAIN SESSION
+# =============================================================================
+pygame.init()
+screen = pygame.display.set_mode((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 
-# Import file in the internal score representation
-userScore = score.Score()
-userScore.importFromFile(songFile)
+# Load the file to a Score object
+userScore = score.Score(songFile)
 
-# Grand piano widget
+# Widget: grand piano
 keyboardWidget = keyboard.Keyboard(loc = (10, 300))
 
-# Pianoroll widget
+# Widget: piano roll
 pianoRollWidget = pianoRoll.PianoRoll(x = 10, yTop = 50, yBottom = 300-2)
 pianoRollWidget.loadPianoRoll(userScore.pianoRoll)
 pianoRollWidget.viewSpan = userScore.avgNoteDuration*PIANOROLL_VIEW_SPAN
 
-# Staffscope widget
+# Widget: staffscope
 staffScopeVisible = STAFFSCOPE_DEFAULT_VISIBILITY
 staffScopeWidget = staffScope.StaffScope()
-staffScopeWidget.setScreen(screen, screenWidth, screenHeight)
+staffScopeWidget.setScreen(screen, GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT)
 staffScopeWidget.load(songFile)
 staffScopeWidget.checkEmpty(exitOnEmpty = False)
 
-# Finger editor widget
+# Widget: finger editor
 fingerSelWidget = fingerSelector.FingerSelector((490, 470))
 
-# Audio notifications widget
+# Widget: audio notifications
 soundNotify = notify.Notify()
 soundNotify.enabled = False
 
-# Metronome widget
+# Widget: metronome
 metronomeObj = metronome.Metronome(120, 4, 4)
 METRONOME_TASK = pygame.USEREVENT + 1
 pygame.time.set_timer(METRONOME_TASK, metronomeObj.getInterval_ms())
 pygame.mixer.init(frequency = 44100, size = -16, channels = 1, buffer = 512)
 
-# Statistics widget
+# Widget: statistics
 statsObj = stats.Stats()
 statsObj.load(songFile)
 statsObj.showIntroSummary()
 
-# Create the arbiter
+# Widget: arbiter
 pianoArbiter = arbiter.Arbiter("permissive")
 
 
@@ -125,21 +122,17 @@ AUTOSAVE_TASK = pygame.USEREVENT + 3
 
 
 # =============================================================================
-# MIDI messages callback
+# INITIALISE MIDI INTERFACE
 # =============================================================================
 def midiCallback(midiMessage) :
   pianoArbiter.updateMidiState(midiMessage)
   statsObj.userActivity()
 
-
-
-# =============================================================================
-# Navigation mode
-# =============================================================================
+# Navigation mode (no MIDI interface selected)
 if (selectedDevice != "None") :
   try :
     midiPort = mido.open_input(selectedDevice, callback = midiCallback)
-  except Exception as e:
+  except Exception as err :
     print("[WARNING] Failed to open the MIDI device (it is used by another software?): running in navigation mode.")
     midiPort = None  
 
@@ -510,7 +503,7 @@ while running :
 
 
   # Clear the screen
-  screen.fill(BACKGROUND_COLOR)
+  screen.fill(GUI_BACKGROUND_COLOR)
 
   # Render the keyboard
   keyboardWidget.reset()
@@ -520,7 +513,7 @@ while running :
   currKey = userScore.getCurrentKey()
   keyboardWidget.setKey(currKey)
   if (currKey != None) :
-    text.render(screen, f"KEY: {currKey.root.upper()} {currKey.mode.upper()}", (200, 470), 2, UI_TEXT_COLOR)
+    text.render(screen, f"KEY: {currKey.root.upper()} {currKey.mode.upper()}", (200, 470), 2, GUI_TEXT_COLOR)
   
   # --------------------------------
   # Staffscope / pianoroll rendering
@@ -627,7 +620,7 @@ while running :
             if statsObj.isComboBroken :
               print("[INFO] Wrong note outside the looping range.")
 
-      # Disabled looped practice: a wrong note has no particular consequence.
+      # No looped practice: a wrong note has no particular consequence.
       else :
         pass
   
@@ -723,7 +716,7 @@ while running :
     metronomeObj.clearQueue()
 
 
-  clock.tick(FPS)
+  clock.tick(GUI_FPS)
 
   # Update the display
   pygame.display.flip()

@@ -1,0 +1,2622 @@
+{
+  "nSnapshots": 90,
+  "snapshots": [
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "9EVAZ2.png",
+      "index": 0,
+      "displayName": "Capture 1",
+      "description": "",
+      "cursorMin": 0,
+      "cursorMax": 51,
+      "playGlowsLeft": {
+        "0": [
+          307,
+          238,
+          10,
+          30
+        ],
+        "1": [
+          320,
+          213,
+          10,
+          30
+        ],
+        "2": [
+          333,
+          196,
+          10,
+          30
+        ],
+        "3": [
+          347,
+          190,
+          10,
+          30
+        ],
+        "4": [
+          359,
+          182,
+          10,
+          30
+        ],
+        "5": [
+          379,
+          179,
+          10,
+          30
+        ],
+        "13": [
+          500,
+          183,
+          10,
+          30
+        ],
+        "14": [
+          513,
+          177,
+          10,
+          30
+        ],
+        "15": [
+          525,
+          174,
+          10,
+          30
+        ],
+        "16": [
+          544,
+          170,
+          10,
+          30
+        ],
+        "24": [
+          689,
+          157,
+          10,
+          30
+        ],
+        "32": [
+          819,
+          169,
+          10,
+          30
+        ],
+        "33": [
+          831,
+          172,
+          10,
+          30
+        ],
+        "34": [
+          842,
+          180,
+          10,
+          30
+        ],
+        "35": [
+          854,
+          186,
+          10,
+          30
+        ],
+        "42": [
+          952,
+          180,
+          10,
+          30
+        ],
+        "43": [
+          962,
+          185,
+          10,
+          30
+        ],
+        "44": [
+          972,
+          194,
+          10,
+          30
+        ],
+        "45": [
+          983,
+          195,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "6": [
+          398,
+          149,
+          10,
+          30
+        ],
+        "7": [
+          412,
+          145,
+          10,
+          30
+        ],
+        "8": [
+          430,
+          144,
+          10,
+          30
+        ],
+        "9": [
+          443,
+          140,
+          10,
+          30
+        ],
+        "10": [
+          456,
+          134,
+          10,
+          30
+        ],
+        "11": [
+          474,
+          130,
+          10,
+          30
+        ],
+        "12": [
+          488,
+          122,
+          10,
+          30
+        ],
+        "17": [
+          565,
+          97,
+          10,
+          30
+        ],
+        "18": [
+          578,
+          94,
+          10,
+          30
+        ],
+        "19": [
+          595,
+          94,
+          10,
+          30
+        ],
+        "20": [
+          610,
+          90,
+          10,
+          30
+        ],
+        "21": [
+          626,
+          107,
+          10,
+          30
+        ],
+        "22": [
+          644,
+          103,
+          10,
+          30
+        ],
+        "23": [
+          658,
+          96,
+          10,
+          30
+        ],
+        "25": [
+          708,
+          94,
+          10,
+          30
+        ],
+        "26": [
+          726,
+          104,
+          10,
+          30
+        ],
+        "27": [
+          741,
+          107,
+          10,
+          30
+        ],
+        "28": [
+          756,
+          90,
+          10,
+          30
+        ],
+        "29": [
+          774,
+          91,
+          10,
+          30
+        ],
+        "30": [
+          794,
+          93,
+          10,
+          30
+        ],
+        "31": [
+          808,
+          96,
+          10,
+          30
+        ],
+        "36": [
+          873,
+          127,
+          10,
+          30
+        ],
+        "37": [
+          884,
+          133,
+          10,
+          30
+        ],
+        "38": [
+          895,
+          139,
+          10,
+          30
+        ],
+        "39": [
+          911,
+          143,
+          10,
+          30
+        ],
+        "40": [
+          928,
+          144,
+          10,
+          30
+        ],
+        "41": [
+          940,
+          144,
+          10,
+          30
+        ],
+        "46": [
+          1001,
+          141,
+          10,
+          30
+        ],
+        "47": [
+          1016,
+          139,
+          10,
+          30
+        ],
+        "48": [
+          1029,
+          145,
+          10,
+          30
+        ],
+        "49": [
+          1042,
+          147,
+          10,
+          30
+        ],
+        "50": [
+          1059,
+          150,
+          10,
+          30
+        ],
+        "51": [
+          1074,
+          152,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "HC3HFT.png",
+      "index": 1,
+      "displayName": "Capture 2",
+      "description": "",
+      "cursorMin": 52,
+      "cursorMax": 59,
+      "playGlowsLeft": {
+        "52": [
+          305,
+          237,
+          10,
+          30
+        ],
+        "53": [
+          322,
+          224,
+          10,
+          30
+        ],
+        "54": [
+          338,
+          207,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "55": [
+          360,
+          151,
+          10,
+          30
+        ],
+        "56": [
+          376,
+          139,
+          10,
+          30
+        ],
+        "57": [
+          388,
+          120,
+          10,
+          30
+        ],
+        "58": [
+          406,
+          134,
+          10,
+          30
+        ],
+        "59": [
+          418,
+          151,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "CYCY75.png",
+      "index": 2,
+      "displayName": "Capture 3",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "83XVTM.png",
+      "index": 3,
+      "displayName": "Capture 4",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "BYVTGD.png",
+      "index": 4,
+      "displayName": "Capture 5",
+      "description": "",
+      "cursorMin": 230,
+      "cursorMax": 235,
+      "playGlowsLeft": {
+        "230": [
+          852,
+          182,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "230": [
+          852,
+          72,
+          10,
+          30
+        ],
+        "231": [
+          927,
+          116,
+          10,
+          30
+        ],
+        "232": [
+          950,
+          112,
+          10,
+          30
+        ],
+        "233": [
+          981,
+          117,
+          10,
+          30
+        ],
+        "234": [
+          1050,
+          91,
+          10,
+          30
+        ],
+        "235": [
+          1069,
+          89,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "A59WYM.png",
+      "index": 5,
+      "displayName": "Capture 6",
+      "description": "",
+      "cursorMin": 236,
+      "cursorMax": 251,
+      "playGlowsLeft": {
+        "236": [
+          304,
+          182,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "237": [
+          380,
+          113,
+          10,
+          30
+        ],
+        "236": [
+          298,
+          90,
+          10,
+          30
+        ],
+        "238": [
+          399,
+          116,
+          10,
+          30
+        ],
+        "239": [
+          432,
+          118,
+          10,
+          30
+        ],
+        "240": [
+          512,
+          90,
+          10,
+          30
+        ],
+        "241": [
+          527,
+          93,
+          10,
+          30
+        ],
+        "242": [
+          565,
+          90,
+          10,
+          30
+        ],
+        "243": [
+          648,
+          125,
+          10,
+          30
+        ],
+        "244": [
+          668,
+          122,
+          10,
+          30
+        ],
+        "245": [
+          702,
+          118,
+          10,
+          30
+        ],
+        "246": [
+          785,
+          93,
+          10,
+          30
+        ],
+        "247": [
+          802,
+          93,
+          10,
+          30
+        ],
+        "248": [
+          833,
+          94,
+          10,
+          30
+        ],
+        "249": [
+          914,
+          125,
+          10,
+          30
+        ],
+        "250": [
+          933,
+          121,
+          10,
+          30
+        ],
+        "251": [
+          967,
+          124,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "T2HZWN.png",
+      "index": 6,
+      "displayName": "Capture 7",
+      "description": "",
+      "cursorMin": 252,
+      "cursorMax": 275,
+      "playGlowsLeft": {
+        "252": [
+          330,
+          197,
+          10,
+          30
+        ],
+        "253": [
+          349,
+          189,
+          10,
+          30
+        ],
+        "254": [
+          362,
+          192,
+          10,
+          30
+        ],
+        "274": [
+          653,
+          193,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "252": [
+          331,
+          105,
+          10,
+          30
+        ],
+        "255": [
+          375,
+          105,
+          10,
+          30
+        ],
+        "256": [
+          395,
+          119,
+          10,
+          30
+        ],
+        "257": [
+          409,
+          111,
+          10,
+          30
+        ],
+        "258": [
+          425,
+          104,
+          10,
+          30
+        ],
+        "261": [
+          483,
+          107,
+          10,
+          30
+        ],
+        "262": [
+          503,
+          117,
+          10,
+          30
+        ],
+        "263": [
+          516,
+          110,
+          10,
+          30
+        ],
+        "264": [
+          530,
+          109,
+          10,
+          30
+        ],
+        "266": [
+          550,
+          105,
+          10,
+          30
+        ],
+        "268": [
+          575,
+          109,
+          10,
+          30
+        ],
+        "271": [
+          622,
+          113,
+          10,
+          30
+        ],
+        "273": [
+          647,
+          108,
+          10,
+          30
+        ],
+        "275": [
+          685,
+          115,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "K98D8A.png",
+      "index": 7,
+      "displayName": "Capture 8",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "GGN5UA.png",
+      "index": 8,
+      "displayName": "Capture 9",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "X3FPEG.png",
+      "index": 9,
+      "displayName": "Capture 10",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "HK92WU.png",
+      "index": 10,
+      "displayName": "Capture 11",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "6AT5PQ.png",
+      "index": 11,
+      "displayName": "Capture 12",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "XT5275.png",
+      "index": 12,
+      "displayName": "Capture 13",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "Y4YWKZ.png",
+      "index": 13,
+      "displayName": "Capture 14",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "A6M232.png",
+      "index": 14,
+      "displayName": "Capture 15",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "QQNB7P.png",
+      "index": 15,
+      "displayName": "Capture 16",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "XMWG5B.png",
+      "index": 16,
+      "displayName": "Capture 17",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "P3NNEH.png",
+      "index": 17,
+      "displayName": "Capture 18",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "3A32MD.png",
+      "index": 18,
+      "displayName": "Capture 19",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "4PQFGW.png",
+      "index": 19,
+      "displayName": "Capture 20",
+      "description": "",
+      "cursorMin": 835,
+      "cursorMax": 874,
+      "playGlowsLeft": {
+        "835": [
+          421,
+          226,
+          10,
+          30
+        ],
+        "836": [
+          435,
+          199,
+          10,
+          30
+        ],
+        "837": [
+          450,
+          179,
+          10,
+          30
+        ],
+        "838": [
+          464,
+          174,
+          10,
+          30
+        ],
+        "839": [
+          484,
+          185,
+          10,
+          30
+        ],
+        "840": [
+          500,
+          169,
+          10,
+          30
+        ],
+        "841": [
+          514,
+          154,
+          10,
+          30
+        ],
+        "842": [
+          529,
+          170,
+          10,
+          30
+        ],
+        "843": [
+          561,
+          166,
+          10,
+          30
+        ],
+        "844": [
+          576,
+          172,
+          10,
+          30
+        ],
+        "845": [
+          596,
+          185,
+          10,
+          30
+        ],
+        "846": [
+          610,
+          166,
+          10,
+          30
+        ],
+        "847": [
+          627,
+          163,
+          10,
+          30
+        ],
+        "848": [
+          644,
+          184,
+          10,
+          30
+        ],
+        "849": [
+          655,
+          190,
+          10,
+          30
+        ],
+        "850": [
+          671,
+          216,
+          10,
+          30
+        ],
+        "851": [
+          701,
+          224,
+          10,
+          30
+        ],
+        "852": [
+          716,
+          200,
+          10,
+          30
+        ],
+        "853": [
+          730,
+          180,
+          10,
+          30
+        ],
+        "854": [
+          745,
+          173,
+          10,
+          30
+        ],
+        "855": [
+          763,
+          190,
+          10,
+          30
+        ],
+        "856": [
+          778,
+          181,
+          10,
+          30
+        ],
+        "857": [
+          793,
+          159,
+          10,
+          30
+        ],
+        "858": [
+          807,
+          181,
+          10,
+          30
+        ],
+        "859": [
+          837,
+          162,
+          10,
+          30
+        ],
+        "860": [
+          851,
+          178,
+          10,
+          30
+        ],
+        "861": [
+          866,
+          187,
+          10,
+          30
+        ],
+        "862": [
+          879,
+          170,
+          10,
+          30
+        ],
+        "863": [
+          895,
+          165,
+          10,
+          30
+        ],
+        "864": [
+          909,
+          179,
+          10,
+          30
+        ],
+        "865": [
+          923,
+          186,
+          10,
+          30
+        ],
+        "866": [
+          937,
+          218,
+          10,
+          30
+        ],
+        "867": [
+          970,
+          226,
+          10,
+          30
+        ],
+        "868": [
+          984,
+          199,
+          10,
+          30
+        ],
+        "869": [
+          999,
+          186,
+          10,
+          30
+        ],
+        "870": [
+          1014,
+          172,
+          10,
+          30
+        ],
+        "871": [
+          1034,
+          184,
+          10,
+          30
+        ],
+        "872": [
+          1047,
+          191,
+          10,
+          30
+        ],
+        "873": [
+          1062,
+          186,
+          10,
+          30
+        ],
+        "874": [
+          1075,
+          176,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "837": [
+          448,
+          97,
+          10,
+          30
+        ],
+        "839": [
+          483,
+          100,
+          10,
+          30
+        ],
+        "841": [
+          512,
+          99,
+          10,
+          30
+        ],
+        "843": [
+          562,
+          99,
+          10,
+          30
+        ],
+        "847": [
+          627,
+          104,
+          10,
+          30
+        ],
+        "849": [
+          657,
+          101,
+          10,
+          30
+        ],
+        "851": [
+          701,
+          105,
+          10,
+          30
+        ],
+        "853": [
+          728,
+          100,
+          10,
+          30
+        ],
+        "855": [
+          762,
+          103,
+          10,
+          30
+        ],
+        "857": [
+          791,
+          101,
+          10,
+          30
+        ],
+        "859": [
+          837,
+          105,
+          10,
+          30
+        ],
+        "863": [
+          895,
+          108,
+          10,
+          30
+        ],
+        "865": [
+          923,
+          104,
+          10,
+          30
+        ],
+        "867": [
+          969,
+          106,
+          10,
+          30
+        ],
+        "869": [
+          998,
+          104,
+          10,
+          30
+        ],
+        "871": [
+          1028,
+          112,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "8W5ZRH.png",
+      "index": 20,
+      "displayName": "Capture 21",
+      "description": "",
+      "cursorMin": 875,
+      "cursorMax": 899,
+      "playGlowsLeft": {
+        "875": [
+          309,
+          186,
+          10,
+          30
+        ],
+        "876": [
+          321,
+          180,
+          10,
+          30
+        ],
+        "877": [
+          340,
+          169,
+          10,
+          30
+        ],
+        "878": [
+          349,
+          169,
+          10,
+          30
+        ],
+        "879": [
+          366,
+          164,
+          10,
+          30
+        ],
+        "880": [
+          378,
+          169,
+          10,
+          30
+        ],
+        "881": [
+          392,
+          177,
+          10,
+          30
+        ],
+        "882": [
+          406,
+          185,
+          10,
+          30
+        ],
+        "883": [
+          433,
+          209,
+          10,
+          30
+        ],
+        "884": [
+          451,
+          193,
+          10,
+          30
+        ],
+        "885": [
+          463,
+          181,
+          10,
+          30
+        ],
+        "886": [
+          477,
+          195,
+          10,
+          30
+        ],
+        "887": [
+          491,
+          178,
+          10,
+          30
+        ],
+        "888": [
+          505,
+          169,
+          10,
+          30
+        ],
+        "889": [
+          518,
+          177,
+          10,
+          30
+        ],
+        "890": [
+          532,
+          192,
+          10,
+          30
+        ],
+        "891": [
+          564,
+          208,
+          10,
+          30
+        ],
+        "892": [
+          580,
+          188,
+          10,
+          30
+        ],
+        "893": [
+          594,
+          174,
+          10,
+          30
+        ],
+        "894": [
+          604,
+          189,
+          10,
+          30
+        ],
+        "895": [
+          618,
+          193,
+          10,
+          30
+        ],
+        "896": [
+          634,
+          178,
+          10,
+          30
+        ],
+        "897": [
+          647,
+          198,
+          10,
+          30
+        ],
+        "898": [
+          662,
+          218,
+          10,
+          30
+        ],
+        "899": [
+          699,
+          213,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "899": [
+          700,
+          129,
+          10,
+          30
+        ],
+        "875": [
+          312,
+          118,
+          10,
+          30
+        ],
+        "877": [
+          336,
+          113,
+          10,
+          30
+        ],
+        "879": [
+          364,
+          119,
+          10,
+          30
+        ],
+        "883": [
+          440,
+          122,
+          10,
+          30
+        ],
+        "885": [
+          461,
+          128,
+          10,
+          30
+        ],
+        "887": [
+          490,
+          121,
+          10,
+          30
+        ],
+        "891": [
+          566,
+          123,
+          10,
+          30
+        ],
+        "893": [
+          592,
+          121,
+          10,
+          30
+        ],
+        "895": [
+          621,
+          130,
+          10,
+          30
+        ],
+        "897": [
+          647,
+          118,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "7F4YR8.png",
+      "index": 21,
+      "displayName": "Capture 22",
+      "description": "",
+      "cursorMin": 900,
+      "cursorMax": 923,
+      "playGlowsLeft": {
+        "900": [
+          607,
+          230,
+          10,
+          30
+        ],
+        "901": [
+          623,
+          191,
+          10,
+          30
+        ],
+        "902": [
+          641,
+          184,
+          10,
+          30
+        ],
+        "903": [
+          654,
+          173,
+          10,
+          30
+        ],
+        "904": [
+          677,
+          166,
+          10,
+          30
+        ],
+        "905": [
+          693,
+          173,
+          10,
+          30
+        ],
+        "906": [
+          712,
+          181,
+          10,
+          30
+        ],
+        "907": [
+          727,
+          191,
+          10,
+          30
+        ],
+        "908": [
+          765,
+          208,
+          10,
+          30
+        ],
+        "909": [
+          785,
+          195,
+          10,
+          30
+        ],
+        "910": [
+          800,
+          190,
+          10,
+          30
+        ],
+        "911": [
+          824,
+          180,
+          10,
+          30
+        ],
+        "912": [
+          839,
+          171,
+          10,
+          30
+        ],
+        "913": [
+          862,
+          174,
+          10,
+          30
+        ],
+        "914": [
+          876,
+          185,
+          10,
+          30
+        ],
+        "915": [
+          888,
+          191,
+          10,
+          30
+        ],
+        "916": [
+          925,
+          227,
+          10,
+          30
+        ],
+        "917": [
+          951,
+          192,
+          10,
+          30
+        ],
+        "918": [
+          962,
+          181,
+          10,
+          30
+        ],
+        "919": [
+          984,
+          174,
+          10,
+          30
+        ],
+        "920": [
+          1010,
+          162,
+          10,
+          30
+        ],
+        "921": [
+          1022,
+          171,
+          10,
+          30
+        ],
+        "922": [
+          1047,
+          176,
+          10,
+          30
+        ],
+        "923": [
+          1066,
+          169,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "922": [
+          1045,
+          125,
+          10,
+          30
+        ],
+        "902": [
+          632,
+          116,
+          10,
+          30
+        ],
+        "904": [
+          678,
+          104,
+          10,
+          30
+        ],
+        "908": [
+          771,
+          107,
+          10,
+          30
+        ],
+        "910": [
+          800,
+          109,
+          10,
+          30
+        ],
+        "912": [
+          839,
+          111,
+          10,
+          30
+        ],
+        "914": [
+          873,
+          119,
+          10,
+          30
+        ],
+        "916": [
+          928,
+          118,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "AAG6EB.png",
+      "index": 22,
+      "displayName": "Capture 23",
+      "description": "",
+      "cursorMin": 924,
+      "cursorMax": 932,
+      "playGlowsLeft": {
+        "924": [
+          309,
+          177,
+          10,
+          30
+        ],
+        "925": [
+          323,
+          182,
+          10,
+          30
+        ],
+        "926": [
+          342,
+          196,
+          10,
+          30
+        ],
+        "927": [
+          354,
+          182,
+          10,
+          30
+        ],
+        "928": [
+          367,
+          194,
+          10,
+          30
+        ],
+        "929": [
+          379,
+          209,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "924": [
+          307,
+          115,
+          10,
+          30
+        ],
+        "926": [
+          340,
+          120,
+          10,
+          30
+        ],
+        "928": [
+          366,
+          120,
+          10,
+          30
+        ],
+        "930": [
+          393,
+          126,
+          10,
+          30
+        ],
+        "932": [
+          446,
+          114,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "ERXXWN.png",
+      "index": 23,
+      "displayName": "Capture 24",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "UV94RG.png",
+      "index": 24,
+      "displayName": "Capture 25",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "X8VN5X.png",
+      "index": 25,
+      "displayName": "Capture 26",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "8DG7NX.png",
+      "index": 26,
+      "displayName": "Capture 27",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "A4HZXW.png",
+      "index": 27,
+      "displayName": "Capture 28",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "ADGZ4K.png",
+      "index": 28,
+      "displayName": "Capture 29",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "8HMXU9.png",
+      "index": 29,
+      "displayName": "Capture 30",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "7W9CCN.png",
+      "index": 30,
+      "displayName": "Capture 31",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "N72YM4.png",
+      "index": 31,
+      "displayName": "Capture 32",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "HWMD5X.png",
+      "index": 32,
+      "displayName": "Capture 33",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "DQUP2T.png",
+      "index": 33,
+      "displayName": "Capture 34",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "QDGFXD.png",
+      "index": 34,
+      "displayName": "Capture 35",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "YVD98U.png",
+      "index": 35,
+      "displayName": "Capture 36",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "BK262F.png",
+      "index": 36,
+      "displayName": "Capture 37",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "H3ME7Q.png",
+      "index": 37,
+      "displayName": "Capture 38",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "4TBKQ9.png",
+      "index": 38,
+      "displayName": "Capture 39",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "W7D48V.png",
+      "index": 39,
+      "displayName": "Capture 40",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "8W3UGE.png",
+      "index": 40,
+      "displayName": "Capture 41",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "N3YD6C.png",
+      "index": 41,
+      "displayName": "Capture 42",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "UEQR54.png",
+      "index": 42,
+      "displayName": "Capture 43",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "BD2RC6.png",
+      "index": 43,
+      "displayName": "Capture 44",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "7APG35.png",
+      "index": 44,
+      "displayName": "Capture 45",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "ZTGP2Q.png",
+      "index": 45,
+      "displayName": "Capture 46",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "BW9F76.png",
+      "index": 46,
+      "displayName": "Capture 47",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "MXU8WK.png",
+      "index": 47,
+      "displayName": "Capture 48",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "NZEZ3B.png",
+      "index": 48,
+      "displayName": "Capture 49",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "W8VK39.png",
+      "index": 49,
+      "displayName": "Capture 50",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "43T7P3.png",
+      "index": 50,
+      "displayName": "Capture 51",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "B9TD6K.png",
+      "index": 51,
+      "displayName": "Capture 52",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "VTPXYV.png",
+      "index": 52,
+      "displayName": "Capture 53",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "Z58EFN.png",
+      "index": 53,
+      "displayName": "Capture 54",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "644DGZ.png",
+      "index": 54,
+      "displayName": "Capture 55",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "4YFZD2.png",
+      "index": 55,
+      "displayName": "Capture 56",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "REV5QD.png",
+      "index": 56,
+      "displayName": "Capture 57",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "B9VH66.png",
+      "index": 57,
+      "displayName": "Capture 58",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "68ZDV3.png",
+      "index": 58,
+      "displayName": "Capture 59",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "GUXYWE.png",
+      "index": 59,
+      "displayName": "Capture 60",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "TCHRT7.png",
+      "index": 60,
+      "displayName": "Capture 61",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "6C8DAK.png",
+      "index": 61,
+      "displayName": "Capture 62",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "EZNN5C.png",
+      "index": 62,
+      "displayName": "Capture 63",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "3T396N.png",
+      "index": 63,
+      "displayName": "Capture 64",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "3CHPH7.png",
+      "index": 64,
+      "displayName": "Capture 65",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "7QC8P2.png",
+      "index": 65,
+      "displayName": "Capture 66",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "RAETVW.png",
+      "index": 66,
+      "displayName": "Capture 67",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "EHQU75.png",
+      "index": 67,
+      "displayName": "Capture 68",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "YV6PF3.png",
+      "index": 68,
+      "displayName": "Capture 69",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "FHQH8R.png",
+      "index": 69,
+      "displayName": "Capture 70",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "TV9GFX.png",
+      "index": 70,
+      "displayName": "Capture 71",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "759UAZ.png",
+      "index": 71,
+      "displayName": "Capture 72",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "HM9M8M.png",
+      "index": 72,
+      "displayName": "Capture 73",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "7M5TNM.png",
+      "index": 73,
+      "displayName": "Capture 74",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "BMU57W.png",
+      "index": 74,
+      "displayName": "Capture 75",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "VY6GET.png",
+      "index": 75,
+      "displayName": "Capture 76",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "9GVB2E.png",
+      "index": 76,
+      "displayName": "Capture 77",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "XHGGRH.png",
+      "index": 77,
+      "displayName": "Capture 78",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "9KN9AR.png",
+      "index": 78,
+      "displayName": "Capture 79",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "CW3TBH.png",
+      "index": 79,
+      "displayName": "Capture 80",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "N4AYMM.png",
+      "index": 80,
+      "displayName": "Capture 81",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "AMWXWH.png",
+      "index": 81,
+      "displayName": "Capture 82",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "92BGX3.png",
+      "index": 82,
+      "displayName": "Capture 83",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "TGYWG9.png",
+      "index": 83,
+      "displayName": "Capture 84",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "6F469A.png",
+      "index": 84,
+      "displayName": "Capture 85",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "VD4VA9.png",
+      "index": 85,
+      "displayName": "Capture 86",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "AYHFYE.png",
+      "index": 86,
+      "displayName": "Capture 87",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "67H6TT.png",
+      "index": 87,
+      "displayName": "Capture 88",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "6G4TMU.png",
+      "index": 88,
+      "displayName": "Capture 89",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+      "file": "A9WRM2.png",
+      "index": 89,
+      "displayName": "Capture 90",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    }
+  ],
+  "isEmpty": false,
+  "songName": "Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+  "songFile": "Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo.pr",
+  "jsonName": "Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo.json",
+  "jsonFile": "./snaps/Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo.json",
+  "depotFolder": "./snaps/db__Rachmaninoff_-_Piano_Concerto_No._2_Op._18_-_3rd_Mvmt_-_Piano_Solo",
+  "hasUnsavedChanges": false
+}

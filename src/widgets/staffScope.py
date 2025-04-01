@@ -70,6 +70,8 @@ class StaffScope :
 
     self.rulersVisible = False
 
+    self.cursorWrongNoteCount = []
+
     # User interaction queues
     self.msgQueueIn = []
     self.msgQueueOut = []
@@ -320,7 +322,7 @@ class StaffScope :
     # --------------------------------
     # Render the visual cues for stats
     # --------------------------------
-    if (len(self.playGlows) > 0) :
+    if ((len(self.playGlows) > 0) and (len(self.cursorWrongNoteCount) > 0)) :
       minCursor = self.db.snapshots[self._snapshotIndex].cursorMin
       maxCursor = self.db.snapshots[self._snapshotIndex].cursorMax
       left_y = []

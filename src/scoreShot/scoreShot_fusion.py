@@ -80,7 +80,7 @@ scoreStatusWidget.setScreen(screen)
 
 
 # Create window
-pygame.display.set_caption(f"scoreShot Fusion - v0.1 [ALPHA] (October 2024) - <{os.path.basename(songFile)}>")
+pygame.display.set_caption(f"scoreShot Fusion - v0.2 [ALPHA] (April 2025) - {os.path.basename(songFile)}")
 
 # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
 pygame.key.set_repeat(250, 50)
@@ -116,6 +116,12 @@ while running :
       altKey  = event.mod & pygame.KMOD_ALT
       shiftKey  = event.mod & pygame.KMOD_SHIFT
 
+      # ----------------------------
+      # "d": duplicate last playglow
+      # ----------------------------
+      if (keys[pygame.K_d]) :
+        print("[DEBUG] 'd': duplicate playglow is not available yet.'")
+
       # ------------------------
       # "g": toggle 'ghost' mode
       # ------------------------
@@ -127,12 +133,6 @@ while running :
       # -------------
       if keys[pygame.K_p] :
         staffScopeWidget.populate()
-
-      # ------------------
-      # "r": toggle rulers
-      # ------------------
-      if keys[pygame.K_r] :
-        staffScopeWidget.toggleRulers()
 
       # -----------------
       # "q": exit the app
@@ -146,6 +146,19 @@ while running :
         print("See you!")
         pygame.quit()
         raise SystemExit(0)
+
+      # ------------------
+      # "r": toggle rulers
+      # ------------------
+      if keys[pygame.K_r] :
+        staffScopeWidget.toggleRulers()
+
+      # ----------------
+      # "s": export/save
+      # ----------------
+      if (keys[pygame.K_s]) :
+        print("[INFO] Saving to the database...")
+        staffScopeWidget.db.save()
 
       # ----------------------------------
       # Left arrow: jump backward (1 step)
@@ -213,13 +226,6 @@ while running :
       if (keys[pygame.K_DELETE]) :
         staffScopeWidget.deletePlayGlow()
 
-      # ----------------
-      # "s": export/save
-      # ----------------
-      if (keys[pygame.K_s]) :
-        print("[DEBUG] Requesting save from the database...")
-        staffScopeWidget.db.save()
-        
 
 
     # -------------------------------------------------------------------------

@@ -34,7 +34,7 @@ TARGET_HEIGHT = 230
 class StaffScope :
 
   """
-  The StaffScope widget is ...
+  Class definition for the staffScope widget used in gangQin and scoreShot_fusion.
   """
   def __init__(self) :
     
@@ -57,7 +57,7 @@ class StaffScope :
     self.imgBox = (-1, -1, -1, -1)
     self.imgScaling = 0
 
-    self._snapshotIndex = -1      # Index of the snapshot loaded (-1 when nothing is loaded)
+    self._staffIndex = -1      # Index the current staff loaded (-1 when nothing is loaded)
 
     self.playGlows = []
     self.playGlowDragged = -1     # Index of the playGlow currently mouse dragged
@@ -79,26 +79,26 @@ class StaffScope :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database.setScreen()
+  # METHOD StaffScope.setScreen
   # ---------------------------------------------------------------------------
-  def setScreen(self, screenObj, width, height) :
+  def setScreen(self, screenInst, screenWidth, screenHeight) :
     """
     Creates an internal copy of the Pygame screen object and parameters.
     This copy is required to draw and interact with the widget.
     """
 
-    self.screen = screenObj
-    self.screenWidth = width
-    self.screenHeight = height
+    self.screen = screenInst
+    self.screenWidth = screenWidth
+    self.screenHeight = screenHeight
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database.load(string)
+  # METHOD StaffScope.loadDatabase
   # ---------------------------------------------------------------------------
-  def load(self, songFile) :
+  def loadDatabase(self, songFile, exitOnEmpty = False) :
     """
-    Loads the snapshot database associated with the filename given as argument.
+    Loads the staffscope database linked to the .pr file 'songFile' given as argument.
     Displays the first staff available from the database.
     """
 
@@ -106,18 +106,7 @@ class StaffScope :
     if (self.db.nSnapshots != 0) :
       self.loadStaffByIndex(0)
 
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Database.checkEmpty()
-  # ---------------------------------------------------------------------------
-  def checkEmpty(self, exitOnEmpty = True) :
-    """
-    Checks if the database is empty. 
-    Exits the app if the corresponding option is set.
-    """
-
-    if (self.db.nSnapshots == 0) :
+    else :
       if exitOnEmpty :
         print("[ERROR] Staffscope database is empty! Capture the score first before calling this tool.")
         exit()
@@ -128,47 +117,16 @@ class StaffScope :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.nextStaff()
-  # ---------------------------------------------------------------------------
-  def nextStaff(self) :
-    """
-    Loads and shows the next staff.
-    Clamps to the last staff when reaching the end of the score.
-    """
-    
-    if ((self._snapshotIndex + 1) <= (self.db.nSnapshots-1)) :
-      self.loadStaffByIndex(self._snapshotIndex+1)
-    
-    else :
-      print("[DEBUG] StaffScope.nextStaff(): end of database reached. No more staff to show.")
-
-  
-    
-  # ---------------------------------------------------------------------------
-  # METHOD StaffScope.previousStaff()
-  # ---------------------------------------------------------------------------
-  def previousStaff(self) :
-    """
-    Loads and shows the previous staff.
-    Clamps to the first staff when reaching the beginning of the score.
-    """
-    
-    if ((self._snapshotIndex - 1) >= 0) :
-      self.loadStaffByIndex(self._snapshotIndex-1)
-
-
-
-  # ---------------------------------------------------------------------------
   # METHOD StaffScope.loadStaffByIndex()
   # ---------------------------------------------------------------------------
   def loadStaffByIndex(self, index) :
     """
-    Loads the content located at position "index" in the snapshot database.
-    Once loaded, the "_snapshotIndex" is updated with the requested index.
+    Loads the staff numbered 'index' from the snapshot database.
+    Once loaded, the "_staffIndex" is updated with the requested index.
     """
     
     # Load only if not cached yet
-    if (self._snapshotIndex != index) :
+    if (self._staffIndex != index) :
 
       self.imgFile = self.db.getSnapshotFileByIndex(index)
       if (self.imgFile != "") :
@@ -193,14 +151,48 @@ class StaffScope :
           self.imgCoordY + int(self.imgHeight*self.imgScaling)
         )
 
-        self._snapshotIndex = index
+        self._staffIndex = index
 
       else : 
         print(f"[DEBUG] Index = {index} has no image associated to it.")
         self.imgScaled = None
         self.imgWidth = -1
         self.imgHeight = -1
-        self._snapshotIndex = index
+        self._staffIndex = index
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope._nextStaff
+  # ---------------------------------------------------------------------------
+  def _nextStaff(self) :
+    """
+    Loads and shows the next staff.
+    Clamps to the last staff when reaching the end of the score.
+    """
+    
+    if ((self._staffIndex + 1) <= (self.db.nSnapshots-1)) :
+      self.loadStaffByIndex(self._staffIndex+1)
+    
+    else :
+      print("[DEBUG] StaffScope._nextStaff(): end of database reached. No more staff to show.")
+
+  
+    
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope._previousStaff
+  # ---------------------------------------------------------------------------
+  def _previousStaff(self) :
+    """
+    Loads and shows the previous staff.
+    Clamps to the first staff when reaching the beginning of the score.
+    """
+    
+    if ((self._staffIndex - 1) >= 0) :
+      self.loadStaffByIndex(self._staffIndex-1)
+
+
+
 
         
 
@@ -233,7 +225,7 @@ class StaffScope :
       # - load a default dbIndex (the one pointed by the user)
       # - no playglow is shown, waiting for user input.
       else :
-        self.loadStaffByIndex(self._snapshotIndex)
+        self.loadStaffByIndex(self._staffIndex)
         self.playGlows = []
 
       self.cursor = cursor
@@ -246,7 +238,7 @@ class StaffScope :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.isStaffAvailable(cursor)
+  # METHOD StaffScope.isStaffAvailable
   # ---------------------------------------------------------------------------
   def isStaffAvailable(self, cursor) :
     """
@@ -262,7 +254,7 @@ class StaffScope :
   # ---------------------------------------------------------------------------
   def render(self) :
     """
-    Renders on screen the staff and the playglows.
+    Renders on screen the snapshot of the score and the playglows.
     The function shall be called at each frame.
     
     A staff must have been loaded prior to calling this function 
@@ -276,9 +268,9 @@ class StaffScope :
     if (self.imgScaled == None) :
       return
 
-    # ----------------------
-    # Render the staff image
-    # ----------------------
+    # ----------------
+    # Render the staff
+    # ----------------
     self.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))
     
 
@@ -319,37 +311,31 @@ class StaffScope :
 
 
 
-    # -----------------------------------
-    # Render the visual cues (stats info)
-    # -----------------------------------
+    # --------------------------------
+    # Render the visual cues for stats
+    # --------------------------------
     if ((len(self.playGlows) > 0) and (len(self.cursorWrongNoteCount) > 0)) :
-      
-      # List all playglows on the staff with a non-zero wrong note count
-      minCursor = self.db.snapshots[self._snapshotIndex].cursorMin
-      maxCursor = self.db.snapshots[self._snapshotIndex].cursorMax
-      leftHand_y = [-1]
-      rightHand_y = [10000]
+      minCursor = self.db.snapshots[self._staffIndex].cursorMin
+      maxCursor = self.db.snapshots[self._staffIndex].cursorMax
+      left_y = []
+      right_y = []
       wrongNotesHist = []
-      
-      # Left hand: determine the y-coordinate of the lowest playglow
-      # Right hand: determine the y-coordinate of the highes playglow
       for n in range(minCursor, maxCursor + 1) :
         if str(n) in self.cursorWrongNoteCount :
           wrongNotesHist.append(self.cursorWrongNoteCount[str(n)])
-        playglows = self.db.snapshots[self._snapshotIndex].getPlayGlowsAtCursor(n)
+        playglows = self.db.snapshots[self._staffIndex].getPlayGlowsAtCursor(n)
         for p in playglows :
           if p.active :
             if (p.hand == 'L') :
-              leftHand_y += [p.coord_yMin, p.coord_yMax]
+              left_y += [p.coord_yMin, p.coord_yMax]
             else :
-              rightHand_y += [p.coord_yMin, p.coord_yMax]      
-      leftHand_yMax = max(leftHand_y)
-      rightHand_yMin = min(rightHand_y)
+              right_y += [p.coord_yMin, p.coord_yMax]
+
+      left_yMax = max(left_y)
+      right_yMin = min(right_y)
 
       for n in range(minCursor, maxCursor + 1) :
-        
-        # Calculate the transparency based on the wrong note count
-        playglows = self.db.snapshots[self._snapshotIndex].getPlayGlowsAtCursor(n)
+        playglows = self.db.snapshots[self._staffIndex].getPlayGlowsAtCursor(n)
         if str(n) in self.cursorWrongNoteCount :
           if (min(wrongNotesHist) != max(wrongNotesHist)) :
             alphaMin = 10
@@ -359,16 +345,15 @@ class StaffScope :
         else :
           alpha = 0
 
-        # Draw the visual cue
         for p in playglows :
           if p.active :
             coords = p.toTuple()
             if (p.hand == 'L') :
-              coords = (coords[0], leftHand_yMax, coords[2], 10)
+              coords = (coords[0], left_yMax, coords[2], 10)
               r = pygame.draw.rect(transparent_surface, (255, 127, 0, alpha), coords)
 
             elif (p.hand == 'R') :
-              coords = (coords[0], rightHand_yMin - 10, coords[2], 10)
+              coords = (coords[0], right_yMin - 10, coords[2], 10)
               r = pygame.draw.rect(transparent_surface, (0, 255, 127, alpha), coords)
               
             else :
@@ -392,7 +377,7 @@ class StaffScope :
     self.playGlowDragged = -1
     
     # Is a staff loaded?
-    if (self._snapshotIndex != -1) :
+    if (self._staffIndex != -1) :
       
       # Is the click on the staff?
       (img_xMin, img_yMin, img_xMax, img_yMax) = self.imgBox
@@ -426,7 +411,7 @@ class StaffScope :
           p = playGlow.PlayGlow()
           p.load((x-5, y-5, 10, 30))
           p.hand = self.activeHand
-          self.db.snapshots[self._snapshotIndex].setPlayGlowAtCursor(self.cursor, p)
+          self.db.snapshots[self._staffIndex].setPlayGlowAtCursor(self.cursor, p)
           self.playGlows.append(p)
 
 
@@ -466,11 +451,8 @@ class StaffScope :
       
 
 
-
-
-
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.clickUp(mouse coordinates)
+  # METHOD StaffScope.clickUp
   # ---------------------------------------------------------------------------
   def clickUp(self, coord) :
     """
@@ -483,7 +465,7 @@ class StaffScope :
     
       # Commit the changes to the database
       p = self.playGlows[self.playGlowDragged]
-      self.db.snapshots[self._snapshotIndex].setPlayGlowAtCursor(self.cursor, p)
+      self.db.snapshots[self._staffIndex].setPlayGlowAtCursor(self.cursor, p)
 
       # Force a reload from the database
       self._cacheClearReq = True
@@ -507,11 +489,58 @@ class StaffScope :
     pass
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.playglowDuplicate
+  # ---------------------------------------------------------------------------
+  def playglowDuplicate(self) :
+    """
+    TODO
+    """
+    
+    self.playGlowDragged = -1
+    
+    # Is a staff loaded?
+    if (self._staffIndex != -1) :
+      
+      # Is the click on the staff?
+      (img_xMin, img_yMin, img_xMax, img_yMax) = self.imgBox
+      if (((x >= img_xMin) and (x <= img_xMax)) and ((y >= img_yMin) and (y <= img_yMax))) :
+        
+        # Is the click on an existing playGlow?
+        noHit = True
+        for (i, p) in enumerate(self.playGlows) :
+          if p.isClickOnBorder(coord) :
+            self.playGlowResized = i
+            p.resizeFrom(x,y)
+            noHit = False
+            print("[DEBUG] StaffScope.clickDown(): resize request")
+          
+          elif p.isClickInBox(coord) :
+            self.playGlowDragged = i
+            p.dragFrom(x,y)
+            noHit = False
+            print("[DEBUG] StaffScope.clickDown(): move request")
+
+          
+
+        # Click in empty space
+        if noHit :
+          for (i, p) in enumerate(self.playGlows) :
+            if (p.hand == self.activeHand) :
+              del self.playGlows[i]
+              break
+          
+          print(f"[DEBUG] StaffScope.clickDown(): new playGlow (hand = {self.activeHand})")
+          p = playGlow.PlayGlow()
+          p.load((x-5, y-5, 10, 30))
+          p.hand = self.activeHand
+          self.db.snapshots[self._staffIndex].setPlayGlowAtCursor(self.cursor, p)
+          self.playGlows.append(p)
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.deletePlayGlow(None)
+  # METHOD StaffScope.playglowDelete
   # ---------------------------------------------------------------------------
-  def deletePlayGlow(self) :
+  def playglowDelete(self) :
     """
     Deletes the active playglow shown on the GUI.
     """
@@ -521,7 +550,7 @@ class StaffScope :
         print(f"[INFO] Deleting playglow at cursor {self.cursor} (hand = '{self.activeHand}')")
         del self.playGlows[i]
         
-        self.db.snapshots[self._snapshotIndex].delPlayGlowAtCursor(self.cursor, p.hand)
+        self.db.snapshots[self._staffIndex].delPlayGlowAtCursor(self.cursor, p.hand)
         
         break
 
@@ -536,8 +565,8 @@ class StaffScope :
     """
     
     # Read the content of the database at that cursor
-    if (self._snapshotIndex != -1) :
-      s = self.db.snapshots[self._snapshotIndex].leftHandRectCoords
+    if (self._staffIndex != -1) :
+      s = self.db.snapshots[self._staffIndex].leftHandRectCoords
 
     # Convert to a playGlow object
     # ...
@@ -547,7 +576,7 @@ class StaffScope :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.populate(None)
+  # METHOD StaffScope.populate
   # ---------------------------------------------------------------------------
   def populate(self) :
     """
@@ -563,7 +592,7 @@ class StaffScope :
 
     
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.toggleGhostMode(None)
+  # METHOD StaffScope.toggleGhostMode
   # ---------------------------------------------------------------------------
   def toggleGhostMode(self) :
     """

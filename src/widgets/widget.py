@@ -20,7 +20,7 @@ from commons import *
 
 
 
-def 
+
 
 
 
@@ -37,16 +37,30 @@ class Widget :
   
   
   # ---------------------------------------------------------------------------
-  # METHOD: GangQin.__init__
+  # METHOD: Widget.__init__
   # ---------------------------------------------------------------------------
   def __init__(self, top) :
+    """
+    Initialisation method definition.
+    """
+    
     self.top = top
     
 
 
 
 
-
+  # ---------------------------------------------------------------------------
+  # METHOD: Widget.render()
+  # ---------------------------------------------------------------------------
+  def render(self) :
+    """
+    Renders the widget on screen.
+    This function is called at every frame of the top level application.
+    """
+    
+    pass
+    
 
 
 

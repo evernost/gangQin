@@ -1,4 +1,4 @@
-# gangQin v2.1 (STABLE)
+# gangQin v3.0 (ALPHA)
 Piano learning app, for those who struggle with the conventional music scores.
 
 ![image](https://github.com/user-attachments/assets/1cd22e89-eea6-40ad-90cc-525259448a2c)

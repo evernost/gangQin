@@ -65,21 +65,24 @@ class GangQin :
   def __init__(self) :
     
     self.songFile = ""
+    self.userScore = score.Score()
+    self.stats = stats.Stats()
 
+    # Init pygame interface
     pygame.init()
     self.screen = pygame.display.set_mode((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT))
     self.clock = pygame.time.Clock()
 
-    self.userScore = score.Score()
-    self.stats = stats.Stats()
-
     # Load widgets
-    self.widgetKeyboard = keyboard.Keyboard(self)
-    self.widgetPianoRoll = pianoRoll.PianoRoll(self)
-    self.widgetFingerSel = fingerSelector.FingerSelector(self)
-    self.widgetSoundNotify = notify.Notify(self)
-    self.widgetMetronome = metronome.Metronome(self)
-    self.widgetArbiter = arbiter.Arbiter(self)
+    self.widgets = [
+      keyboard.Keyboard(self),
+      pianoRoll.PianoRoll(self),
+      fingerSelector.FingerSelector(self),
+      notify.Notify(self),
+      metronome.Metronome(self),
+      arbiter.Arbiter(self)
+    ]
+    
 
 
 

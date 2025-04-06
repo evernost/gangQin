@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
 # Project       : gangQin
-# Module name   : -
-# File name     : main.py
+# Module name   : widget
+# File name     : widget.py
 # File type     : Python script (Python 3)
-# Purpose       : application entry point
+# Purpose       : widget parent class
 # Author        : QuBi (nitrogenium@outlook.fr)
-# Creation date : Friday, 1 Sept 2023
+# Creation date : Saturday, 5 April 2025
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
@@ -17,17 +17,72 @@
 # Project specific constants
 from commons import *
 
-# Graphic interface
-import pygame
 
 
-import src.gangQin as gangQin
+
+def 
 
 
-# MIDI
-import mido
-import rtmidi
 
+
+# =============================================================================
+# CLASS DEFINITION
+# =============================================================================
+class Widget :
+
+  """
+  TODO
+  """
+  
+  
+  
+  # ---------------------------------------------------------------------------
+  # METHOD: GangQin.__init__
+  # ---------------------------------------------------------------------------
+  def __init__(self, top) :
+    self.top = top
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# =============================================================================
+# SESSION INIT: FILE SELECTION
+# =============================================================================
+
+# Open the MIDI interface file selection GUI
+(selectedDevice, songFile) = fileSelectGUI.show()
+
+if ((songFile == "") or (songFile == "None")) :
+  exit()
+
+# If a MIDI file is selected, show the track selection GUI
+if songFile.endswith(".mid") :
+  trackSel = trackSelectionGUI.new()
+  trackSel.load(songFile)
+  midiTracks = trackSel.show()
 
 
 

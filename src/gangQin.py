@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
 # Project       : gangQin
-# Module name   : -
-# File name     : main.py
+# Module name   : gangQin
+# File name     : gangQin.py
 # File type     : Python script (Python 3)
-# Purpose       : application entry point
+# Purpose       : gangQin class definition
 # Author        : QuBi (nitrogenium@outlook.fr)
-# Creation date : Friday, 1 Sept 2023
+# Creation date : Saturday, 5 April 2025
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
@@ -20,13 +20,121 @@ from commons import *
 # Graphic interface
 import pygame
 
+# Widgets
+import src.widgets.fileSelectGUI as fileSelectGUI
+import src.widgets.fingerSelector as fingerSelector
+import src.widgets.keyboard as keyboard
+import src.widgets.notify as notify
+import src.widgets.pianoRoll as pianoRoll
+import src.widgets.trackSelectionGUI as trackSelectionGUI
+import src.widgets.staffScope as staffScope
 
-import src.gangQin as gangQin
-
+# Utilities
+import arbiter
+import metronome
+import note
+import score
+import stats
+import text
+import utils
 
 # MIDI
 import mido
 import rtmidi
+
+
+
+
+
+
+
+# =============================================================================
+# CLASS DEFINITION
+# =============================================================================
+class GangQin :
+
+  """
+  TODO
+  """
+  
+  
+  
+  # ---------------------------------------------------------------------------
+  # METHOD: GangQin.__init__
+  # ---------------------------------------------------------------------------
+  def __init__(self) :
+    
+    self.songFile = ""
+
+    pygame.init()
+    self.screen = pygame.display.set_mode((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT))
+    self.clock = pygame.time.Clock()
+
+    self.userScore = score.Score()
+    self.stats = stats.Stats()
+
+    # Load widgets
+    self.widgetKeyboard = keyboard.Keyboard(self)
+    self.widgetPianoRoll = pianoRoll.PianoRoll(self)
+    self.widgetFingerSel = fingerSelector.FingerSelector(self)
+    self.widgetSoundNotify = notify.Notify(self)
+    self.widgetMetronome = metronome.Metronome(self)
+    self.widgetArbiter = arbiter.Arbiter(self)
+
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: GangQin.loadSong()
+  # ---------------------------------------------------------------------------
+  def loadSong(self) :
+    (selectedDevice, songFile) = fileSelectGUI.show()
+
+    if ((songFile == "") or (songFile == "None")) :
+      exit()
+
+    # If a MIDI file is selected, show the track selection GUI
+    if songFile.endswith(".mid") :
+      trackSel = trackSelectionGUI.new()
+      trackSel.load(songFile)
+      midiTracks = trackSel.show()
+
+
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: GangQin.run()
+  # ---------------------------------------------------------------------------
+  def run(self) :
+    while True :
+      for event in pygame.event.get() :
+        if (event.type == pygame.QUIT) :
+          running = False
+
+
+
+
+
+
+
+      clock.tick(GUI_FPS)
+
+      # Update the display
+      pygame.display.flip()
+
+# Quit Pygame
+pygame.quit()
+
+
+
+
+
+# =============================================================================
+# SESSION INIT: FILE SELECTION
+# =============================================================================
 
 
 

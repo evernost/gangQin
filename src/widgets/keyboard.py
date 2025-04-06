@@ -33,11 +33,6 @@ import src.utils as utils
 
 
 
-# =============================================================================
-# Guards
-# =============================================================================
-if (__name__ == "__main__") :
-  print("[WARNING] This library is not intended to be called as a main.")
 
 
 
@@ -109,7 +104,7 @@ class Keyboard :
   # ---------------------------------------------------------------------------
   def makeKeyboardPolygons(self, grandPianoMode = True) :
     """
-    Generates the polygons depicting all the notes of a MIDI keyboard (128 notes)
+    Generates the polygons describing all the notes of a MIDI keyboard (128 notes)
     For a grand piano, you'd use only polygons indexed from 21 (A0) to 108 (C8)
     """
 
@@ -620,3 +615,9 @@ class Keyboard :
     self.litKeysPolygons = []
 
 
+
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'keyboard.py'")

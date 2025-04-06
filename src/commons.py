@@ -25,9 +25,9 @@
 #       everywhere else in the code without prefix ("from commons import *")
 
 # VERSION
-REV_MAJOR = 2
-REV_MINOR = 1
-REV_TYPE = "STABLE" # "ALPHA", "BETA", "STABLE"
+REV_MAJOR = 3
+REV_MINOR = 0
+REV_TYPE = "ALPHA" # "ALPHA", "BETA", "STABLE"
 REV_YEAR = 2025
 REV_MONTH = "April"
 

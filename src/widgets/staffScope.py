@@ -262,7 +262,7 @@ class StaffScope :
   # ---------------------------------------------------------------------------
   def render(self) :
     """
-    Renders on screen the snapshot of the score and the playglows.
+    Renders on screen the staff and the playglows.
     The function shall be called at each frame.
     
     A staff must have been loaded prior to calling this function 
@@ -276,9 +276,9 @@ class StaffScope :
     if (self.imgScaled == None) :
       return
 
-    # ----------------
-    # Render the staff
-    # ----------------
+    # ----------------------
+    # Render the staff image
+    # ----------------------
     self.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))
     
 
@@ -319,15 +319,20 @@ class StaffScope :
 
 
 
-    # --------------------------------
-    # Render the visual cues for stats
-    # --------------------------------
+    # -----------------------------------
+    # Render the visual cues (stats info)
+    # -----------------------------------
     if ((len(self.playGlows) > 0) and (len(self.cursorWrongNoteCount) > 0)) :
+      
+      # List all playglows on the staff with a non-zero wrong note count
       minCursor = self.db.snapshots[self._snapshotIndex].cursorMin
       maxCursor = self.db.snapshots[self._snapshotIndex].cursorMax
-      left_y = []
-      right_y = []
+      leftHand_y = [-1]
+      rightHand_y = [10000]
       wrongNotesHist = []
+      
+      # Left hand: determine the y-coordinate of the lowest playglow
+      # Right hand: determine the y-coordinate of the highes playglow
       for n in range(minCursor, maxCursor + 1) :
         if str(n) in self.cursorWrongNoteCount :
           wrongNotesHist.append(self.cursorWrongNoteCount[str(n)])
@@ -335,14 +340,15 @@ class StaffScope :
         for p in playglows :
           if p.active :
             if (p.hand == 'L') :
-              left_y += [p.coord_yMin, p.coord_yMax]
+              leftHand_y += [p.coord_yMin, p.coord_yMax]
             else :
-              right_y += [p.coord_yMin, p.coord_yMax]
-
-      left_yMax = max(left_y)
-      right_yMin = min(right_y)
+              rightHand_y += [p.coord_yMin, p.coord_yMax]      
+      leftHand_yMax = max(leftHand_y)
+      rightHand_yMin = min(rightHand_y)
 
       for n in range(minCursor, maxCursor + 1) :
+        
+        # Calculate the transparency based on the wrong note count
         playglows = self.db.snapshots[self._snapshotIndex].getPlayGlowsAtCursor(n)
         if str(n) in self.cursorWrongNoteCount :
           if (min(wrongNotesHist) != max(wrongNotesHist)) :
@@ -353,15 +359,16 @@ class StaffScope :
         else :
           alpha = 0
 
+        # Draw the visual cue
         for p in playglows :
           if p.active :
             coords = p.toTuple()
             if (p.hand == 'L') :
-              coords = (coords[0], left_yMax, coords[2], 10)
+              coords = (coords[0], leftHand_yMax, coords[2], 10)
               r = pygame.draw.rect(transparent_surface, (255, 127, 0, alpha), coords)
 
             elif (p.hand == 'R') :
-              coords = (coords[0], right_yMin - 10, coords[2], 10)
+              coords = (coords[0], rightHand_yMin - 10, coords[2], 10)
               r = pygame.draw.rect(transparent_surface, (0, 255, 127, alpha), coords)
               
             else :

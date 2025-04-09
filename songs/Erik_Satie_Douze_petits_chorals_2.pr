@@ -1,5 +1,5 @@
 {
-  "revision": "v2.0",
+  "revision": "v2.1",
   "nStaffs": 2,
   "avgNoteDuration": 805.607476635514,
   "cursor": 0,
@@ -1092,7 +1092,7 @@
     {
       "pitch": 53,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 1,
       "startTime": 14400,

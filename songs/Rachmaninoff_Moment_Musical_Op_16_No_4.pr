@@ -1,5 +1,5 @@
 {
-  "revision": "v2.0",
+  "revision": "v2.1",
   "nStaffs": 2,
   "avgNoteDuration": 141.67146367146367,
   "cursor": 0,
@@ -12,12 +12,10 @@
     302,
     347,
     353,
-    365,
     377,
     401,
     413,
     515,
-    518,
     638
   ],
   "activeHands": "LR",
@@ -8941,7 +8939,7 @@
       "startTime": 30000,
       "stopTime": 30000,
       "sustained": false,
-      "inactive": true,
+      "inactive": false,
       "disabled": false,
       "voice": 0,
       "name": "A4",
@@ -10810,7 +10808,7 @@
     {
       "pitch": 72,
       "hand": 0,
-      "finger": 1,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 7,
       "startTime": 29920,
@@ -12940,7 +12938,7 @@
     {
       "pitch": 76,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 20,
       "startTime": 42480,
@@ -22615,7 +22613,7 @@
     {
       "pitch": 47,
       "hand": 1,
-      "finger": 3,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 37,
       "startTime": 28880,
@@ -24355,7 +24353,7 @@
     {
       "pitch": 48,
       "hand": 1,
-      "finger": 3,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 31,
       "startTime": 29200,
@@ -24415,7 +24413,7 @@
     {
       "pitch": 48,
       "hand": 1,
-      "finger": 3,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 35,
       "startTime": 30160,
@@ -34480,7 +34478,7 @@
     {
       "pitch": 57,
       "hand": 1,
-      "finger": 0,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 17,
       "startTime": 31600,

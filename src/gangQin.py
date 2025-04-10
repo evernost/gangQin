@@ -68,7 +68,7 @@ class GangQin :
     self.userScore = score.Score()
     self.stats = stats.Stats()
 
-    # Init pygame interface
+    # Init pygame library
     pygame.init()
     self.screen = pygame.display.set_mode((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT))
     self.clock = pygame.time.Clock()
@@ -85,13 +85,13 @@ class GangQin :
     
 
 
-
-
-
   # ---------------------------------------------------------------------------
   # METHOD: GangQin.loadSong()
   # ---------------------------------------------------------------------------
   def loadSong(self) :
+    """
+    Initialises the gangQin application with the song to work on (.gq or MIDI file)
+    """
     (selectedDevice, songFile) = fileSelectGUI.show()
 
     if ((songFile == "") or (songFile == "None")) :
@@ -105,6 +105,14 @@ class GangQin :
 
 
 
+  # Create window
+pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {userScore.songName}")
+
+# Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
+pygame.key.set_repeat(250, 50)
+
+# Autosave feature (todo)
+AUTOSAVE_TASK = pygame.USEREVENT + 3
 
 
 
@@ -112,13 +120,30 @@ class GangQin :
   # METHOD: GangQin.run()
   # ---------------------------------------------------------------------------
   def run(self) :
+    
+    
+    # Main execution loop.
+    # Loop exits when the application is done
     while True :
+      
+      # Fill background screen
+      screen.fill(GUI_BACKGROUND_COLOR)
+    
+    
       for event in pygame.event.get() :
         if (event.type == pygame.QUIT) :
           running = False
 
+      # Dispatch keyboard/click messages
+      for widget in self.widgets :
+        if (event.type in widget.uiSensivityList) :
+          widget.uiEvent(event)
+          print("test")
 
 
+
+      for widget in self.widgets :
+        widget.render()
 
 
 
@@ -136,18 +161,9 @@ pygame.quit()
 
 
 # =============================================================================
-# SESSION INIT: FILE SELECTION
-# =============================================================================
-
-
-
-
-# =============================================================================
 # MAIN SESSION
 # =============================================================================
-pygame.init()
-screen = pygame.display.set_mode((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT))
-clock = pygame.time.Clock()
+
 
 # Load the file to a Score object
 userScore = score.Score(songFile)
@@ -189,14 +205,6 @@ pianoArbiter = arbiter.Arbiter("permissive")
 
 
 
-# Create window
-pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {userScore.songName}")
-
-# Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
-pygame.key.set_repeat(250, 50)
-
-# Autosave feature (todo)
-AUTOSAVE_TASK = pygame.USEREVENT + 3
 
 
 
@@ -802,5 +810,19 @@ while running :
 
 # Quit Pygame
 pygame.quit()
+
+
+
+# =============================================================================
+# Standalone call
+# =============================================================================
+if (__name__ == "__main__") :
+  gq = GangQin()
+  
+  # Call the file selection GUI
+  gq.loadSong()
+
+  # Main app
+  gq.run()
 
 

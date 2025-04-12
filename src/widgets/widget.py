@@ -31,7 +31,10 @@ from commons import *
 class Widget :
 
   """
-  TODO
+  Widget class definition.
+  The widget class contains pure functions that need to be overriden:
+  - TODO
+  - TODO
   """
   
   

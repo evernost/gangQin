@@ -17,6 +17,7 @@
 # Project specific constants
 from src.commons import *
 
+import src.widgets.widget as widget
 import src.note as note
 
 import datetime
@@ -39,11 +40,11 @@ CURSOR_STEADY_COUNT_LIMIT = 300
 # =============================================================================
 # Main code
 # =============================================================================
-class Score :
+class Score(widget.Widget) :
 
   """
-  The Score objects is a custom representation of the song that is suited
-  for the gameplay. 
+  The Score object is a custom representation of the song suited for the 
+  gameplay. 
   
   It provides the necessary functions to get the notes to be played at a given
   moment, navigate through the score, edit metadata (bookmarks), load/save, etc.
@@ -65,14 +66,16 @@ class Score :
     - "L"       : list of the note start timecodes (left hand only), duplicates removed
     - "R"       : list of the note start timecodes (right hand only), duplicates removed
     
-  - <cursorsLeft>   : list of cursors values where a note is pressed on the left hand
-  - <cursorsRight>  : list of cursors values where a note is pressed on the right hand
+  List of cursor values where a note is pressed on the left/right hand:
+  - 'cursorsLeft'
+  - 'cursorsRight'
   """
-  def __init__(self, songFile) :
+  def __init__(self, top) :
     
-    self.songDir  = ""
-    self.songName = ""
-    
+    # Call the Widget init method
+    super().__init__(top)
+
+    # Custom attributes
     self.nStaffs = 2
     self.avgNoteDuration = 0
     self.hasUnsavedChanges = False
@@ -119,8 +122,6 @@ class Score :
 
     # Weak arbitration sections
     self.weakArbitrationSections = []
-
-    self.importFromFile(songFile)
 
 
 

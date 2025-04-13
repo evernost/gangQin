@@ -71,10 +71,10 @@ class Score(widget.Widget) :
   - 'cursorsRight'
   """
 
-  def __init__(self, top, loc) :
+  def __init__(self, top) :
     
     # Call the Widget init method
-    super().__init__(top, loc)
+    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
 
     # Custom attributes
     self.nStaffs = 2

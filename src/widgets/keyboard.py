@@ -48,6 +48,9 @@ class Keyboard(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc)
 
+    # Define the events the widgets must react to
+    self.uiSensivityList = [pygame.K_TAB]
+
     # Completed after calling "makePolygons()"
     self.polygons = []
 
@@ -56,12 +59,12 @@ class Keyboard(widget.Widget) :
     self.blackNoteRGB = KEYBOARD_BLACK_NOTE_COLOR
     
     # Rectangle indicating a note to play by left hand
-    self.sqWhiteNoteLeftRGB = KEYBOARD_PLAY_RECT_LEFT_HAND_WHITE_NOTE
-    self.sqBlackNoteLeftRGB = KEYBOARD_PLAY_RECT_LEFT_HAND_BLACK_NOTE
+    self.sqWhiteNoteLeftRGB = KEYBOARD_PLAY_RECT_COLOR_LEFT_HAND_WHITE_NOTE
+    self.sqBlackNoteLeftRGB = KEYBOARD_PLAY_RECT_COLOR_LEFT_HAND_BLACK_NOTE
 
     # Rectangle indicating a note to play by right hand
-    self.sqWhiteNoteRightRGB = KEYBOARD_PLAY_RECT_RIGHT_HAND_WHITE_NOTE
-    self.sqBlackNoteRightRGB = KEYBOARD_PLAY_RECT_RIGHT_HAND_BLACK_NOTE
+    self.sqWhiteNoteRightRGB = KEYBOARD_PLAY_RECT_COLOR_RIGHT_HAND_WHITE_NOTE
+    self.sqBlackNoteRightRGB = KEYBOARD_PLAY_RECT_COLOR_RIGHT_HAND_BLACK_NOTE
 
     # Rectangle of a note being played by both 
     # - a note to play by left hand
@@ -79,11 +82,11 @@ class Keyboard(widget.Widget) :
     self.fingerFontBlackNoteRGB = KEYBOARD_FINGERSATZ_FONT_COLOR_WHITE_NOTE
     self.fingerFontWhiteNoteRGB = KEYBOARD_FINGERSATZ_FONT_COLOR_BLACK_NOTE
 
-    # Define some shorthand notations
-    self.a = KEYBOARD_WHITE_NOTE_HEIGHT; self.b = KEYBOARD_WHITE_NOTE_WIDTH
+    # Define shorthand notations
     self.c = KEYBOARD_BLACK_NOTE_HEIGHT; self.d = KEYBOARD_BLACK_NOTE_WIDTH
     self.s = KEYBOARD_NOTE_CHANFER
     self.e = KEYBOARD_NOTE_SPACING
+    self.x = self.loc[0]; self.y = self.loc[1]
 
     # TODO: description
     self.litKeysPolygons = []
@@ -421,8 +424,8 @@ class Keyboard(widget.Widget) :
     eps = 3
     u = [x[0] for x in self.polygons[noteObj.pitch]]
     x0 = min(u); y0 = self.y + self.c + self.e
-    h = self.a - (self.c + self.e) - (2*eps)
-    w = self.b - (2*self.e) - (2*eps)
+    h = KEYBOARD_WHITE_NOTE_HEIGHT - (self.c + self.e) - (2*eps)
+    w = KEYBOARD_WHITE_NOTE_WIDTH - (2*self.e) - (2*eps)
     rect = [(x0 + eps, y0 + eps)]
     rect += utils.Vector2D(0, h)
     rect += utils.Vector2D(w, 0)
@@ -503,8 +506,8 @@ class Keyboard(widget.Widget) :
     eps = 3
     u = [x[0] for x in self.polygons[noteObj.pitch]]
     x0 = min(u); y0 = self.y + self.c + self.e
-    h = self.a - (self.c + self.e) - (2*eps)
-    w = self.b - (2*self.e) - (2*eps)
+    h = KEYBOARD_WHITE_NOTE_HEIGHT - (self.c + self.e) - (2*eps)
+    w = KEYBOARD_WHITE_NOTE_WIDTH - (2*self.e) - (2*eps)
     
     rectLeft = [(x0 + eps, y0 + eps)]
     rectLeft += utils.Vector2D(0, h)

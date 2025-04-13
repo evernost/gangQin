@@ -83,13 +83,13 @@ class GangQin :
     self.widgets = [
       score.Score(self),
       keyboard.Keyboard(self, loc = (10, 300)),
-      pianoRoll.PianoRoll(self),
-      staffScope.StaffScope(self),
-      fingerSelector.FingerSelector(self),
-      metronome.Metronome(self),
-      arbiter.Arbiter(self),
-      stats.Stats(self),
-      notify.Notify(self)
+      pianoRoll.PianoRoll(self, loc = (10, 50))
+      #staffScope.StaffScope(self),
+      #fingerSelector.FingerSelector(self),
+      #metronome.Metronome(self),
+      #arbiter.Arbiter(self),
+      #stats.Stats(self),
+      #notify.Notify(self)
     ]
     
 

@@ -15,7 +15,7 @@
 # External libs 
 # =============================================================================
 # Project specific constants
-from commons import *
+from src.commons import *
 
 
 
@@ -42,7 +42,7 @@ class Widget :
   # ---------------------------------------------------------------------------
   # METHOD: Widget.__init__
   # ---------------------------------------------------------------------------
-  def __init__(self, top, loc = (0, 0)) :
+  def __init__(self, top, loc = WIDGET_LOC_UNDEFINED) :
     """
     Initialisation method definition.
     """

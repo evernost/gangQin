@@ -16,6 +16,8 @@
 # Project specific constants
 from src.commons import *
 
+import src.widgets.widget as widget
+
 import pygame
 
 
@@ -23,31 +25,28 @@ import pygame
 # =============================================================================
 # Constants pool
 # =============================================================================
+# None.
 
 
 
 # =============================================================================
-# Guards
+# CLASS DEFINITION
 # =============================================================================
-if (__name__ == "__main__") :
-  print("[WARNING] This library is not intended to be called as a main.")
+class PianoRoll(widget.Widget) :
 
+  """
+  Piano roll widget.
+  """
 
-
-# =============================================================================
-# Main code
-# =============================================================================
-
-class PianoRoll :
-
-  # ---------------------------------------------------------------------------
-  # Constructor
-  # ---------------------------------------------------------------------------
-  def __init__(self, x, yTop, yBottom) :
-    # Drawing localisation
-    self.x = x
-    self.yTop = yTop
-    self.yBottom = yBottom
+  def __init__(self, top, loc) :
+    
+    # Call the Widget init method
+    super().__init__(top, loc)
+  
+    # Drawing location
+    self.x = loc[0]
+    self.yTop = loc[1]
+    self.yBottom = 300-2
 
     # Defines the amount of notes shown in the piano roll view
     # Units are in timecodes. Use "avgNoteDuration" to use it conveniently
@@ -57,17 +56,17 @@ class PianoRoll :
     self.nStaffs = 0
     
     # Color scheme
-    self.backgroundRGB = (80, 80, 80)         # Background color for the piano roll
-    self.keyLineRGB = (50, 50, 50)            # Color of the lines separating each notes in the piano roll
+    self.backgroundRGB = PIANOROLL_BACKGROUND_COLOR         # Background color for the piano roll
+    self.keyLineRGB = PIANOROLL_NOTE_LINE_COLOR            # Color of the lines separating each notes in the piano roll
     self.leftNoteOutlineRGB = (243, 35, 35)   # Border color for the notes in the piano roll
     self.rightNoteOutlineRGB = (35, 243, 118)
-    self.leftNoteRGB = (250, 165, 165)        # Color of a left hand note in piano roll
-    self.rightNoteRGB = (165, 250, 200)       # Color of a right hand note in piano roll
+    self.leftNoteRGB = PIANOROLL_NOTE_COLOR_LEFT_HAND        # Color of a left hand note in piano roll
+    self.rightNoteRGB = PIANOROLL_NOTE_COLOR_RIGHT_HAND      # Color of a right hand note in piano roll
     
     # Shortcuts for the key sizes
-    self.b = WHITE_NOTE_WIDTH
-    self.d = BLACK_NOTE_WIDTH
-    self.e = NOTE_SPACING
+    self.b = KEYBOARD_WHITE_NOTE_WIDTH
+    self.d = KEYBOARD_BLACK_NOTE_WIDTH
+    self.e = KEYBOARD_NOTE_SPACING
 
     # UI interaction queues
     self._altPressed = False
@@ -224,75 +223,9 @@ class PianoRoll :
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD PianoRoll.keyPress(pygameKeys)
-  # ---------------------------------------------------------------------------
-  def keyPress(self, pygameKeys) :
-    """
-    TODO
-    """
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'pianoRoll.py'")
 
-    if pygameKeys[pygame.K_LALT] :
-      print("[DEBUG] Keypress: 'ALT'")
-
-    # if pygameKeys[pygame.K_m] :
-
-    #   if not(self.enable) :
-    #     self.enable = True
-    #     self._switched = True
-    #     self.msgQueue.append(MSG_TIMER_ON)
-
-    #   if pygameKeys[pygame.K_KP_PLUS] :
-    #     self._optionMode = True
-    #     self.bpm += 1
-    #     if not(MSG_TEMPO_UPDATE in self.msgQueue) :
-    #       self.msgQueue.append(MSG_TEMPO_UPDATE)
-      
-    #   elif pygameKeys[pygame.K_KP_MINUS] :
-    #     self._optionMode = True
-    #     self.bpm -= 1
-    #     if not(MSG_TEMPO_UPDATE in self.msgQueue) :
-    #       self.msgQueue.append(MSG_TEMPO_UPDATE)
-
-    # else :
-    #   self.switched = False
-    #   self._optionMode = False
-
-
-      
-  # ---------------------------------------------------------------------------
-  # METHOD PianoRoll.keyRelease(pygameKeys)
-  # ---------------------------------------------------------------------------
-  def keyRelease(self, pygameKeys) :
-    """
-    TODO
-    """
-
-    if pygameKeys[pygame.K_LALT] :
-      #print("[DEBUG] Keyrelease: '<'")
-      pass
-
-    # if (key == pygame.K_m) :
-
-    #   if self._switched :
-    #     self._switched = False
-
-    #   else : 
-    #     if self._optionMode :
-    #       self._optionMode = False
-    #     else :
-    #       self.enable = False
-    #       self.counter = 1
-    #       self.msgQueue.append(MSG_TIMER_OFF)
-
-
-
-  def mouseEvent(self, event) :
-    
-    pass
-    #print("[DEBUG] Keyrelease: '<'")
-
-    # if (event.type == pygame.MOUSEBUTTONDOWN) :
-    #   keys    = pygame.key.get_pressed()
-    #   ctrlKey = event.mod & pygame.KMOD_CTRL
-    #   altKey  = event.mod & pygame.KMOD_ALT

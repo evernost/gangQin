@@ -14,7 +14,7 @@
 # External libs
 # =============================================================================
 # Project specific constants
-from commons import *
+from src.commons import *
 
 import configparser
 import mido
@@ -181,12 +181,12 @@ def show() :
 
   fileExt = tk.StringVar()
   radioButton_mid = ttk.Radiobutton(fileSelFrame, text = ".mid file", value = ".mid", variable = fileExt, command = onRadioButtonChange)
-  radioButton_pr  = ttk.Radiobutton(fileSelFrame, text = ".pr file" , value = ".pr" , variable = fileExt, command = onRadioButtonChange)
+  radioButton_pr  = ttk.Radiobutton(fileSelFrame, text = ".gq file" , value = ".pr" , variable = fileExt, command = onRadioButtonChange)
   
   radioButton_mid.grid(row = 0, column = 1, padx = 1, pady = 1, sticky = "w")
   radioButton_pr.grid(row = 0, column = 2, padx = 1, pady = 1, sticky = "e")
 
-  # Read the last practiced song, set the .mid/.pr selection accordingly
+  # Read the last practiced song, set the .mid/.gq selection accordingly
   if "song" in configData["DEFAULT"] :
     if configData["DEFAULT"]["song"] in getFileList(SONG_PATH, ".mid") + getFileList(SONG_PATH, ".pr") :
       (_, lastFileExt) = os.path.splitext(configData["DEFAULT"]["song"])

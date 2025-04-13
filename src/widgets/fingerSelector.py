@@ -14,10 +14,14 @@
 # External libs
 # =============================================================================
 # Project specific constants
-from commons import *
+from src.commons import *
 
-import pygame
+import src.widgets.widget as widget
 import text
+
+# Standard libs
+import pygame
+
 
 
 
@@ -32,20 +36,18 @@ FINGERSEL_HAND_CHANGE = 3
 
 
 # =============================================================================
-# Guards
+# CLASS DEFINITION
 # =============================================================================
-if (__name__ == "__main__") :
-  print("[WARNING] This library is not intended to be called as a main.")
+class FingerSelector(widget.Widget) :
 
-
-
-# =============================================================================
-# Main code
-# =============================================================================
-class FingerSelector :
-
-  def __init__(self, loc) :
+  def __init__(self, top, loc) :
     
+    # Call the Widget init method
+    super().__init__(top, loc)
+
+    # Define the events the widgets must react to
+    self.uiSensivityList = [pygame.K_TAB]
+
     # UI interaction queues
     self.msgQueueIn = []
     self.msgQueueOut = []
@@ -346,6 +348,23 @@ class FingerSelector :
   
 
 
+
+  # ---------------------------------------------------------------------------
+  # METHOD: FingerSelector.uiEvent()
+  # ---------------------------------------------------------------------------
+  def uiEvent(self, pygameEvent) :
+    """
+    This function is called every time a pygame event listed in 'uiSensitivityList'
+    happens.
+    """
+    
+    if pygameEvent in self.uiSensivityList :
+      pass
+
+
+
+
+
   # ---------------------------------------------------------------------------
   # METHOD FingerSelector.keyRelease(pygameKeys)
   # ---------------------------------------------------------------------------
@@ -359,4 +378,13 @@ class FingerSelector :
 
     if (key == pygame.K_m) :
       pass
+
+
+
+
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'fingerSelector.py'")
 

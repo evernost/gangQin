@@ -38,7 +38,7 @@ CURSOR_STEADY_COUNT_LIMIT = 300
 
 
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
 class Score(widget.Widget) :
 
@@ -70,10 +70,11 @@ class Score(widget.Widget) :
   - 'cursorsLeft'
   - 'cursorsRight'
   """
-  def __init__(self, top) :
+
+  def __init__(self, top, loc) :
     
     # Call the Widget init method
-    super().__init__(top)
+    super().__init__(top, loc)
 
     # Custom attributes
     self.nStaffs = 2

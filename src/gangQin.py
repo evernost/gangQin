@@ -42,7 +42,8 @@ import utils
 import mido
 import rtmidi
 
-
+# Standard libs
+import os
 
 
 
@@ -81,7 +82,7 @@ class GangQin :
     # Load widgets
     self.widgets = [
       score.Score(self),
-      keyboard.Keyboard(self),
+      keyboard.Keyboard(self, loc = (10, 300)),
       pianoRoll.PianoRoll(self),
       staffScope.StaffScope(self),
       fingerSelector.FingerSelector(self),
@@ -112,21 +113,19 @@ class GangQin :
       trackSel = trackSelectionGUI.new()
       trackSel.load(songFile)
       midiTracks = trackSel.show()
+      self.songType = "mid"
+    else :
+      self.songType = "gq"
 
 
-    # Update the app 
-    (rootDir, rootNameExt) = os.path.split(inputFile)
+    # Update the app properties 
+    (rootDir, rootNameExt) = os.path.split(songFile)
     (rootName, _) = os.path.splitext(rootNameExt)
-    # self.songName     = rootNameExt
-    # self.jsonName     = rootName + ".json"          # Example: "my_song.json"
-    # self.jsonFile     = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
-    # self.depotFolder  = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
     
+    self.songFile = songFile
     self.songDir = rootDir
     self.songName = rootName
-    
-
-    pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {userScore.songName}")
+    pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {self.songName}")
 
     
 
@@ -134,7 +133,6 @@ class GangQin :
   # METHOD: GangQin.run()
   # ---------------------------------------------------------------------------
   def run(self) :
-    
     
     # Main execution loop.
     # Loop exits when the application is done

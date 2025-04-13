@@ -3,7 +3,7 @@
 # Project       : gangQin
 # Module name   : keyboard
 # File name     : keyboard.py
-# Purpose       : draws and manages the keyboard displayed on screen.
+# Purpose       : draws the keyboard displayed on screen
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : Sunday, 8 Oct 2023
 # -----------------------------------------------------------------------------
@@ -16,13 +16,14 @@
 # Project specific constants
 from src.commons import *
 
-import pygame
 import src.text as text
+import src.utils as utils
+import src.widgets.widget as widget
+
+import pygame
 
 # For point in polygon test
 from shapely.geometry import Point, Polygon
-
-import src.utils as utils
 
 
 
@@ -33,36 +34,34 @@ import src.utils as utils
 
 
 
-
-
-
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
+class Keyboard(widget.Widget) :
 
-class Keyboard :
+  """
+  TODO: description
+  """
 
-  # ---------------------------------------------------------------------------
-  # Constructor
-  # ---------------------------------------------------------------------------
-  def __init__(self, loc) :
-    (self.x, self.y) = loc
+  def __init__(self, top, loc) :
     
-    # -------------
-    # Color palette
-    # -------------
-    
+    # Call the Widget init method
+    super().__init__(top, loc)
+
+    # Completed after calling "makePolygons()"
+    self.polygons = []
+
     # Black and white notes of the keyboard
-    self.whiteNoteRGB = (255, 255, 255)
-    self.blackNoteRGB = (0, 0, 0)
+    self.whiteNoteRGB = KEYBOARD_WHITE_NOTE_COLOR
+    self.blackNoteRGB = KEYBOARD_BLACK_NOTE_COLOR
     
     # Rectangle indicating a note to play by left hand
-    self.sqWhiteNoteLeftRGB = (200, 10, 0)
-    self.sqBlackNoteLeftRGB = (200, 10, 0)
+    self.sqWhiteNoteLeftRGB = KEYBOARD_PLAY_RECT_LEFT_HAND_WHITE_NOTE
+    self.sqBlackNoteLeftRGB = KEYBOARD_PLAY_RECT_LEFT_HAND_BLACK_NOTE
 
     # Rectangle indicating a note to play by right hand
-    self.sqWhiteNoteRightRGB = (0, 200, 10)
-    self.sqBlackNoteRightRGB = (0, 200, 10)
+    self.sqWhiteNoteRightRGB = KEYBOARD_PLAY_RECT_RIGHT_HAND_WHITE_NOTE
+    self.sqBlackNoteRightRGB = KEYBOARD_PLAY_RECT_RIGHT_HAND_BLACK_NOTE
 
     # Rectangle of a note being played by both 
     # - a note to play by left hand
@@ -76,180 +75,188 @@ class Keyboard :
     self.sqWhiteNoteOverlapRightRGB = (140, 255, 146)
     self.sqBlackNoteOverlapRightRGB = (140, 255, 146)
 
-    # Color of the font indicating the finger
-    self.fingerFontBlackNoteRGB = (240, 240, 240)
-    self.fingerFontWhiteNoteRGB = (240, 240, 240)
+    # Color of the font indicating the finger number
+    self.fingerFontBlackNoteRGB = KEYBOARD_FINGERSATZ_FONT_COLOR_WHITE_NOTE
+    self.fingerFontWhiteNoteRGB = KEYBOARD_FINGERSATZ_FONT_COLOR_BLACK_NOTE
 
+    # Define some shorthand notations
+    self.a = KEYBOARD_WHITE_NOTE_HEIGHT; self.b = KEYBOARD_WHITE_NOTE_WIDTH
+    self.c = KEYBOARD_BLACK_NOTE_HEIGHT; self.d = KEYBOARD_BLACK_NOTE_WIDTH
+    self.s = KEYBOARD_NOTE_CHANFER
+    self.e = KEYBOARD_NOTE_SPACING
+
+    # TODO: description
     self.litKeysPolygons = []
 
-    # Define the size of the keys
-    self.a = WHITE_NOTE_HEIGHT; self.b = WHITE_NOTE_WIDTH
-    self.c = BLACK_NOTE_HEIGHT; self.d = BLACK_NOTE_WIDTH
-    self.s = NOTE_CHANFER
-    self.e = NOTE_SPACING
-    
-    # Generate polygons for all notes and store them in <keyboardPolygons>
-    self.makeKeyboardPolygons()
+    # Generate polygons for all notes and store them in 'polygons'
+    self.makePolygons()
 
     # List of notes currently pressed
     self.activeNotes = []
 
-    # Define the current key the song is in
-    self.activeKey = []
-
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: Keyboard.makeKeyboardPolygons()
+  # METHOD: Keyboard.makePolygons()
   # ---------------------------------------------------------------------------
-  def makeKeyboardPolygons(self, grandPianoMode = True) :
+  def makePolygons(self, grandPianoMode = True) :
     """
-    Generates the polygons describing all the notes of a MIDI keyboard (128 notes)
-    For a grand piano, you'd use only polygons indexed from 21 (A0) to 108 (C8)
+    Generates the polygons drawing the notes of a full MIDI keyboard 
+    (i.e. 128 notes)
+    
+    If grandPianoMode = True, polygon generation is restricted to the notes of 
+    a grand piano (i.e. from A0 to C8).
+
+    This function populates the attribute 'polygons'. 
+    It is a 128 elements array, such that 'polygons[midiNoteCode]' is an array
+    containing the vertices required to draw the note with MIDI code 'midiNoteCode'.
+
+    This function only needs to be called once.
     """
-
-    self.keyboardPolygons = []
-
-    # Some shortcuts
-    a = self.a; b = self.b
-    c = self.c; d = self.d
-    s = self.s
-    e = self.e
-    x0 = self.x - (12*b); y0 = self.y
 
     # Initialise output
-    self.keyboardPolygons = [[] for _ in range(128)]
+    self.polygons = [[] for _ in range(128)]
+
+    # Some shortcuts for readability
+    wnh = KEYBOARD_WHITE_NOTE_HEIGHT
+    wnw = KEYBOARD_WHITE_NOTE_WIDTH
+    bnh = KEYBOARD_BLACK_NOTE_HEIGHT 
+    bnw = KEYBOARD_BLACK_NOTE_WIDTH
+    nc = KEYBOARD_NOTE_CHANFER
+    ns = KEYBOARD_NOTE_SPACING
+
+    x0 = self.x - (12*wnw); y0 = self.y
 
     # Generate polygons for each note
     for i in range(0, 128, 12) :
       
       # Note C
       if (grandPianoMode and (i == 108)) :
-        self.keyboardPolygons[i] = [(x0+e, y0)]
-        self.keyboardPolygons[i] += utils.Vector2D(0,a-s)
-        self.keyboardPolygons[i] += utils.Vector2D(s,s)
-        self.keyboardPolygons[i] += utils.Vector2D(b-(2*s)-(2*e),0)
-        self.keyboardPolygons[i] += utils.Vector2D(s,-s)
-        self.keyboardPolygons[i] += utils.Vector2D(0,-(a-s))
+        self.polygons[i] = [(x0+ns, y0)]
+        self.polygons[i] += utils.Vector2D(0, wnh-nc)
+        self.polygons[i] += utils.Vector2D(nc, nc)
+        self.polygons[i] += utils.Vector2D(wnw-(2*nc)-(2*ns), 0)
+        self.polygons[i] += utils.Vector2D(nc, -nc)
+        self.polygons[i] += utils.Vector2D(0, -(wnh-nc))
       else :
-        self.keyboardPolygons[i] = [(x0+e, y0)]
-        self.keyboardPolygons[i] += utils.Vector2D(0,a-s)
-        self.keyboardPolygons[i] += utils.Vector2D(s,s)
-        self.keyboardPolygons[i] += utils.Vector2D(b-(2*s)-(2*e),0)
-        self.keyboardPolygons[i] += utils.Vector2D(s,-s)
-        self.keyboardPolygons[i] += utils.Vector2D(0,-(a-c-e-s))
-        self.keyboardPolygons[i] += utils.Vector2D(-2*d//3,0)
-        self.keyboardPolygons[i] += utils.Vector2D(0,-(c+e))
+        self.polygons[i] = [(x0+ns, y0)]
+        self.polygons[i] += utils.Vector2D(0, wnh-nc)
+        self.polygons[i] += utils.Vector2D(nc, nc)
+        self.polygons[i] += utils.Vector2D(wnw-(2*nc)-(2*ns), 0)
+        self.polygons[i] += utils.Vector2D(nc, -nc)
+        self.polygons[i] += utils.Vector2D(0, -(wnh-bnh-ns-nc))
+        self.polygons[i] += utils.Vector2D(-2*bnw//3, 0)
+        self.polygons[i] += utils.Vector2D(0, -(bnh+ns))
 
       # Note Db
-      self.keyboardPolygons[i+1] = [(x0+b-(2*d//3)+e, y0)]
-      self.keyboardPolygons[i+1] += utils.Vector2D(0,c-e)
-      self.keyboardPolygons[i+1] += utils.Vector2D(d-(2*e),0)
-      self.keyboardPolygons[i+1] += utils.Vector2D(0,-(c-e))
+      self.polygons[i+1] = [(x0+wnw-(2*bnw//3)+ns, y0)]
+      self.polygons[i+1] += utils.Vector2D(0, bnh-ns)
+      self.polygons[i+1] += utils.Vector2D(bnw-(2*ns), 0)
+      self.polygons[i+1] += utils.Vector2D(0, -(bnh-ns))
 
       # Note D
-      self.keyboardPolygons[i+2] = [(x0+b+(d//3)+e, y0)]
-      self.keyboardPolygons[i+2] += utils.Vector2D(0,c+e)
-      self.keyboardPolygons[i+2] += utils.Vector2D(-d//3,0)
-      self.keyboardPolygons[i+2] += utils.Vector2D(0,a-c-e-s)
-      self.keyboardPolygons[i+2] += utils.Vector2D(s,s)
-      self.keyboardPolygons[i+2] += utils.Vector2D(b-(2*s)-(2*e),0)
-      self.keyboardPolygons[i+2] += utils.Vector2D(s,-s)
-      self.keyboardPolygons[i+2] += utils.Vector2D(0,-(a-c-e-s))
-      self.keyboardPolygons[i+2] += utils.Vector2D(-d//3,0)
-      self.keyboardPolygons[i+2] += utils.Vector2D(0,-(c+e))
+      self.polygons[i+2] = [(x0+wnw+(bnw//3)+ns, y0)]
+      self.polygons[i+2] += utils.Vector2D(0, bnh+ns)
+      self.polygons[i+2] += utils.Vector2D(-bnw//3, 0)
+      self.polygons[i+2] += utils.Vector2D(0, wnh-bnh-ns-nc)
+      self.polygons[i+2] += utils.Vector2D(nc,nc)
+      self.polygons[i+2] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+      self.polygons[i+2] += utils.Vector2D(nc,-nc)
+      self.polygons[i+2] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
+      self.polygons[i+2] += utils.Vector2D(-bnw//3,0)
+      self.polygons[i+2] += utils.Vector2D(0,-(bnh+ns))
 
       # Note Eb
-      self.keyboardPolygons[i+3] = [(x0+(2*b)-(d//3)+e, y0)]
-      self.keyboardPolygons[i+3] += utils.Vector2D(0,c-e)
-      self.keyboardPolygons[i+3] += utils.Vector2D(d-(2*e),0)
-      self.keyboardPolygons[i+3] += utils.Vector2D(0,-(c-e))
+      self.polygons[i+3] = [(x0+(2*wnw)-(bnw//3)+ns, y0)]
+      self.polygons[i+3] += utils.Vector2D(0,bnh-ns)
+      self.polygons[i+3] += utils.Vector2D(bnw-(2*ns),0)
+      self.polygons[i+3] += utils.Vector2D(0,-(bnh-ns))
 
       # Note Eb
-      self.keyboardPolygons[i+4] = [(x0+(2*b)+(2*d//3)+e, y0)]
-      self.keyboardPolygons[i+4] += utils.Vector2D(0,c+e)
-      self.keyboardPolygons[i+4] += utils.Vector2D(-2*d//3,0)
-      self.keyboardPolygons[i+4] += utils.Vector2D(0,a-c-e-s)
-      self.keyboardPolygons[i+4] += utils.Vector2D(s,s)
-      self.keyboardPolygons[i+4] += utils.Vector2D(b-(2*s)-(2*e),0)
-      self.keyboardPolygons[i+4] += utils.Vector2D(s,-s)
-      self.keyboardPolygons[i+4] += utils.Vector2D(0,-(a-s))
+      self.polygons[i+4] = [(x0+(2*wnw)+(2*bnw//3)+ns, y0)]
+      self.polygons[i+4] += utils.Vector2D(0,bnh+ns)
+      self.polygons[i+4] += utils.Vector2D(-2*bnw//3,0)
+      self.polygons[i+4] += utils.Vector2D(0,wnh-bnh-ns-nc)
+      self.polygons[i+4] += utils.Vector2D(nc,nc)
+      self.polygons[i+4] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+      self.polygons[i+4] += utils.Vector2D(nc,-nc)
+      self.polygons[i+4] += utils.Vector2D(0,-(wnh-nc))
 
       # Note F
-      self.keyboardPolygons[i+5] = [(x0+(3*b)+e, y0)]
-      self.keyboardPolygons[i+5] += utils.Vector2D(0,a-s)
-      self.keyboardPolygons[i+5] += utils.Vector2D(s,s)
-      self.keyboardPolygons[i+5] += utils.Vector2D(b-(2*s)-(2*e),0)
-      self.keyboardPolygons[i+5] += utils.Vector2D(s,-s)
-      self.keyboardPolygons[i+5] += utils.Vector2D(0,-(a-c-e-s))
-      self.keyboardPolygons[i+5] += utils.Vector2D(-2*d//3,0)
-      self.keyboardPolygons[i+5] += utils.Vector2D(0,-(c+e))
+      self.polygons[i+5] = [(x0+(3*wnw)+ns, y0)]
+      self.polygons[i+5] += utils.Vector2D(0,wnh-nc)
+      self.polygons[i+5] += utils.Vector2D(nc,nc)
+      self.polygons[i+5] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+      self.polygons[i+5] += utils.Vector2D(nc,-nc)
+      self.polygons[i+5] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
+      self.polygons[i+5] += utils.Vector2D(-2*bnw//3,0)
+      self.polygons[i+5] += utils.Vector2D(0,-(bnh+ns))
 
       # Note Gb
-      self.keyboardPolygons[i+6] = [(x0+(4*b)-(2*d//3)+e, y0)]
-      self.keyboardPolygons[i+6] += utils.Vector2D(0,c-e)
-      self.keyboardPolygons[i+6] += utils.Vector2D(d-(2*e),0)
-      self.keyboardPolygons[i+6] += utils.Vector2D(0,-(c-e))
+      self.polygons[i+6] = [(x0+(4*wnw)-(2*bnw//3)+ns, y0)]
+      self.polygons[i+6] += utils.Vector2D(0,bnh-ns)
+      self.polygons[i+6] += utils.Vector2D(bnw-(2*ns),0)
+      self.polygons[i+6] += utils.Vector2D(0,-(bnh-ns))
 
       # Note G
-      self.keyboardPolygons[i+7] = [(x0+(4*b)+(d//3)+e, y0)]
-      self.keyboardPolygons[i+7] += utils.Vector2D(0,c+e)
-      self.keyboardPolygons[i+7] += utils.Vector2D(-d//3,0)
-      self.keyboardPolygons[i+7] += utils.Vector2D(0,a-c-e-s)
-      self.keyboardPolygons[i+7] += utils.Vector2D(s,s)
-      self.keyboardPolygons[i+7] += utils.Vector2D(b-(2*s)-(2*e),0)
-      self.keyboardPolygons[i+7] += utils.Vector2D(s,-s)
-      self.keyboardPolygons[i+7] += utils.Vector2D(0,-(a-c-e-s))
-      self.keyboardPolygons[i+7] += utils.Vector2D(-d//2,0)
-      self.keyboardPolygons[i+7] += utils.Vector2D(0,-(c+e))
+      self.polygons[i+7] = [(x0+(4*wnw)+(bnw//3)+ns, y0)]
+      self.polygons[i+7] += utils.Vector2D(0,bnh+ns)
+      self.polygons[i+7] += utils.Vector2D(-bnw//3,0)
+      self.polygons[i+7] += utils.Vector2D(0,wnh-bnh-ns-nc)
+      self.polygons[i+7] += utils.Vector2D(nc,nc)
+      self.polygons[i+7] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+      self.polygons[i+7] += utils.Vector2D(nc,-nc)
+      self.polygons[i+7] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
+      self.polygons[i+7] += utils.Vector2D(-bnw//2,0)
+      self.polygons[i+7] += utils.Vector2D(0,-(bnh+ns))
 
       if ((i+8) < 127) :
 
         # Note Ab
-        self.keyboardPolygons[i+8] = [(x0+(5*b)-(d//2)+e, y0)]
-        self.keyboardPolygons[i+8] += utils.Vector2D(0,c-e)
-        self.keyboardPolygons[i+8] += utils.Vector2D(d-(2*e),0)
-        self.keyboardPolygons[i+8] += utils.Vector2D(0,-(c-e))
+        self.polygons[i+8] = [(x0+(5*wnw)-(bnw//2)+ns, y0)]
+        self.polygons[i+8] += utils.Vector2D(0,bnh-ns)
+        self.polygons[i+8] += utils.Vector2D(bnw-(2*ns),0)
+        self.polygons[i+8] += utils.Vector2D(0,-(bnh-ns))
 
         # Note A
         if (grandPianoMode and ((i+9) == 21)) :
-          self.keyboardPolygons[i+9] = [(x0+(5*b)+e, y0)]
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,a-s)
-          self.keyboardPolygons[i+9] += utils.Vector2D(s,s)
-          self.keyboardPolygons[i+9] += utils.Vector2D(b-(2*s)-(2*e),0)
-          self.keyboardPolygons[i+9] += utils.Vector2D(s,-s)
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,-(a-c-e-s))
-          self.keyboardPolygons[i+9] += utils.Vector2D(-d//3,0)
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,-(c+e))
+          self.polygons[i+9] = [(x0+(5*wnw)+ns, y0)]
+          self.polygons[i+9] += utils.Vector2D(0,wnh-nc)
+          self.polygons[i+9] += utils.Vector2D(nc,nc)
+          self.polygons[i+9] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+          self.polygons[i+9] += utils.Vector2D(nc,-nc)
+          self.polygons[i+9] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
+          self.polygons[i+9] += utils.Vector2D(-bnw//3,0)
+          self.polygons[i+9] += utils.Vector2D(0,-(bnh+ns))
         else :
-          self.keyboardPolygons[i+9] = [(x0+(5*b)+(d//2)+e, y0)]
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,c+e)
-          self.keyboardPolygons[i+9] += utils.Vector2D(-d//2,0)
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,a-c-e-s)
-          self.keyboardPolygons[i+9] += utils.Vector2D(s,s)
-          self.keyboardPolygons[i+9] += utils.Vector2D(b-(2*s)-(2*e),0)
-          self.keyboardPolygons[i+9] += utils.Vector2D(s,-s)
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,-(a-c-e-s))
-          self.keyboardPolygons[i+9] += utils.Vector2D(-d//3,0)
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,-(c+e))
+          self.polygons[i+9] = [(x0+(5*wnw)+(bnw//2)+ns, y0)]
+          self.polygons[i+9] += utils.Vector2D(0, bnh+ns)
+          self.polygons[i+9] += utils.Vector2D(-bnw//2, 0)
+          self.polygons[i+9] += utils.Vector2D(0, wnh-bnh-ns-nc)
+          self.polygons[i+9] += utils.Vector2D(nc,nc)
+          self.polygons[i+9] += utils.Vector2D(wnw-(2*nc)-(2*ns), 0)
+          self.polygons[i+9] += utils.Vector2D(nc, -nc)
+          self.polygons[i+9] += utils.Vector2D(0, -(wnh-bnh-ns-nc))
+          self.polygons[i+9] += utils.Vector2D(-bnw//3, 0)
+          self.polygons[i+9] += utils.Vector2D(0,-(bnh+ns))
 
         # Note Bb
-        self.keyboardPolygons[i+10] = [(x0+(6*b)-(d//3)+e, y0)]
-        self.keyboardPolygons[i+10] += utils.Vector2D(0,c-e)
-        self.keyboardPolygons[i+10] += utils.Vector2D(d-(2*e),0)
-        self.keyboardPolygons[i+10] += utils.Vector2D(0,-(c-e))
+        self.polygons[i+10] = [(x0+(6*wnw)-(bnw//3)+ns, y0)]
+        self.polygons[i+10] += utils.Vector2D(0,bnh-ns)
+        self.polygons[i+10] += utils.Vector2D(bnw-(2*ns),0)
+        self.polygons[i+10] += utils.Vector2D(0,-(bnh-ns))
 
         # Note B
-        self.keyboardPolygons[i+11] = [(x0+(6*b)+(2*d//3)+e, y0)]
-        self.keyboardPolygons[i+11] += utils.Vector2D(0,c+e)
-        self.keyboardPolygons[i+11] += utils.Vector2D(-2*d//3,0)
-        self.keyboardPolygons[i+11] += utils.Vector2D(0,a-c-e-s)
-        self.keyboardPolygons[i+11] += utils.Vector2D(s,s)
-        self.keyboardPolygons[i+11] += utils.Vector2D(b-(2*s)-(2*e),0)
-        self.keyboardPolygons[i+11] += utils.Vector2D(s,-s)
-        self.keyboardPolygons[i+11] += utils.Vector2D(0,-(a-s))
+        self.polygons[i+11] = [(x0+(6*wnw)+(2*bnw//3)+ns, y0)]
+        self.polygons[i+11] += utils.Vector2D(0,bnh+ns)
+        self.polygons[i+11] += utils.Vector2D(-2*bnw//3,0)
+        self.polygons[i+11] += utils.Vector2D(0,wnh-bnh-ns-nc)
+        self.polygons[i+11] += utils.Vector2D(nc,nc)
+        self.polygons[i+11] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+        self.polygons[i+11] += utils.Vector2D(nc,-nc)
+        self.polygons[i+11] += utils.Vector2D(0,-(wnh-nc))
 
-      x0 += 7*b
+      x0 += 7*wnw
 
 
 
@@ -267,25 +274,28 @@ class Keyboard :
       for i in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
         if ((i % 12) in BLACK_NOTES_CODE_MOD12) :
           if ((i % 12) in self.activeKey) :
-            pygame.draw.polygon(screenInst, self.blackNoteRGB, self.keyboardPolygons[i])
+            pygame.draw.polygon(screenInst, self.blackNoteRGB, self.polygons[i])
           else :
-            pygame.draw.polygon(screenInst, (100, 100, 100), self.keyboardPolygons[i])
+            pygame.draw.polygon(screenInst, (100, 100, 100), self.polygons[i])
         else :
           if ((i % 12) in self.activeKey) :
-            pygame.draw.polygon(screenInst, self.whiteNoteRGB, self.keyboardPolygons[i])
+            pygame.draw.polygon(screenInst, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
           else :
-            pygame.draw.polygon(screenInst, (220, 220, 220), self.keyboardPolygons[i])
+            pygame.draw.polygon(screenInst, (220, 220, 220), self.polygons[i])
     
     
     else :
       for i in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
         if ((i % 12) in [1, 3, 6, 8, 10]) :
-          pygame.draw.polygon(screenInst, self.blackNoteRGB, self.keyboardPolygons[i])
+          pygame.draw.polygon(screenInst, self.blackNoteRGB, self.polygons[i])
         else :
-          pygame.draw.polygon(screenInst, self.whiteNoteRGB, self.keyboardPolygons[i])
+          pygame.draw.polygon(screenInst, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD Keyboard.keyPress
+  # ---------------------------------------------------------------------------
   def setKey(self, scaleObj) :
     if (scaleObj != None) :
       self.activeKey = scaleObj.activeNotes
@@ -396,7 +406,7 @@ class Keyboard :
         #self.litKeysPolygons.append((sq, pitch))
 
         # This makes the hitbox for click on the entire key:
-        self.litKeysPolygons.append((self.keyboardPolygons[noteObj.pitch], noteObj))
+        self.litKeysPolygons.append((self.polygons[noteObj.pitch], noteObj))
 
 
 
@@ -409,7 +419,7 @@ class Keyboard :
 
     # Build the little rectangle drawn on top of the note, to show that it is pressed
     eps = 3
-    u = [x[0] for x in self.keyboardPolygons[noteObj.pitch]]
+    u = [x[0] for x in self.polygons[noteObj.pitch]]
     x0 = min(u); y0 = self.y + self.c + self.e
     h = self.a - (self.c + self.e) - (2*eps)
     w = self.b - (2*self.e) - (2*eps)
@@ -450,7 +460,7 @@ class Keyboard :
 
     # Build the rectangle that will be drawn on top of the note
     eps = 2
-    u = [x[0] for x in self.keyboardPolygons[noteObj.pitch]]
+    u = [x[0] for x in self.polygons[noteObj.pitch]]
     x0 = min(u); y0 = self.y + 50
     h = self.c - self.e - (2*eps) - 50
     w = self.d - (2*self.e) - (2*eps)
@@ -491,7 +501,7 @@ class Keyboard :
 
     # Build the rectangle that will be drawn on top of the note
     eps = 3
-    u = [x[0] for x in self.keyboardPolygons[noteObj.pitch]]
+    u = [x[0] for x in self.polygons[noteObj.pitch]]
     x0 = min(u); y0 = self.y + self.c + self.e
     h = self.a - (self.c + self.e) - (2*eps)
     w = self.b - (2*self.e) - (2*eps)
@@ -528,7 +538,7 @@ class Keyboard :
 
     # Build the rectangle that will be drawn on top of the note
     eps = 3
-    u = [x[0] for x in self.keyboardPolygons[noteObj.pitch]]
+    u = [x[0] for x in self.polygons[noteObj.pitch]]
     x0 = min(u); y0 = self.y + 50
     h = self.c - self.e - (2*eps) - 50
     w = self.d - (2*self.e) - (2*eps)

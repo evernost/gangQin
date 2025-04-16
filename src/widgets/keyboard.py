@@ -266,44 +266,35 @@ class Keyboard(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD: Keyboard.render()
   # ---------------------------------------------------------------------------
-  def render(self, screenInst) :
+  def render(self) :
     """
     Draw the keyboard using the polygons generated for each note.
     """
 
-    # Draw keys from MIDI code 21 (A0) to MIDI code 108 (C8) ie notes of a grand piano.
+    # Draw keys from MIDI code 21 (A0) to MIDI code 108 (C8) i.e. notes of a grand piano.
     
-    if (len(self.activeKey) > 0) :
+    if False :
       for i in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
         if ((i % 12) in BLACK_NOTES_CODE_MOD12) :
           if ((i % 12) in self.activeKey) :
-            pygame.draw.polygon(screenInst, self.blackNoteRGB, self.polygons[i])
+            pygame.draw.polygon(self.top.screen, self.blackNoteRGB, self.polygons[i])
           else :
-            pygame.draw.polygon(screenInst, (100, 100, 100), self.polygons[i])
+            pygame.draw.polygon(self.top.screen, (100, 100, 100), self.polygons[i])
         else :
           if ((i % 12) in self.activeKey) :
-            pygame.draw.polygon(screenInst, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
+            pygame.draw.polygon(self.top.screen, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
           else :
-            pygame.draw.polygon(screenInst, (220, 220, 220), self.polygons[i])
+            pygame.draw.polygon(self.top.screen, (220, 220, 220), self.polygons[i])
     
     
     else :
       for i in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
         if ((i % 12) in [1, 3, 6, 8, 10]) :
-          pygame.draw.polygon(screenInst, self.blackNoteRGB, self.polygons[i])
+          pygame.draw.polygon(self.top.screen, self.blackNoteRGB, self.polygons[i])
         else :
-          pygame.draw.polygon(screenInst, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
+          pygame.draw.polygon(self.top.screen, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
 
 
-
-  # ---------------------------------------------------------------------------
-  # METHOD Keyboard.keyPress
-  # ---------------------------------------------------------------------------
-  def setKey(self, scaleObj) :
-    if (scaleObj != None) :
-      self.activeKey = scaleObj.activeNotes
-    else :
-      self.activeKey = []
 
 
 

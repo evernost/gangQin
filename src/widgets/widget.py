@@ -33,19 +33,16 @@ class Widget :
   """
   Widget class definition.
   The widget class contains pure functions that need to be overriden:
-  - TODO
-  - TODO
+  - 'render': draws the widget's content on the screen
+  - 'uiEvent': defines how the widget reacts to user inputs (click, keypress)
+
+  This widget class itself does not do anything.
+
+  Widgets implemented in the gangQin app suite (gangQin player, gangQin capture
+  gangQin fusion) must inherit from this class.
   """
   
-  
-  
-  # ---------------------------------------------------------------------------
-  # METHOD: Widget.__init__
-  # ---------------------------------------------------------------------------
   def __init__(self, top, loc = WIDGET_LOC_UNDEFINED) :
-    """
-    Initialisation method definition.
-    """
     
     # Reference to the top level app
     self.top = top

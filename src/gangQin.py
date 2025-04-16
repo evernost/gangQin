@@ -71,13 +71,11 @@ class GangQin :
     self.songName = ""    # Example: 'my_song.mid'
     self.songType = ""    # Example: "mid"
 
-    # Init pygame library
+    # Pygame configuration
     pygame.init()
     self.screen = pygame.display.set_mode((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT))
     self.clock = pygame.time.Clock()
-    
-    # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
-    pygame.key.set_repeat(250, 50)
+    pygame.key.set_repeat(250, 50)    # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
 
     # Load widgets
     self.widgets = [
@@ -117,7 +115,6 @@ class GangQin :
     else :
       self.songType = "gq"
 
-
     # Update the app properties 
     (rootDir, rootNameExt) = os.path.split(songFile)
     (rootName, _) = os.path.splitext(rootNameExt)
@@ -141,7 +138,6 @@ class GangQin :
       # Fill background screen
       self.screen.fill(GUI_BACKGROUND_COLOR)
     
-    
       for event in pygame.event.get() :
         if (event.type == pygame.QUIT) :
           running = False
@@ -150,10 +146,8 @@ class GangQin :
       for widget in self.widgets :
         if (event.type in widget.uiSensivityList) :
           widget.uiEvent(event)
-          print("test")
 
-
-
+      # Render widgets
       for widget in self.widgets :
         widget.render()
 
@@ -764,9 +758,9 @@ if False :
     # -----------------------------------
     # Render text on screen (bitmap font)
     # -----------------------------------
-    text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)
-    text.showBookmark(screen, userScore.getBookmarkIndex())
-    text.showActiveHands(screen, userScore.activeHands)
+    # text.showCursor(screen, userScore.getCursor(), userScore.scoreLength)
+    # text.showBookmark(screen, userScore.getBookmarkIndex())
+    # text.showActiveHands(screen, userScore.activeHands)
     text.showLoop(screen, userScore.loopEnable, userScore.loopStart, userScore.loopEnd, userScore.getCursor())
     text.showCombo(screen, statsObj.comboCount, statsObj.comboHighestSession, statsObj.comboHighestAllTime)
     text.showMetronome(screen, metronomeObj)

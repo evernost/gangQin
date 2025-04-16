@@ -20,6 +20,8 @@ from src.commons import *
 import src.widgets.widget as widget
 import src.note as note
 
+import text
+
 import datetime
 import copy
 import json   # for JSON database import/export
@@ -1572,6 +1574,23 @@ class Score(widget.Widget) :
     """
 
     print("[WARNING] 'setWeakArbitration' is TODO")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Score.render()
+  # ---------------------------------------------------------------------------
+  def render(self) :
+    """
+    Renders the widget on screen.
+    This function is called at every frame of the top level application.
+    """
+
+    text.showCursor(self.top.screen, self.getCursor(), self.scoreLength)
+    text.showBookmark(self.top.screen, self.getBookmarkIndex())
+    text.showActiveHands(self.top.screen, self.activeHands)
+
+
 
 
 

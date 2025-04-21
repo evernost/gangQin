@@ -40,7 +40,6 @@ import utils
 
 # MIDI
 import mido
-import rtmidi
 
 
 

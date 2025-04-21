@@ -2,7 +2,7 @@
   "revision": "v2.1",
   "nStaffs": 2,
   "avgNoteDuration": 291.2696794793074,
-  "cursor": 900,
+  "cursor": 928,
   "bookmarks": [
     0,
     252,
@@ -13889,7 +13889,7 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 2,
       "startTime": 247680,
@@ -22024,7 +22024,7 @@
       "noteIndex": 19,
       "startTime": 246240,
       "stopTime": 247679,
-      "sustained": false,
+      "sustained": true,
       "inactive": false,
       "disabled": false,
       "voice": 0,
@@ -22034,7 +22034,7 @@
     {
       "pitch": 70,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 20,
       "startTime": 247680,
@@ -30424,7 +30424,7 @@
       "noteIndex": 31,
       "startTime": 246240,
       "stopTime": 247200,
-      "sustained": false,
+      "sustained": true,
       "inactive": false,
       "disabled": false,
       "voice": 0,
@@ -41189,7 +41189,7 @@
     {
       "pitch": 78,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 12,
       "startTime": 247680,

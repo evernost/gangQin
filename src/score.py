@@ -17,8 +17,8 @@
 # Project specific constants
 from src.commons import *
 
-import src.widgets.widget as widget
 import src.note as note
+import src.widgets.widget as widget
 
 import text
 
@@ -156,8 +156,6 @@ class Score(widget.Widget) :
     self.songDir = rootDir
     self.songName = rootName
     
-
-
     self.hasUnsavedChanges = False
     
 

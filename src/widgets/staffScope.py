@@ -14,8 +14,13 @@
 # =============================================================================
 # External libs 
 # =============================================================================
+# Project specific constants
+from src.commons import *
+
 import src.scoreShot.database as database
 import src.widgets.playGlow as playGlow
+import src.widgets.widget as widget
+
 import pygame
 
 
@@ -31,19 +36,19 @@ TARGET_HEIGHT = 230
 # =============================================================================
 # Main code
 # =============================================================================
-class StaffScope :
+class StaffScope(widget.Widget) :
 
   """
   Class definition for the staffscope widget.
   """
-  def __init__(self) :
+
+  def __init__(self, top) :
     
+    # Call the Widget init method
+    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
+
     self.db = None
-    
-    self.screen = None
-    self.screenWidth = -1       # GUI width
-    self.screenHeight = -1      # GUI height
-    
+        
     self.cursor = -1
 
     self.img = None
@@ -75,21 +80,6 @@ class StaffScope :
     # User interaction queues
     self.msgQueueIn = []
     self.msgQueueOut = []
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Database.setScreen()
-  # ---------------------------------------------------------------------------
-  def setScreen(self, screenObj, width, height) :
-    """
-    Creates an internal copy of the Pygame screen object and parameters.
-    This copy is required to draw and interact with the widget.
-    """
-
-    self.screen = screenObj
-    self.screenWidth = width
-    self.screenHeight = height
 
 
 
@@ -183,7 +173,7 @@ class StaffScope :
         self.imgScaling = min(sWidth, sHeight)      
         self.imgScaled = pygame.transform.smoothscale(self.img, (int(self.imgWidth*self.imgScaling), int(self.imgHeight*self.imgScaling)))
 
-        self.imgCoordX = (self.screenWidth-(int(self.imgWidth*self.imgScaling))) // 2
+        self.imgCoordX = (self.top.screenWidth-(int(self.imgWidth*self.imgScaling))) // 2
         self.imgCoordY = 50
 
         self.imgBox = (
@@ -279,7 +269,7 @@ class StaffScope :
     # ----------------------
     # Render the staff image
     # ----------------------
-    self.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))
+    self.top.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))
     
 
 
@@ -297,7 +287,7 @@ class StaffScope :
     # --------------------
     # Render the playGlows
     # --------------------
-    transparent_surface = pygame.Surface((self.screenWidth, self.screenHeight), pygame.SRCALPHA)
+    transparent_surface = pygame.Surface((self.top.screenWidth, self.top.screenHeight), pygame.SRCALPHA)
     transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
     
     for p in self.playGlows :
@@ -311,7 +301,7 @@ class StaffScope :
         r = pygame.draw.rect(transparent_surface, (255, 0, 0, alpha), coords)
 
         if not(p.active) :
-          pygame.draw.rect(self.screen, (128, 128, 128), r, 1)
+          pygame.draw.rect(self.top.screen, (128, 128, 128), r, 1)
 
       elif (p.hand == "R") :
         coords = p.toTuple()
@@ -374,7 +364,7 @@ class StaffScope :
             else :
               pass
 
-    self.screen.blit(transparent_surface, (0, 0))
+    self.top.screen.blit(transparent_surface, (0, 0))
 
 
 

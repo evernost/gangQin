@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
 # Project       : gangQin
-# Module name   : gangQin
+# Module name   : GangQin Player
 # File name     : gangQin.py
 # File type     : Python script (Python 3)
-# Purpose       : gangQin class definition
+# Purpose       : GangQin Player - class definition
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Saturday, 5 April 2025
 # -----------------------------------------------------------------------------
@@ -47,6 +47,14 @@ import os
 
 
 
+# =============================================================================
+# CONSTANTS
+# =============================================================================
+SCORE_WIDGET_ID = 0
+KEYBOARD_WIDGET_ID = 1
+PIANOROLL_WIDGET_ID = 2
+STAFFSCOPE_WIDGET_ID = 3
+
 
 
 # =============================================================================
@@ -74,21 +82,23 @@ class GangQin :
     # Pygame configuration
     pygame.init()
     self.screen = pygame.display.set_mode((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT))
+    self.screenWidth = self.screen.get_size()[0]
+    self.screenHeight = self.screen.get_size()[1]
     self.clock = pygame.time.Clock()
     pygame.key.set_repeat(250, 50)    # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
 
     # Load widgets
-    self.widgets = [
-      score.Score(self),
-      keyboard.Keyboard(self, loc = (10, 300)),
-      pianoRoll.PianoRoll(self, loc = (10, 50))
-      #staffScope.StaffScope(self),
+    self.widgets = {
+      SCORE_WIDGET_ID : score.Score(self),
+      KEYBOARD_WIDGET_ID: keyboard.Keyboard(self, loc = (10, 300)),
+      #PIANOROLL_WIDGET_ID: pianoRoll.PianoRoll(self, loc = (10, 50)),
+      STAFFSCOPE_WIDGET_ID: staffScope.StaffScope(self),
       #fingerSelector.FingerSelector(self),
       #metronome.Metronome(self),
       #arbiter.Arbiter(self),
       #stats.Stats(self),
       #notify.Notify(self)
-    ]
+    }
     
 
 
@@ -122,9 +132,13 @@ class GangQin :
     self.songFile = songFile
     self.songDir = rootDir
     self.songName = rootName
-    pygame.display.set_caption(f"gangQin - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {self.songName}")
+    pygame.display.set_caption(f"gangQin player - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {self.songName}")
 
+    # Load the score
+    self.widgets[SCORE_WIDGET_ID].importFromFile(songFile)
+    self.widgets[STAFFSCOPE_WIDGET_ID].load(songFile)
     
+
 
   # ---------------------------------------------------------------------------
   # METHOD: GangQin.run()
@@ -143,12 +157,12 @@ class GangQin :
           running = False
 
       # Dispatch keyboard/click messages
-      for widget in self.widgets :
+      for widget in self.widgets.values() :
         if (event.type in widget.uiSensivityList) :
           widget.uiEvent(event)
 
       # Render widgets
-      for widget in self.widgets :
+      for widget in self.widgets.values() :
         widget.render()
 
 

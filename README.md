@@ -105,6 +105,7 @@ Known limitations:
 
 ## TODO / Ideas
 - [ ] add a weak arbitration mode
+- [ ] add a border around the staffscope that turns red when a wrong note is played 
 - [ ] catalog of exercise sessions: add the possibility to save the current location + loop settings + hand practice to a catalog, so that it can be restored later
 - [ ] add a rehearsal mode, where inputs don't trigger anything (i.e. practice without wrong note count)
 - [ ] make the widgets inherit from a parent class containing basic operations, like text display and keyboard interaction

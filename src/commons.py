@@ -44,7 +44,7 @@ GUI_TEXT_COLOR        = (40, 147, 131)
 KEYBOARD_WHITE_NOTE_HEIGHT = 150
 KEYBOARD_WHITE_NOTE_WIDTH = 25
 KEYBOARD_BLACK_NOTE_HEIGHT = 100
-KEYBOARD_BLACK_NOTE_WIDTH = 12    # Ideally, a multiple of 6 (to avoid 'un-eveness' in the display) 
+KEYBOARD_BLACK_NOTE_WIDTH = 12    # A multiple of 6 is preferable to avoid 'un-eveness' in the display (rounding effect) 
 KEYBOARD_NOTE_CHANFER = 2
 KEYBOARD_NOTE_SPACING = 1
 

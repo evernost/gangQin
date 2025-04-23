@@ -48,54 +48,41 @@ class Score(widget.Widget) :
   The Score object is a custom representation of the song suited for the 
   gameplay. 
   
-  It provides the necessary functions to get the notes to be played at a given
-  moment, navigate through the score, edit metadata (bookmarks), load/save, etc.
+  Score is initialised first from a MIDI file. 
+  All the notes and timings are retrieved and stored in a custom representation.
+
+  Then, as you play, edit, add information, etc. those annotations are joined
+  to the database in a custom file (.gq) that is nothing more but a JSON file.
   
-  Score is initialised from a MIDI file and saves to a .pr file
-  
+  Cursors: 
   In a MIDI file, each event (note on/note off) has a timestamp attached.
-  
-  The value of the timestamp depends on the tempo that has been defined, the duration
-  of the note, etc.
-  
-  The Score abstracts these timecodes and browses in the song using a 'cursor'.
+  The value of the timestamp depends on the duration of the note, the tempo etc.
+  In the Score object, these timestamps are abstracted and you browse in the 
+  song using a 'cursor'.
   Every time a note starts playing in the song, a cursor is assigned to it.
-  
-  Description of the attributes:
-  - 'noteOnTimecodes': dictionary containing the following subsets:
-    - "LR_full" : full list of the note start timecodes (including duplicates)
-    - "LR"      : same as "LR", without the duplicate values
-    - "L"       : list of the note start timecodes (left hand only), duplicates removed
-    - "R"       : list of the note start timecodes (right hand only), duplicates removed
-    
-  List of cursor values where a note is pressed on the left/right hand:
-  - 'cursorsLeft'
-  - 'cursorsRight'
   """
 
   def __init__(self, top) :
     
     # Call the Widget init method
     super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
-
-    # Custom attributes
-    self.nStaffs = 2
-    self.avgNoteDuration = 0
-    self.hasUnsavedChanges = False
-    
+   
+    # Pointer in the score
     self.cursor = 0
-    self.cursorMax = 0
-    self.scoreLength = 0
+    
+    # List of cursors with bookmark
+    self.bookmarks = []
 
+    # Various information about the score
+    self.scoreLength = 0
+    self.cursorMax = 0
+    
     self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
 
     self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
-    
     self.cursorsLeft = []
     self.cursorsRight = []
 
-    self.bookmarks = []
-    
     self.activeHands = "LR"
     
     self.teacherNotes = []
@@ -104,82 +91,51 @@ class Score(widget.Widget) :
     self.cachedCursor = -1
     self.cachedTeacherNotes = []
 
-    # Key scales used throughout the song
-    # List of tuples: (scaleObject, startTimeCode)
-    self.keyList = []
-
-    self.progressEnable = True
-
-    # Loop practice feature
-    self.loopEnable = False
-    self.loopStart = -1
-    self.loopEnd = -1
-    self.loopStrictMode = False
-
     # Lookahead view
     self.lookAheadDistance = 0
-
-    # Tempo sections
-    self.tempoReadFromScore = False
-    self.tempoSections = [(1, 120)]
 
     # Weak arbitration sections
     self.weakArbitrationSections = []
 
+    # Custom attributes (not organised yet)
+    self.hasUnsavedChanges = False
+    self.avgNoteDuration = 0
+
+    # Tempo sections (not implemented)
+    self.tempoReadFromScore = False
+    self.tempoSections = [(1, 120)]
+
+    # Key scales sections (not implemented)
+    self.keyList = []
+
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.importFromFile
+  # METHOD Score.load()
   # ---------------------------------------------------------------------------
-  def importFromFile(self, inputFile) :
+  def load(self, inputFile, midiTracks = []) :
     """
-    Loads the internal piano roll from an external file (.mid or .pr)
+    Loads the piano roll from an external file (.mid or .gq)
     """
   
     if (os.path.splitext(inputFile)[-1] == ".mid") :
-      self._importFromMIDIFile(inputFile)
+      self._loadMIDIFile(inputFile)
     elif (os.path.splitext(inputFile)[-1] == ".pr") :
-      self._importFromPrFile(inputFile)
+      self._loadGQFile(inputFile)
     else :
       print("[ERROR] This file extension is not supported.")
       exit()
-
-
-
-    (rootDir, rootNameExt) = os.path.split(inputFile)
-    (rootName, _) = os.path.splitext(rootNameExt)
-    # self.songName     = rootNameExt
-    # self.jsonName     = rootName + ".json"          # Example: "my_song.json"
-    # self.jsonFile     = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
-    # self.depotFolder  = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
-    
-    self.songDir = rootDir
-    self.songName = rootName
     
     self.hasUnsavedChanges = False
     
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.importFromMIDIFile(midiFileName)
+  # METHOD Score._loadMIDIFile()
   # ---------------------------------------------------------------------------
-  def _importFromMIDIFile(self, midiFile) :
+  def _loadMIDIFile(self, midiFile: str) -> None :
     """
-    Builds the internal score structure from a MIDI file.
-    
-    A score is stored in the object in the <pianoRoll> variable and looks like:
-    pianoRoll.noteArray[t][p] = [note0, note1, ...]
-    
-    It is basically the list of all notes played on track <t>, on pitch <p>. 
-    
-    Each element of the list is a Note object.
-    
-    A Note() object has attributes:
-    - noteXXX.start/.end (integer) : timestamp of its beginning/end
-    - noteXXX.hand (string: "l", "r" or ""): hand used to play the note.
-    Please refer to note.py for more information on the Note objects.
-    
-    pianoRoll.noteOntimecodes[t] = [t0, t1, ...]
+    Loads and initialises the Score object from a MIDI file.
     """
 
     print("[INFO] Processing .mid file... ", end = "")
@@ -187,12 +143,7 @@ class Score(widget.Widget) :
 
     mid = mido.MidiFile(midiFile)
 
-    # TODO: give more flexibility when opening MIDI files
-    # It is assumed here that the MIDI file has 2 tracks.
-    # But in general MIDI files might contain more than that.
-    # And in general, the user might want to map specific tracks to the staffs
-    # and not only track 0 and 1.
-    # print(f"[INFO] [MIDI import] Tracks found: {len(mid.tracks)}")
+
     
     # Only 2 staves are supported for now.
     # The app focuses on piano practice: there is no plan to support more than
@@ -343,16 +294,24 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score._importFromPrFile(fileName)
+  # METHOD Score._loadGQFile()
   # ---------------------------------------------------------------------------
-  def _importFromPrFile(self, pianoRollFile) :
+  def _loadGQFile(self, gqFile: str) -> None :
     """
-    Imports the score and all metadata (finger, hand, bookmarks etc.)
-    from a .pr file (JSON) and restores the last session.
+    Loads and initialises the Score object from a .gq file.
+
+    Unlike MIDI files, .gq files store all the user annotated information 
+    about the score (bookmarks, fingersatz, tempo, etc.)
+
+    NOTE: this function is usually called from 'load()' and you should not
+    need to call it by yourself.
     """
     
+    # For statistics
     startTime = time.time()
-    with open(pianoRollFile, "r") as fileHandler :
+    
+    # Open the file as a JSON
+    with open(gqFile, "r") as fileHandler :
       importDict = json.load(fileHandler)
 
     # Read the revision

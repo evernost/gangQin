@@ -110,6 +110,7 @@ Known limitations:
 - [ ] add a rehearsal mode, where inputs don't trigger anything (i.e. practice without wrong note count)
 - [ ] make the widgets inherit from a parent class containing basic operations, like text display and keyboard interaction
 - [ ] CTRL+ and CTRL- adjust the view span in pianoroll mode.
+- [ ] add a perspective effect to the pianoroll view
 - [ ] terminate properly when the last cursor is reached.
 - [ ] scoreShot-capture: on the capture window, show the snapshot count number.
-- [ ] add a perspective effect to the pianoroll view
+

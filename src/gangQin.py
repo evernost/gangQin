@@ -40,7 +40,6 @@ import utils
 
 # MIDI
 import mido
-import rtmidi
 
 # Standard libs
 import os
@@ -54,6 +53,7 @@ SCORE_WIDGET_ID = 0
 KEYBOARD_WIDGET_ID = 1
 PIANOROLL_WIDGET_ID = 2
 STAFFSCOPE_WIDGET_ID = 3
+FINGERSELECTOR_WIDGET_ID = 3
 
 
 
@@ -73,13 +73,13 @@ class GangQin :
   # ---------------------------------------------------------------------------
   def __init__(self) :
     
-    # Song attributes helpers
+    # Initialise attributes
     self.songFile = ""    # Example: "./songs/my_song.mid"
     self.songDir  = ""    # Example: './songs'
     self.songName = ""    # Example: 'my_song.mid'
     self.songType = ""    # Example: "mid"
 
-    # Pygame configuration
+    # Initialise pygame
     pygame.init()
     self.screen = pygame.display.set_mode((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT))
     self.screenWidth = self.screen.get_size()[0]
@@ -87,12 +87,12 @@ class GangQin :
     self.clock = pygame.time.Clock()
     pygame.key.set_repeat(250, 50)    # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
 
-    # Load widgets
+    # Initialise the widgets
     self.widgets = {
       SCORE_WIDGET_ID : score.Score(self),
       KEYBOARD_WIDGET_ID: keyboard.Keyboard(self, loc = (10, 300)),
       #PIANOROLL_WIDGET_ID: pianoRoll.PianoRoll(self, loc = (10, 50)),
-      STAFFSCOPE_WIDGET_ID: staffScope.StaffScope(self),
+      STAFFSCOPE_WIDGET_ID: staffScope.StaffScope(self)
       #fingerSelector.FingerSelector(self),
       #metronome.Metronome(self),
       #arbiter.Arbiter(self),
@@ -123,6 +123,7 @@ class GangQin :
       midiTracks = trackSel.show()
       self.songType = "mid"
     else :
+      midiTracks = []
       self.songType = "gq"
 
     # Update the app properties 
@@ -135,7 +136,7 @@ class GangQin :
     pygame.display.set_caption(f"gangQin player - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {self.songName}")
 
     # Load the score
-    self.widgets[SCORE_WIDGET_ID].importFromFile(songFile)
+    self.widgets[SCORE_WIDGET_ID].load(songFile, midiTracks)
     self.widgets[STAFFSCOPE_WIDGET_ID].load(songFile)
     
 

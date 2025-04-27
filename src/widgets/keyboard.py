@@ -274,7 +274,7 @@ class Keyboard(widget.Widget) :
     # Draw keys from MIDI code 21 (A0) to MIDI code 108 (C8) i.e. notes of a grand piano.
     
     if False :
-      for i in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+      for i in GRAND_PIANO_MIDI_RANGE :
         if ((i % 12) in BLACK_NOTES_CODE_MOD12) :
           if ((i % 12) in self.activeKey) :
             pygame.draw.polygon(self.top.screen, self.blackNoteRGB, self.polygons[i])
@@ -288,7 +288,7 @@ class Keyboard(widget.Widget) :
     
     
     else :
-      for i in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+      for i in GRAND_PIANO_MIDI_RANGE :
         if ((i % 12) in [1, 3, 6, 8, 10]) :
           pygame.draw.polygon(self.top.screen, self.blackNoteRGB, self.polygons[i])
         else :

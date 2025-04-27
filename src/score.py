@@ -35,7 +35,8 @@ import time
 # =============================================================================
 # Constants pool
 # =============================================================================
-CURSOR_STEADY_COUNT_LIMIT = 300
+# gangQin always deals with 2 staves max (left and right hand)
+SCORE_N_STAFF = 2
 
 
 
@@ -49,17 +50,18 @@ class Score(widget.Widget) :
   gameplay. 
   
   Score is initialised first from a MIDI file. 
-  All the notes and timings are retrieved and stored in a custom representation.
+  All the notes and timings are read and stored in a custom representation.
 
   Then, as you play, edit, add information, etc. those annotations are joined
   to the database in a custom file (.gq) that is nothing more but a JSON file.
   
-  Cursors: 
+  The 'cursor': 
   In a MIDI file, each event (note on/note off) has a timestamp attached.
   The value of the timestamp depends on the duration of the note, the tempo etc.
   In the Score object, these timestamps are abstracted and you browse in the 
   song using a 'cursor'.
-  Every time a note starts playing in the song, a cursor is assigned to it.
+  There is a cursor value for every unique moment a note starts playing.
+  Chords contribute to 1 value of the cursor.
   """
 
   def __init__(self, top) :
@@ -77,7 +79,7 @@ class Score(widget.Widget) :
     self.scoreLength = 0
     self.cursorMax = 0
     
-    self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
+    self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
 
     self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
     self.cursorsLeft = []
@@ -91,21 +93,19 @@ class Score(widget.Widget) :
     self.cachedCursor = -1
     self.cachedTeacherNotes = []
 
-    # Lookahead view
     self.lookAheadDistance = 0
 
-    # Weak arbitration sections
     self.weakArbitrationSections = []
 
     # Custom attributes (not organised yet)
     self.hasUnsavedChanges = False
     self.avgNoteDuration = 0
 
-    # Tempo sections (not implemented)
+    # NOT IMPLEMENTED: tempo sections
     self.tempoReadFromScore = False
     self.tempoSections = [(1, 120)]
 
-    # Key scales sections (not implemented)
+    # NOT IMPLEMENTED: key scales sections
     self.keyList = []
 
 
@@ -113,17 +113,33 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score.load()
   # ---------------------------------------------------------------------------
-  def load(self, inputFile, midiTracks = []) :
+  def load(self, inputFile: str, midiTracks = []) -> None :
     """
-    Loads the piano roll from an external file (.mid or .gq)
+    Loads the score from an external file (.mid or .gq)
+
+    When loading a MIDI file, you may specify the tracks to be imported.
+    It is common for MIDI files to have more than just 2 channels, especially
+    if you import the full orchestra version. 
+    In that case, you can use the trackSelection GUI to choose the piano tracks
+    or even any track you'd like to practice (limit = SCORE_N_STAFF = 2)
+
+    'midiTracks' is the list of tracks to be imported.
+    By default, it ... TODO
     """
   
-    if (os.path.splitext(inputFile)[-1] == ".mid") :
-      self._loadMIDIFile(inputFile)
-    elif (os.path.splitext(inputFile)[-1] == ".pr") :
+    fileExt = os.path.splitext(inputFile)[-1]
+
+    # MIDI import (.mid)
+    if (fileExt == ".mid") :
+      self._loadMIDIFile(inputFile, midiTracks)
+    
+    # gangQin import (.gq)
+    elif (fileExt == ".pr") :
       self._loadGQFile(inputFile)
+    
+    # Rest is not supported
     else :
-      print("[ERROR] This file extension is not supported.")
+      print(f"[ERROR] The file extension '{fileExt}' is not supported.")
       exit()
     
     self.hasUnsavedChanges = False
@@ -133,29 +149,28 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score._loadMIDIFile()
   # ---------------------------------------------------------------------------
-  def _loadMIDIFile(self, midiFile: str) -> None :
+  def _loadMIDIFile(self, midiFile: str, midiTracks = []) -> None :
     """
     Loads and initialises the Score object from a MIDI file.
-    """
 
+    NOTE: this function is usually called from 'load()' and you should not
+    need to call it by yourself.
+    """
+    
+    # For statistics
     print("[INFO] Processing .mid file... ", end = "")
     startTime = time.time()
 
+    # Open MIDI file
     mid = mido.MidiFile(midiFile)
 
+    # Check the MIDI tracks against the available ones
+    # If it doesn't match: default to channel 0 and 1.
+    # TODO
 
-    
-    # Only 2 staves are supported for now.
-    # The app focuses on piano practice: there is no plan to support more than
-    # 2 staves in the near future.
-    if (len(mid.tracks) > 2) :
-      print("[WARNING] The MIDI file has more than 2 tracks. Tracks beyond the first 2 will be ignored.")
-    self.nStaffs = 2
-    
-    # Allocate outputs
-    self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
+    # Initialise attributes 
+    self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
     self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
-
     nNotes = 0; noteDuration = 0
     
     # Each note is assigned to a unique identifier (simple counter)
@@ -1148,7 +1163,7 @@ class Score(widget.Widget) :
     self.teacherNotes = []
     
     # Loop on all notes in the score
-    for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+    for pitch in GRAND_PIANO_MIDI_RANGE :
       for (staffIndex, _) in enumerate(self.pianoRoll) :
         for noteObj in self.pianoRoll[staffIndex][pitch] :
 
@@ -1208,7 +1223,7 @@ class Score(widget.Widget) :
     
     for n in range(1, (self.lookAheadDistance+1)) :
       if ((self.getCursor() + n) < self.cursorMax) :
-        for pitch in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
+        for pitch in GRAND_PIANO_MIDI_RANGE :
           for (staffIndex, _) in enumerate(self.pianoRoll) :
             for noteObj in self.pianoRoll[staffIndex][pitch] :
 

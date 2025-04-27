@@ -86,6 +86,7 @@ class GangQin :
     self.screenHeight = self.screen.get_size()[1]
     self.clock = pygame.time.Clock()
     pygame.key.set_repeat(250, 50)    # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
+    self._backgroundInit()
 
     # Initialise the widgets
     self.widgets = {
@@ -151,7 +152,7 @@ class GangQin :
     while True :
       
       # Fill background screen
-      self.screen.fill(GUI_BACKGROUND_COLOR)
+      self.screen.blit(self.background, (0, 0))
     
       for event in pygame.event.get() :
         if (event.type == pygame.QUIT) :
@@ -166,7 +167,7 @@ class GangQin :
       for widget in self.widgets.values() :
         widget.render()
 
-
+      
 
 
       self.clock.tick(GUI_FPS)
@@ -174,8 +175,42 @@ class GangQin :
       # Update the display
       pygame.display.flip()
 
-# Quit Pygame
-pygame.quit()
+  # Quit Pygame
+  pygame.quit()
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: GangQin._backgroundInit() [EXPERIMENTAL]
+  # ---------------------------------------------------------------------------
+  def _backgroundInit(self) :
+
+    C0 = GUI_BACKGROUND_COLOR
+    C1 = (58, 97, 90)
+
+    patternData = [
+      [C0, C0, C1, C0, C0, C0, C0, C0],
+      [C0, C0, C1, C0, C0, C0, C0, C0],
+      [C1, C1, C1, C0, C0, C0, C0, C0],
+      [C0, C0, C0, C0, C0, C0, C0, C0],
+      [C0, C0, C0, C0, C0, C0, C0, C0],
+      [C0, C0, C0, C0, C0, C1, C1, C1],
+      [C0, C0, C0, C0, C0, C1, C0, C0],
+      [C0, C0, C0, C0, C0, C1, C0, C0]
+    ]
+
+    w, h = len(patternData[0]), len(patternData)
+    patternSurface = pygame.Surface((w, h))
+    for y in range(h):
+      for x in range(w):
+        patternSurface.set_at((x, y), patternData[y][x])
+    
+    self.background = pygame.Surface((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT))
+    for x in range(0, GUI_SCREEN_WIDTH, patternSurface.get_width()):
+      for y in range(0, GUI_SCREEN_HEIGHT, patternSurface.get_height()):
+        self.background.blit(patternSurface, (x, y))
+
+
 
 
 if False :

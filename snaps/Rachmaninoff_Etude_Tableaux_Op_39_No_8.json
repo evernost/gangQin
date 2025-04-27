@@ -1,0 +1,1404 @@
+{
+  "nSnapshots": 35,
+  "snapshots": [
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "DW8969.png",
+      "index": 0,
+      "displayName": "Capture 1",
+      "description": "",
+      "cursorMin": 0,
+      "cursorMax": 26,
+      "playGlowsLeft": {
+        "0": [
+          359,
+          217,
+          10,
+          30
+        ],
+        "1": [
+          387,
+          204,
+          10,
+          30
+        ],
+        "2": [
+          412,
+          185,
+          10,
+          30
+        ],
+        "3": [
+          444,
+          167,
+          10,
+          30
+        ],
+        "4": [
+          468,
+          203,
+          10,
+          30
+        ],
+        "5": [
+          494,
+          211,
+          10,
+          30
+        ],
+        "6": [
+          520,
+          173,
+          10,
+          30
+        ],
+        "7": [
+          545,
+          202,
+          10,
+          30
+        ],
+        "8": [
+          571,
+          221,
+          10,
+          30
+        ],
+        "9": [
+          611,
+          218,
+          10,
+          30
+        ],
+        "10": [
+          636,
+          205,
+          10,
+          30
+        ],
+        "11": [
+          662,
+          186,
+          10,
+          30
+        ],
+        "12": [
+          691,
+          168,
+          10,
+          30
+        ],
+        "13": [
+          717,
+          203,
+          10,
+          30
+        ],
+        "14": [
+          743,
+          212,
+          10,
+          30
+        ],
+        "15": [
+          769,
+          172,
+          10,
+          30
+        ],
+        "16": [
+          796,
+          205,
+          10,
+          30
+        ],
+        "17": [
+          820,
+          220,
+          10,
+          30
+        ],
+        "18": [
+          858,
+          220,
+          10,
+          30
+        ],
+        "19": [
+          881,
+          205,
+          10,
+          30
+        ],
+        "20": [
+          909,
+          185,
+          10,
+          30
+        ],
+        "21": [
+          939,
+          172,
+          10,
+          30
+        ],
+        "22": [
+          963,
+          202,
+          10,
+          30
+        ],
+        "23": [
+          989,
+          220,
+          10,
+          30
+        ],
+        "24": [
+          1015,
+          180,
+          10,
+          30
+        ],
+        "25": [
+          1041,
+          193,
+          10,
+          30
+        ],
+        "26": [
+          1068,
+          207,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "4": [
+          468,
+          120,
+          10,
+          30
+        ],
+        "5": [
+          494,
+          117,
+          10,
+          30
+        ],
+        "6": [
+          520,
+          120,
+          10,
+          30
+        ],
+        "7": [
+          545,
+          114,
+          10,
+          30
+        ],
+        "8": [
+          571,
+          125,
+          10,
+          30
+        ],
+        "9": [
+          610,
+          116,
+          10,
+          30
+        ],
+        "13": [
+          719,
+          120,
+          10,
+          30
+        ],
+        "14": [
+          743,
+          116,
+          10,
+          30
+        ],
+        "15": [
+          769,
+          121,
+          10,
+          30
+        ],
+        "16": [
+          795,
+          114,
+          10,
+          30
+        ],
+        "17": [
+          821,
+          126,
+          10,
+          30
+        ],
+        "18": [
+          858,
+          118,
+          10,
+          30
+        ],
+        "22": [
+          964,
+          121,
+          10,
+          30
+        ],
+        "23": [
+          990,
+          116,
+          10,
+          30
+        ],
+        "24": [
+          1015,
+          126,
+          10,
+          30
+        ],
+        "25": [
+          1041,
+          120,
+          10,
+          30
+        ],
+        "26": [
+          1067,
+          132,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "GTU46F.png",
+      "index": 1,
+      "displayName": "Capture 2",
+      "description": "",
+      "cursorMin": 27,
+      "cursorMax": 53,
+      "playGlowsLeft": {
+        "27": [
+          294,
+          213,
+          10,
+          30
+        ],
+        "28": [
+          323,
+          197,
+          10,
+          30
+        ],
+        "29": [
+          349,
+          180,
+          10,
+          30
+        ],
+        "30": [
+          384,
+          165,
+          10,
+          30
+        ],
+        "31": [
+          412,
+          198,
+          10,
+          30
+        ],
+        "32": [
+          437,
+          217,
+          10,
+          30
+        ],
+        "33": [
+          467,
+          170,
+          10,
+          30
+        ],
+        "34": [
+          495,
+          187,
+          10,
+          30
+        ],
+        "35": [
+          521,
+          200,
+          10,
+          30
+        ],
+        "36": [
+          564,
+          212,
+          10,
+          30
+        ],
+        "37": [
+          593,
+          198,
+          10,
+          30
+        ],
+        "38": [
+          620,
+          188,
+          10,
+          30
+        ],
+        "39": [
+          652,
+          190,
+          10,
+          30
+        ],
+        "40": [
+          683,
+          187,
+          10,
+          30
+        ],
+        "41": [
+          709,
+          201,
+          10,
+          30
+        ],
+        "42": [
+          744,
+          186,
+          10,
+          30
+        ],
+        "43": [
+          768,
+          203,
+          10,
+          30
+        ],
+        "44": [
+          797,
+          215,
+          10,
+          30
+        ],
+        "45": [
+          840,
+          214,
+          10,
+          30
+        ],
+        "46": [
+          866,
+          199,
+          10,
+          30
+        ],
+        "47": [
+          896,
+          187,
+          10,
+          30
+        ],
+        "48": [
+          925,
+          180,
+          10,
+          30
+        ],
+        "49": [
+          952,
+          200,
+          10,
+          30
+        ],
+        "50": [
+          980,
+          178,
+          10,
+          30
+        ],
+        "51": [
+          1009,
+          192,
+          10,
+          30
+        ],
+        "53": [
+          1063,
+          195,
+          10,
+          30
+        ],
+        "52": [
+          1009,
+          192,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "52": [
+          1036,
+          128,
+          10,
+          30
+        ],
+        "53": [
+          1064,
+          124,
+          10,
+          30
+        ],
+        "27": [
+          295,
+          120,
+          10,
+          30
+        ],
+        "31": [
+          412,
+          118,
+          10,
+          30
+        ],
+        "32": [
+          438,
+          114,
+          10,
+          30
+        ],
+        "33": [
+          465,
+          123,
+          10,
+          30
+        ],
+        "34": [
+          495,
+          117,
+          10,
+          30
+        ],
+        "35": [
+          522,
+          126,
+          10,
+          30
+        ],
+        "36": [
+          565,
+          121,
+          10,
+          30
+        ],
+        "40": [
+          682,
+          124,
+          10,
+          30
+        ],
+        "41": [
+          709,
+          121,
+          10,
+          30
+        ],
+        "42": [
+          742,
+          131,
+          10,
+          30
+        ],
+        "43": [
+          768,
+          121,
+          10,
+          30
+        ],
+        "44": [
+          798,
+          133,
+          10,
+          30
+        ],
+        "45": [
+          841,
+          122,
+          10,
+          30
+        ],
+        "46": [
+          868,
+          137,
+          10,
+          30
+        ],
+        "47": [
+          897,
+          121,
+          10,
+          30
+        ],
+        "48": [
+          924,
+          126,
+          10,
+          30
+        ],
+        "51": [
+          1009,
+          126,
+          10,
+          30
+        ],
+        "49": [
+          924,
+          126,
+          10,
+          30
+        ],
+        "50": [
+          924,
+          126,
+          10,
+          30
+        ],
+        "37": [
+          565,
+          120,
+          10,
+          30
+        ],
+        "38": [
+          565,
+          122,
+          10,
+          30
+        ],
+        "39": [
+          565,
+          120,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "4ZE73D.png",
+      "index": 2,
+      "displayName": "Capture 3",
+      "description": "",
+      "cursorMin": 54,
+      "cursorMax": 80,
+      "playGlowsLeft": {
+        "54": [
+          293,
+          181,
+          10,
+          30
+        ],
+        "55": [
+          319,
+          203,
+          10,
+          30
+        ],
+        "56": [
+          346,
+          192,
+          10,
+          30
+        ],
+        "57": [
+          377,
+          191,
+          10,
+          30
+        ],
+        "58": [
+          406,
+          189,
+          10,
+          30
+        ],
+        "59": [
+          433,
+          183,
+          10,
+          30
+        ],
+        "60": [
+          458,
+          176,
+          10,
+          30
+        ],
+        "63": [
+          565,
+          234,
+          10,
+          30
+        ],
+        "64": [
+          591,
+          191,
+          10,
+          30
+        ],
+        "65": [
+          618,
+          177,
+          10,
+          30
+        ],
+        "66": [
+          648,
+          187,
+          10,
+          30
+        ],
+        "67": [
+          675,
+          180,
+          10,
+          30
+        ],
+        "68": [
+          704,
+          174,
+          10,
+          30
+        ],
+        "69": [
+          732,
+          170,
+          10,
+          30
+        ],
+        "72": [
+          825,
+          209,
+          10,
+          30
+        ],
+        "73": [
+          856,
+          192,
+          10,
+          30
+        ],
+        "74": [
+          887,
+          176,
+          10,
+          30
+        ],
+        "75": [
+          916,
+          188,
+          10,
+          30
+        ],
+        "76": [
+          941,
+          192,
+          10,
+          30
+        ],
+        "77": [
+          975,
+          187,
+          10,
+          30
+        ],
+        "78": [
+          1002,
+          170,
+          10,
+          30
+        ],
+        "79": [
+          1006,
+          169,
+          10,
+          30
+        ],
+        "80": [
+          1004,
+          169,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "54": [
+          294,
+          116,
+          10,
+          30
+        ],
+        "56": [
+          346,
+          116,
+          10,
+          30
+        ],
+        "55": [
+          319,
+          119,
+          10,
+          30
+        ],
+        "57": [
+          376,
+          109,
+          10,
+          30
+        ],
+        "58": [
+          406,
+          109,
+          10,
+          30
+        ],
+        "59": [
+          432,
+          108,
+          10,
+          30
+        ],
+        "60": [
+          458,
+          98,
+          10,
+          30
+        ],
+        "61": [
+          489,
+          96,
+          10,
+          30
+        ],
+        "62": [
+          519,
+          99,
+          10,
+          30
+        ],
+        "63": [
+          566,
+          88,
+          10,
+          30
+        ],
+        "64": [
+          590,
+          93,
+          10,
+          30
+        ],
+        "65": [
+          616,
+          98,
+          10,
+          30
+        ],
+        "66": [
+          647,
+          98,
+          10,
+          30
+        ],
+        "69": [
+          731,
+          96,
+          10,
+          30
+        ],
+        "70": [
+          759,
+          99,
+          10,
+          30
+        ],
+        "71": [
+          785,
+          96,
+          10,
+          30
+        ],
+        "72": [
+          825,
+          91,
+          10,
+          30
+        ],
+        "73": [
+          857,
+          93,
+          10,
+          30
+        ],
+        "74": [
+          887,
+          90,
+          10,
+          30
+        ],
+        "75": [
+          916,
+          103,
+          10,
+          30
+        ],
+        "76": [
+          944,
+          101,
+          10,
+          30
+        ],
+        "77": [
+          977,
+          104,
+          10,
+          30
+        ],
+        "78": [
+          1004,
+          100,
+          10,
+          30
+        ],
+        "79": [
+          1036,
+          110,
+          10,
+          30
+        ],
+        "80": [
+          1064,
+          108,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "GECAX3.png",
+      "index": 3,
+      "displayName": "Capture 4",
+      "description": "",
+      "cursorMin": 81,
+      "cursorMax": 93,
+      "playGlowsLeft": {
+        "81": [
+          293,
+          207,
+          10,
+          30
+        ],
+        "82": [
+          319,
+          194,
+          10,
+          30
+        ],
+        "83": [
+          346,
+          173,
+          10,
+          30
+        ],
+        "84": [
+          372,
+          164,
+          10,
+          30
+        ],
+        "86": [
+          428,
+          169,
+          10,
+          30
+        ],
+        "87": [
+          454,
+          169,
+          10,
+          30
+        ],
+        "88": [
+          482,
+          174,
+          10,
+          30
+        ],
+        "89": [
+          508,
+          178,
+          10,
+          30
+        ],
+        "90": [
+          550,
+          209,
+          10,
+          30
+        ],
+        "91": [
+          575,
+          179,
+          10,
+          30
+        ],
+        "92": [
+          602,
+          171,
+          10,
+          30
+        ],
+        "93": [
+          628,
+          162,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "5R2PG9.png",
+      "index": 4,
+      "displayName": "Capture 5",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "YR9HD2.png",
+      "index": 5,
+      "displayName": "Capture 6",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "PYNXU8.png",
+      "index": 6,
+      "displayName": "Capture 7",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "8GNHFQ.png",
+      "index": 7,
+      "displayName": "Capture 8",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "KWBKYP.png",
+      "index": 8,
+      "displayName": "Capture 9",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "6YHGAW.png",
+      "index": 9,
+      "displayName": "Capture 10",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "KRBGZQ.png",
+      "index": 10,
+      "displayName": "Capture 11",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "94E47X.png",
+      "index": 11,
+      "displayName": "Capture 12",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "R7GTMV.png",
+      "index": 12,
+      "displayName": "Capture 13",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "GEZ6MX.png",
+      "index": 13,
+      "displayName": "Capture 14",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "UZQD9C.png",
+      "index": 14,
+      "displayName": "Capture 15",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "WA8DTX.png",
+      "index": 15,
+      "displayName": "Capture 16",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "UCY52C.png",
+      "index": 16,
+      "displayName": "Capture 17",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "4QWBXG.png",
+      "index": 17,
+      "displayName": "Capture 18",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "M7ZHAN.png",
+      "index": 18,
+      "displayName": "Capture 19",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "E327AF.png",
+      "index": 19,
+      "displayName": "Capture 20",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "VN3ZFT.png",
+      "index": 20,
+      "displayName": "Capture 21",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "5KA6PX.png",
+      "index": 21,
+      "displayName": "Capture 22",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "K69R2D.png",
+      "index": 22,
+      "displayName": "Capture 23",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "63ZAVK.png",
+      "index": 23,
+      "displayName": "Capture 24",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "X8MWUM.png",
+      "index": 24,
+      "displayName": "Capture 25",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "VC35RV.png",
+      "index": 25,
+      "displayName": "Capture 26",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "6WB9TT.png",
+      "index": 26,
+      "displayName": "Capture 27",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "RXKNPZ.png",
+      "index": 27,
+      "displayName": "Capture 28",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "BFGNVU.png",
+      "index": 28,
+      "displayName": "Capture 29",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "E5WZFT.png",
+      "index": 29,
+      "displayName": "Capture 30",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "Z7Y8UX.png",
+      "index": 30,
+      "displayName": "Capture 31",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "FRGN9A.png",
+      "index": 31,
+      "displayName": "Capture 32",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "QFC8DY.png",
+      "index": 32,
+      "displayName": "Capture 33",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "82ZMTT.png",
+      "index": 33,
+      "displayName": "Capture 34",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+      "file": "DX35RZ.png",
+      "index": 34,
+      "displayName": "Capture 35",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    }
+  ],
+  "isEmpty": false,
+  "songName": "Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+  "songFile": "Rachmaninoff_Etude_Tableaux_Op_39_No_8.pr",
+  "jsonName": "Rachmaninoff_Etude_Tableaux_Op_39_No_8.json",
+  "jsonFile": "./snaps/Rachmaninoff_Etude_Tableaux_Op_39_No_8.json",
+  "depotFolder": "./snaps/db__Rachmaninoff_Etude_Tableaux_Op_39_No_8",
+  "hasUnsavedChanges": false
+}

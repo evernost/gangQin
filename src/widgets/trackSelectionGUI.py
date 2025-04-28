@@ -182,57 +182,37 @@ class TrackSelectionGUI :
   # METHOD trackSelectionGUI.CLBK_onLeftKey()
   # ---------------------------------------------------------------------------
   def CLBK_onLeftKey(self, event = None) : 
-    ret = self.lstboxTracks.curselection()
-    if (len(ret) > 0) :
-      
-      (sel, *rem) = ret
-      
-      # Edit the 'new' left hand
-      self.lstboxTracks.delete(sel)
-      s = f"Track {sel} - {self.tracks[sel].name} ({self.tracks[sel].nNotes} notes)"
-      self.lstboxTracks.insert(sel, f"{s : <35}{'[LEFT]' : >7}")
-      self.lstboxTracks.selection_set(sel)
-      self.lstboxTracks.activate(sel)
-
-      # Edit the previous left hand if it was already assigned
-      if (self.leftTrack != -1) :
-        self.lstboxTracks.delete(self.leftTrack)
-        s = f"Track {self.leftTrack} - {self.tracks[self.leftTrack].name} ({self.tracks[self.leftTrack].nNotes} notes)"
-        self.lstboxTracks.insert(self.leftTrack, f"{s : <35}{'' : >7}")
-        
-      self.leftTrack = sel
-
-    else : 
-      print(f"Please select a track before assigning.")
+    self._assignTrack(hand = "L")
 
   # ---------------------------------------------------------------------------
   # METHOD trackSelectionGUI.CLBK_onRightKey()
   # ---------------------------------------------------------------------------
   def CLBK_onRightKey(self, event = None) :
-    ret = self.lstboxTracks.curselection()
+    self._assignTrack(hand = "R")
+    # ret = self.lstboxTracks.curselection()
 
-    # If something is selected
-    if (len(ret) > 0) :
+    # # If something is selected
+    # if (len(ret) > 0) :
       
-      (sel, *rem) = ret
+    #   (sel, *rem) = ret
       
-      # Edit the 'new' right hand
-      self.lstboxTracks.delete(sel)
-      s = f"Track {sel} - {self.tracks[sel].name} ({self.tracks[sel].nNotes} notes)"
-      self.lstboxTracks.insert(sel, f"{s : <35}{'[RIGHT]' : >7}")
-      self.lstboxTracks.selection_set(sel)
-      self.lstboxTracks.activate(sel)
+    #   # Edit the 'new' right hand
+    #   self.lstboxTracks.delete(sel)
+    #   s = f"Track {sel} - {self.tracks[sel].name} ({self.tracks[sel].nNotes} notes)"
+    #   self.lstboxTracks.insert(sel, f"{s : <35}{'[RIGHT]' : >7}")
+    #   self.lstboxTracks.selection_set(sel)
+    #   self.lstboxTracks.activate(sel)
 
-      # Edit the previous right hand if it was already assigned
-      if (self.rightTrack != -1) :
-        self.lstboxTracks.delete(self.rightTrack)
-        s = f"Track {self.rightTrack} - {self.tracks[self.rightTrack].name} ({self.tracks[self.rightTrack].nNotes} notes)"
-        self.lstboxTracks.insert(self.rightTrack, f"{s : <35}{'' : >7}")
+    #   # Edit the previous right hand if it was already assigned
+    #   if (self.rightTrack != -1) :
+    #     self.lstboxTracks.delete(self.rightTrack)
+    #     s = f"Track {self.rightTrack} - {self.tracks[self.rightTrack].name} ({self.tracks[self.rightTrack].nNotes} notes)"
+    #     self.lstboxTracks.insert(self.rightTrack, f"{s : <35}{'' : >7}")
         
-      self.rightTrack = sel
+    #   self.rightTrack = sel
 
-    else : 
-      print(f"Please select a track before assigning.")
+    # else : 
+    #   print(f"Please select a track before assigning.")
 
   # ---------------------------------------------------------------------------
   # METHOD trackSelectionGUI.CLBK_onDownKey()
@@ -248,6 +228,57 @@ class TrackSelectionGUI :
   # ---------------------------------------------------------------------------
   def CLBK_onGenerate(self, event = None) :
     self.root.destroy()
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD trackSelectionGUI.CLBK_onGenerate()
+  # ---------------------------------------------------------------------------
+  def _assignTrack(self, hand = "L") -> None :
+
+    lstboxSel = self.lstboxTracks.curselection()
+    if (len(lstboxSel) > 0) :
+      sel = lstboxSel[0]
+      
+      handUpdate = (((hand == "L") and (self.leftTrack != sel)) or ((hand == "R") and (self.rightTrack != sel)))
+      erasePrevious = (((hand == "L") and (self.leftTrack != -1)) or ((hand == "R") and (self.rightTrack != -1)))
+
+      # Update the content of the selection
+      if handUpdate :
+        self.lstboxTracks.delete(sel)
+        self.lstboxTracks.insert(sel, self._generateListboxString(sel, hand))
+        self.lstboxTracks.selection_set(sel)
+        self.lstboxTracks.activate(sel)
+
+        if (hand == "L") :
+          if erasePrevious :
+            self.lstboxTracks.delete(self.leftTrack)
+            self.lstboxTracks.insert(self.leftTrack, self._generateListboxString(self.leftTrack, ""))
+          self.leftTrack = sel
+        elif (hand == "R") :
+          if erasePrevious :
+            self.lstboxTracks.delete(self.rightTrack)
+            self.lstboxTracks.insert(self.rightTrack, self._generateListboxString(self.rightTrack, ""))
+          self.rightTrack = sel
+
+    else : 
+      print(f"Please select a track before assigning.")
+
+
+
+
+  def _generateListboxString(self, trackSel, hand) :
+    s = f"Track {trackSel} - {self.tracks[trackSel].name} ({self.tracks[trackSel].nNotes} notes)"
+    
+    if (hand == "L") :
+      s = f"{s : <35}{'[LEFT]' : >7}"
+    elif (hand == "R") : 
+      s = f"{s : <35}{'[RIGHT]' : >7}"
+    else :
+      s = f"{s : <35}{'' : >7}"
+    
+    return s
 
 
 

@@ -157,7 +157,7 @@ class TrackSelectionGUI :
     self._centerWindow()
     self.root.mainloop()
 
-    return {"left": self.leftTrack, "right": self.rightTrack}
+    return self.getTrackLinks()
 
 
 
@@ -273,6 +273,23 @@ class TrackSelectionGUI :
       s = f"{s : <35}{'' : >7}"
     
     return s
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD trackSelectionGUI.getTrackLinks()
+  # ---------------------------------------------------------------------------
+  def getTrackLinks(self) :
+    """
+    Generates a dictonary corresponding to the track selection.
+    """
+    
+    out = {"L": -1, "R": -1}
+    for i in range(self.nTracks) :
+      if (self.tracks[i].panning != "") :
+        out[self.tracks[i].panning] = i
+      
+    return out
 
 
 

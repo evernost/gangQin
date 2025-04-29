@@ -11,23 +11,22 @@ gangQin Player:
 gangQin Player:
 - [ ] track selection for MIDI file now fully integrated
 - [ ] added more shortcuts for the finger selector
-- [X] better background
 - [ ] new style for the keyboard
 - [ ] hand selector is clearer (pressing 'L' or 'R' was not very clear)
+- [X] new background
 
 gangQin Fusion:
 - [ ] auto-repeat function for the playglows
 - [ ] song selector defaults to the last song
 
-
 gangQin Capture:
-- [ ] snapshot counter 
+- [ ] added snapshot counter 
 
 🐞 Bug Fixes
 - [ ] playglows disappearing (issue #13)
 
 📈 Performance
-- [ ] double key press are deprecated
+- [ ] double key press are deprecated (very little benefit and barely used)
 
 TODO
 

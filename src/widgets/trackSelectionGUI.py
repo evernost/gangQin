@@ -25,16 +25,17 @@ from tkinter import ttk
 # =============================================================================
 MAX_TRACK_NAME_LENGTH = 10
 
+# Assigns 0 -> Right and 1 -> Left by default
+ASSIGN_DEFAULT = True
 
-
-# =============================================================================
-# Main code
-# =============================================================================
 
 class Track :
   def __init__(self):
     self.name = ""
-    self.nNotes = 0
+    self.noteCount = 0
+    self.panning = ""
+
+
 
 # Factory function
 def new() :
@@ -42,6 +43,9 @@ def new() :
 
 
 
+# =============================================================================
+# GUI CLASS
+# =============================================================================
 class TrackSelectionGUI :
 
   """
@@ -49,17 +53,17 @@ class TrackSelectionGUI :
   """
 
   def __init__(self) :
+    
+    
+    # Initialise attributes
     self.midiFile = ""
     self.nTracks = 0
-    self.midiTracks = []
+    self.tracks = []
     
-    self.leftTrack = -1
-    self.rightTrack = -1
 
-    self.displayTrackList = []
-
+    # Initialise display
     self.root = None
-    
+    self.displayTrackList = []
 
 
   # ---------------------------------------------------------------------------
@@ -72,30 +76,38 @@ class TrackSelectionGUI :
 
     self.midiFile = midiFile
 
+    # Read content of the MIDI file
     midiObj = mido.MidiFile(midiFile)
-    
     self.nTracks = len(midiObj.tracks)
     self.tracks = [Track() for _ in range(self.nTracks)]
 
     # Loop on the tracks
     for (i, track) in enumerate(midiObj.tracks) :
       
-      # Read the name of the track
+      # Read and limit the name of the track
       trackName = track.name.split("\x00")[0]
       if (len(trackName) > MAX_TRACK_NAME_LENGTH) :
-        self.tracks[i].name = trackName[0:(MAX_TRACK_NAME_LENGTH-3)] + "..."
-      else :
-        self.tracks[i].name = trackName
+        trackName = trackName[0:(MAX_TRACK_NAME_LENGTH-3)] + "..."
 
       # Count the notes in the track
-      self.tracks[i].nNotes = 0
+      noteCount = 0
       for msg in track :
         if ((msg.type == 'note_on') and (msg.velocity > 0)) :
-          self.tracks[i].nNotes += 1
+          noteCount += 1
+
+      # Assign to the Track
+      self.tracks[i].name = trackName
+      self.tracks[i].noteCount = noteCount
+      self.tracks[i].panning = ""
+
+      if ASSIGN_DEFAULT :
+        if (i == 0) :
+          self.tracks[i].panning = "R"
+        elif (i == 1) :
+          self.tracks[i].panning = "L"
 
       # Add the track to the 'trackList' widget
-      s = f"Track {i} - {self.tracks[i].name} ({self.tracks[i].nNotes} notes)"
-      self.displayTrackList.append(f"{s : <35}{'' : >7}")
+      self.displayTrackList.append(self._generateListboxString(i))
 
 
 
@@ -182,37 +194,13 @@ class TrackSelectionGUI :
   # METHOD trackSelectionGUI.CLBK_onLeftKey()
   # ---------------------------------------------------------------------------
   def CLBK_onLeftKey(self, event = None) : 
-    self._assignTrack(hand = "L")
+    self._assignActiveTrack(hand = "L")
 
   # ---------------------------------------------------------------------------
   # METHOD trackSelectionGUI.CLBK_onRightKey()
   # ---------------------------------------------------------------------------
   def CLBK_onRightKey(self, event = None) :
-    self._assignTrack(hand = "R")
-    # ret = self.lstboxTracks.curselection()
-
-    # # If something is selected
-    # if (len(ret) > 0) :
-      
-    #   (sel, *rem) = ret
-      
-    #   # Edit the 'new' right hand
-    #   self.lstboxTracks.delete(sel)
-    #   s = f"Track {sel} - {self.tracks[sel].name} ({self.tracks[sel].nNotes} notes)"
-    #   self.lstboxTracks.insert(sel, f"{s : <35}{'[RIGHT]' : >7}")
-    #   self.lstboxTracks.selection_set(sel)
-    #   self.lstboxTracks.activate(sel)
-
-    #   # Edit the previous right hand if it was already assigned
-    #   if (self.rightTrack != -1) :
-    #     self.lstboxTracks.delete(self.rightTrack)
-    #     s = f"Track {self.rightTrack} - {self.tracks[self.rightTrack].name} ({self.tracks[self.rightTrack].nNotes} notes)"
-    #     self.lstboxTracks.insert(self.rightTrack, f"{s : <35}{'' : >7}")
-        
-    #   self.rightTrack = sel
-
-    # else : 
-    #   print(f"Please select a track before assigning.")
+    self._assignActiveTrack(hand = "R")
 
   # ---------------------------------------------------------------------------
   # METHOD trackSelectionGUI.CLBK_onDownKey()
@@ -231,49 +219,55 @@ class TrackSelectionGUI :
 
 
 
-
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.CLBK_onGenerate()
+  # METHOD trackSelectionGUI._assignActiveTrack()
   # ---------------------------------------------------------------------------
-  def _assignTrack(self, hand = "L") -> None :
+  def _assignActiveTrack(self, hand = "L") -> None :
+    """
+    Assigns a hand to the higlighted track in the listbox.
+    """
 
     lstboxSel = self.lstboxTracks.curselection()
+    
+    # If at least one item is highlighted
     if (len(lstboxSel) > 0) :
       sel = lstboxSel[0]
-      
-      handUpdate = (((hand == "L") and (self.leftTrack != sel)) or ((hand == "R") and (self.rightTrack != sel)))
-      erasePrevious = (((hand == "L") and (self.leftTrack != -1)) or ((hand == "R") and (self.rightTrack != -1)))
 
-      # Update the content of the selection
-      if handUpdate :
-        self.lstboxTracks.delete(sel)
-        self.lstboxTracks.insert(sel, self._generateListboxString(sel, hand))
-        self.lstboxTracks.selection_set(sel)
-        self.lstboxTracks.activate(sel)
+      self.tracks[sel].panning = hand
 
-        if (hand == "L") :
-          if erasePrevious :
-            self.lstboxTracks.delete(self.leftTrack)
-            self.lstboxTracks.insert(self.leftTrack, self._generateListboxString(self.leftTrack, ""))
-          self.leftTrack = sel
-        elif (hand == "R") :
-          if erasePrevious :
-            self.lstboxTracks.delete(self.rightTrack)
-            self.lstboxTracks.insert(self.rightTrack, self._generateListboxString(self.rightTrack, ""))
-          self.rightTrack = sel
+      # Update the listbox
+      self.lstboxTracks.delete(sel)
+      self.lstboxTracks.insert(sel, self._generateListboxString(sel))
+      self.lstboxTracks.selection_set(sel)
+      self.lstboxTracks.activate(sel)
+
+      # Clear info of any track with the same panning
+      for i in range(self.nTracks) :
+        if (i != sel) :
+          if (self.tracks[i].panning == hand) :
+            self.tracks[i].panning = ""
+            self.lstboxTracks.delete(i)
+            self.lstboxTracks.insert(i, self._generateListboxString(i))
 
     else : 
-      print(f"Please select a track before assigning.")
+      print(f"[INFO] Please select a track before assigning.")
 
 
 
-
-  def _generateListboxString(self, trackSel, hand) :
-    s = f"Track {trackSel} - {self.tracks[trackSel].name} ({self.tracks[trackSel].nNotes} notes)"
+  # ---------------------------------------------------------------------------
+  # METHOD trackSelectionGUI._generateListboxString()
+  # ---------------------------------------------------------------------------
+  def _generateListboxString(self, index: int) -> str :
+    """
+    Generates the content of the string that goes at the given index in the 
+    track selection listbox.
+    """
     
-    if (hand == "L") :
+    s = f"Track {index} - {self.tracks[index].name} ({self.tracks[index].noteCount} notes)"
+    
+    if (self.tracks[index].panning == "L") :
       s = f"{s : <35}{'[LEFT]' : >7}"
-    elif (hand == "R") : 
+    elif (self.tracks[index].panning == "R") : 
       s = f"{s : <35}{'[RIGHT]' : >7}"
     else :
       s = f"{s : <35}{'' : >7}"

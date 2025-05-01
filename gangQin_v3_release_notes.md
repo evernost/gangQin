@@ -9,11 +9,14 @@ gangQin Player:
 
 🛠️ Improvements
 gangQin Player:
-- [ ] track selection for MIDI file now fully integrated
+- [X] track selection for MIDI file now fully integrated
+- [X] new backgrounds available
+- [X] constants centralised and reorganised in 'commons.py'
 - [ ] added more shortcuts for the finger selector
-- [ ] new style for the keyboard
+- [ ] new keyboard style
 - [ ] hand selector is clearer (pressing 'L' or 'R' was not very clear)
-- [X] new background
+- [ ] auto-backup of any existing .gq upon new generation from .mid
+
 
 gangQin Fusion:
 - [ ] auto-repeat function for the playglows

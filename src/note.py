@@ -30,13 +30,13 @@ if (__name__ == "__main__") :
 
 class Note :
 
-  def __init__(self, pitch, hand = UNDEFINED_HAND, finger = 0, noteIndex = 0, startTime = 0, stopTime = 0, voice = VOICE_DEFAULT, highlight = False) :
+  def __init__(self, pitch, hand = NOTE_UNDEFINED_HAND, finger = 0, noteIndex = 0, startTime = 0, stopTime = 0, voice = NOTE_VOICE_DEFAULT, highlight = False) :
     
     # General common attributes of a note
     self.pitch = pitch
     self.hand = hand
     self.finger = finger
-    self.keyColor = WHITE_KEY if ((pitch % 12) in WHITE_NOTES_CODE_MOD12) else BLACK_KEY
+    self.keyColor = NOTE_WHITE_KEY if ((pitch % 12) in MIDI_CODE_WHITE_NOTES_MOD12) else NOTE_BLACK_KEY
     
     # Info relative to the pianoroll
     self.noteIndex = noteIndex      # Index of the note in this pitch
@@ -68,10 +68,10 @@ class Note :
     """
 
 
-    if (self.voice != VOICE_DEFAULT) :
+    if (self.voice != NOTE_VOICE_DEFAULT) :
       baseColor = VOICE_COLOR[self.voice]
     else :
-      if (self.hand == LEFT_HAND) :
+      if (self.hand == NOTE_LEFT_HAND) :
         if (self.upcoming) :
           baseColor = utils.adjustHSV((255, 0, 127), 0, -40 - (self.upcomingDistance*20), -10)
         else :
@@ -89,7 +89,7 @@ class Note :
     # 'sustained', 'highlight', 'voice', 'lookAheadDistance' attributes are all ignored.
     if self.disabled :
 
-      if (self.keyColor == WHITE_KEY) :
+      if (self.keyColor == NOTE_WHITE_KEY) :
         (rectColor, rectOutlineColor, pianoRollColor) = ((200, 200, 200), (170, 170, 170), (250, 250, 250))
       
       else :
@@ -100,12 +100,12 @@ class Note :
       # Highlighted note for fingersatz editing -------------------------------
       if self.highlight :
 
-        if (self.hand == LEFT_HAND) :
+        if (self.hand == NOTE_LEFT_HAND) :
           hueShift = 30
         else :
           hueShift = 60
 
-        if (self.keyColor == WHITE_KEY) :
+        if (self.keyColor == NOTE_WHITE_KEY) :
           (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, hueShift, 0, 0), utils.adjustHSV(baseColor, hueShift, 0, -50), utils.adjustHSV(baseColor, hueShift, 0, 0))
 
         else :
@@ -114,7 +114,7 @@ class Note :
       # Inactive note (single hand practice) ----------------------------------
       elif self.inactive :
 
-        if (self.keyColor == WHITE_KEY) :
+        if (self.keyColor == NOTE_WHITE_KEY) :
           (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -70, 0), (240, 240, 240), utils.adjustHSV(baseColor, 0, -60, 0))
         
         else :
@@ -124,7 +124,7 @@ class Note :
 
         # Upcoming note -------------------------------------------------------
         if (self.upcoming) :
-          if (self.keyColor == WHITE_KEY) :
+          if (self.keyColor == NOTE_WHITE_KEY) :
             (rectColor, rectOutlineColor, pianoRollColor) = (baseColor, (255, 255, 255), baseColor)
             
           else :
@@ -132,7 +132,7 @@ class Note :
 
         # Sustained note ------------------------------------------------------
         if (self.sustained) :
-          if (self.keyColor == WHITE_KEY) :
+          if (self.keyColor == NOTE_WHITE_KEY) :
             (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -60, 0), (160, 160, 160), utils.adjustHSV(baseColor, 0, -60, 0))
             
           else :
@@ -140,7 +140,7 @@ class Note :
 
         # Normal note ---------------------------------------------------------
         else : 
-          if (self.keyColor == WHITE_KEY) :
+          if (self.keyColor == NOTE_WHITE_KEY) :
             (rectColor, rectOutlineColor, pianoRollColor) = (baseColor, (10, 10, 10), baseColor)
             
           else :
@@ -155,10 +155,10 @@ class Note :
   # print() function overloading
   # ---------------------------------------------------------------------------
   def __str__(self) :
-    if (self.hand == RIGHT_HAND) : handStr = "right hand"
-    if (self.hand == LEFT_HAND) : handStr = "left hand"
-    if (self.keyColor == WHITE_KEY) : keyColorStr = "white key"
-    if (self.keyColor == BLACK_KEY) : keyColorStr = "black key"
+    if (self.hand == NOTE_RIGHT_HAND) : handStr = "right hand"
+    if (self.hand == NOTE_LEFT_HAND) : handStr = "left hand"
+    if (self.keyColor == NOTE_WHITE_KEY) : keyColorStr = "white key"
+    if (self.keyColor == NOTE_BLACK_KEY) : keyColorStr = "black key"
 
     ret = f"""Note object properties
     - pitch:     {self.pitch}

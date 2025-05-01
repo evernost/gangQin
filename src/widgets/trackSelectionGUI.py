@@ -154,6 +154,8 @@ class TrackSelectionGUI :
     self.root.bind('<Down>',    self.CLBK_onDownKey)
     self.root.bind('<q>',       self.CLBK_onQuit)
 
+    self.root.protocol("WM_DELETE_WINDOW", self.CLBK_onQuit)
+
     self._centerWindow()
     self.root.mainloop()
 
@@ -188,6 +190,7 @@ class TrackSelectionGUI :
   # METHOD trackSelectionGUI.CLBK_onQuit()
   # ---------------------------------------------------------------------------
   def CLBK_onQuit(self, event = None) :
+    print("[INFO] User exit...")
     exit()
 
   # ---------------------------------------------------------------------------
@@ -284,11 +287,7 @@ class TrackSelectionGUI :
     Generates a dictonary corresponding to the track selection.
     """
     
-    out = {"L": -1, "R": -1}
-    for i in range(self.nTracks) :
-      if (self.tracks[i].panning != "") :
-        out[self.tracks[i].panning] = i
-      
+    out = [T.panning for T in self.tracks]
     return out
 
 

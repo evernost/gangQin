@@ -35,9 +35,7 @@ import time
 # =============================================================================
 # Constants pool
 # =============================================================================
-# gangQin always deals with 2 staves max (left and right hand)
-SCORE_N_STAFF = 2
-
+# None.
 
 
 # =============================================================================
@@ -111,45 +109,18 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.load()
+  # METHOD Score.load() [DEPRECATED]
   # ---------------------------------------------------------------------------
-  def load(self, inputFile: str, midiTracks = []) -> None :
-    """
-    Loads the score from an external file (.mid or .gq)
+  #def load(self, inputFile: str, midiTracks = {}) -> None :
 
-    When loading a MIDI file, you may specify the tracks to be imported.
-    It is common for MIDI files to have more than just 2 channels, especially
-    if you import the full orchestra version. 
-    In that case, you can use the trackSelection GUI to choose the piano tracks
-    or even any track you'd like to practice (limit = SCORE_N_STAFF = 2)
-
-    'midiTracks' is the list of tracks to be imported.
-    By default, it ... TODO
-    """
-  
-    fileExt = os.path.splitext(inputFile)[-1]
-
-    # MIDI import (.mid)
-    if (fileExt == ".mid") :
-      self._loadMIDIFile(inputFile, midiTracks)
-    
-    # gangQin import (.gq)
-    elif (fileExt == ".pr") :
-      self._loadGQFile(inputFile)
-    
-    # Rest is not supported
-    else :
-      print(f"[ERROR] The file extension '{fileExt}' is not supported.")
-      exit()
-    
-    self.hasUnsavedChanges = False
+    #self.hasUnsavedChanges = False
     
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score._loadMIDIFile()
+  # METHOD Score.loadMIDIFile()
   # ---------------------------------------------------------------------------
-  def _loadMIDIFile(self, midiFile: str, midiTracks = []) -> None :
+  def loadMIDIFile(self, midiFile: str, midiTracks: list[str]) -> None :
     """
     Loads and initialises the Score object from a MIDI file.
 
@@ -158,43 +129,45 @@ class Score(widget.Widget) :
     """
     
     # For statistics
-    print("[INFO] Processing .mid file... ", end = "")
+    print("[INFO] Processing .mid file... ")
     startTime = time.time()
 
     # Open MIDI file
     mid = mido.MidiFile(midiFile)
 
-    # Check the MIDI tracks against the available ones
-    # If it doesn't match: default to channel 0 and 1.
-    # TODO
-
     # Initialise attributes 
     self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
     self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
-    nNotes = 0; noteDuration = 0
+    noteCount = 0; noteDuration = 0
     
-    # Each note is assigned to a unique identifier (simple counter)
+    # Assign a unique identifier to each note (simple counter)
     id = 0
 
     # Loop on the tracks, decode the MIDI messages
-    for (trackNumber, track) in enumerate(mid.tracks) :
-      if (trackNumber < 2) :
+    for (i, track) in enumerate(mid.tracks) :
+      
+      # Process the track if it is linked to left or right hand
+      # Ignore it otherwise
+      if (midiTracks[i] != "") :
+        if (midiTracks[i] == "R") : trackID = SCORE_RIGHT_HAND_TRACK_ID
+        if (midiTracks[i] == "L") : trackID = SCORE_LEFT_HAND_TRACK_ID
+      
         currTime = 0
         for msg in track :
 
-          # Update the current date ---------------------------------------------
+          # Update the current time
           currTime += msg.time
           
-          # Keypress event ------------------------------------------------------
+          # Keypress event
           if ((msg.type == 'note_on') and (msg.velocity > 0)) :
             
             pitch = msg.note
             
             # Inspect the previous notes with the same pitch
-            if (len(self.pianoRoll[trackNumber][pitch]) > 0) :
+            if (len(self.pianoRoll[trackID][pitch]) > 0) :
               
               # Detect if among these notes, one is still held
-              for currNote in self.pianoRoll[trackNumber][pitch] :
+              for currNote in self.pianoRoll[trackID][pitch] :
                 if (currNote.stopTime < 0) :
                   print(f"[WARNING] Ambiguous note at t = {currTime} ({note.getFriendlyName(pitch)}): a keypress overlaps a hanging keypress on the same note.")
 
@@ -203,18 +176,18 @@ class Score(widget.Widget) :
                   # User should decide here.
                   currNote.stopTime = currTime
                   noteDuration += (currNote.stopTime - currNote.startTime)
-                  nNotes += 1.0
+                  noteCount += 1.0
                   id += 1
 
               # Append the new note to the list
               # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
-              insertIndex = len(self.pianoRoll[trackNumber][pitch])
-              self.pianoRoll[trackNumber][pitch].append(note.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
+              insertIndex = len(self.pianoRoll[trackID][pitch])
+              self.pianoRoll[trackID][pitch].append(note.Note(pitch, hand = trackID, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
               
               # Append the timecode of this keypress
-              if (trackNumber == LEFT_HAND) :
+              if (trackID == SCORE_LEFT_HAND_TRACK_ID) :
                 self.noteOnTimecodes["L"].append(currTime)
-              elif (trackNumber == RIGHT_HAND) :
+              elif (trackID == SCORE_RIGHT_HAND_TRACK_ID) :
                 self.noteOnTimecodes["R"].append(currTime)
               else :
                 print("[INTERNAL ERROR] Invalid track number.")
@@ -226,16 +199,16 @@ class Score(widget.Widget) :
               
               # Append the new note to the list
               # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
-              insertIndex = len(self.pianoRoll[trackNumber][pitch])
-              self.pianoRoll[trackNumber][pitch].append(note.Note(pitch, hand = trackNumber, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
+              insertIndex = len(self.pianoRoll[trackID][pitch])
+              self.pianoRoll[trackID][pitch].append(note.Note(pitch, hand = trackID, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
               
               # Append the timecode of this keypress
-              # if not(currTime in self.noteOntimecodes[trackNumber]) : 
-              #   self.noteOntimecodes[trackNumber].append(currTime)
+              # if not(currTime in self.noteOntimecodes[trackID]) : 
+              #   self.noteOntimecodes[trackID].append(currTime)
 
-              if (trackNumber == LEFT_HAND) :
+              if (trackID == SCORE_LEFT_HAND_TRACK_ID) :
                 self.noteOnTimecodes["L"].append(currTime)
-              elif (trackNumber == RIGHT_HAND) :
+              elif (trackID == SCORE_RIGHT_HAND_TRACK_ID) :
                 self.noteOnTimecodes["R"].append(currTime)
               else :
                 print("[INTERNAL ERROR] Invalid track number.")
@@ -244,19 +217,19 @@ class Score(widget.Widget) :
 
           # Keyrelease event ----------------------------------------------------
           # NOTE: in some files, 'NOTE OFF' message is mimicked using a 'NOTE ON' with null velocity.
-          if ((msg.type == 'note_off') or ((msg.type == 'note_on') and (msg.velocity == 0))) :
+          elif ((msg.type == 'note_off') or ((msg.type == 'note_on') and (msg.velocity == 0))) :
             
             pitch = msg.note
 
             # Take the latest event in the piano roll for this note
-            noteObj = self.pianoRoll[trackNumber][pitch][-1]
+            noteObj = self.pianoRoll[trackID][pitch][-1]
             
             # Close it
             noteObj.stopTime = currTime
             noteObj.id = id
             
             noteDuration += (noteObj.stopTime - noteObj.startTime)
-            nNotes += 1.0
+            noteCount += 1.0
             id += 1
 
             # Quite common apparently. Is that really an error case?
@@ -266,8 +239,20 @@ class Score(widget.Widget) :
 
 
 
-          # Others --------------------------------------------------------------
-          # Other MIDI events are ignored.
+          elif (msg.type == 'time_signature') :
+            print(f"- read time signature: {msg.numerator}/{msg.denominator} (timecode = {currTime})")
+
+          elif (msg.type == 'key_signature') :
+            print(f"- read key signature: {msg.key} (timecode = {currTime})")
+
+          elif (msg.type == 'set_tempo') :
+            pass
+
+          elif (msg.type == 'control_change') :
+            pass
+
+          elif (msg.type == 'program_change') :
+            pass
 
 
     # Tidy up:
@@ -280,38 +265,29 @@ class Score(widget.Widget) :
     self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
     self.noteOnTimecodes["LR"].sort()
 
-    # Build <cursorsLeft> and <cursorsRight>
+    # Build 'cursorsLeft' and 'cursorsRight' attributes
     self._buildCursorsLR()
 
-    # Estimate average note duration (needed for the piano roll display)
-    self.avgNoteDuration = noteDuration/nNotes
+    # Estimate average note duration (needed for the pianoroll display)
+    self.avgNoteDuration = noteDuration/noteCount
     
     self.scoreLength = len(self.noteOnTimecodes["LR"])
     self.cursorMax = self.scoreLength-1
-    
-    # Statistics are inexistant, initialize them
-    self.statsCursor = [0 for _ in range(self.scoreLength)]
-    self.sessionCount = 1
-    self.sessionStartTime = datetime.datetime.now()
-    self.sessionStopTime = -1
-    self.sessionTotalPracticeTime = 0
-    self.sessionLog = []
-    
+        
     # DEBUG
-    print(f"[DEBUG] Score length: {self.scoreLength} steps")
+    print(f"- Score length: {self.scoreLength} steps")
 
     stopTime = time.time()
     print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
     
-    print("")
-    print(f"[INFO] Get ready for the first session!")
+
     
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score._loadGQFile()
+  # METHOD Score.loadGQFile()
   # ---------------------------------------------------------------------------
-  def _loadGQFile(self, gqFile: str) -> None :
+  def loadGQFile(self, gqFile: str) -> None :
     """
     Loads and initialises the Score object from a .gq file.
 
@@ -403,7 +379,7 @@ class Score(widget.Widget) :
         # Detect manual editions
         noteNameExpected = note.getFriendlyName(noteObjImported["pitch"])
         noteNameActual   = noteObjImported["name"]
-        newColor = WHITE_KEY if ((noteObjImported["pitch"] % 12) in WHITE_NOTES_CODE_MOD12) else BLACK_KEY
+        newColor = WHITE_KEY if ((noteObjImported["pitch"] % 12) in MIDI_CODE_WHITE_NOTES_MOD12) else BLACK_KEY
         if (noteNameExpected != noteNameActual) :
           print(f"[INFO] Note ID {noteObj.id}: manual edition detected.")
           print(f"Following fields will be replaced:")
@@ -1163,7 +1139,7 @@ class Score(widget.Widget) :
     self.teacherNotes = []
     
     # Loop on all notes in the score
-    for pitch in GRAND_PIANO_MIDI_RANGE :
+    for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
       for (staffIndex, _) in enumerate(self.pianoRoll) :
         for noteObj in self.pianoRoll[staffIndex][pitch] :
 
@@ -1223,7 +1199,7 @@ class Score(widget.Widget) :
     
     for n in range(1, (self.lookAheadDistance+1)) :
       if ((self.getCursor() + n) < self.cursorMax) :
-        for pitch in GRAND_PIANO_MIDI_RANGE :
+        for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
           for (staffIndex, _) in enumerate(self.pianoRoll) :
             for noteObj in self.pianoRoll[staffIndex][pitch] :
 

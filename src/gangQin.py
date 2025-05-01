@@ -115,19 +115,22 @@ class GangQin :
     (selectedDevice, songFile) = fileSelectGUI.show()
 
     if ((songFile == "") or (songFile == "None")) :
+      print("[INFO] No file selected, exiting...")
       exit()
 
     # If a MIDI file is selected, show the track selection GUI
     if songFile.endswith(".mid") :
+      self.songType = "mid"
       trackSel = trackSelectionGUI.new()
       trackSel.load(songFile)
       midiTracks = trackSel.show()
-      self.songType = "mid"
+      self.widgets[SCORE_WIDGET_ID].loadMIDIFile(songFile, midiTracks)
     else :
-      midiTracks = []
       self.songType = "gq"
+      self.widgets[SCORE_WIDGET_ID].loadGQFile(songFile)
+      self.widgets[STAFFSCOPE_WIDGET_ID].load(songFile)
 
-    # Update the app properties 
+    # Update the app properties
     (rootDir, rootNameExt) = os.path.split(songFile)
     (rootName, _) = os.path.splitext(rootNameExt)
     
@@ -135,11 +138,6 @@ class GangQin :
     self.songDir = rootDir
     self.songName = rootName
     pygame.display.set_caption(f"gangQin player - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {self.songName}")
-
-    # Load the score
-    self.widgets[SCORE_WIDGET_ID].load(songFile, midiTracks)
-    self.widgets[STAFFSCOPE_WIDGET_ID].load(songFile)
-    
 
 
   # ---------------------------------------------------------------------------
@@ -184,10 +182,14 @@ class GangQin :
   # METHOD: GangQin._backgroundInit() [EXPERIMENTAL]
   # ---------------------------------------------------------------------------
   def _backgroundInit(self) :
+    """
+    Initialises the 'background' attribute from a pattern description.
+    Builds the tiling.
+    """
 
+    # TODO: move to 'commons.py'
     C0 = GUI_BACKGROUND_COLOR
     C1 = (58, 97, 90)
-
     patternData = [
       [C0, C0, C1, C0, C0, C0, C0, C0],
       [C0, C0, C1, C0, C0, C0, C0, C0],

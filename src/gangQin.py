@@ -199,6 +199,11 @@ class GangQin :
   # METHOD: GangQin._midiCallback()
   # ---------------------------------------------------------------------------
   def _midiCallback(self, midiMessage) :
+    """
+    This function is called on every MIDI event coming from the external MIDI
+    keyboard.
+    """
+
     self.widgets[WIDGET_ID_ARBITER].updateMidiState(midiMessage)
     self.widgets[WIDGET_ID_STATS].userActivity()
 
@@ -240,6 +245,40 @@ class GangQin :
     for x in range(0, GUI_SCREEN_WIDTH, patternSurface.get_width()):
       for y in range(0, GUI_SCREEN_HEIGHT, patternSurface.get_height()):
         self.background.blit(patternSurface, (x, y))
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: GangQin._onExit()
+  # ---------------------------------------------------------------------------
+  def _onExit(self) :
+    """
+    Function is called upon exiting.
+    Do all the things here that you need to do before leaving 
+    (save, look for unsaved changes, etc.)
+    """
+
+    pass
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: GangQin._onSave()
+  # ---------------------------------------------------------------------------
+  def _onSave(self) :
+    """
+    Function is called when a 'save' event occured (either from user or 
+    automatically)
+    """
+
+    pass
+
+
+
+
+
+
+
 
 
 
@@ -293,39 +332,11 @@ if False :
 
 
 
-
-  # =============================================================================
-  # INITIALISE MIDI INTERFACE
-  # =============================================================================
-  def midiCallback(midiMessage) :
-    pianoArbiter.updateMidiState(midiMessage)
-    statsObj.userActivity()
-
-  # Navigation mode (no MIDI interface selected)
-  if (selectedDevice != "None") :
-    try :
-      midiPort = mido.open_input(selectedDevice, callback = midiCallback)
-    except Exception as err :
-      print("[WARNING] Failed to open the MIDI device (it is used by another software?): running in navigation mode.")
-      midiPort = None  
-
-  else :
-    print("[NOTE] No MIDI interface selected: running in navigation mode.")
-    midiPort = None
-
-
-
   # =============================================================================
   # Main loop
   # =============================================================================
   running = True
-
-  clickMsg = False
-  ctrlKey  = False
-  altKey   = False
-
-  comboCount = 0
-  comboDrop  = False
+  
 
   setFingersatzMsg = -1
 
@@ -359,43 +370,8 @@ if False :
         fingerSelWidget.keyPress(keys)
         pianoRollWidget.keyPress(keys)
 
-        # ----------------------------------
-        # Left arrow: jump backward (1 step)
-        # ----------------------------------
-        if (keys[pygame.K_LEFT] and not(ctrlKey) and not(altKey)) :
-          userScore.cursorStep(-1)
 
-        # ----------------------------------
-        # Right arrow: jump forward (1 step)
-        # ----------------------------------
-        if (keys[pygame.K_RIGHT] and not(ctrlKey) and not(altKey)) :
-          userScore.cursorStep(1)
 
-        # -----------------------------------------
-        # CTRL + Left arrow: fast rewind (10 steps)
-        # -----------------------------------------
-        if (keys[pygame.K_LEFT] and ctrlKey) :
-          userScore.cursorStep(-10)
-
-        # -------------------------------------------
-        # CTRL + right arrow: fast forward (10 steps)
-        # -------------------------------------------
-        if (keys[pygame.K_RIGHT] and ctrlKey) :
-          userScore.cursorStep(10)
-
-        # ---------------------------------------------
-        # Tab key: highlight the note above for editing
-        # ---------------------------------------------
-        if (keys[pygame.K_TAB] and not(shiftKey)) :
-          print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
-          # fingerSelWidget.keyPress(keys)
-
-        # -----------------------------------------------
-        # Maj + tab: highlight the note before for editing
-        # -----------------------------------------------
-        if (keys[pygame.K_TAB] and shiftKey) :
-          print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
-          # fingerSelWidget.keyPress(keys)
 
 
 
@@ -493,11 +469,7 @@ if False :
         if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_c]) :
           print("[INFO] Adding comments will be available in a future release.")
 
-        # --------------------------------
-        # "d" + "-": shorten note duration
-        # --------------------------------
-        # if (keys[pygame.K_d] and keys[pygame.K_KP_MINUS]) :
-        #   print("[INFO] Note duration shortening will be added in a future release.")
+
         
         # ------------------------------
         # "e": report error in the score
@@ -508,47 +480,8 @@ if False :
           # Pass the info to staffScope:
           # ...
 
-        # ----------------------------
-        # "h": (Hear) toggle play mode
-        # ----------------------------
-        if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_h]) :
-          print("[INFO] Playing the song feature will be added in a future release.")
 
-        # ---------------------------------------------
-        # "k": toggle display of the notes in the scale
-        # ---------------------------------------------
-        if keys[pygame.K_k] :
-          
-          # A key has been defined starting from the current cursor
-          currKey = userScore.getCurrentKey()
-          
-          if (currKey != None) :
-            if (currKey.startTime == userScore.getCursor()) :
-              if keys[pygame.K_KP_PLUS] :
-                currKey.nextRoot()
 
-              elif keys[pygame.K_KP_MINUS] :
-                currKey.previousRoot()
-
-          # Otherwise: start a new key here
-          else :
-            
-            # TODO: do some stats and print the keys that are the most likely
-            # userScore.guessKey()
-            print("[DEBUG] New key added")
-            userScore.keyList.append(utils.Scale("C", "major", startTime = userScore.getCursor()))
-
-        # ------------------------------------
-        # CTRL + k: set the key the song is in
-        # ------------------------------------
-        if (keys[pygame.K_LCTRL] and keys[pygame.K_k]) :
-          print("[INFO] Setting the key of the song will be added in a future release.")
-
-        # ------------------------------
-        # "l": toggle left hand practice
-        # ------------------------------
-        if (keys[pygame.K_l]) :  
-          userScore.toggleLeftHandPractice()
         
         # -----------------
         # "q": exit the app

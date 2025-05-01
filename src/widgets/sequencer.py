@@ -63,12 +63,6 @@ class Sequencer(widget.Widget) :
     interactions to the widget.
     """
     
-    # # Get the modifier state
-    # mods = pygame.key.get_mods()
-
-    # # Check ONLY Ctrl is held (LEFT or RIGHT Ctrl)
-    # if mods & KMOD_CTRL and not (mods & (KMOD_ALT | KMOD_SHIFT | KMOD_META)):
-
     # Keyboard events
     if (pygameEvent.type in (pygame.KEYUP, pygame.KEYDOWN)) :
       keys    = pygame.key.get_pressed()
@@ -77,7 +71,7 @@ class Sequencer(widget.Widget) :
       shiftKey  = pygameEvent.mod & pygame.KMOD_SHIFT
       altGrKey  = pygameEvent.mod & pygame.KMOD_META
       
-      # Simple keypresses
+      # Simple keypresses (no modifiers)
       if not(ctrlKey | shiftKey | altKey | altGrKey) :
 
         # LEFT: jump backward (1 step)
@@ -104,21 +98,16 @@ class Sequencer(widget.Widget) :
         if (keys[pygame.K_UP]) :
           self.top.widgets[WIDGET_ID_SCORE].gotoNextBookmark()
 
+      # Ctrl-modified keypress
+      elif (ctrlKey and not(shiftKey | altKey | altGrKey)) :
 
-#         # -----------------------------------------
-#         # CTRL + Left arrow: fast rewind (10 steps)
-#         # -----------------------------------------
-#         if (keys[pygame.K_LEFT] and ctrlKey) :
-#           userScore.cursorStep(-10)
+        # CTRL + LEFT: fast rewind (10 steps)
+        if keys[pygame.K_LEFT] :
+          self.top.widgets[WIDGET_ID_SCORE].cursorStep(-10)
 
-#         # -------------------------------------------
-#         # CTRL + right arrow: fast forward (10 steps)
-#         # -------------------------------------------
-#         if (keys[pygame.K_RIGHT] and ctrlKey) :
-#           userScore.cursorStep(10)
-
-
-
+        # CTRL + LEFT: fast forward (10 steps)
+        elif keys[pygame.K_RIGHT] :
+          self.top.widgets[WIDGET_ID_SCORE].cursorStep(10)
 
 
 

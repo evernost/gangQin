@@ -162,7 +162,7 @@ class Arbiter :
     # 'Superfluous' notes need to be released and pressed again to be accepted later on.
     if (self.comparisonMode == "permissive") :
       allowProgress = True
-      for pitch in GRAND_PIANO_MIDI_RANGE :
+      for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
 
         # Case 1: a required note is missing.
         if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 0) and (self.midiSuperfluous[pitch] == 0)) :
@@ -218,7 +218,7 @@ class Arbiter :
         msgQueue.append(MSG_CURSOR_NEXT)
         
         # Update note status
-        for pitch in GRAND_PIANO_MIDI_RANGE :
+        for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
           
           # Flag the notes played in 'excess'.
           if ((teacherNotesAsMidiArray[pitch] == 0) and (self.midiCurr[pitch] == 1)) :

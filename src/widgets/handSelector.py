@@ -3,8 +3,9 @@
 # Project       : gangQin
 # Module name   : handSelector
 # File name     : handSelector.py
+# File type     : Python script (Python 3)
 # Purpose       : widget to edit the properties of a given note.
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Saturday, 09 November 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
@@ -17,8 +18,10 @@
 from src.commons import *
 
 import src.text as text
+import src.widgets.widget as widget
 
 from enum import Enum
+import pygame
 
 
 
@@ -34,9 +37,23 @@ class Msg(Enum) :
 # =============================================================================
 # Main code
 # =============================================================================
-class handSelector :
+class HandSelector(widget.Widget) :
 
-  def __init__(self) :
+  """
+  TODO: description
+
+  - controls the position in the score
+  - manages the loops 
+  - reads arbiter decision
+  - automatic play 
+
+
+  """
+
+  def __init__(self, top) :
+    
+    # Call the Widget init method
+    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
     
     self.screen = None
 
@@ -51,6 +68,56 @@ class handSelector :
 
     self.msgQueueIn = []
     self.msgQueueOut = []
+
+
+
+  
+  # ---------------------------------------------------------------------------
+  # METHOD: HandSelector.uiEvent()
+  # ---------------------------------------------------------------------------
+  def uiEvent(self, pygameEvent) -> None :
+    """
+    This function is called by the top level and passes all the keyboard/mouse
+    interactions to the widget.
+    """
+    
+    # Keyboard events
+    if (pygameEvent.type in (pygame.KEYUP, pygame.KEYDOWN)) :
+      keys    = pygame.key.get_pressed()
+      ctrlKey   = pygameEvent.mod & pygame.KMOD_CTRL
+      altKey    = pygameEvent.mod & pygame.KMOD_ALT
+      shiftKey  = pygameEvent.mod & pygame.KMOD_SHIFT
+      altGrKey  = pygameEvent.mod & pygame.KMOD_META
+      
+      # Simple keypresses (no modifiers)
+      if not(ctrlKey | shiftKey | altKey | altGrKey) :
+        
+        # TAB: highlight the next note above for fingersatz edition
+        if keys[pygame.K_TAB] :
+          print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
+
+
+
+      # Ctrl-modified keypress
+      elif (ctrlKey and not(shiftKey | altKey | altGrKey)) :
+        pass
+
+
+      # Shift-modified keypress
+      elif (shiftKey and not(ctrlKey | altKey | altGrKey)) :
+        
+        # TAB: highlight the next note above for fingersatz edition
+        if keys[pygame.K_TAB] :
+          print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
+
+
+      # -----------------------------------------------
+        # Maj + tab: highlight the note before for editing
+        # -----------------------------------------------
+        if (keys[pygame.K_TAB] and shiftKey) :
+          print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
+          # fingerSelWidget.keyPress(keys)
+
 
 
 

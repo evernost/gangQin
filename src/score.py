@@ -26,7 +26,6 @@ import datetime
 import copy
 import json   # for JSON database import/export
 import mido   # for MIDI file manipulation
-import os     # for file manipulation
 import re
 import time
 
@@ -414,7 +413,7 @@ class Score(widget.Widget) :
 
     stopTime = time.time()
     print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
-    print(f"[INFO] {noteCount} notes read from .pr file.")
+    print(f"[INFO] {noteCount} notes read from .gq file.")
     print(f"[INFO] Score length: {self.scoreLength} steps")
     
     print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")

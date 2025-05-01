@@ -20,6 +20,9 @@ from src.commons import *
 import src.widgets.widget as widget
 
 
+import pygame
+
+
 
 # =============================================================================
 # Constants pool
@@ -36,7 +39,7 @@ class Sequencer(widget.Widget) :
   """
   TODO: description
 
-  
+  - controls the position in the score
   - manages the loops 
   - reads arbiter decision
   - automatic play 
@@ -49,8 +52,120 @@ class Sequencer(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
 
-    # Define the events the widgets must react to
-    self.uiSensivityList = []
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Sequencer.uiEvent()
+  # ---------------------------------------------------------------------------
+  def uiEvent(self, pygameEvent) -> None :
+    """
+    This function is called by the top level and passes all the keyboard/mouse
+    interactions to the widget.
+    """
+    
+    # # Get the modifier state
+    # mods = pygame.key.get_mods()
+
+    # # Check ONLY Ctrl is held (LEFT or RIGHT Ctrl)
+    # if mods & KMOD_CTRL and not (mods & (KMOD_ALT | KMOD_SHIFT | KMOD_META)):
+
+    # Keyboard events
+    if (pygameEvent.type in (pygame.KEYUP, pygame.KEYDOWN)) :
+      keys    = pygame.key.get_pressed()
+      ctrlKey   = pygameEvent.mod & pygame.KMOD_CTRL
+      altKey    = pygameEvent.mod & pygame.KMOD_ALT
+      shiftKey  = pygameEvent.mod & pygame.KMOD_SHIFT
+      altGrKey  = pygameEvent.mod & pygame.KMOD_META
+      
+      # Simple keypresses
+      if not(ctrlKey | shiftKey | altKey | altGrKey) :
+
+        # LEFT: jump backward (1 step)
+        if keys[pygame.K_LEFT] :
+          self.top.widgets[WIDGET_ID_SCORE].cursorStep(-1)
+
+        # RIGHT: jump forward (1 step)
+        elif keys[pygame.K_RIGHT] :
+          self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
+
+        # HOME: jump to the beginning of the score
+        if (keys[pygame.K_HOME]) :
+          self.top.widgets[WIDGET_ID_SCORE].cursorBegin()
+
+        # END: jump to the end of the score
+        if (keys[pygame.K_END]) :
+          self.top.widgets[WIDGET_ID_SCORE].cursorEnd()
+
+        # DOWN: jump to the previous bookmark
+        if (keys[pygame.K_DOWN]) :
+          self.top.widgets[WIDGET_ID_SCORE].gotoPreviousBookmark()
+
+        # UP: jump to the next bookmark
+        if (keys[pygame.K_UP]) :
+          self.top.widgets[WIDGET_ID_SCORE].gotoNextBookmark()
+
+
+#         # -----------------------------------------
+#         # CTRL + Left arrow: fast rewind (10 steps)
+#         # -----------------------------------------
+#         if (keys[pygame.K_LEFT] and ctrlKey) :
+#           userScore.cursorStep(-10)
+
+#         # -------------------------------------------
+#         # CTRL + right arrow: fast forward (10 steps)
+#         # -------------------------------------------
+#         if (keys[pygame.K_RIGHT] and ctrlKey) :
+#           userScore.cursorStep(10)
+
+
+
+
+
+
+
+
+
+
+#  elif (event.type == pygame.MOUSEBUTTONDOWN) :
+        
+#         pianoRollWidget.mouseEvent(event)
+
+#         # Left click
+#         if (event.button == MOUSE_LEFT_CLICK) :
+#           clickMsg = True
+#           clickCoord = pygame.mouse.get_pos()
+        
+#         # Scroll up
+#         if (event.button == MOUSE_SCROLL_UP) :
+          
+#           # Find feature: go to the next cursor whose active notes match 
+#           # the current notes being pressed.
+#           # Note : use a copy of the MIDI notes list to prevent the 
+#           #        MIDI callback to mess with the function.
+#           if (pianoArbiter.hasActiveMidiInput()) :
+#             print("[INFO] Backward search requested...")
+#             (suspendReq, pitchListHold) = userScore.search(pianoArbiter.midiCurr.copy())
+#             if suspendReq :
+#               pianoArbiter.suspendReq(pitchListHold)
+
+#           elif ctrlKey :
+#             userScore.cursorStep(10)
+#           else :
+#             userScore.cursorStep(1)
+
+#         # Scroll down
+#         if (event.button == MOUSE_SCROLL_DOWN) :
+          
+#           # Find feature
+
+
+
+
+
+
+
+
+
 
 
 
@@ -59,5 +174,5 @@ class Sequencer(widget.Widget) :
 # Unit tests
 # =============================================================================
 if (__name__ == "__main__") :
-  print("[INFO] There are no unit tests available for 'score.py'")
+  print("[INFO] There are no unit tests available for 'sequencer.py'")
 

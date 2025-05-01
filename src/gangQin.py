@@ -28,6 +28,7 @@ import src.widgets.notify as notify
 import src.widgets.pianoRoll as pianoRoll
 import src.widgets.trackSelectionGUI as trackSelectionGUI
 import src.widgets.staffScope as staffScope
+import src.widgets.sequencer as sequencer
 
 # Utilities
 import arbiter
@@ -49,11 +50,7 @@ import os
 # =============================================================================
 # CONSTANTS
 # =============================================================================
-SCORE_WIDGET_ID = 0
-KEYBOARD_WIDGET_ID = 1
-PIANOROLL_WIDGET_ID = 2
-STAFFSCOPE_WIDGET_ID = 3
-FINGERSELECTOR_WIDGET_ID = 3
+
 
 
 
@@ -87,18 +84,20 @@ class GangQin :
     self.clock = pygame.time.Clock()
     pygame.key.set_repeat(250, 50)    # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
     self._backgroundInit()
+    self.running = False
 
     # Initialise the widgets
     self.widgets = {
-      SCORE_WIDGET_ID : score.Score(self),
-      KEYBOARD_WIDGET_ID: keyboard.Keyboard(self, loc = (10, 300)),
-      #PIANOROLL_WIDGET_ID: pianoRoll.PianoRoll(self, loc = (10, 50)),
-      STAFFSCOPE_WIDGET_ID: staffScope.StaffScope(self)
+      WIDGET_ID_SCORE : score.Score(self),
+      WIDGET_ID_KEYBOARD: keyboard.Keyboard(self, loc = (10, 300)),
+      #WIDGET_ID_PIANOROLL: pianoRoll.PianoRoll(self, loc = (10, 50)),
+      WIDGET_ID_STAFFSCOPE: staffScope.StaffScope(self),
       #fingerSelector.FingerSelector(self),
       #metronome.Metronome(self),
       #arbiter.Arbiter(self),
       #stats.Stats(self),
       #notify.Notify(self)
+      WIDGET_ID_SEQUENCER: sequencer.Sequencer(self)
     }
     
 
@@ -124,11 +123,22 @@ class GangQin :
       trackSel = trackSelectionGUI.new()
       trackSel.load(songFile)
       midiTracks = trackSel.show()
-      self.widgets[SCORE_WIDGET_ID].loadMIDIFile(songFile, midiTracks)
+      self.widgets[WIDGET_ID_SCORE].loadMIDIFile(songFile, midiTracks)
     else :
       self.songType = "gq"
-      self.widgets[SCORE_WIDGET_ID].loadGQFile(songFile)
-      self.widgets[STAFFSCOPE_WIDGET_ID].load(songFile)
+      self.widgets[WIDGET_ID_SCORE].loadGQFile(songFile)
+      self.widgets[WIDGET_ID_STAFFSCOPE].load(songFile)
+
+    # Initialise the MIDI keyboard interface
+    if (selectedDevice != "None") :
+      try :
+        midiPort = mido.open_input(selectedDevice, callback = self._midiCallback)
+      except Exception as err :
+        print("[WARNING] Failed to open the MIDI device (it is used by another software?): running in navigation mode.")
+        midiPort = None  
+    else :
+      print("[NOTE] No MIDI interface selected: running in navigation mode.")
+      midiPort = None
 
     # Update the app properties
     (rootDir, rootNameExt) = os.path.split(songFile)
@@ -140,14 +150,18 @@ class GangQin :
     pygame.display.set_caption(f"gangQin player - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {self.songName}")
 
 
+
   # ---------------------------------------------------------------------------
   # METHOD: GangQin.run()
   # ---------------------------------------------------------------------------
   def run(self) :
     
+    # Start app
+    self.appRunning = True
+
     # Main execution loop.
     # Loop exits when the application is done
-    while True :
+    while self.appRunning :
       
       # Fill background screen
       self.screen.blit(self.background, (0, 0))
@@ -156,10 +170,10 @@ class GangQin :
         if (event.type == pygame.QUIT) :
           running = False
 
-      # Dispatch keyboard/click messages
-      for widget in self.widgets.values() :
-        if (event.type in widget.uiSensivityList) :
-          widget.uiEvent(event)
+        # Pass keyboard/click messages to the widgets
+        if event.type in (pygame.KEYUP, pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN) :
+          for widget in self.widgets.values() :
+            widget.uiEvent(event)
 
       # Render widgets
       for widget in self.widgets.values() :
@@ -175,6 +189,21 @@ class GangQin :
 
   # Quit Pygame
   pygame.quit()
+
+
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: GangQin._midiCallback()
+  # ---------------------------------------------------------------------------
+  def _midiCallback(self, midiMessage) :
+    self.widgets[WIDGET_ID_ARBITER].updateMidiState(midiMessage)
+    self.widgets[WIDGET_ID_STATS].userActivity()
+
+
+
 
 
 
@@ -211,6 +240,11 @@ class GangQin :
     for x in range(0, GUI_SCREEN_WIDTH, patternSurface.get_width()):
       for y in range(0, GUI_SCREEN_HEIGHT, patternSurface.get_height()):
         self.background.blit(patternSurface, (x, y))
+
+
+
+
+
 
 
 
@@ -363,29 +397,9 @@ if False :
           print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
           # fingerSelWidget.keyPress(keys)
 
-        # ---------------------------------------
-        # HOME: jump to the beginning of the file
-        # ---------------------------------------
-        if (keys[pygame.K_HOME]) :
-          userScore.cursorBegin()
 
-        # --------------------------------
-        # END: jump to the end of the file
-        # --------------------------------
-        if (keys[pygame.K_END]) :
-          userScore.cursorEnd()
 
-        # -----------------------------------
-        # Down: jump to the previous bookmark
-        # -----------------------------------
-        if (keys[pygame.K_DOWN]) :
-          userScore.gotoPreviousBookmark()
 
-        # -----------------------------
-        # Up: jump to the next bookmark
-        # -----------------------------
-        if (keys[pygame.K_UP]) :
-          userScore.gotoNextBookmark()
 
         # -------------------------------
         # F2: increase lookAhead distance

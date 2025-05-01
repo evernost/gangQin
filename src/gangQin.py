@@ -86,6 +86,9 @@ class GangQin :
     self._backgroundInit()
     self.running = False
 
+    # TODO: limit the keyevents to avoid unncessary processing
+    #pygame.event.set_allowed([pygame.KEYDOWN, pygame.KEYUP, pygame.QUIT])
+
     # Initialise the widgets
     self.widgets = {
       WIDGET_ID_SCORE : score.Score(self),

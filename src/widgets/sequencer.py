@@ -54,64 +54,77 @@ class Sequencer(widget.Widget) :
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD: Sequencer.uiEvent()
-  # ---------------------------------------------------------------------------
-  def uiEvent(self, pygameEvent) -> None :
+  # # ---------------------------------------------------------------------------
+  # # METHOD: Sequencer.uiEvent()
+  # # ---------------------------------------------------------------------------
+  # def uiEvent(self, pygameEvent) -> None :
+  #   """
+  #   This function is called by the top level and passes all the keyboard/mouse
+  #   interactions to the widget.
+  #   """
+    
+  #   # Keyboard events
+  #   if (pygameEvent.type in (pygame.KEYUP, pygame.KEYDOWN)) :
+  #     keys    = pygame.key.get_pressed()
+  #     ctrlKey   = pygameEvent.mod & pygame.KMOD_CTRL
+  #     altKey    = pygameEvent.mod & pygame.KMOD_ALT
+  #     shiftKey  = pygameEvent.mod & pygame.KMOD_SHIFT
+  #     altGrKey  = pygameEvent.mod & pygame.KMOD_META
+      
+  #     # Simple keypresses (no modifiers)
+  #     if not(ctrlKey | shiftKey | altKey | altGrKey) :
+
+
+
+
+
+
+  def _onKeyEvent(self, key, type, modifier = "") :
     """
-    This function is called by the top level and passes all the keyboard/mouse
-    interactions to the widget.
+    Function is triggered by a keypress.
+    Override this function with your own handlers.
     """
     
-    # Keyboard events
-    if (pygameEvent.type in (pygame.KEYUP, pygame.KEYDOWN)) :
-      keys    = pygame.key.get_pressed()
-      ctrlKey   = pygameEvent.mod & pygame.KMOD_CTRL
-      altKey    = pygameEvent.mod & pygame.KMOD_ALT
-      shiftKey  = pygameEvent.mod & pygame.KMOD_SHIFT
-      altGrKey  = pygameEvent.mod & pygame.KMOD_META
+    if (type == pygame.KEYDOWN) :
       
       # Simple keypresses (no modifiers)
-      if not(ctrlKey | shiftKey | altKey | altGrKey) :
-
+      if (modifier == "") :
         # LEFT: jump backward (1 step)
-        if keys[pygame.K_LEFT] :
+        if (key == pygame.K_LEFT) :
           self.top.widgets[WIDGET_ID_SCORE].cursorStep(-1)
 
         # RIGHT: jump forward (1 step)
-        elif keys[pygame.K_RIGHT] :
+        elif (key == pygame.K_RIGHT) :
           self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
 
         # HOME: jump to the beginning of the score
-        if (keys[pygame.K_HOME]) :
+        elif (key == pygame.K_HOME) :
           self.top.widgets[WIDGET_ID_SCORE].cursorBegin()
 
         # END: jump to the end of the score
-        if (keys[pygame.K_END]) :
+        elif (key == pygame.K_END) :
           self.top.widgets[WIDGET_ID_SCORE].cursorEnd()
 
         # DOWN: jump to the previous bookmark
-        if (keys[pygame.K_DOWN]) :
+        elif (key == pygame.K_DOWN) :
           self.top.widgets[WIDGET_ID_SCORE].gotoPreviousBookmark()
 
         # UP: jump to the next bookmark
-        if (keys[pygame.K_UP]) :
+        elif (key == pygame.K_UP) :
           self.top.widgets[WIDGET_ID_SCORE].gotoNextBookmark()
 
+
+
       # Ctrl-modified keypress
-      elif (ctrlKey and not(shiftKey | altKey | altGrKey)) :
+      elif (modifier == "ctrl")  :
 
         # CTRL + LEFT: fast rewind (10 steps)
-        if keys[pygame.K_LEFT] :
+        if (key == pygame.K_LEFT) :
           self.top.widgets[WIDGET_ID_SCORE].cursorStep(-10)
 
         # CTRL + LEFT: fast forward (10 steps)
-        elif keys[pygame.K_RIGHT] :
+        elif (key == pygame.K_RIGHT) :
           self.top.widgets[WIDGET_ID_SCORE].cursorStep(10)
-
-
-
-
 
 
 
@@ -146,14 +159,6 @@ class Sequencer(widget.Widget) :
 #         if (event.button == MOUSE_SCROLL_DOWN) :
           
 #           # Find feature
-
-
-
-
-
-
-
-
 
 
 

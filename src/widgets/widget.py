@@ -65,31 +65,31 @@ class Widget :
     
     # KEYBOARD EVENTS
     if (pygameEvent.type in (pygame.KEYUP, pygame.KEYDOWN)) :
-      keys      = pygame.key.get_pressed()
       ctrlKey   = pygameEvent.mod & pygame.KMOD_CTRL
       altKey    = pygameEvent.mod & pygame.KMOD_ALT
       shiftKey  = pygameEvent.mod & pygame.KMOD_SHIFT
       altGrKey  = pygameEvent.mod & pygame.KMOD_META
+      key       = pygameEvent.key
       
       # Simple keypresses (no modifiers)
       if not(ctrlKey | shiftKey | altKey | altGrKey) :
-        pass
+        self._onKeyEvent(key, pygameEvent.type)
 
       # Ctrl-modified keypress
       elif (ctrlKey and not(shiftKey | altKey | altGrKey)) :
-        pass
+        self._onKeyEvent(key, pygameEvent.type, modifier = "ctrl")
 
       # Shift-modified keypress
       elif (shiftKey and not(ctrlKey | altKey | altGrKey)) :
-        pass
+        self._onKeyEvent(key, pygameEvent.type, modifier = "shift")
 
       # Alt-modified keypress
       elif (altKey and not(ctrlKey | shiftKey | altGrKey)) :
-        pass
+        self._onKeyEvent(key, pygameEvent.type, modifier = "alt")
 
       # AltGr-modified keypress
       elif (altGrKey and not(ctrlKey | shiftKey | altKey)) :
-        pass
+        self._onKeyEvent(key, pygameEvent.type, modifier = "altgr")
 
 
 
@@ -112,16 +112,32 @@ class Widget :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: Widget.render()
+  # METHOD: Widget.render() [ABSTRACT]
   # ---------------------------------------------------------------------------
   def render(self) :
     """
     Renders the widget on screen.
     This function is called at every frame of the top level application.
+
+    This function must be overriden with the specific code of the widget.
     """
     
     pass
     
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD: Widget._onKeyEvent()
+  # ---------------------------------------------------------------------------
+  def _onKeyEvent(self, key, type, modifier = "") :
+    """
+    Function is triggered by a keypress.
+    
+    This function must be overriden with the specific code of the widget.
+    """
+    
+    # SAMPLE CODE
+    if (type == pygame.KEYDOWN) :
+      if (key == pygame.K_q) :
+        print(f"'Q' was pressed!")
 

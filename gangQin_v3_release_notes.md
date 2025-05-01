@@ -12,10 +12,12 @@ gangQin Player:
 - [X] track selection for MIDI file now fully integrated
 - [X] new backgrounds available
 - [X] constants centralised and reorganised in 'commons.py'
+- [ ] perspective view in the pianoroll
 - [ ] added more shortcuts for the finger selector
 - [ ] new keyboard style
 - [ ] hand selector is clearer (pressing 'L' or 'R' was not very clear)
 - [ ] auto-backup of any existing .gq upon new generation from .mid
+- [ ] more robust single hand practice
 
 
 gangQin Fusion:

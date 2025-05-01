@@ -86,8 +86,12 @@ class TrackSelectionGUI :
       
       # Read and limit the name of the track
       trackName = track.name.split("\x00")[0]
-      if (len(trackName) > MAX_TRACK_NAME_LENGTH) :
-        trackName = trackName[0:(MAX_TRACK_NAME_LENGTH-3)] + "..."
+      if (len(trackName) == 0) :
+        trackName = "*NO NAME*"
+      elif (len(trackName) > MAX_TRACK_NAME_LENGTH) :
+        trackName = "'" + trackName[0:(MAX_TRACK_NAME_LENGTH-3)] + "...'"
+      else :
+        trackName = "'" + trackName + "'"
 
       # Count the notes in the track
       noteCount = 0

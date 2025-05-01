@@ -109,27 +109,16 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.load() [DEPRECATED]
-  # ---------------------------------------------------------------------------
-  #def load(self, inputFile: str, midiTracks = {}) -> None :
-
-    #self.hasUnsavedChanges = False
-    
-
-
-  # ---------------------------------------------------------------------------
   # METHOD Score.loadMIDIFile()
   # ---------------------------------------------------------------------------
   def loadMIDIFile(self, midiFile: str, midiTracks: list[str]) -> None :
     """
     Loads and initialises the Score object from a MIDI file.
-
-    NOTE: this function is usually called from 'load()' and you should not
-    need to call it by yourself.
     """
     
+    print("[INFO] Processing MIDI file... ")
+    
     # For statistics
-    print("[INFO] Processing .mid file... ")
     startTime = time.time()
 
     # Open MIDI file
@@ -273,14 +262,11 @@ class Score(widget.Widget) :
     
     self.scoreLength = len(self.noteOnTimecodes["LR"])
     self.cursorMax = self.scoreLength-1
-        
-    # DEBUG
-    print(f"- Score length: {self.scoreLength} steps")
+    
+    print(f"- score length: {self.scoreLength} steps")
 
     stopTime = time.time()
     print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
-    
-
     
 
 
@@ -379,7 +365,7 @@ class Score(widget.Widget) :
         # Detect manual editions
         noteNameExpected = note.getFriendlyName(noteObjImported["pitch"])
         noteNameActual   = noteObjImported["name"]
-        newColor = WHITE_KEY if ((noteObjImported["pitch"] % 12) in MIDI_CODE_WHITE_NOTES_MOD12) else BLACK_KEY
+        newColor = NOTE_WHITE_KEY if ((noteObjImported["pitch"] % 12) in MIDI_CODE_WHITE_NOTES_MOD12) else NOTE_BLACK_KEY
         if (noteNameExpected != noteNameActual) :
           print(f"[INFO] Note ID {noteObj.id}: manual edition detected.")
           print(f"Following fields will be replaced:")
@@ -399,9 +385,9 @@ class Score(widget.Widget) :
 
         self.pianoRoll[noteObjImported["hand"]][noteObjImported["pitch"]].append(noteObj)
         
-        if (noteObjImported["hand"] == LEFT_HAND) :
+        if (noteObjImported["hand"] == NOTE_LEFT_HAND) :
           self.noteOnTimecodes["L"].append(noteObj.startTime)
-        elif (noteObjImported["hand"] == RIGHT_HAND) :
+        elif (noteObjImported["hand"] == NOTE_RIGHT_HAND) :
           self.noteOnTimecodes["R"].append(noteObj.startTime)
 
         self.noteOnTimecodes["LR_full"].append(noteObj.startTime)
@@ -845,7 +831,7 @@ class Score(widget.Widget) :
     
     prevCursor = self.getCursor()
 
-    if (hand == LEFT_HAND) :
+    if (hand == NOTE_LEFT_HAND) :
       
       # TODO: guards needed here. There are case where the sets can be void.
       if (direction > 0) : 
@@ -866,7 +852,7 @@ class Score(widget.Widget) :
         self.cursor = self.cursorsLeft[minIndex]
 
 
-    if (hand == RIGHT_HAND) :
+    if (hand == NOTE_RIGHT_HAND) :
     
       if (direction > 0) : 
         subList = [x >= self.cursor for x in self.cursorsRight]
@@ -1149,11 +1135,11 @@ class Score(widget.Widget) :
             # SINGLE HAND PRACTICE
             # Adds the notes of the inactive hand to the list.
             # Sets their "inactive" property to "True" so that it is displayed with the appropriate color.
-            if ((self.activeHands == ACTIVE_HANDS_LEFT) and (staffIndex == RIGHT_HAND)) :
+            if ((self.activeHands == ACTIVE_HANDS_LEFT) and (staffIndex == NOTE_RIGHT_HAND)) :
               noteObj.inactive = True
               self.teacherNotes.append(noteObj)
 
-            elif ((self.activeHands == ACTIVE_HANDS_RIGHT) and (staffIndex == LEFT_HAND)) :
+            elif ((self.activeHands == ACTIVE_HANDS_RIGHT) and (staffIndex == NOTE_LEFT_HAND)) :
               noteObj.inactive = True
               self.teacherNotes.append(noteObj)
 
@@ -1345,7 +1331,7 @@ class Score(widget.Widget) :
 
     if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_RIGHT)) :
       self.activeHands = ACTIVE_HANDS_LEFT
-      self.cursorAlignToActiveHand(LEFT_HAND)
+      self.cursorAlignToActiveHand(NOTE_LEFT_HAND)
     
     else :
       self.activeHands = ACTIVE_HANDS_BOTH
@@ -1364,7 +1350,7 @@ class Score(widget.Widget) :
       
     if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_LEFT)) :
       self.activeHands = ACTIVE_HANDS_RIGHT
-      self.cursorAlignToActiveHand(RIGHT_HAND)
+      self.cursorAlignToActiveHand(NOTE_RIGHT_HAND)
     
     else :
       self.activeHands = ACTIVE_HANDS_BOTH
@@ -1390,9 +1376,9 @@ class Score(widget.Widget) :
     Among others, the list of cursors must be edited too.
     """
     
-    if (noteObj.hand == LEFT_HAND) :
+    if (noteObj.hand == NOTE_LEFT_HAND) :
       
-      noteObj.hand = RIGHT_HAND
+      noteObj.hand = NOTE_RIGHT_HAND
 
       if (noteObj.startTime in self.noteOnTimecodes["L"]) :
         
@@ -1409,9 +1395,9 @@ class Score(widget.Widget) :
         print("The timecode of the note you are trying to remove is not in the list of timecodes!")
         exit()
 
-    elif (noteObj.hand == RIGHT_HAND) :
+    elif (noteObj.hand == NOTE_RIGHT_HAND) :
       
-      noteObj.hand = LEFT_HAND
+      noteObj.hand = NOTE_LEFT_HAND
 
       if (noteObj.startTime in self.noteOnTimecodes["R"]) :
         

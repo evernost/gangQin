@@ -274,7 +274,7 @@ class Keyboard(widget.Widget) :
     # Draw keys from MIDI code 21 (A0) to MIDI code 108 (C8) i.e. notes of a grand piano.
     
     if False :
-      for i in GRAND_PIANO_MIDI_RANGE :
+      for i in MIDI_CODE_GRAND_PIANO_RANGE :
         if ((i % 12) in BLACK_NOTES_CODE_MOD12) :
           if ((i % 12) in self.activeKey) :
             pygame.draw.polygon(self.top.screen, self.blackNoteRGB, self.polygons[i])
@@ -288,7 +288,7 @@ class Keyboard(widget.Widget) :
     
     
     else :
-      for i in GRAND_PIANO_MIDI_RANGE :
+      for i in MIDI_CODE_GRAND_PIANO_RANGE :
         if ((i % 12) in [1, 3, 6, 8, 10]) :
           pygame.draw.polygon(self.top.screen, self.blackNoteRGB, self.polygons[i])
         else :
@@ -349,15 +349,15 @@ class Keyboard(widget.Widget) :
         
         # One note is hit by one hand
         noteObj1 = subList[0][1]; noteObj2 = subList[1][1]
-        if ((noteObj1.hand != UNDEFINED_HAND) and (noteObj2.hand != UNDEFINED_HAND)) :
+        if ((noteObj1.hand != NOTE_UNDEFINED_HAND) and (noteObj2.hand != NOTE_UNDEFINED_HAND)) :
           if (noteObj1.hand != noteObj2.hand) :
           
             # White note highlighting
-            if ((noteObj1.pitch % 12) in WHITE_NOTES_CODE_MOD12) :
+            if ((noteObj1.pitch % 12) in MIDI_CODE_WHITE_NOTES_MOD12) :
               self._doubleHandWhiteKeyPress(screenInst, noteObj1)
 
             # Black note highlighting
-            if ((noteObj1.pitch % 12) in BLACK_NOTES_CODE_MOD12) :
+            if ((noteObj1.pitch % 12) in MIDI_CODE_BLACK_NOTES_MOD12) :
               self._doubleHandBlackKeyPress(screenInst, noteObj1)
 
             # These notes are now displayed, we can remove them from the list
@@ -384,18 +384,18 @@ class Keyboard(widget.Widget) :
     for noteObj in noteList :
 
       # White note highlighting
-      if (noteObj.keyColor == WHITE_KEY) :
+      if (noteObj.keyColor == NOTE_WHITE_KEY) :
         self._singleHandWhiteKeyPress(screenInst, noteObj)
 
       # Black note highlighting
-      if (noteObj.keyColor == BLACK_KEY) :
+      if (noteObj.keyColor == NOTE_BLACK_KEY) :
         self._singleHandBlackKeyPress(screenInst, noteObj)
       
       # ------------------------------
       # Note click detection materials
       # ------------------------------
       # Store the polygons associated to the "teacher notes"
-      if ((noteObj.hand == LEFT_HAND) or (noteObj.hand == RIGHT_HAND)) :
+      if ((noteObj.hand == NOTE_LEFT_HAND) or (noteObj.hand == NOTE_RIGHT_HAND)) :
         # This makes the hitbox for click on the lit part of the key only:
         #self.litKeysPolygons.append((sq, pitch))
 

@@ -37,7 +37,7 @@ import pygame
 class Sequencer(widget.Widget) :
 
   """
-  TODO: description
+  SEQUENCER object
 
   - controls the position in the score
   - manages the loops 
@@ -54,31 +54,9 @@ class Sequencer(widget.Widget) :
 
 
 
-  # # ---------------------------------------------------------------------------
-  # # METHOD: Sequencer.uiEvent()
-  # # ---------------------------------------------------------------------------
-  # def uiEvent(self, pygameEvent) -> None :
-  #   """
-  #   This function is called by the top level and passes all the keyboard/mouse
-  #   interactions to the widget.
-  #   """
-    
-  #   # Keyboard events
-  #   if (pygameEvent.type in (pygame.KEYUP, pygame.KEYDOWN)) :
-  #     keys    = pygame.key.get_pressed()
-  #     ctrlKey   = pygameEvent.mod & pygame.KMOD_CTRL
-  #     altKey    = pygameEvent.mod & pygame.KMOD_ALT
-  #     shiftKey  = pygameEvent.mod & pygame.KMOD_SHIFT
-  #     altGrKey  = pygameEvent.mod & pygame.KMOD_META
-      
-  #     # Simple keypresses (no modifiers)
-  #     if not(ctrlKey | shiftKey | altKey | altGrKey) :
-
-
-
-
-
-
+  # ---------------------------------------------------------------------------
+  # METHOD Sequencer._onKeyEvent()                                    [PRIVATE]
+  # ---------------------------------------------------------------------------
   def _onKeyEvent(self, key, type, modifier = "") :
     """
     Function is triggered by a keypress.
@@ -125,6 +103,35 @@ class Sequencer(widget.Widget) :
         # CTRL + LEFT: fast forward (10 steps)
         elif (key == pygame.K_RIGHT) :
           self.top.widgets[WIDGET_ID_SCORE].cursorStep(10)
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Widget._onMouseEvent()                                    [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _onMouseEvent(self, button, type) :
+    """
+    Function is triggered by a keypress.
+    
+    This function must be overriden with the specific code of the widget.
+    """
+    
+    # Read the keyboard state
+    keys = pygame.key.get_pressed()
+    ctrl = keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]
+
+    if (type == pygame.MOUSEBUTTONDOWN) :
+      if (button == MOUSE_SCROLL_UP) :
+        if ctrl :
+          self.top.widgets[WIDGET_ID_SCORE].cursorStep(10)
+        else :
+          self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
+
+      elif (button == MOUSE_SCROLL_DOWN) :
+        if ctrl :
+          self.top.widgets[WIDGET_ID_SCORE].cursorStep(-10)
+        else :
+          self.top.widgets[WIDGET_ID_SCORE].cursorStep(-1)
 
 
 

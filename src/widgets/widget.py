@@ -94,21 +94,9 @@ class Widget :
 
 
     # MOUSE EVENTS
-    elif (pygameEvent.type == pygame.MOUSEBUTTONDOWN) :
-        
-      # Left click
-      if (pygameEvent.button == MOUSE_LEFT_CLICK) :
-        pass
+    elif (pygameEvent.type in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP]) :
+      self._onMouseEvent(pygameEvent.button, pygameEvent.type)
       
-      # Scroll up
-      elif (pygameEvent.button == MOUSE_SCROLL_UP) :
-        pass
-
-      # Scroll down
-      elif (pygameEvent.button == MOUSE_SCROLL_DOWN) :
-        pass
-
-
 
 
   # ---------------------------------------------------------------------------
@@ -127,7 +115,7 @@ class Widget :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: Widget._onKeyEvent()
+  # METHOD: Widget._onKeyEvent()                                      [PRIVATE]
   # ---------------------------------------------------------------------------
   def _onKeyEvent(self, key, type, modifier = "") :
     """
@@ -139,5 +127,22 @@ class Widget :
     # SAMPLE CODE
     if (type == pygame.KEYDOWN) :
       if (key == pygame.K_q) :
-        print(f"'Q' was pressed!")
+        print("[DEBUG] Widget._onKeyEvent(): 'Q' was pressed!")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Widget._onMouseEvent()                                    [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _onMouseEvent(self, button, type) :
+    """
+    Function is triggered by a keypress.
+    
+    This function must be overriden with the specific code of the widget.
+    """
+    
+    # SAMPLE CODE
+    if (type == pygame.MOUSEBUTTONDOWN) :
+      if (button == MOUSE_SCROLL_UP) :
+        print("[DEBUG] Widget._onMouseEvent(): scroll up!")
 

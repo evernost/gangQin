@@ -43,6 +43,8 @@ import time
 class Score(widget.Widget) :
 
   """
+  SCORE object
+  
   The Score object is a custom representation of the song suited for the 
   gameplay. 
   

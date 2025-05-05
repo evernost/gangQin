@@ -153,7 +153,7 @@ class PianoRoll(widget.Widget) :
     # NOTE: some processing could be avoided here since the notes are sorted by startTime
     # Once the notes start way after the end of the window, why bother exploring the rest?
     for (staffIndex, _) in enumerate(self.noteArray) :
-      for pitch in GRAND_PIANO_MIDI_RANGE :
+      for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
         for note in self.noteArray[staffIndex][pitch] :
           
           # Shortcuts
@@ -190,10 +190,10 @@ class PianoRoll(widget.Widget) :
           ]
       
       # TODO: replace with a call to getNoteColor()
-      if (note.hand == LEFT_HAND) :
+      if (note.hand == NOTE_LEFT_HAND) :
         color = self.leftNoteOutlineRGB
       
-      if (note.hand == RIGHT_HAND) :
+      if (note.hand == NOTE_RIGHT_HAND) :
         color = self.rightNoteOutlineRGB
 
       (rectColor, rectOutlineColor, pianoRollColor) = note.getNoteColor()
@@ -205,9 +205,6 @@ class PianoRoll(widget.Widget) :
       pygame.draw.polygon(screenInst, rectColor, sq)
             
 
-
-
-    
 
   # ---------------------------------------------------------------------------
   # METHOD PianoRoll.loadPianoRoll(noteArray)

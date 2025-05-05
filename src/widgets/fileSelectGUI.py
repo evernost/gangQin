@@ -108,7 +108,7 @@ def show() :
   # ---------------------------------------------------------------------------
   # [GUI MANAGEMENT] Window centering
   # ---------------------------------------------------------------------------
-  def centerWindow(container):
+  def centerGUI(container):
     
     # Ensure widgets are updated before calculating size
     container.update_idletasks()
@@ -257,7 +257,7 @@ def show() :
   # Set the select button as the "default" button
   root.bind("<Return>", lambda event = None : buttonOK.invoke())
 
-  centerWindow(root)
+  centerGUI(root)
 
   root.mainloop()
   

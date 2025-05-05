@@ -74,42 +74,36 @@ class Score(widget.Widget) :
    
     # Pointer in the score
     self.cursor = 0
-    
-    # List of cursors with bookmark
-    self.bookmarks = []
-
-    # Various information about the score
-    self.scoreLength = 0
-    self.cursorMax = 0
-    
-    self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
-
-    self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
     self.cursorsLeft = []
     self.cursorsRight = []
+    self.bookmarks = []
+    self.cursorMax = 0
+    self.length = 0
 
+    # Internal representation
+    self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
+    self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
+
+    # Options for Score.getTeacherNotes()
+    self.lookAheadDistance = 0
     self.activeHands = "LR"
-    
-    self.teacherNotes = []
-    self.sustainedNotes = []
-
     self.cachedCursor = -1
     self.cachedTeacherNotes = []
-
-    self.lookAheadDistance = 0
-
-    self.weakArbitrationSections = []
-
+    
+    # Sections in the score
+    self.sectionLoop = []
+    self.sectionKey = []
+    self.sectionWeakArbitration = []
+    self.sectionTempo = []
+    
+    # Settings for the interaction with the cursor
+    self.loopStart = -1
+    self.loopEnd = -1
+    self.loopEnable = False
+    
     # Custom attributes (not organised yet)
     self.hasUnsavedChanges = False
     self.avgNoteDuration = 0
-
-    # NOT IMPLEMENTED: tempo sections
-    self.tempoReadFromScore = False
-    self.tempoSections = [(1, 120)]
-
-    # NOT IMPLEMENTED: key scales sections
-    self.keyList = []
 
 
 
@@ -265,10 +259,10 @@ class Score(widget.Widget) :
     # Estimate average note duration (needed for the pianoroll display)
     self.avgNoteDuration = noteDuration/noteCount
     
-    self.scoreLength = len(self.noteOnTimecodes["LR"])
-    self.cursorMax = self.scoreLength-1
+    self.length = len(self.noteOnTimecodes["LR"])
+    self.cursorMax = self.length-1
     
-    print(f"- score length: {self.scoreLength} steps")
+    print(f"- score length: {self.length} steps")
 
     stopTime = time.time()
     print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
@@ -297,15 +291,11 @@ class Score(widget.Widget) :
       importDict = json.load(fileHandler)
 
     # Read the revision
-    versionMatch = re.match(r"^v(\d+)\.(\d+)$", importDict["revision"])
-    if versionMatch :
-      (majorRev, minorRev) = (int(versionMatch.group(1)), int(versionMatch.group(2)))
-
-    else :
-      # At that point, the rest of the parsing might fail.
-      print(f"[WARNING] No version could be read from the .pr file. Either it is corrupted or too old and this version does not speak Dinosaur anymore.")
+    rev = importDict["revision"][1:].split(".")
+    revMajor = int(rev[0])
+    revMinor = int(rev[1])
     
-    # Default dictionary, in case some fields do not exist.
+    # Fallback dictionary in case some fields do not exist.
     safeDict = {
       "revision"                  : "v0.0",
       "nStaffs"                   : 2,
@@ -324,8 +314,7 @@ class Score(widget.Widget) :
       if currKey in importDict :
         safeDict[currKey] = importDict[currKey]
 
-    # Initialize the object  
-    self.nStaffs                  = safeDict["nStaffs"]
+    # Initialize the object
     self.avgNoteDuration          = safeDict["avgNoteDuration"]
     self.cursor                   = safeDict["cursor"]
     self.bookmarks                = safeDict["bookmarks"]
@@ -334,7 +323,7 @@ class Score(widget.Widget) :
     # -----------------------------
     # Pianoroll import - v0.X style
     # -----------------------------
-    if (majorRev == 0) :
+    if (revMajor == 0) :
       print("[INFO] Importing dinosaur .pr file (versions v0.X) has been deprecated since gangQin v1.6")
       exit()
       
@@ -414,13 +403,13 @@ class Score(widget.Widget) :
     # either on the left (cursorsLeft) or right hand (cursorsRight)
     self._buildCursorsLR()
 
-    self.scoreLength = len(self.noteOnTimecodes["LR"])
-    self.cursorMax = self.scoreLength-1
+    self.length = len(self.noteOnTimecodes["LR"])
+    self.cursorMax = self.length-1
 
     stopTime = time.time()
     print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
     print(f"[INFO] {noteCount} notes read from .gq file.")
-    print(f"[INFO] Score length: {self.scoreLength} steps")
+    print(f"[INFO] Score length: {self.length} steps")
     
     print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")
 
@@ -507,113 +496,18 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.getCursorsLeftPointer()
+  # METHOD Score.cursorGoto()
   # ---------------------------------------------------------------------------
-  def getCursorsLeftPointer(self, cursor, force = False) :
+  def cursorGoto(self, value, ignoreActiveHand = False) :
     """
-    Returns the value 'p' such that cursorsLeft[p] is equal to the query 
-    value 'cursor'.
-
-    If no such value exists, the function returns:
-    - -1 when 'force' is False (default)
-    - 'p' such that cursorsLeft[p] is the closest possible to 'cursor' otherwise.
-      In that case, cursorsLeft[p] can be either before or after 'cursor'.
-    """
+    Sets the cursor to a specific value.
     
-    if (cursor in self.cursorsLeft) :
-      index = self.cursorsLeft.index(cursor)
-      return index
-
-    else :
-      if force :
-        minDist = abs(cursor - self.cursorsLeft[0]); minIndex = 0
-        for (idx, cursorLeft) in enumerate(self.cursorsLeft) :
-          if (abs(cursor - cursorLeft) < minDist) :
-            minDist = abs(cursor - cursorLeft)
-            minIndex = idx
-
-        print(f"[DEBUG] Requested cursor: {cursor}, closest: {minIndex}")
-        return minIndex
-
-      else :
-        return -1
-    
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.getCursorsRightPointer()
-  # ---------------------------------------------------------------------------
-  def getCursorsRightPointer(self, cursor, force = False) :
-    """
-    Returns the value 'p' such that cursorsRight[p] is equal to the query value
-    'cursor'.
-
-    If no such value exists, the function returns:
-    - -1 when <force> is False (default)
-    - 'p' such that cursorsRight[p] is the closest possible to 'cursor' otherwise.
-       In that case, cursorsRight[p] can be either before or after 'cursor'.
-    """
-    
-    if (cursor in self.cursorsRight) :
-      index = self.cursorsRight.index(cursor)
-      return index
-
-    else :
-      if force :
-        minDist = abs(cursor - self.cursorsRight[0]); minIndex = 0
-        for (idx, cursorLeft) in enumerate(self.cursorsRight) :
-          if (abs(cursor - cursorLeft) < minDist) :
-            minDist = abs(cursor - cursorLeft)
-            minIndex = idx
-
-        print(f"[DEBUG] Requested cursor: {cursor}, closest: {minIndex}")
-        return minIndex
-
-      else :
-        return -1
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score._buildCursorsLR()                                    [PRIVATE]
-  # ---------------------------------------------------------------------------
-  def _buildCursorsLR(self) :
-    """
-    Populates the fields 'cursorsLeft' and 'cursorsRight' from the list of
-    'note ON' timecodes ('noteOnTimeCodes' dictionary).
-    This method is typically called after loading the .pr file.
-    """
-    
-    self.cursorsLeft = []; self.cursorsRight = []
-
-    for (index, timecode) in enumerate(self.noteOnTimecodes["LR"]) :
-      unaffected = True
-      if (timecode in self.noteOnTimecodes["L"]) :
-        self.cursorsLeft.append(index)
-        unaffected = False
-
-      if (timecode in self.noteOnTimecodes["R"]) :
-        self.cursorsRight.append(index)
-        unaffected = False
-      
-      if unaffected :
-        print("[INTERNAL ERROR] Score._buildCursorsLR: something odd happened!")
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.setCursor()
-  # ---------------------------------------------------------------------------
-  def setCursor(self, value, ignoreActiveHand = False) :
-    """
-    Sets the cursor to the given value.
-    
-    The function is protected so that:
+    The cursor assignment is protected so that:
     - values outside the score's range are clamped
     - values not aligned with the active hand are adjusted
 
     Setting the cursor must be done with this function exclusively.
-    Manually setting the <cursor> attribute might cause crashes.
+    Manually setting 'Score.cursor' is discouraged and might cause crashes.
     """
 
     if (value < 0) :
@@ -632,39 +526,25 @@ class Score(widget.Widget) :
       if ignoreActiveHand :
         self.cursor = valueClamped
       else: 
-        p = self.getCursorsLeftPointer(valueClamped, force = True)
+        p = self._getCursorsLeftPointer(valueClamped, force = True)
         self.cursor = self.cursorsLeft[p]
 
     elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
       if ignoreActiveHand :
         self.cursor = valueClamped
       else: 
-        p = self.getCursorsRightPointer(valueClamped, force = True)
+        p = self._getCursorsRightPointer(valueClamped, force = True)
         self.cursor = self.cursorsRight[p]
 
     else :
-      print("[INTERNAL ERROR] Score.setCursor: unknown active hand specification!")
+      print("[INTERNAL ERROR] Score.cursorGoto: unknown active hand specification!")
 
     
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.getCurrentTimecode()
-  # ---------------------------------------------------------------------------
-  def getCurrentTimecode(self) :
-    """
-    Returns the MIDI timecode of the current location in the score.
-    """
-    
-    # TODO: incorrect for single hand practice mode
-    return self.noteOnTimecodes["LR"][self.cursor]
-
-
 
   # ---------------------------------------------------------------------------
   # METHOD Score.cursorBegin()
   # ---------------------------------------------------------------------------
-  def cursorBegin(self) :
+  def cursorBegin(self) -> None :
     """
     Sets the cursor to the beginning of the score.
 
@@ -673,17 +553,17 @@ class Score(widget.Widget) :
 
     # If the loop mode is enabled: go back to the beginning of the loop
     if (self.loopEnable and (self.cursor >= self.loopStart)) :
-      self.setCursor(self.loopStart)
+      self.cursorGoto(self.loopStart)
     
     else :
-      self.setCursor(0)
+      self.cursorGoto(0)
 
 
 
   # ---------------------------------------------------------------------------
   # METHOD Score.cursorEnd()
   # ---------------------------------------------------------------------------
-  def cursorEnd(self) :
+  def cursorEnd(self) -> None :
     """
     Sets the cursor to the end of the score.
 
@@ -699,7 +579,7 @@ class Score(widget.Widget) :
     
     # Otherwise just set the cursor to the end
     else :
-      self.setCursor(self.cursorMax)
+      self.cursorGoto(self.cursorMax)
 
 
 
@@ -725,11 +605,11 @@ class Score(widget.Widget) :
 
       # BOTH HAND PRACTICE
       if (self.activeHands == ACTIVE_HANDS_BOTH) :
-        self.setCursor(self.getCursor() + delta)
+        self.cursorGoto(self.getCursor() + delta)
 
       # SINGLE HAND PRACTICE (LEFT)
       elif (self.activeHands == ACTIVE_HANDS_LEFT) :
-        index = self.getCursorsLeftPointer(self.getCursor())
+        index = self._getCursorsLeftPointer(self.getCursor())
         
         if (index == -1) :
           print("[INTERNAL ERROR] Left hand practice is active, but there is no event on the left hand at this cursor. Cannot browse from here!")
@@ -739,7 +619,7 @@ class Score(widget.Widget) :
 
       # SINGLE HAND PRACTICE (RIGHT)
       elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
-        index = self.getCursorsRightPointer(self.getCursor())
+        index = self._getCursorsRightPointer(self.getCursor())
 
         if (index == -1) :
           print("[INTERNAL ERROR] Right hand practice is active, but there is no event on the right hand at this cursor. Cannot browse from here!")
@@ -748,7 +628,7 @@ class Score(widget.Widget) :
           self.cursor = self.cursorsRight[index + delta]
 
       else :
-        print("[INTERNAL ERROR] Score.setCursor: unknown active hand specification!")
+        print("[INTERNAL ERROR] Score.cursorGoto: unknown active hand specification!")
 
 
 
@@ -756,11 +636,11 @@ class Score(widget.Widget) :
 
       # BOTH HAND PRACTICE
       if (self.activeHands == ACTIVE_HANDS_BOTH) :
-        self.setCursor(self.getCursor() + delta)
+        self.cursorGoto(self.getCursor() + delta)
 
       # SINGLE HAND PRACTICE (LEFT)
       elif (self.activeHands == ACTIVE_HANDS_LEFT) :
-        index = self.getCursorsLeftPointer(self.getCursor())
+        index = self._getCursorsLeftPointer(self.getCursor())
         
         if (index == -1) :
           print("[INTERNAL ERROR] Left hand practice is active, but there is no event on the left hand at this cursor. Cannot browse from here!")
@@ -770,7 +650,7 @@ class Score(widget.Widget) :
 
       # SINGLE HAND PRACTICE (RIGHT)
       elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
-        index = self.getCursorsRightPointer(self.getCursor())
+        index = self._getCursorsRightPointer(self.getCursor())
 
         if (index == -1) :
           print("[INTERNAL ERROR] Right hand practice is active, but there is no event on the right hand at this cursor. Cannot browse from here!")
@@ -827,6 +707,7 @@ class Score(widget.Widget) :
     If direction < 0, it looks for a compatible location before the current location.
     'compatible location' meaning 'location where a note of the active hand is played'.
     
+    The function does not change 'Score.activeHands' attribute.
     """
     
     prevCursor = self.getCursor()
@@ -881,17 +762,93 @@ class Score(widget.Widget) :
 
 
 
+
   # ---------------------------------------------------------------------------
-  # METHOD Score.setLoopStart()
+  # METHOD Score.cursorGotoNextBookmark()
   # ---------------------------------------------------------------------------
-  def setLoopStart(self) :
+  def cursorGotoNextBookmark(self) -> None :
+    """
+    Sets the cursor to the next closest bookmark.
+    Does nothing if there are no bookmarks.
+    """
+    
+    if (len(self.bookmarks) > 0) :
+      
+      # TODO: the set has to be restricted further in single hand practice
+      tmp = [x for x in self.bookmarks if (x > self.cursor)]
+      if (len(tmp) > 0) :
+        
+        if (self.activeHands == ACTIVE_HANDS_LEFT) :
+          self.cursorGoto(tmp[0], ignoreActiveHand = True)
+          if not(tmp[0] in self.cursorsLeft) :
+            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[0])} has nothing on the left hand.")
+        
+        elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
+          self.cursorGoto(tmp[0], ignoreActiveHand = True)
+          if not(tmp[0] in self.cursorsRight) :
+            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[0])} has nothing on the right hand.")
+        
+        else :
+          self.cursorGoto(tmp[0])
+      
+      
+      else :
+        print(f"[INFO] Last bookmark reached")
+    
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.cursorGotoPreviousBookmark()
+  # ---------------------------------------------------------------------------
+  def cursorGotoPreviousBookmark(self) :
+    """
+    Sets the cursor to the previous closest bookmark.
+    Does nothing if there are no bookmarks.
+    """
+
+    if (len(self.bookmarks) > 0) :
+      tmp = [x for x in self.bookmarks if (x < self.cursor)]
+      if (len(tmp) > 0) :
+
+        if (self.activeHands == ACTIVE_HANDS_LEFT) :
+          self.cursorGoto(tmp[-1], ignoreActiveHand = True)
+          if not(tmp[-1] in self.cursorsLeft) :
+            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[-1])} has nothing on the left hand.")
+        
+        elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
+          self.cursorGoto(tmp[-1], ignoreActiveHand = True)
+          if not(tmp[-1] in self.cursorsRight) :
+            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[-1])} has nothing on the right hand.")
+
+        else :
+          self.cursorGoto(tmp[-1])
+      
+      
+      else :
+        print(f"[INFO] First bookmark reached")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.cursorIsBookmarked()
+  # ---------------------------------------------------------------------------
+  def cursorIsBookmarked(self) :
+    """
+    Returns True if the current position in the score is bookmarked.
+    """
+    return (self.cursor in self.bookmarks)
+  
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.loopSetStart()
+  # ---------------------------------------------------------------------------
+  def loopSetStart(self) :
     """
     Sets the beginning of the loop at the current cursor.
     
     If the end of the loop is already defined, this function also enables
     the loop practice mode.
-
-    TODO: rename to "loopSetStart"
     """
     
     # Loop end is not yet defined
@@ -908,16 +865,14 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.setLoopEnd()
+  # METHOD Score.loopSetEnd()
   # ---------------------------------------------------------------------------
-  def setLoopEnd(self) :
+  def loopSetEnd(self) :
     """
     Sets the end of the loop at the current cursor.
     
     If the beginning of the loop is already defined, this function also enables
     the loop practice mode.
-
-    TODO: rename to "loopSetEnd"
     """
     
     # Loop start is not yet defined
@@ -935,11 +890,11 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.clearLoop()
+  # METHOD Score.loopClear()
   # ---------------------------------------------------------------------------
-  def clearLoop(self) :
+  def loopClear(self) :
     """
-    Clears the loop information, disables the loop practice mode.
+    Clears the loop specification, disables the loop practice mode.
     """
     self.loopStart = -1
     self.loopEnd = -1
@@ -949,9 +904,9 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.toggleBookmark()
+  # METHOD Score.bookmarkToggle()
   # ---------------------------------------------------------------------------
-  def toggleBookmark(self) :
+  def bookmarkToggle(self) :
     """
     Adds/removes a bookmark at the current cursor.
     """
@@ -971,82 +926,6 @@ class Score(widget.Widget) :
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD Score.gotoNextBookmark()
-  # ---------------------------------------------------------------------------
-  def gotoNextBookmark(self) :
-    """
-    Sets the cursor to the next closest bookmark.
-    Does nothing if there are no bookmarks.
-    """
-    
-    if (len(self.bookmarks) > 0) :
-      
-      # TODO: the set has to be restricted further in single hand practice
-      tmp = [x for x in self.bookmarks if (x > self.cursor)]
-      if (len(tmp) > 0) :
-        
-        if (self.activeHands == ACTIVE_HANDS_LEFT) :
-          self.setCursor(tmp[0], ignoreActiveHand = True)
-          if not(tmp[0] in self.cursorsLeft) :
-            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[0])} has nothing on the left hand.")
-        
-        elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
-          self.setCursor(tmp[0], ignoreActiveHand = True)
-          if not(tmp[0] in self.cursorsRight) :
-            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[0])} has nothing on the right hand.")
-        
-        else :
-          self.setCursor(tmp[0])
-      
-      
-      else :
-        print(f"[INFO] Last bookmark reached")
-    
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.gotoNextBookmark()
-  # ---------------------------------------------------------------------------
-  def gotoPreviousBookmark(self) :
-    """
-    Sets the cursor to the previous closest bookmark.
-    Does nothing if there are no bookmarks.
-    """
-
-    if (len(self.bookmarks) > 0) :
-      tmp = [x for x in self.bookmarks if (x < self.cursor)]
-      if (len(tmp) > 0) :
-
-        if (self.activeHands == ACTIVE_HANDS_LEFT) :
-          self.setCursor(tmp[-1], ignoreActiveHand = True)
-          if not(tmp[-1] in self.cursorsLeft) :
-            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[-1])} has nothing on the left hand.")
-        
-        elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
-          self.setCursor(tmp[-1], ignoreActiveHand = True)
-          if not(tmp[-1] in self.cursorsRight) :
-            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[-1])} has nothing on the right hand.")
-
-        else :
-          self.cursor = tmp[-1]
-      
-      
-      else :
-        print(f"[INFO] First bookmark reached")
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.isBookmarked()
-  # ---------------------------------------------------------------------------
-  def isBookmarked(self) :
-    """
-    Returns True if the current position in the score is bookmarked.
-    """
-    return (self.cursor in self.bookmarks)
-  
-
   
   # ---------------------------------------------------------------------------
   # METHOD Score.getBookmarkIndex()
@@ -1065,6 +944,123 @@ class Score(widget.Widget) :
     else :
       return -1
   
+
+
+
+
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score._getCursorsLeftPointer()                             [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _getCursorsLeftPointer(self, cursor, force = False) :
+    """
+    Returns the value 'p' such that cursorsLeft[p] is equal to the query 
+    value 'cursor'.
+
+    If no such value exists, the function returns:
+    - -1 when 'force' is False (default)
+    - 'p' such that cursorsLeft[p] is the closest possible to 'cursor' otherwise.
+      In that case, cursorsLeft[p] can be either before or after 'cursor'.
+
+    There is usually no need to call this function externally.
+    """
+    
+    if (cursor in self.cursorsLeft) :
+      index = self.cursorsLeft.index(cursor)
+      return index
+
+    else :
+      if force :
+        minDist = abs(cursor - self.cursorsLeft[0]); minIndex = 0
+        for (idx, cursorLeft) in enumerate(self.cursorsLeft) :
+          if (abs(cursor - cursorLeft) < minDist) :
+            minDist = abs(cursor - cursorLeft)
+            minIndex = idx
+
+        print(f"[DEBUG] Requested cursor: {cursor}, closest: {minIndex}")
+        return minIndex
+
+      else :
+        return -1
+    
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score._getCursorsRightPointer()                            [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _getCursorsRightPointer(self, cursor, force = False) :
+    """
+    Returns the value 'p' such that cursorsRight[p] is equal to the query value
+    'cursor'.
+
+    If no such value exists, the function returns:
+    - -1 when <force> is False (default)
+    - 'p' such that cursorsRight[p] is the closest possible to 'cursor' otherwise.
+       In that case, cursorsRight[p] can be either before or after 'cursor'.
+    """
+    
+    if (cursor in self.cursorsRight) :
+      index = self.cursorsRight.index(cursor)
+      return index
+
+    else :
+      if force :
+        minDist = abs(cursor - self.cursorsRight[0]); minIndex = 0
+        for (idx, cursorLeft) in enumerate(self.cursorsRight) :
+          if (abs(cursor - cursorLeft) < minDist) :
+            minDist = abs(cursor - cursorLeft)
+            minIndex = idx
+
+        print(f"[DEBUG] Requested cursor: {cursor}, closest: {minIndex}")
+        return minIndex
+
+      else :
+        return -1
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score._buildCursorsLR()                                    [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _buildCursorsLR(self) :
+    """
+    Populates the fields 'Score.cursorsLeft' and 'Score.cursorsRight' from the 
+    list of 'note ON' timecodes ('noteOnTimeCodes' dictionary).
+    This method is typically called after loading the .pr file.
+    """
+    
+    self.cursorsLeft = []; self.cursorsRight = []
+
+    for (index, timecode) in enumerate(self.noteOnTimecodes["LR"]) :
+      unaffected = True
+      if (timecode in self.noteOnTimecodes["L"]) :
+        self.cursorsLeft.append(index)
+        unaffected = False
+
+      if (timecode in self.noteOnTimecodes["R"]) :
+        self.cursorsRight.append(index)
+        unaffected = False
+      
+      if unaffected :
+        print("[INTERNAL ERROR] Score._buildCursorsLR: something odd happened!")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getTimecode()
+  # ---------------------------------------------------------------------------
+  def getTimecode(self) :
+    """
+    Returns the MIDI timecode of the current location in the score.
+    """
+    
+    # TODO: incorrect for single hand practice mode
+    return self.noteOnTimecodes["LR"][self.cursor]
+
+
 
 
   # ---------------------------------------------------------------------------
@@ -1144,7 +1140,7 @@ class Score(widget.Widget) :
               self.teacherNotes.append(noteObj)
 
             else :
-              self.inactive = False
+              noteObj.inactive = False
               self.teacherNotes.append(noteObj)
 
           # Detect a note held at this timecode
@@ -1263,7 +1259,7 @@ class Score(widget.Widget) :
         timecodeSearchField = [x > self.cursor for x in self.cursorsRight]
       else :
         # TODO: check the boundaries
-        timecodeSearchField = [x for x in range(self.cursor+1, self.scoreLength)]
+        timecodeSearchField = [x for x in range(self.cursor+1, self.length)]
     
     else :
       if (self.activeHands == ACTIVE_HANDS_RIGHT) :
@@ -1433,16 +1429,6 @@ class Score(widget.Widget) :
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD Score.hasUnsavedChanges()
-  # ---------------------------------------------------------------------------
-  def hasUnsavedChanges(self) :
-    """
-    Returns True if there are any unsaved changes in the current session.
-    """
-    
-    print("TODO")
-
 
   
   # ---------------------------------------------------------------------------
@@ -1486,7 +1472,6 @@ class Score(widget.Widget) :
     When off, no more progress in the score is allowed.
     """
     
-    self.progressEnable = not(self.progressEnable)
     print("[INFO] Rehearsal mode will be available in a future release.")
 
 
@@ -1520,7 +1505,7 @@ class Score(widget.Widget) :
     This function is called at every frame of the top level application.
     """
 
-    text.showCursor(self.top.screen, self.getCursor(), self.scoreLength)
+    text.showCursor(self.top.screen, self.getCursor(), self.length)
     text.showBookmark(self.top.screen, self.getBookmarkIndex())
     text.showActiveHands(self.top.screen, self.activeHands)
 
@@ -1544,7 +1529,7 @@ class Score(widget.Widget) :
         
         # B: toggle bookmark
         if (key == pygame.K_b) :
-          self.toggleBookmark()
+          self.bookmarkToggle()
 
         
 

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
 # Project       : gangQin
-# Module name   : keyboard
+# Module name   : Keyboard (inherited from Widget)
 # File name     : keyboard.py
+# File type     : Python script (Python 3)
 # Purpose       : draws the keyboard displayed on screen
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Sunday, 8 Oct 2023
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
@@ -40,7 +41,15 @@ from shapely.geometry import Point, Polygon
 class Keyboard(widget.Widget) :
 
   """
-  TODO: description
+  KEYBOARD Object
+  
+  The Keyboard object is a Widget representing the keyboard on screen.
+
+  It is in charge of:
+  - drawing the actual keyboard (black and white notes)
+  - highlighting the notes pressed by the user on his external MIDI keyboard
+  - highlighting the notes that have to be played.
+
   """
 
   def __init__(self, top, loc) :
@@ -48,23 +57,8 @@ class Keyboard(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc)
 
-    # Define the events the widgets must react to
-    self.uiSensivityList = [pygame.K_TAB]
-
-    # Completed after calling "makePolygons()"
+    # Populated after calling "Keyboard.makePolygons()"
     self.polygons = []
-
-    # Black and white notes of the keyboard
-    self.whiteNoteRGB = KEYBOARD_WHITE_NOTE_COLOR
-    self.blackNoteRGB = KEYBOARD_BLACK_NOTE_COLOR
-    
-    # Rectangle indicating a note to play by left hand
-    self.sqWhiteNoteLeftRGB = KEYBOARD_PLAY_RECT_COLOR_LEFT_HAND_WHITE_NOTE
-    self.sqBlackNoteLeftRGB = KEYBOARD_PLAY_RECT_COLOR_LEFT_HAND_BLACK_NOTE
-
-    # Rectangle indicating a note to play by right hand
-    self.sqWhiteNoteRightRGB = KEYBOARD_PLAY_RECT_COLOR_RIGHT_HAND_WHITE_NOTE
-    self.sqBlackNoteRightRGB = KEYBOARD_PLAY_RECT_COLOR_RIGHT_HAND_BLACK_NOTE
 
     # Rectangle of a note being played by both 
     # - a note to play by left hand
@@ -78,10 +72,6 @@ class Keyboard(widget.Widget) :
     self.sqWhiteNoteOverlapRightRGB = (140, 255, 146)
     self.sqBlackNoteOverlapRightRGB = (140, 255, 146)
 
-    # Color of the font indicating the finger number
-    self.fingerFontBlackNoteRGB = KEYBOARD_FINGERSATZ_FONT_COLOR_WHITE_NOTE
-    self.fingerFontWhiteNoteRGB = KEYBOARD_FINGERSATZ_FONT_COLOR_BLACK_NOTE
-
     # Define shorthand notations
     self.c = KEYBOARD_BLACK_NOTE_HEIGHT; self.d = KEYBOARD_BLACK_NOTE_WIDTH
     self.s = KEYBOARD_NOTE_CHANFER
@@ -91,8 +81,8 @@ class Keyboard(widget.Widget) :
     # TODO: description
     self.litKeysPolygons = []
 
-    # Generate polygons for all notes and store them in 'polygons'
-    self.makePolygons()
+    # Generate polygons for all notes and store them in 'Keyboard.polygons'
+    self._makePolygons()
 
     # List of notes currently pressed
     self.activeNotes = []
@@ -100,21 +90,21 @@ class Keyboard(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: Keyboard.makePolygons()
+  # METHOD: Keyboard._makePolygons()                                  [PRIVATE]
   # ---------------------------------------------------------------------------
-  def makePolygons(self, grandPianoMode = True) :
+  def _makePolygons(self, grandPianoMode = True) :
     """
     Generates the polygons drawing the notes of a full MIDI keyboard 
     (i.e. 128 notes)
     
-    If grandPianoMode = True, polygon generation is restricted to the notes of 
-    a grand piano (i.e. from A0 to C8).
+    If 'grandPianoMode' is set to True, polygon generation is restricted to 
+    the notes of a grand piano (i.e. from A0 to C8).
 
     This function populates the attribute 'polygons'. 
-    It is a 128 elements array, such that 'polygons[midiNoteCode]' is an array
-    containing the vertices required to draw the note with MIDI code 'midiNoteCode'.
+    It is a 128 elements array, such that 'polygons[i]' is an array
+    containing the vertices required to draw the note with MIDI code 'i'.
 
-    This function only needs to be called once.
+    This function only needs to be called once at init.
     """
 
     # Initialise output
@@ -272,29 +262,11 @@ class Keyboard(widget.Widget) :
     """
 
     # Draw keys from MIDI code 21 (A0) to MIDI code 108 (C8) i.e. notes of a grand piano.
-    
-    if False :
-      for i in MIDI_CODE_GRAND_PIANO_RANGE :
-        if ((i % 12) in BLACK_NOTES_CODE_MOD12) :
-          if ((i % 12) in self.activeKey) :
-            pygame.draw.polygon(self.top.screen, self.blackNoteRGB, self.polygons[i])
-          else :
-            pygame.draw.polygon(self.top.screen, (100, 100, 100), self.polygons[i])
-        else :
-          if ((i % 12) in self.activeKey) :
-            pygame.draw.polygon(self.top.screen, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
-          else :
-            pygame.draw.polygon(self.top.screen, (220, 220, 220), self.polygons[i])
-    
-    
-    else :
-      for i in MIDI_CODE_GRAND_PIANO_RANGE :
-        if ((i % 12) in [1, 3, 6, 8, 10]) :
-          pygame.draw.polygon(self.top.screen, self.blackNoteRGB, self.polygons[i])
-        else :
-          pygame.draw.polygon(self.top.screen, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
-
-
+    for i in MIDI_CODE_GRAND_PIANO_RANGE :
+      if ((i % 12) in MIDI_CODE_BLACK_NOTES_MOD12) :
+        pygame.draw.polygon(self.top.screen, KEYBOARD_BLACK_NOTE_COLOR, self.polygons[i])
+      else :
+        pygame.draw.polygon(self.top.screen, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
 
 
 
@@ -441,7 +413,7 @@ class Keyboard(widget.Widget) :
         #text.render(screenInst, str(finger), (x0+10,y0+23), 1, self.fingerFontWhiteNoteRGB)
         
         # Font size 2
-        text.render(screenInst, str(noteObj.finger), (x0+7, y0+19), 2, self.fingerFontWhiteNoteRGB)
+        text.render(screenInst, str(noteObj.finger), (x0+7, y0+19), 2, KEYBOARD_FINGERSATZ_FONT_COLOR_BLACK_NOTE)
 
 
 
@@ -482,7 +454,7 @@ class Keyboard(widget.Widget) :
         #text.render(screenInst, str(noteObj.finger), (x0+3, y0+23), 1, self.fingerFontBlackNoteRGB)
         
         # Font size 2
-        text.render(screenInst, str(noteObj.finger), (x0+1, y0+19), 2, self.fingerFontBlackNoteRGB)
+        text.render(screenInst, str(noteObj.finger), (x0+1, y0+19), 2, KEYBOARD_FINGERSATZ_FONT_COLOR_WHITE_NOTE)
 
 
 
@@ -511,12 +483,12 @@ class Keyboard(widget.Widget) :
     if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
       pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapLeftRGB, rectLeft)
     else :
-      pygame.draw.polygon(screenInst, self.sqWhiteNoteLeftRGB, rectLeft)
+      pygame.draw.polygon(screenInst, KEYBOARD_PLAY_RECT_COLOR_LEFT_HAND_WHITE_NOTE, rectLeft)
     
     if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
       pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapRightRGB, rectRight)
     else :
-      pygame.draw.polygon(screenInst, self.sqWhiteNoteRightRGB, rectRight)
+      pygame.draw.polygon(screenInst, KEYBOARD_PLAY_RECT_COLOR_RIGHT_HAND_WHITE_NOTE, rectRight)
 
     # Show finger number
     # TODO
@@ -548,12 +520,12 @@ class Keyboard(widget.Widget) :
     if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
       pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapLeftRGB, rectLeft)
     else :
-      pygame.draw.polygon(screenInst, self.sqBlackNoteLeftRGB, rectLeft)
+      pygame.draw.polygon(screenInst, KEYBOARD_PLAY_RECT_COLOR_LEFT_HAND_BLACK_NOTE, rectLeft)
     
     if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
       pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapRightRGB, rectRight)
     else :
-      pygame.draw.polygon(screenInst, self.sqBlackNoteRightRGB, rectRight)
+      pygame.draw.polygon(screenInst, KEYBOARD_PLAY_RECT_COLOR_RIGHT_HAND_BLACK_NOTE, rectRight)
 
     # Show finger number
     # TODO
@@ -589,21 +561,6 @@ class Keyboard(widget.Widget) :
     # This click hit none of the polygons shown
     else :
       return None
-
-
-
-  # ---------------------------------------------------------------------------
-  # Method <showScale>
-  # 
-  # Toggles the display of the scale
-  # ---------------------------------------------------------------------------
-  def showScale(self) :
-    print("[INFO] Showing the scale will be available in a future release.")
-
-
-
-
-
 
 
 

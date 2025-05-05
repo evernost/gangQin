@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
 # Project       : gangQin
-# Module name   : score
+# Module name   : Score (inherited from Widget)
 # File name     : score.py
 # File type     : Python script (Python 3)
 # Purpose       : provides the functions to interact with the music score
@@ -22,11 +22,12 @@ import src.widgets.widget as widget
 
 import text
 
-import datetime
 import copy
+import datetime
 import json   # for JSON database import/export
 import mido   # for MIDI file manipulation
-import re
+import pygame
+import re     # for version decoding
 import time
 
 
@@ -35,6 +36,7 @@ import time
 # Constants pool
 # =============================================================================
 # None.
+
 
 
 # =============================================================================
@@ -52,11 +54,13 @@ class Score(widget.Widget) :
   All the notes and timings are read and stored in a custom representation.
 
   Then, as you play, edit, add information, etc. those annotations are joined
-  to the database in a custom file (.gq) that is nothing more but a JSON file.
+  to the database in a custom file (.gq) 
+  A .gq file is nothing more but a JSON file, so it remains human readable.
   
-  The 'cursor': 
+  The 'cursor' concept: 
   In a MIDI file, each event (note on/note off) has a timestamp attached.
   The value of the timestamp depends on the duration of the note, the tempo etc.
+  
   In the Score object, these timestamps are abstracted and you browse in the 
   song using a 'cursor'.
   There is a cursor value for every unique moment a note starts playing.
@@ -423,7 +427,7 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.exportToPrFile()
+  # METHOD Score.exportToGQFile()
   # ---------------------------------------------------------------------------
   def exportToPrFile(self, backup = False) :
     """
@@ -486,11 +490,6 @@ class Score(widget.Widget) :
       currTime = datetime.datetime.now()
       print(f"[DEBUG] {noteCount} notes written in .pr file.")
       print(f"[INFO] Saved to '{pianoRollFile}' at {currTime.strftime('%H:%M:%S')}")
-
-
-
-
-
 
 
 
@@ -576,7 +575,7 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score._buildCursorsLR()
+  # METHOD Score._buildCursorsLR()                                    [PRIVATE]
   # ---------------------------------------------------------------------------
   def _buildCursorsLR(self) :
     """
@@ -603,7 +602,7 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.setCursor(value)
+  # METHOD Score.setCursor()
   # ---------------------------------------------------------------------------
   def setCursor(self, value, ignoreActiveHand = False) :
     """
@@ -705,14 +704,14 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.cursorStep(delta)
+  # METHOD Score.cursorStep()
   # ---------------------------------------------------------------------------
-  def cursorStep(self, delta) :
+  def cursorStep(self, delta: int) -> None :
     """
-    Jumps in the score with a step (positive or negative)
+    Jumps in the score with a relative step (positive or negative)
     
     Jump is done by adding/subtracting the step to the cursor value.
-    Cursor value clamps to the allowed range no matter the step given.
+    Jump value is protected, it cannot go out of bounds.
     
     NOTES
     - The jump ignores any loop settings i.e. it does not wrap if the step
@@ -1524,6 +1523,31 @@ class Score(widget.Widget) :
     text.showCursor(self.top.screen, self.getCursor(), self.scoreLength)
     text.showBookmark(self.top.screen, self.getBookmarkIndex())
     text.showActiveHands(self.top.screen, self.activeHands)
+
+
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score._onKeyEvent()                                        [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _onKeyEvent(self, key, type, modifier = "") :
+    """
+    Function triggered by a keypress.
+    """
+    
+    if (type == pygame.KEYDOWN) :
+      
+      # Simple keypresses (no modifiers)
+      if (modifier == "") :
+        
+        # B: toggle bookmark
+        if (key == pygame.K_b) :
+          self.toggleBookmark()
+
+        
+
 
 
 

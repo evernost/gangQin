@@ -37,7 +37,6 @@ import note
 import score
 import stats
 import text
-import utils
 
 # MIDI
 import mido
@@ -174,12 +173,11 @@ class GangQin :
     
       for event in pygame.event.get() :
         if (event.type == pygame.QUIT) :
-          running = False
+          self.appRunning = False
 
         # Pass keyboard/click messages to the widgets
-        if event.type in (pygame.KEYUP, pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN) :
-          for widget in self.widgets.values() :
-            widget.uiEvent(event)
+        for widget in self.widgets.values() :
+          widget.uiEvent(event)
 
       # Render widgets
       for widget in self.widgets.values() :
@@ -296,38 +294,35 @@ class GangQin :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: GangQin._onExit()
+  # METHOD: GangQin._onExit()                                         [PRIVATE]
   # ---------------------------------------------------------------------------
   def _onExit(self) :
     """
     Function is called upon exiting.
     Do all the things here that you need to do before leaving 
     (save, look for unsaved changes, etc.)
+
+    This function is called automatically. It is not meant to be called 
+    externally.
     """
 
     pass
 
 
+
   # ---------------------------------------------------------------------------
-  # METHOD: GangQin._onSave()
+  # METHOD: GangQin._onSave()                                         [PRIVATE]
   # ---------------------------------------------------------------------------
   def _onSave(self) :
     """
     Function is called when a 'save' event occured (either from user or 
     automatically)
+
+    This function is called automatically. It is not meant to be called 
+    externally.
     """
 
     pass
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -503,17 +498,8 @@ if False :
         if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_a]) :
           userScore.setWeakArbitration()
 
-        # ----------------------------------------
-        # "b": toggle a bookmark on this timestamp
-        # ----------------------------------------
-        if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_b]) :
-          userScore.toggleBookmark()
-        
-        # ------------------
-        # "c": add a comment
-        # ------------------
-        if (not(keys[pygame.K_LCTRL]) and keys[pygame.K_c]) :
-          print("[INFO] Adding comments will be available in a future release.")
+
+
 
 
         
@@ -546,7 +532,7 @@ if False :
           raise SystemExit(0)
 
         # -------------------------------
-        # "r": toggle right hand practice
+        # "r": toggle right hand practice [DEPRECATED]
         # -------------------------------
         if (keys[pygame.K_r]) :
           userScore.toggleRightHandPractice()
@@ -571,11 +557,7 @@ if False :
           else :
             print("[INFO] Staffscope view: OFF")
 
-        # -------------------------
-        # Space key: rehearsal mode
-        # -------------------------
-        if (keys[pygame.K_SPACE]) :
-          userScore.toggleRehearsalMode()
+
 
       # -------------------------------------------------------------------------
       # Mouse click event handling

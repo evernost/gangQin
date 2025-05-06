@@ -27,7 +27,6 @@ import datetime
 import json   # for JSON database import/export
 import mido   # for MIDI file manipulation
 import pygame
-import re     # for version decoding
 import time
 
 
@@ -47,13 +46,18 @@ class Score(widget.Widget) :
   """
   SCORE object
   
-  The Score object is a custom representation of the song suited for the 
-  gameplay. 
+  The Score object is a database storing the song in a structure that is suited 
+  for the gameplay.
   
-  Score is initialised first from a MIDI file. 
-  All the notes and timings are read and stored in a custom representation.
+  Score is first initialised from a MIDI file. 
+  All the notes and their timings are read and stored in a custom representation.
 
-  Then, as you play, edit, add information, etc. those annotations are joined
+  The Score objects gives various utility functions that help in various tasks:
+  - navigate through the score
+  - return the notes that must be pressed at a given moment 
+  - store context-based user information (fingersatz, comments, tempo, etc.)
+  
+  As you play, edit, add information, etc. those annotations are joined
   to the database in a custom file (.gq) 
   A .gq file is nothing more but a JSON file, so it remains human readable.
   
@@ -249,8 +253,7 @@ class Score(widget.Widget) :
     self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
     self.noteOnTimecodes["LR_full"].sort()
 
-    self.noteOnTimecodes["LR"] = set(self.noteOnTimecodes["LR_full"])
-    self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
+    self.noteOnTimecodes["LR"] = list(set(self.noteOnTimecodes["LR_full"]))
     self.noteOnTimecodes["LR"].sort()
 
     # Build 'cursorsLeft' and 'cursorsRight' attributes
@@ -1028,8 +1031,11 @@ class Score(widget.Widget) :
   def _buildCursorsLR(self) :
     """
     Populates the fields 'Score.cursorsLeft' and 'Score.cursorsRight' from the 
-    list of 'note ON' timecodes ('noteOnTimeCodes' dictionary).
-    This method is typically called after loading the .pr file.
+    list of timecodes of all note on events ('Score.noteOnTimeCodes' dictionary).
+    
+    This method is usually called after loading a MIDI or even .gq file, since 
+    the information in these fields is redundant and does not bring added
+    value to get stored in the file.
     """
     
     self.cursorsLeft = []; self.cursorsRight = []
@@ -1089,9 +1095,9 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.resetCache()
+  # METHOD Score._resetCache()                                        [PRIVATE]
   # ---------------------------------------------------------------------------
-  def resetCache(self) :
+  def _resetCache(self) :
     """
     Resets the teacher notes cache.
     Teacher notes are determined once per cursor. Cacheing avoids doing this 
@@ -1332,7 +1338,7 @@ class Score(widget.Widget) :
     else :
       self.activeHands = ACTIVE_HANDS_BOTH
 
-    self.resetCache()
+    self._resetCache()
 
 
 
@@ -1351,7 +1357,7 @@ class Score(widget.Widget) :
     else :
       self.activeHands = ACTIVE_HANDS_BOTH
 
-    self.resetCache()
+    self._resetCache()
 
 
 
@@ -1453,26 +1459,13 @@ class Score(widget.Widget) :
   # METHOD Score.guessScale()
   # ---------------------------------------------------------------------------
   def guessScale(self, startCursor, span = -1) :
-    print("TODO")
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.toggleRehearsalMode()
-  # ---------------------------------------------------------------------------
-  def toggleRehearsalMode(self) :
     """
-    Turns ON/OFF the rehearsal mode, i.e. enable/disable progressing in the score
-    based on the MIDI input.
-    
-    An arbiter inspects the keyboard input, looks if it matches with the score, and 
-    decides whether to move forward or stay in the current location.
-    
-    This function toggles the arbiter. 
-    When off, no more progress in the score is allowed.
+    Tries to determine the key a section is in based on statistics. 
+
+    Function is not implemented yet.
     """
     
-    print("[INFO] Rehearsal mode will be available in a future release.")
+    pass
 
 
 

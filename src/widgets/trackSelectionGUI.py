@@ -25,8 +25,12 @@ from tkinter import ttk
 # =============================================================================
 MAX_TRACK_NAME_LENGTH = 10
 
-# Assigns 0 -> Right and 1 -> Left by default
+# Default channel assignment (should work for most MIDI files)
+# When True:
+# - channel 0 -> Right hand
+# - channel 1 -> Left hand
 ASSIGN_DEFAULT = True
+
 
 
 class Track :
@@ -300,7 +304,10 @@ class TrackSelectionGUI :
 # Unit tests
 # =============================================================================
 if (__name__ == "__main__") :
+  
+  print("[INFO] Library 'TrackSelectionGUI' called as main: running unit tests...")
+  
   gui = new()
   gui.load("./songs/Rachmaninoff_Piano_Concerto_No_3_Op_30_1st_Movement.mid")
   midiTracks = gui.show()
-  print(f"MIDI tracks: {midiTracks}")
+  print(f"MIDI tracks selection: {midiTracks}")

@@ -13,12 +13,12 @@
 - [ ] status bar indicating various kind of messages (errors in the score, warnings, etc.)
 
 ## Improvements
-
 - [ ] major code refactor, more modular, overall code more coherent and less duplicates
 - [X] constants centralised and reorganised in 'commons.py'
 
 ### gangQin Player:
 - [X] track selection for MIDI file now fully integrated
+- [ ] cursor auto-increment during fingersatz edition when a single hand is playing
 - [ ] song selector proposes the most practiced songs first
 - [ ] wrong note counter is disabled in looped practice (so that the counter does not go crazy. See issue #15)
 - [ ] added more shortcuts for the finger selector
@@ -39,8 +39,8 @@
 - [ ] added context to the score (page number, capture number within the page, editor's name, etc.)
 
 ## Bug Fixes
-- [ ] playglows disappearing (issue #13)
 - [ ] more robust MIDI keyboard detection (issue #9)
+- [ ] playglows disappearing (issue #13)
 - [X] crash during some MIDI file imports (issue #16)
 
 # Performance

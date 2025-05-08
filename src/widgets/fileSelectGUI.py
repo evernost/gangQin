@@ -32,10 +32,12 @@ def getFileList(folderPath, extension) :
   Returns a sorted list of all files of a given extension in a specific
   directory.
   """
+
   fileList = []
   for filename in os.listdir(folderPath) :
     if filename.endswith(extension):
-      fileList.append(os.path.join(folderPath, filename))
+      #fileList.append(os.path.join(folderPath, filename))
+      fileList.append(folderPath + '/' + filename)
 
   fileList.sort()
   return fileList
@@ -108,7 +110,7 @@ def show() :
   # ---------------------------------------------------------------------------
   # [GUI MANAGEMENT] Window centering
   # ---------------------------------------------------------------------------
-  def centerGUI(container):
+  def _centerGUI(container):
     
     # Ensure widgets are updated before calculating size
     container.update_idletasks()
@@ -256,9 +258,7 @@ def show() :
   # ---------------
   # Set the select button as the "default" button
   root.bind("<Return>", lambda event = None : buttonOK.invoke())
-
-  centerGUI(root)
-
+  _centerGUI(root)
   root.mainloop()
   
 
@@ -267,10 +267,10 @@ def show() :
   # Save conf to the .ini file  
   configData["DEFAULT"] = {
     "midi_interface": selectedDevice,
-    "song": selectedFile
+    "song"          : selectedFile
     }
 
-  # Create the ./conf dir if it does not exist
+  # Create the './conf' dir if it does not exist
   if not os.path.exists("./conf"):
     os.makedirs("./conf")
 
@@ -285,4 +285,7 @@ def show() :
 # Unit tests
 # =============================================================================
 if (__name__ == "__main__") :
+  
+  print("[INFO] Library called as main: running unit tests...")
+  
   show()

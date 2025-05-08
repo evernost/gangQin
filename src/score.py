@@ -25,6 +25,7 @@ import copy
 import datetime
 import json       # for .gq file database import/export
 import mido       # for MIDI file manipulation
+import os         # for filename manipulation
 import pygame
 import time
 
@@ -116,6 +117,8 @@ class Score(widget.Widget) :
   def loadMIDIFile(self, midiFile: str, midiTracks: list[str]) -> None :
     """
     Loads and initialises the Score object from a MIDI file.
+
+    'midiFile' must be the full path to the file.
     """
     
     print("[INFO] Processing MIDI file... ")
@@ -275,6 +278,8 @@ class Score(widget.Widget) :
     """
     Loads and initialises the Score object from a .gq file.
 
+    'gqFile' must be the full path to the file.
+
     Unlike MIDI files, .gq files store all the user annotated information 
     about the score (bookmarks, fingersatz, tempo, etc.)
     """
@@ -328,10 +333,10 @@ class Score(widget.Widget) :
     # ---------------------------------
     # From version 1.0, the pianoroll is flattened.
     # From version 1.3, the variables:
-    # - <noteOntimecodes>, 
-    # - <noteOntimecodesMerged>, 
-    # - <cursorsLeft>, 
-    # - <cursorsRight>
+    # - 'noteOntimecodes'
+    # - 'noteOntimecodesMerged'
+    # - 'cursorsLeft'
+    # - 'cursorsRight'
     # are rebuilt from the notes properties in the pianoroll.
     else :
       
@@ -414,30 +419,31 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score.exportToGQFile()
   # ---------------------------------------------------------------------------
-  def exportToPrFile(self, backup = False) -> None :
+  def exportToGQFile(self, gqFile: str, backup = False) -> None :
     """
-    Exports the piano roll and all metadata (finger, hand, comments etc.) in 
+    Exports the annotated score and all metadata (finger, hand, comments etc.) in 
     a .gq file (JSON) that can be imported later to restore the session.
 
-    Call the function with 'backup = True' to save to a '.bak' extension instead. 
+    'gqFile' must be the full path to the file.
+
+    Call the function with 'backup = True' to save under a '.bak' extension instead
+    so that the original file is not overwritten. 
     """
 
     if backup :
-      print("[INFO] Exporting piano roll...")
+      print("[INFO] Exporting a backup of the gangQin file...")
     else :
-      print("[INFO] Exporting a backup of the piano roll...")
+      print("[INFO] Exporting gangQin file...")
 
     # Create the dictionnary containing all the things we want to save
     exportDict = {}
 
     # Export "manually" elements of the PianoRoll object to the export dictionary.
     # Not ideal but does the job for now as there aren't too many properties.
-    exportDict["revision"]              = f"v{REV_MAJOR}.{REV_MINOR}"
-    exportDict["nStaffs"]               = self.nStaffs
-    exportDict["avgNoteDuration"]       = self.avgNoteDuration
-    exportDict["cursor"]                = self.cursor
-    exportDict["bookmarks"]             = self.bookmarks
-    exportDict["activeHands"]           = self.activeHands
+    exportDict["revision"]        = f"v{REV_MAJOR}.{REV_MINOR}"
+    exportDict["avgNoteDuration"] = self.avgNoteDuration
+    exportDict["cursor"]          = self.getCursor()
+    exportDict["bookmarks"]       = self.bookmarks
 
     noteCount = 0
     exportDict["pianoRoll"] = []
@@ -460,20 +466,19 @@ class Score(widget.Widget) :
           exportDict["pianoRoll"].append(noteExportAttr)
 
     if backup :
-      pianoRollFile = self.songDir + "/" + self.songName + ".bak"  
-    else :
-      pianoRollFile = self.songDir + "/" + self.songName + ".pr"
+      (root, _) = os.path.splitext(gqFile)
+      exportFile = root + ".bak"
     
-    with open(pianoRollFile, "w") as fileHandler :
+    with open(exportFile, "w") as fileHandler :
       json.dump(exportDict, fileHandler, indent = 2)
 
     currTime = datetime.datetime.now()
     if backup :
-      print(f"[INFO] Saved backup to '{pianoRollFile}'")
+      print(f"[INFO] Saved backup to '{exportFile}'")
     else :
       currTime = datetime.datetime.now()
       print(f"[DEBUG] {noteCount} notes written in .pr file.")
-      print(f"[INFO] Saved to '{pianoRollFile}' at {currTime.strftime('%H:%M:%S')}")
+      print(f"[INFO] Saved to '{exportFile}' at {currTime.strftime('%H:%M:%S')}")
 
 
 
@@ -1517,5 +1522,17 @@ class Score(widget.Widget) :
 # Unit tests
 # =============================================================================
 if (__name__ == "__main__") :
-  print("[INFO] There are no unit tests available for 'score.py'")
+  
+  print("[INFO] Library 'Score' called as main: running unit tests...")
 
+  # Import and then export a .gq file without any modifications 
+  # (under a different name)
+  # Comparing the input and output file helps to make sure no information
+  # is lost in the process. 
+  songFile = SONG_PATH + "/" + "Rachmaninoff_Piano_Concerto_No2_Op18.pr"
+  score = Score(None)
+  score.loadGQFile(songFile)
+  score.exportToGQFile(songFile, backup = True)
+
+  # Now diff the original file 'in.gq' with 'out.gq'.
+  # Files must be identical (except for the revision number)

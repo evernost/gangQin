@@ -70,7 +70,7 @@ class GangQin :
     # Initialise attributes
     self.songFile = ""    # Example: "./songs/my_song.mid"
     self.songDir  = ""    # Example: './songs'
-    self.songName = ""    # Example: 'my_song.mid'
+    self.songName = ""    # Example: 'my_song'
     self.songType = ""    # Example: "mid"
 
     # Initialise pygame
@@ -121,6 +121,12 @@ class GangQin :
     if ((songFile == "") or (songFile == "None")) :
       print("[INFO] No file selected, exiting...")
       exit()
+    else :
+      (rootDir, rootNameExt) = os.path.split(songFile)
+      (rootName, _) = os.path.splitext(rootNameExt)
+      self.songFile = songFile
+      self.songDir  = rootDir
+      self.songName = rootName
 
     # If a MIDI file is selected, show the track selection GUI
     if songFile.endswith(".mid") :
@@ -146,12 +152,6 @@ class GangQin :
       midiPort = None
 
     # Update the app properties
-    (rootDir, rootNameExt) = os.path.split(songFile)
-    (rootName, _) = os.path.splitext(rootNameExt)
-    
-    self.songFile = songFile
-    self.songDir = rootDir
-    self.songName = rootName
     pygame.display.set_caption(f"gangQin player - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {self.songName}")
 
 

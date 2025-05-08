@@ -19,13 +19,12 @@ from src.commons import *
 
 import src.note as note
 import src.widgets.widget as widget
-
 import text
 
 import copy
 import datetime
-import json   # for JSON database import/export
-import mido   # for MIDI file manipulation
+import json       # for .gq file database import/export
+import mido       # for MIDI file manipulation
 import pygame
 import time
 
@@ -182,7 +181,7 @@ class Score(widget.Widget) :
               elif (trackID == SCORE_RIGHT_HAND_TRACK_ID) :
                 self.noteOnTimecodes["R"].append(currTime)
               else :
-                print("[INTERNAL ERROR] Invalid track number.")
+                print("[ERROR] Score.loadMIDIFile(): invalid track number (possible internal error)")
 
               self.noteOnTimecodes["LR_full"].append(currTime)
             
@@ -194,16 +193,12 @@ class Score(widget.Widget) :
               insertIndex = len(self.pianoRoll[trackID][pitch])
               self.pianoRoll[trackID][pitch].append(note.Note(pitch, hand = trackID, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
               
-              # Append the timecode of this keypress
-              # if not(currTime in self.noteOntimecodes[trackID]) : 
-              #   self.noteOntimecodes[trackID].append(currTime)
-
               if (trackID == SCORE_LEFT_HAND_TRACK_ID) :
                 self.noteOnTimecodes["L"].append(currTime)
               elif (trackID == SCORE_RIGHT_HAND_TRACK_ID) :
                 self.noteOnTimecodes["R"].append(currTime)
               else :
-                print("[INTERNAL ERROR] Invalid track number.")
+                print("[ERROR] Score.loadMIDIFile(): invalid track number (possible internal error)")
 
               self.noteOnTimecodes["LR_full"].append(currTime)
 
@@ -281,9 +276,6 @@ class Score(widget.Widget) :
 
     Unlike MIDI files, .gq files store all the user annotated information 
     about the score (bookmarks, fingersatz, tempo, etc.)
-
-    NOTE: this function is usually called from 'load()' and you should not
-    need to call it by yourself.
     """
     
     # For statistics
@@ -342,7 +334,7 @@ class Score(widget.Widget) :
     # are rebuilt from the notes properties in the pianoroll.
     else :
       
-      self.pianoRoll = [[[] for _ in range(128)] for _ in range(self.nStaffs)]
+      self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
       self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
       noteCount = 0
       masteredNoteCount = 0
@@ -421,13 +413,12 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score.exportToGQFile()
   # ---------------------------------------------------------------------------
-  def exportToPrFile(self, backup = False) :
+  def exportToPrFile(self, backup = False) -> None :
     """
     Exports the piano roll and all metadata (finger, hand, comments etc.) in 
-    a .pr file (JSON) that can be imported later to restore the session.
+    a .gq file (JSON) that can be imported later to restore the session.
 
-    Call the function with 'backup' option set to True to save to a '.bak' 
-    extension instead. 
+    Call the function with 'backup = True' to save to a '.bak' extension instead. 
     """
 
     if backup :
@@ -503,11 +494,11 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   def cursorGoto(self, value, ignoreActiveHand = False) :
     """
-    Sets the cursor to a specific value.
+    Sets the cursor to a specific location in the score.
     
     The cursor assignment is protected so that:
-    - values outside the score's range are clamped
-    - values not aligned with the active hand are adjusted
+    - values outside the allowed range are clamped
+    - values not aligned with the active hand are adjusted 
 
     Setting the cursor must be done with this function exclusively.
     Manually setting 'Score.cursor' is discouraged and might cause crashes.
@@ -540,7 +531,7 @@ class Score(widget.Widget) :
         self.cursor = self.cursorsRight[p]
 
     else :
-      print("[INTERNAL ERROR] Score.cursorGoto: unknown active hand specification!")
+      print("[ERROR] Score.cursorGoto(): unknown active hand specification (possible internal error)")
 
     
 
@@ -554,10 +545,9 @@ class Score(widget.Widget) :
     If loop practice is active, it jumps to the beginning of the loop.
     """
 
-    # If the loop mode is enabled: go back to the beginning of the loop
+    # If the loop mode is enabled: go to the beginning of the loop
     if (self.loopEnable and (self.cursor >= self.loopStart)) :
       self.cursorGoto(self.loopStart)
-    
     else :
       self.cursorGoto(0)
 
@@ -575,12 +565,7 @@ class Score(widget.Widget) :
     
     # If the loop mode is enabled: go back to the end of the loop
     if (self.loopEnable and (self.cursor <= self.loopEnd)) :
-      
-      # TODO: setting the cursor shall be protected depending on the active hand.
-      # Directly setting the cursor is dangerous.
-      self.cursor = self.loopEnd
-    
-    # Otherwise just set the cursor to the end
+      self.cursorGoto(self.loopEnd)
     else :
       self.cursorGoto(self.cursorMax)
 
@@ -942,7 +927,7 @@ class Score(widget.Widget) :
     from 1.
     """
     
-    if self.isBookmarked() :      
+    if self.cursorIsBookmarked() :      
       return self.bookmarks.index(self.getCursor()) + 1
     else :
       return -1
@@ -1249,7 +1234,7 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   def search(self, noteList, direction = 1) :
     """
-    Finds the next location in the score where the query notes appear 
+    Finds the next location in the score where all the query notes appear 
     simultaneously.
     Sets the cursor to the first matching location.
     
@@ -1362,19 +1347,19 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.toggleNoteHand(noteObject)
+  # METHOD Score.noteHandSwap()
   # ---------------------------------------------------------------------------
-  def toggleNoteHand(self, noteObj) :
+  def noteHandSwap(self, noteObj) -> None :
     """
-    Changes the hand assigned to the note passed as argument and update the score
-    accordingly.
+    Changes the hand assigned to the note passed as argument and updates the 
+    Score database accordingly.
     
     If the note is assigned to the left hand, it will now be assigned to the right
     hand and vice versa.
     
     NOTES
     Assigning a note from the left to the right hand has more impact than just 
-    editing the <hand> property of the note object. 
+    editing the 'hand' property of the note object. 
     Among others, the list of cursors must be edited too.
     """
     
@@ -1427,16 +1412,12 @@ class Score(widget.Widget) :
     lengthL = len(self.noteOnTimecodes["L"]); lengthR = len(self.noteOnTimecodes["R"])
     
     # Consistency check
+    # TODO: replace with error try/catch, otherwise there is a risk of losing all progression
+    # in case assert fails
     assert(lengthLR == (lengthL + lengthR))
     
 
 
-  
-
-
-
-
-  
   # ---------------------------------------------------------------------------
   # METHOD <getCurrentKey>
   #

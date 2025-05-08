@@ -20,15 +20,15 @@ from src.commons import *
 import src.utils as utils
 
 
-# =============================================================================
-# Guards
-# =============================================================================
-if (__name__ == "__main__") :
-  print("[WARNING] This lib is not intended to be called as a main.")
-
 
 
 class Note :
+
+  """
+  NOTE object
+  
+  TODO
+  """
 
   def __init__(self, pitch, hand = NOTE_UNDEFINED_HAND, finger = 0, noteIndex = 0, startTime = 0, stopTime = 0, voice = NOTE_VOICE_DEFAULT, highlight = False) :
     
@@ -202,4 +202,11 @@ def getFriendlyName(midiCode) :
 
   else :
     return ""
+
+
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'note.py'")
 

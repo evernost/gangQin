@@ -144,6 +144,7 @@ class Score(widget.Widget) :
         if (midiTracks[i] == "L") : trackID = SCORE_LEFT_HAND_TRACK_ID
       
         currTime = 0
+        currTempo = 0
         for msg in track :
 
           # Update the current time
@@ -209,31 +210,31 @@ class Score(widget.Widget) :
             pitch = msg.note
 
             # Take the latest event in the piano roll for this note
-            noteObj = self.pianoRoll[trackID][pitch][-1]
+            if (len(self.pianoRoll[trackID][pitch]) > 0) :
+              noteObj = self.pianoRoll[trackID][pitch][-1]
+              noteObj.stopTime = currTime
+              noteObj.id = id
+              noteDuration += (noteObj.stopTime - noteObj.startTime)
+              noteCount += 1.0
+              id += 1
+            else :
+              print("[WARNING] Score.loadMIDIFile(): read 'note OFF' with no matching 'note ON' event (possible MIDI corruption)")
             
-            # Close it
-            noteObj.stopTime = currTime
-            noteObj.id = id
-            
-            noteDuration += (noteObj.stopTime - noteObj.startTime)
-            noteCount += 1.0
-            id += 1
-
             # Quite common apparently. Is that really an error case?
             # if (noteObj.startTime == noteObj.stopTime) :
             #   print(f"[WARNING] [MIDI import] MIDI note {pitch} ({note.getFriendlyName(pitch)}) has null duration (start time = stop time = {noteObj.startTime})")
             #   self.pianoRoll[trackNumber][pitch].pop()
 
-
-
           elif (msg.type == 'time_signature') :
             print(f"- read time signature: {msg.numerator}/{msg.denominator} (timecode = {currTime})")
+            #eventTime = mido.tick2second(current_time, ticks_per_beat, tempo) for a display in seconds
 
           elif (msg.type == 'key_signature') :
             print(f"- read key signature: {msg.key} (timecode = {currTime})")
 
           elif (msg.type == 'set_tempo') :
-            pass
+            #print(f"- read new tempo: {msg.tempo} (timecode = {currTime})")
+            currTempo = msg.tempo
 
           elif (msg.type == 'control_change') :
             pass

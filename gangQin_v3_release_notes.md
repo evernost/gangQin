@@ -41,6 +41,7 @@
 ## Bug Fixes
 - [ ] playglows disappearing (issue #13)
 - [ ] more robust MIDI keyboard detection (issue #9)
+- [X] crash during some MIDI file imports (issue #16)
 
 # Performance
 TODO

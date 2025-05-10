@@ -21,7 +21,7 @@ from tkinter import ttk
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 MAX_TRACK_NAME_LENGTH = 10
 
@@ -33,45 +33,38 @@ ASSIGN_DEFAULT = True
 
 
 
-class Track :
-  def __init__(self):
-    self.name = ""
-    self.noteCount = 0
-    self.panning = ""
-
-
-
-# Factory function
-def new() :
-  return TrackSelectionGUI()
-
-
-
 # =============================================================================
-# GUI CLASS
+# CLASS DEFINITION
 # =============================================================================
 class TrackSelectionGUI :
 
   """
-  TODO
+  TRACKSELECTIONGUI object
+
+  Self-contained class containing all the necessary functions to show the MIDI
+  Track selection GUI on screen.
+
+  Call the app, it will return a dictionary with the tracks assignment upon
+  exiting.
+
+  See the unit tests for a quick demo.
   """
 
   def __init__(self) :
-    
     
     # Initialise attributes
     self.midiFile = ""
     self.nTracks = 0
     self.tracks = []
     
-
     # Initialise display
     self.root = None
     self.displayTrackList = []
 
 
+
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.load()
+  # METHOD TrackSelectionGUI.load()
   # ---------------------------------------------------------------------------
   def load(self, midiFile: str) :
     """
@@ -120,7 +113,7 @@ class TrackSelectionGUI :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.show()
+  # METHOD TrackSelectionGUI.show()
   # ---------------------------------------------------------------------------
   def show(self) :
     """
@@ -172,7 +165,7 @@ class TrackSelectionGUI :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI._centerWindow()
+  # METHOD TrackSelectionGUI._centerWindow()
   # ---------------------------------------------------------------------------
   def _centerWindow(self) :
     """
@@ -195,26 +188,26 @@ class TrackSelectionGUI :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.CLBK_onQuit()
+  # METHOD TrackSelectionGUI.CLBK_onQuit()
   # ---------------------------------------------------------------------------
   def CLBK_onQuit(self, event = None) :
     print("[INFO] User exit...")
     exit()
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.CLBK_onLeftKey()
+  # METHOD TrackSelectionGUI.CLBK_onLeftKey()
   # ---------------------------------------------------------------------------
   def CLBK_onLeftKey(self, event = None) : 
     self._assignActiveTrack(hand = "L")
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.CLBK_onRightKey()
+  # METHOD TrackSelectionGUI.CLBK_onRightKey()
   # ---------------------------------------------------------------------------
   def CLBK_onRightKey(self, event = None) :
     self._assignActiveTrack(hand = "R")
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.CLBK_onDownKey()
+  # METHOD TrackSelectionGUI.CLBK_onDownKey()
   # ---------------------------------------------------------------------------
   def CLBK_onDownKey(self, event = None) :
     if not(self.lstboxTracks.curselection()) :
@@ -223,7 +216,7 @@ class TrackSelectionGUI :
       self.lstboxTracks.focus_set()
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.CLBK_onGenerate()
+  # METHOD TrackSelectionGUI.CLBK_onGenerate()
   # ---------------------------------------------------------------------------
   def CLBK_onGenerate(self, event = None) :
     self.root.destroy()
@@ -231,7 +224,7 @@ class TrackSelectionGUI :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI._assignActiveTrack()
+  # METHOD TrackSelectionGUI._assignActiveTrack()
   # ---------------------------------------------------------------------------
   def _assignActiveTrack(self, hand = "L") -> None :
     """
@@ -266,7 +259,7 @@ class TrackSelectionGUI :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI._generateListboxString()
+  # METHOD TrackSelectionGUI._generateListboxString()
   # ---------------------------------------------------------------------------
   def _generateListboxString(self, index: int) -> str :
     """
@@ -288,7 +281,7 @@ class TrackSelectionGUI :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.getTrackLinks()
+  # METHOD TrackSelectionGUI.getTrackLinks()
   # ---------------------------------------------------------------------------
   def getTrackLinks(self) :
     """
@@ -300,8 +293,31 @@ class TrackSelectionGUI :
 
 
 
+
 # =============================================================================
-# Unit tests
+# UTILITIES
+# =============================================================================
+class Track :
+
+  """
+  Description is TODO
+  """
+
+  def __init__(self):
+    self.name = ""
+    self.noteCount = 0
+    self.panning = ""
+
+
+
+# Factory function
+def new() :
+  return TrackSelectionGUI()
+
+
+
+# =============================================================================
+# UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
   

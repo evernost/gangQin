@@ -89,6 +89,7 @@ class Score(widget.Widget) :
     self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
 
     # Options for Score.getTeacherNotes()
+    self.teacherNotes = []
     self.lookAheadDistance = 0
     self.activeHands = "LR"
     self.cachedCursor = -1
@@ -316,10 +317,9 @@ class Score(widget.Widget) :
         safeDict[currKey] = importDict[currKey]
 
     # Initialize the object
-    self.avgNoteDuration          = safeDict["avgNoteDuration"]
-    self.cursor                   = safeDict["cursor"]
-    self.bookmarks                = safeDict["bookmarks"]
-    self.activeHands              = safeDict["activeHands"]
+    self.cursor           = safeDict["cursor"]
+    self.bookmarks        = safeDict["bookmarks"]
+    self.avgNoteDuration  = safeDict["avgNoteDuration"]
     
     # -----------------------------
     # Pianoroll import - v0.X style
@@ -344,7 +344,6 @@ class Score(widget.Widget) :
       self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
       noteCount = 0
       masteredNoteCount = 0
-
       for noteObjImported in importDict["pianoRoll"] :
 
         # Create the object
@@ -675,85 +674,10 @@ class Score(widget.Widget) :
       if ((self.cursor + 1) <= self.loopEnd) :
         self.cursorStep(1)
       else : 
-        self.cursor = self.loopStart
+        self.cursorGoto(self.loopStart)
 
     else :
       self.cursorStep(1)
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.cursorAlignToActiveHand()
-  # ---------------------------------------------------------------------------
-  def cursorAlignToActiveHand(self, hand, direction = 0) :
-    """
-    Sets the cursor to the closest location that is compatible with the requested
-    hand practice mode.
-
-    When the user changes the active hands from 'both hands' to 'single hand' practice,
-    the cursor might become invalid.
-    E.g. left hand practice requested, but there is no note played on the left hand at 
-    the current cursor. 
-    
-    There are different strategies to find a candidate:
-    If direction == 0, it looks for the closest compatible location (default behaviour)
-    If direction > 0, it looks for a compatible location after the current location.
-    If direction < 0, it looks for a compatible location before the current location.
-    'compatible location' meaning 'location where a note of the active hand is played'.
-    
-    The function does not change 'Score.activeHands' attribute.
-    """
-    
-    prevCursor = self.getCursor()
-
-    if (hand == NOTE_LEFT_HAND) :
-      
-      # TODO: guards needed here. There are case where the sets can be void.
-      if (direction > 0) : 
-        subList = [x >= self.cursor for x in self.cursorsLeft]
-        self.cursor = subList[0]
-
-      elif (direction < 0) : 
-        subList = [x <= self.cursor for x in self.cursorsLeft]
-        self.cursor = subList[-1]
-
-      else :
-        minIndex = 0
-        dist = abs(self.cursor - self.cursorsLeft[0])
-        for (index, cursorLeft) in enumerate(self.cursorsLeft[1:]) :
-          if (abs(self.cursor - cursorLeft) < dist) :
-            dist = abs(self.cursor - cursorLeft)
-            minIndex = index+1          
-        self.cursor = self.cursorsLeft[minIndex]
-
-
-    if (hand == NOTE_RIGHT_HAND) :
-    
-      if (direction > 0) : 
-        subList = [x >= self.cursor for x in self.cursorsRight]
-        self.cursor = subList[0]
-
-      elif (direction < 0) : 
-        subList = [x <= self.cursor for x in self.cursorsRight]
-        self.cursor = subList[-1]
-
-      else :
-        minIndex = 0
-        dist = abs(self.cursor - self.cursorsRight[0])
-        for (index, cursorRight) in enumerate(self.cursorsRight[1:]) :
-          if (abs(self.cursor - cursorRight) < dist) :
-            dist = abs(self.cursor - cursorRight)
-            minIndex = index+1
-        self.cursor = self.cursorsRight[minIndex]
-      
-    delta = self.getCursor() - prevCursor
-    if (delta > 0) :
-      print(f"[DEBUG] Cursor changed because it was not aligned with the requested active hand (+{delta})")
-    elif (delta < 0) :
-      print(f"[DEBUG] Cursor changed because it was not aligned with the requested active hand ({delta})")
-    else :
-      pass
-
 
 
 
@@ -832,6 +756,80 @@ class Score(widget.Widget) :
     """
     return (self.cursor in self.bookmarks)
   
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score._cursorAlignWithActiveHand()                         [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _cursorAlignWithActiveHand(self, hand, direction = 0) :
+    """
+    Sets the cursor to the closest location that is compatible with the requested
+    hand practice mode.
+
+    When the user changes the active hands from 'both hands' to 'single hand' practice,
+    the cursor might become invalid.
+    E.g. left hand practice requested, but there is no note played on the left hand at 
+    the current cursor. 
+    
+    There are different strategies to find a candidate:
+    - direction = 0: look for the closest compatible location (default behaviour)
+    - direction > 0: look for a compatible location after the current location.
+    - direction < 0: look for a compatible location before the current location.
+    'compatible location' means here 'location where a note of the active hand is played'.
+    
+    The function does not change the 'Score.activeHands' attribute.
+    """
+    
+    prevCursor = self.getCursor()
+
+    if (hand == NOTE_LEFT_HAND) :
+      
+      # TODO: guards needed here. There are case where the sets can be void.
+      if (direction > 0) : 
+        subList = [x >= self.cursor for x in self.cursorsLeft]
+        self.cursor = subList[0]
+
+      elif (direction < 0) : 
+        subList = [x <= self.cursor for x in self.cursorsLeft]
+        self.cursor = subList[-1]
+
+      else :
+        minIndex = 0
+        dist = abs(self.cursor - self.cursorsLeft[0])
+        for (index, cursorLeft) in enumerate(self.cursorsLeft[1:]) :
+          if (abs(self.cursor - cursorLeft) < dist) :
+            dist = abs(self.cursor - cursorLeft)
+            minIndex = index+1          
+        self.cursor = self.cursorsLeft[minIndex]
+
+
+    if (hand == NOTE_RIGHT_HAND) :
+    
+      if (direction > 0) : 
+        subList = [x >= self.cursor for x in self.cursorsRight]
+        self.cursor = subList[0]
+
+      elif (direction < 0) : 
+        subList = [x <= self.cursor for x in self.cursorsRight]
+        self.cursor = subList[-1]
+
+      else :
+        minIndex = 0
+        dist = abs(self.cursor - self.cursorsRight[0])
+        for (index, cursorRight) in enumerate(self.cursorsRight[1:]) :
+          if (abs(self.cursor - cursorRight) < dist) :
+            dist = abs(self.cursor - cursorRight)
+            minIndex = index+1
+        self.cursor = self.cursorsRight[minIndex]
+      
+    delta = self.getCursor() - prevCursor
+    if (delta > 0) :
+      print(f"[DEBUG] Cursor changed because it was not aligned with the requested active hand (+{delta})")
+    elif (delta < 0) :
+      print(f"[DEBUG] Cursor changed because it was not aligned with the requested active hand ({delta})")
+    else :
+      pass
+
 
 
   # ---------------------------------------------------------------------------
@@ -1043,6 +1041,50 @@ class Score(widget.Widget) :
       
       if unaffected :
         print("[INTERNAL ERROR] Score._buildCursorsLR: something odd happened!")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.setActiveHands()
+  # ---------------------------------------------------------------------------
+  def setActiveHands(self, left:bool, right:bool) -> None :
+    """
+    Sets the hands i.e. the active channels of the score.
+    
+    Since gangQin handles piano scores only, it corresponds to the left or 
+    right hand channel. 
+    
+    The active hand attributes restrains the set of possible value the 'cursor'
+    attribute might take.
+
+    When the left channel alone is active, the cursor can only take a value
+    among the ones where a note starts on the left hand.
+    Same for the right channel.
+  
+    Single active channels can result in jumps in the cursor values when calling 
+    'Score.cursorStep(+/-1)' or 'Score.cursorNext()'. This is perfectly normal.
+    When both hands are active, the cursor always evolves linearly (no jumps)
+
+    NOTES
+    - at least one channel must be active
+    - changing the active hands attribute is disabled during looped practice
+    """
+    
+    if not(self.loopEnable) :
+      if (not(left) and not(right)) :
+        print("[WARNING] Score.setActiveHands(): at least one hand must be active.")
+      elif left and not(right) :
+        self.activeHands = ACTIVE_HANDS_LEFT
+      elif not(left) and right :
+        self.activeHands = ACTIVE_HANDS_RIGHT
+      else :
+        self.activeHands = ACTIVE_HANDS_BOTH
+    
+      self._cursorAlignWithActiveHand()
+      self._resetCache()
+
+    else :
+      print("[INFO] Score.setActiveHands(): changing the active hand is disabled during looped practice.")
 
 
 
@@ -1314,41 +1356,41 @@ class Score(widget.Widget) :
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD Score.toggleLeftHandPractice()
-  # ---------------------------------------------------------------------------
-  def toggleLeftHandPractice(self) :
-    """
-    Activates/deactivates the left hand practice.
-    """
+  # # ---------------------------------------------------------------------------
+  # # METHOD Score.toggleLeftHandPractice()
+  # # ---------------------------------------------------------------------------
+  # def toggleLeftHandPractice(self) :
+  #   """
+  #   Activates/deactivates the left hand practice.
+  #   """
 
-    if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_RIGHT)) :
-      self.activeHands = ACTIVE_HANDS_LEFT
-      self.cursorAlignToActiveHand(NOTE_LEFT_HAND)
+  #   if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_RIGHT)) :
+  #     self.activeHands = ACTIVE_HANDS_LEFT
+  #     self.cursorAlignToActiveHand(NOTE_LEFT_HAND)
     
-    else :
-      self.activeHands = ACTIVE_HANDS_BOTH
+  #   else :
+  #     self.activeHands = ACTIVE_HANDS_BOTH
 
-    self._resetCache()
+  #   self._resetCache()
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD Score.toggleRightHandPractice()
-  # ---------------------------------------------------------------------------
-  def toggleRightHandPractice(self) :
-    """
-    Activates/deactivates the right hand practice.
-    """
+  # # ---------------------------------------------------------------------------
+  # # METHOD Score.toggleRightHandPractice()
+  # # ---------------------------------------------------------------------------
+  # def toggleRightHandPractice(self) :
+  #   """
+  #   Activates/deactivates the right hand practice.
+  #   """
       
-    if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_LEFT)) :
-      self.activeHands = ACTIVE_HANDS_RIGHT
-      self.cursorAlignToActiveHand(NOTE_RIGHT_HAND)
+  #   if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_LEFT)) :
+  #     self.activeHands = ACTIVE_HANDS_RIGHT
+  #     self.cursorAlignToActiveHand(NOTE_RIGHT_HAND)
     
-    else :
-      self.activeHands = ACTIVE_HANDS_BOTH
+  #   else :
+  #     self.activeHands = ACTIVE_HANDS_BOTH
 
-    self._resetCache()
+  #   self._resetCache()
 
 
 

@@ -40,6 +40,7 @@ import text
 
 # MIDI
 import mido
+import mido.backends.rtmidi   # Necessary for the .exe generation
 
 # Standard libs
 import os

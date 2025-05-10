@@ -21,7 +21,7 @@ from commons import *
 import pygame
 
 # Widgets
-import src.widgets.fileSelectGUI as fileSelectGUI
+import src.widgets.fileSelectionGUI as fileSelectionGUI
 import src.widgets.fingerSelector as fingerSelector
 import src.widgets.keyboard as keyboard
 import src.widgets.notify as notify
@@ -116,7 +116,8 @@ class GangQin :
     """
 
     # Call the file selection GUI
-    (selectedDevice, songFile) = fileSelectGUI.show()
+    fsGUI = fileSelectionGUI.new()
+    (selectedDevice, songFile) = fsGUI.run()
 
     if ((songFile == "") or (songFile == "None")) :
       print("[INFO] No file selected, exiting...")

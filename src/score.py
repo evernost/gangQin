@@ -481,7 +481,6 @@ class Score(widget.Widget) :
 
 
 
-
   # ---------------------------------------------------------------------------
   # METHOD Score.getCursor()
   # ---------------------------------------------------------------------------
@@ -497,7 +496,7 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score.cursorGoto()
   # ---------------------------------------------------------------------------
-  def cursorGoto(self, value, ignoreActiveHand = False) :
+  def cursorGoto(self, value, force = False) -> None :
     """
     Sets the cursor to a specific location in the score.
     
@@ -507,36 +506,32 @@ class Score(widget.Widget) :
 
     Setting the cursor must be done with this function exclusively.
     Manually setting 'Score.cursor' is discouraged and might cause crashes.
+
+    The parameter 'force' is set, the cursor location will be enforced regardless
+    of the active hands.
+    The need for this option is yet to be confirmed.
     """
 
     if (value < 0) :
-      valueClamped = 0
+      cursorNew = 0
     elif (value > self.cursorMax) :
-      valueClamped = self.cursorMax
+      cursorNew = self.cursorMax
     else :
-      valueClamped = value
+      cursorNew = value
 
-
-
-    if (self.activeHands == ACTIVE_HANDS_BOTH) :
-      self.cursor = valueClamped
-
-    elif (self.activeHands == ACTIVE_HANDS_LEFT) :
-      if ignoreActiveHand :
-        self.cursor = valueClamped
-      else: 
-        p = self._getCursorsLeftPointer(valueClamped, force = True)
-        self.cursor = self.cursorsLeft[p]
-
-    elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
-      if ignoreActiveHand :
-        self.cursor = valueClamped
-      else: 
-        p = self._getCursorsRightPointer(valueClamped, force = True)
+    if force :
+      self.cursor = cursorNew
+    else :
+      if (self.activeHands == SCORE_ACTIVE_HANDS_BOTH) :
+        self.cursor = cursorNew
+      elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
+        i = self._getIndexInCursorsLeft(cursorNew)
+        self.cursor = self.cursorsLeft[i]
+      elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
+        p = self._getIndexInCursorsRight(cursorNew, force = True)
         self.cursor = self.cursorsRight[p]
-
-    else :
-      print("[ERROR] Score.cursorGoto(): unknown active hand specification (possible internal error)")
+      else :
+        print("[ERROR] Score.cursorGoto(): unknown active hand specification (possible internal error)")
 
     
 
@@ -597,11 +592,11 @@ class Score(widget.Widget) :
     if (delta > 0) :
 
       # BOTH HAND PRACTICE
-      if (self.activeHands == ACTIVE_HANDS_BOTH) :
+      if (self.activeHands == SCORE_ACTIVE_HANDS_BOTH) :
         self.cursorGoto(self.getCursor() + delta)
 
       # SINGLE HAND PRACTICE (LEFT)
-      elif (self.activeHands == ACTIVE_HANDS_LEFT) :
+      elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
         index = self._getCursorsLeftPointer(self.getCursor())
         
         if (index == -1) :
@@ -611,7 +606,7 @@ class Score(widget.Widget) :
           self.cursor = self.cursorsLeft[index + delta]
 
       # SINGLE HAND PRACTICE (RIGHT)
-      elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
+      elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
         index = self._getCursorsRightPointer(self.getCursor())
 
         if (index == -1) :
@@ -628,11 +623,11 @@ class Score(widget.Widget) :
     else :
 
       # BOTH HAND PRACTICE
-      if (self.activeHands == ACTIVE_HANDS_BOTH) :
+      if (self.activeHands == SCORE_ACTIVE_HANDS_BOTH) :
         self.cursorGoto(self.getCursor() + delta)
 
       # SINGLE HAND PRACTICE (LEFT)
-      elif (self.activeHands == ACTIVE_HANDS_LEFT) :
+      elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
         index = self._getCursorsLeftPointer(self.getCursor())
         
         if (index == -1) :
@@ -642,7 +637,7 @@ class Score(widget.Widget) :
           self.cursor = self.cursorsLeft[index + delta]
 
       # SINGLE HAND PRACTICE (RIGHT)
-      elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
+      elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
         index = self._getCursorsRightPointer(self.getCursor())
 
         if (index == -1) :
@@ -688,27 +683,30 @@ class Score(widget.Widget) :
     """
     Sets the cursor to the next closest bookmark.
     Does nothing if there are no bookmarks.
+
+    In single hand practice, if the next bookmark does not contain events
+    for the current hand, then it will jump to the closest location of the
+    requested bookmark.
     """
     
-    if (len(self.bookmarks) > 0) :
+    if self.bookmarks :
       
-      # TODO: the set has to be restricted further in single hand practice
-      tmp = [x for x in self.bookmarks if (x > self.cursor)]
-      if (len(tmp) > 0) :
+      # List the bookmarked cursor values greater than the current cursor
+      nextBookmarks = [x for x in self.bookmarks if (x > self.cursor)]
+      
+      if nextBookmarks :
+        if (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
+          self.cursorGoto(nextBookmarks[0])
+          if not(nextBookmarks[0] in self.cursorsLeft) :
+            print(f"[INFO] Bookmark #{self.bookmarks.index(nextBookmarks[0])} has nothing on the left hand. Using closest location instead.")
         
-        if (self.activeHands == ACTIVE_HANDS_LEFT) :
-          self.cursorGoto(tmp[0], ignoreActiveHand = True)
-          if not(tmp[0] in self.cursorsLeft) :
-            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[0])} has nothing on the left hand.")
-        
-        elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
-          self.cursorGoto(tmp[0], ignoreActiveHand = True)
-          if not(tmp[0] in self.cursorsRight) :
-            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[0])} has nothing on the right hand.")
+        elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
+          self.cursorGoto(nextBookmarks[0])
+          if not(nextBookmarks[0] in self.cursorsRight) :
+            print(f"[INFO] Bookmark #{self.bookmarks.index(nextBookmarks[0])} has nothing on the right hand. Using closest location instead.")
         
         else :
-          self.cursorGoto(tmp[0])
-      
+          self.cursorGoto(nextBookmarks[0])
       
       else :
         print(f"[INFO] Last bookmark reached")
@@ -718,29 +716,35 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score.cursorGotoPreviousBookmark()
   # ---------------------------------------------------------------------------
-  def cursorGotoPreviousBookmark(self) :
+  def cursorGotoPreviousBookmark(self) -> None :
     """
     Sets the cursor to the previous closest bookmark.
     Does nothing if there are no bookmarks.
+
+    In single hand practice, if the previous bookmark does not contain events
+    for the current hand, then it will jump to the closest location of the
+    requested bookmark.
     """
 
-    if (len(self.bookmarks) > 0) :
-      tmp = [x for x in self.bookmarks if (x < self.cursor)]
-      if (len(tmp) > 0) :
+    if self.bookmarks :
+      
+      # List the bookmarked cursor values greater than the current cursor
+      nextBookmarks = [x for x in self.bookmarks if (x < self.cursor)]
+      
+      if nextBookmarks :
 
-        if (self.activeHands == ACTIVE_HANDS_LEFT) :
-          self.cursorGoto(tmp[-1], ignoreActiveHand = True)
-          if not(tmp[-1] in self.cursorsLeft) :
-            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[-1])} has nothing on the left hand.")
+        if (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
+          self.cursorGoto(nextBookmarks[-1], ignoreActiveHand = True)
+          if not(nextBookmarks[-1] in self.cursorsLeft) :
+            print(f"[WARNING] Bookmark #{self.bookmarks.index(nextBookmarks[-1])} has nothing on the left hand.")
         
-        elif (self.activeHands == ACTIVE_HANDS_RIGHT) :
-          self.cursorGoto(tmp[-1], ignoreActiveHand = True)
-          if not(tmp[-1] in self.cursorsRight) :
-            print(f"[WARNING] Bookmark #{self.bookmarks.index(tmp[-1])} has nothing on the right hand.")
+        elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
+          self.cursorGoto(nextBookmarks[-1], ignoreActiveHand = True)
+          if not(nextBookmarks[-1] in self.cursorsRight) :
+            print(f"[WARNING] Bookmark #{self.bookmarks.index(nextBookmarks[-1])} has nothing on the right hand.")
 
         else :
-          self.cursorGoto(tmp[-1])
-      
+          self.cursorGoto(nextBookmarks[-1])
       
       else :
         print(f"[INFO] First bookmark reached")
@@ -938,79 +942,75 @@ class Score(widget.Widget) :
   
 
 
-
-
-
-
-
-
   # ---------------------------------------------------------------------------
-  # METHOD Score._getCursorsLeftPointer()                             [PRIVATE]
+  # METHOD Score._getIndexInCursorsLeft()                             [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _getCursorsLeftPointer(self, cursor, force = False) :
+  def _getIndexInCursorsLeft(self, cursorReq, force = False) -> int :
     """
-    Returns the value 'p' such that cursorsLeft[p] is equal to the query 
-    value 'cursor'.
+    Returns the index 'i' such that 'Score.cursorsLeft[i]' is equal to the 
+    requested value 'cursorReq'.
 
-    If no such value exists, the function returns:
-    - -1 when 'force' is False (default)
-    - 'p' such that cursorsLeft[p] is the closest possible to 'cursor' otherwise.
-      In that case, cursorsLeft[p] can be either before or after 'cursor'.
+    By default, it returns the index that gives the closest cursor to the 
+    target value, in case no exact match can be found.
+    The closest match can be either before or after the target cursor.
 
-    There is usually no need to call this function externally.
+    When force = True, it returns -1 when there is no exact solution.
     """
     
-    if (cursor in self.cursorsLeft) :
-      index = self.cursorsLeft.index(cursor)
-      return index
-
+    # An exact solution exists 
+    if (cursorReq in self.cursorsLeft) :
+      return self.cursorsLeft.index(cursorReq)
+    
+    # No exact solution
     else :
       if force :
-        minDist = abs(cursor - self.cursorsLeft[0]); minIndex = 0
-        for (idx, cursorLeft) in enumerate(self.cursorsLeft) :
-          if (abs(cursor - cursorLeft) < minDist) :
-            minDist = abs(cursor - cursorLeft)
-            minIndex = idx
-
-        print(f"[DEBUG] Requested cursor: {cursor}, closest: {minIndex}")
-        return minIndex
-
-      else :
         return -1
+      else :
+        minDist = abs(cursorReq - self.cursorsLeft[0])
+        minIndex = 0
+        for (i, cursorLeft) in enumerate(self.cursorsLeft) :
+          if (abs(cursorReq - cursorLeft) < minDist) :
+            minDist = abs(cursorReq - cursorLeft)
+            minIndex = i
+
+        print(f"[DEBUG] Requested cursor: {cursorReq}, closest: {minIndex}")
+        return minIndex
     
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score._getCursorsRightPointer()                            [PRIVATE]
+  # METHOD Score._getIndexInCursorsRight()                            [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _getCursorsRightPointer(self, cursor, force = False) :
+  def _getIndexInCursorsRight(self, cursorReq, force = False) -> int :
     """
-    Returns the value 'p' such that cursorsRight[p] is equal to the query value
-    'cursor'.
+    Returns the index 'i' such that 'Score.cursorsRight[i]' is equal to the 
+    requested value 'cursorReq'.
 
-    If no such value exists, the function returns:
-    - -1 when <force> is False (default)
-    - 'p' such that cursorsRight[p] is the closest possible to 'cursor' otherwise.
-       In that case, cursorsRight[p] can be either before or after 'cursor'.
+    By default, it returns the index that gives the closest cursor to the 
+    target value, in case no exact match can be found.
+    The closest match can be either before or after the target cursor.
+
+    When force = True, it returns -1 when there is no exact solution.
     """
     
-    if (cursor in self.cursorsRight) :
-      index = self.cursorsRight.index(cursor)
-      return index
-
+    # An exact solution exists 
+    if (cursorReq in self.cursorsRight) :
+      return self.cursorsRight.index(cursorReq)
+    
+    # No exact solution
     else :
       if force :
-        minDist = abs(cursor - self.cursorsRight[0]); minIndex = 0
-        for (idx, cursorLeft) in enumerate(self.cursorsRight) :
-          if (abs(cursor - cursorLeft) < minDist) :
-            minDist = abs(cursor - cursorLeft)
-            minIndex = idx
-
-        print(f"[DEBUG] Requested cursor: {cursor}, closest: {minIndex}")
-        return minIndex
-
-      else :
         return -1
+      else :
+        minDist = abs(cursorReq - self.cursorsRight[0])
+        minIndex = 0
+        for (i, cursorRight) in enumerate(self.cursorsRight) :
+          if (abs(cursorReq - cursorRight) < minDist) :
+            minDist = abs(cursorReq - cursorRight)
+            minIndex = i
+
+        print(f"[DEBUG] Requested cursor: {cursorReq}, closest: {minIndex}")
+        return minIndex
 
 
 
@@ -1074,11 +1074,11 @@ class Score(widget.Widget) :
       if (not(left) and not(right)) :
         print("[WARNING] Score.setActiveHands(): at least one hand must be active.")
       elif left and not(right) :
-        self.activeHands = ACTIVE_HANDS_LEFT
+        self.activeHands = SCORE_ACTIVE_HANDS_LEFT
       elif not(left) and right :
-        self.activeHands = ACTIVE_HANDS_RIGHT
+        self.activeHands = SCORE_ACTIVE_HANDS_RIGHT
       else :
-        self.activeHands = ACTIVE_HANDS_BOTH
+        self.activeHands = SCORE_ACTIVE_HANDS_BOTH
     
       self._cursorAlignWithActiveHand()
       self._resetCache()
@@ -1097,8 +1097,7 @@ class Score(widget.Widget) :
     """
     
     # TODO: incorrect for single hand practice mode
-    return self.noteOnTimecodes["LR"][self.cursor]
-
+    return self.noteOnTimecodes["LR"][self.getCursor()]
 
 
 
@@ -1170,11 +1169,11 @@ class Score(widget.Widget) :
             # SINGLE HAND PRACTICE
             # Adds the notes of the inactive hand to the list.
             # Sets their "inactive" property to "True" so that it is displayed with the appropriate color.
-            if ((self.activeHands == ACTIVE_HANDS_LEFT) and (staffIndex == NOTE_RIGHT_HAND)) :
+            if ((self.activeHands == SCORE_ACTIVE_HANDS_LEFT) and (staffIndex == NOTE_RIGHT_HAND)) :
               noteObj.inactive = True
               self.teacherNotes.append(noteObj)
 
-            elif ((self.activeHands == ACTIVE_HANDS_RIGHT) and (staffIndex == NOTE_LEFT_HAND)) :
+            elif ((self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) and (staffIndex == NOTE_LEFT_HAND)) :
               noteObj.inactive = True
               self.teacherNotes.append(noteObj)
 
@@ -1292,18 +1291,18 @@ class Score(widget.Widget) :
     """
 
     if (direction >= 0) :
-      if (self.activeHands == ACTIVE_HANDS_RIGHT) :
+      if (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
         timecodeSearchField = [x > self.cursor for x in self.cursorsRight]
-      elif (self.activeHands == ACTIVE_HANDS_LEFT) :
+      elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
         timecodeSearchField = [x > self.cursor for x in self.cursorsRight]
       else :
         # TODO: check the boundaries
         timecodeSearchField = [x for x in range(self.cursor+1, self.length)]
     
     else :
-      if (self.activeHands == ACTIVE_HANDS_RIGHT) :
+      if (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
         timecodeSearchField = [x < self.cursor for x in self.cursorsRight]
-      elif (self.activeHands == ACTIVE_HANDS_LEFT) :
+      elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
         timecodeSearchField = [x < self.cursor for x in self.cursorsRight]
       else :
         timecodeSearchField = [x for x in range(0, self.cursor)]

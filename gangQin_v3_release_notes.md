@@ -33,6 +33,7 @@
 ### gangQin Fusion:
 - [ ] auto-repeat function for the playglows
 - [ ] song selector defaults to the last song
+- [ ] ghost mode on the mouse cursor to help placing the playglow
 
 ### gangQin Capture:
 - [ ] added snapshot counter

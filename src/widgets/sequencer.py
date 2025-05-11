@@ -85,11 +85,11 @@ class Sequencer(widget.Widget) :
 
         # DOWN: jump to the previous bookmark
         elif (key == pygame.K_DOWN) :
-          self.top.widgets[WIDGET_ID_SCORE].gotoPreviousBookmark()
+          self.top.widgets[WIDGET_ID_SCORE].cursorGotoPreviousBookmark()
 
         # UP: jump to the next bookmark
         elif (key == pygame.K_UP) :
-          self.top.widgets[WIDGET_ID_SCORE].gotoNextBookmark()
+          self.top.widgets[WIDGET_ID_SCORE].cursorGotoNextBookmark()
 
 
 

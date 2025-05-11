@@ -68,6 +68,11 @@ class GangQin :
   # ---------------------------------------------------------------------------
   def __init__(self) :
     
+    # TODO: check the minimal requirements to run properly
+    # - '/song' directory must exist
+    # ...
+    # self._envCheck()
+
     # Initialise attributes
     self.songFile = ""    # Example: "./songs/my_song.mid"
     self.songDir  = ""    # Example: './songs'

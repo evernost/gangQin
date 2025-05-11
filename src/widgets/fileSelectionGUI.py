@@ -148,10 +148,11 @@ class FileSelectGUI :
   # ---------------------------------------------------------------------------
   def _getSelection(self) :
     """
-    Returns a descriptor (dictionary) with the 
+    Returns a descriptor (dictionary) with the selected song and the selected
+    input MIDI interface.
     """
   
-    # Save conf to the .ini file  
+    # Save the selection to the configuration file
     self.config["DEFAULT"] = {
       "midi_interface": self.selectedDevice,
       "song"          : self.selectedFile
@@ -361,7 +362,7 @@ class FileSelectGUI :
     changed.
     """
     
-    if (self.guiFileExtChoice.get() == ".mid"): 
+    if (self.guiFileExtChoice.get() == ".mid") : 
       fileList = [os.path.basename(file) for file in self.MIDIFiles]
     elif (self.guiFileExtChoice.get() == ".pr") : 
       fileList = [os.path.basename(file) for file in self.GQFiles]
@@ -390,13 +391,15 @@ class FileSelectGUI :
     
     # Read the file
     comboIndex = self.guiComboFile.current()
-    self.selectedFile = self.MIDIFiles[comboIndex]
+    if (self.guiFileExtChoice.get() == ".mid") : 
+      self.selectedFile = self.MIDIFiles[comboIndex]
+    else :
+      self.selectedFile = self.GQFiles[comboIndex]
 
     # Read the device
     self.selectedDevice = self.guiComboMIDI.get()
 
     self.root.destroy()
-
 
 
 

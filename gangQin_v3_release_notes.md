@@ -25,7 +25,7 @@
 - [ ] improved hand selector for the single hand practice
 - [ ] auto-backup of .gq if overwritten by a new generation from .mid
 - [ ] auto-backup of .gq during practice
-- [ ] more robust single hand practice
+- [X] more robust single hand practice
 - [ ] double key press replaced by an orange note, the user must indicate what hand should play
 - [ ] auto-detection of odd fingersatz in chords
 - [ ] clearer stat cues

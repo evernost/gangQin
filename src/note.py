@@ -21,29 +21,59 @@ import src.utils as utils
 
 
 
+# =============================================================================
+# CONSTANTS POOL
+# =============================================================================
+# None.
 
+
+
+# =============================================================================
+# CLASS DEFINITION
+# =============================================================================
 class Note :
 
   """
   NOTE object
   
-  TODO
+  The Note object is a representation of a musical note with all the properties
+  necessary accross the different objects. 
+  
   """
 
-  def __init__(self, pitch, hand = NOTE_UNDEFINED_HAND, finger = 0, noteIndex = 0, startTime = 0, stopTime = 0, voice = NOTE_VOICE_DEFAULT, highlight = False) :
+
+  # "pitch": 72,
+  # "hand": 0,
+  # "finger": 0,
+  # "keyColor": 0,        # N'a rien à faire là
+  # "noteIndex": 70,
+  # "startTime": 358880,
+  # "stopTime": 359031,
+  # "sustained": false,   # N'a rien à faire dans le .json de sortie
+  # "inactive": false,    # Idem
+  # "disabled": false,
+  # "voice": 0,
+  # "name": "C5",
+  # "id": 1364
+
+  def __init__(self, pitch, noteIndex = 0, startTime = 0, stopTime = 0, voice = NOTE_VOICE_DEFAULT, highlight = False) :
     
     # General common attributes of a note
-    self.pitch = pitch
-    self.hand = hand
-    self.finger = finger
-    self.keyColor = NOTE_WHITE_KEY if ((pitch % 12) in MIDI_CODE_WHITE_NOTES_MOD12) else NOTE_BLACK_KEY
+    self.pitch    = pitch
+    self.hand     = NOTE_UNDEFINED_HAND
+    self.finger   = NOTE_UNDEFINED_FINGER
     
-    # Info relative to the pianoroll
-    self.noteIndex = noteIndex      # Index of the note in this pitch
-    self.startTime = startTime
-    self.stopTime = stopTime
-    self.sustained = False          # True if the note is held at a given time (note will be ignored by the arbiter)
-    self.highlight = highlight      # True if its fingersatz is being edited
+    # Database properties
+    self.startTime  = 0
+    self.stopTime   = 0
+    self.id         = -1    # Note unique identifier
+    self.pitchCount = 0      # Index of the note in this pitch
+    self.name       = getFriendlyName(self.pitch)
+    
+
+    # Display properties (not stored in db, changes throughout the gameplay)
+    self.sustained = False          # True if the note is held at a given time
+    self.highlight = False          # True if its fingersatz is being edited
     self.inactive = False           # True if the note shall be ignored by the arbiter (single hand practice)
     self.disabled = False           # True if the note shall be ignored by the arbiter (unplayable note)
     self.upcoming = False           # True if the note is about to be played soon
@@ -52,6 +82,9 @@ class Note :
     self.voice = voice              # Define the voice the note belongs to, if another is needed on top of the usual left/right voice
     self.lookAheadDistance = 0      # Define how far away this note is located relative to the current cursor
     
+    # Internal properties
+    self.keyColor = NOTE_WHITE_KEY if ((pitch % 12) in MIDI_CODE_WHITE_NOTES_MOD12) else NOTE_BLACK_KEY
+
     # Not used anymore?
     self.name = getFriendlyName(self.pitch)
     self.id = -1
@@ -66,7 +99,6 @@ class Note :
     """
     Returns the RGB color (as a 3-tuple) of the note based on its properties.
     """
-
 
     if (self.voice != NOTE_VOICE_DEFAULT) :
       baseColor = VOICE_COLOR[self.voice]

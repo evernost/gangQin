@@ -12,7 +12,7 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNAL LIBS
 # =============================================================================
 # Project specific constants
 from src.commons import *
@@ -32,7 +32,7 @@ import time
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS POOL
 # =============================================================================
 # None.
 
@@ -90,10 +90,9 @@ class Score(widget.Widget) :
 
     # Options for Score.getTeacherNotes()
     self.teacherNotes = []
+    self.teacherNotesCursorCached = -1
     self.lookAheadDistance = 0
     self.activeHands = "LR"
-    self.cachedCursor = -1
-    self.cachedTeacherNotes = []
     
     # Sections in the score
     self.sectionLoop = []
@@ -178,7 +177,12 @@ class Score(widget.Widget) :
               # Append the new note to the list
               # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
               insertIndex = len(self.pianoRoll[trackID][pitch])
-              self.pianoRoll[trackID][pitch].append(note.Note(pitch, hand = trackID, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
+              newNote = note.Note(pitch)
+              newNote.hand      = trackID
+              newNote.id        = insertIndex
+              newNote.startTime = currTime
+              newNote.stopTime  = NOTE_END_UNKNOWN
+              self.pianoRoll[trackID][pitch].append(newNote)
               
               # Append the timecode of this keypress
               if (trackID == SCORE_LEFT_HAND_TRACK_ID) :
@@ -482,6 +486,68 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD Score.exportToGQv3File()
+  # ---------------------------------------------------------------------------
+  def exportToGQ3File(self, gqFile: str, backup = False) -> None :
+    """
+    Prototype function
+    Exporting to GQ file v3
+
+    Experimenting a format that is more 'diff' and 'merge' friendly.
+    """
+
+    exportDict = {}
+    exportDict["revision"]        = f"v{REV_MAJOR}.{REV_MINOR}"
+    exportDict["avgNoteDuration"] = self.avgNoteDuration
+    exportDict["cursor"]          = self.getCursor()
+    exportDict["bookmarks"]       = self.bookmarks
+
+    noteCount = 0
+    exportDict["pianoRoll"] = []
+    for notesInTrack in self.pianoRoll :
+      for notesInPitch in notesInTrack :
+        for noteObj in notesInPitch :
+          noteCount += 1
+          
+          noteObjCopy = copy.deepcopy(noteObj)
+          noteExportAttr = noteObjCopy.__dict__
+
+          # Filter out some note attributes that need not to be exported
+          del noteExportAttr["highlight"]
+          del noteExportAttr["upcoming"]
+          del noteExportAttr["upcomingDistance"]
+          del noteExportAttr["fromKeyboardInput"]
+          del noteExportAttr["lookAheadDistance"]
+          del noteExportAttr["visible"]
+
+          exportDict["pianoRoll"].append(noteExportAttr)
+
+    if backup :
+      (root, _) = os.path.splitext(gqFile)
+      exportFile = root + ".bak"
+    else :
+      (root, _) = os.path.splitext(gqFile)
+      exportFile = root + ".gq3"
+    
+    with open(exportFile, "w") as fileHandler :
+      json.dump(exportDict, fileHandler, indent = 2)
+
+    currTime = datetime.datetime.now()
+    if backup :
+      print(f"[INFO] Saved backup to '{exportFile}'")
+    else :
+      currTime = datetime.datetime.now()
+      print(f"[DEBUG] {noteCount} notes written in .pr file.")
+      print(f"[INFO] Saved to '{exportFile}' at {currTime.strftime('%H:%M:%S')}")
+
+
+
+
+
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD Score.getCursor()
   # ---------------------------------------------------------------------------
   def getCursor(self) :
@@ -677,77 +743,36 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.cursorGotoNextBookmark()
+  # METHOD Score.cursorGotoClosestBookmark()
   # ---------------------------------------------------------------------------
-  def cursorGotoNextBookmark(self) -> None :
+  def cursorGotoClosestBookmark(self, direction : int) -> None :
     """
     Sets the cursor to the next closest bookmark.
     Does nothing if there are no bookmarks.
 
-    In single hand practice, if the next bookmark does not contain events
+    Indicate the direction using the 'direction' argument:
+    - any integer >= 0: goto the next bookmark
+    - any integer < 0 : goto the previous bookmark
+
+    In single hand practice, if the destination bookmark does not contain events
     for the current hand, then it will jump to the closest location of the
     requested bookmark.
     """
     
     if self.bookmarks :
-      
-      # List the bookmarked cursor values greater than the current cursor
-      nextBookmarks = [x for x in self.bookmarks if (x > self.cursor)]
-      
-      if nextBookmarks :
-        if (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
+      if (direction >= 0) :
+        nextBookmarks = [x for x in self.bookmarks if (x > self.cursor)]
+        if nextBookmarks :
           self.cursorGoto(nextBookmarks[0])
-          if not(nextBookmarks[0] in self.cursorsLeft) :
-            print(f"[INFO] Bookmark #{self.bookmarks.index(nextBookmarks[0])} has nothing on the left hand. Using closest location instead.")
-        
-        elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
-          self.cursorGoto(nextBookmarks[0])
-          if not(nextBookmarks[0] in self.cursorsRight) :
-            print(f"[INFO] Bookmark #{self.bookmarks.index(nextBookmarks[0])} has nothing on the right hand. Using closest location instead.")
-        
         else :
-          self.cursorGoto(nextBookmarks[0])
-      
-      else :
-        print(f"[INFO] Last bookmark reached")
+          print(f"[INFO] Last bookmark reached")
     
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.cursorGotoPreviousBookmark()
-  # ---------------------------------------------------------------------------
-  def cursorGotoPreviousBookmark(self) -> None :
-    """
-    Sets the cursor to the previous closest bookmark.
-    Does nothing if there are no bookmarks.
-
-    In single hand practice, if the previous bookmark does not contain events
-    for the current hand, then it will jump to the closest location of the
-    requested bookmark.
-    """
-
-    if self.bookmarks :
-      
-      # List the bookmarked cursor values greater than the current cursor
-      nextBookmarks = [x for x in self.bookmarks if (x < self.cursor)]
-      
-      if nextBookmarks :
-
-        if (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
-          self.cursorGoto(nextBookmarks[-1], ignoreActiveHand = True)
-          if not(nextBookmarks[-1] in self.cursorsLeft) :
-            print(f"[WARNING] Bookmark #{self.bookmarks.index(nextBookmarks[-1])} has nothing on the left hand.")
-        
-        elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
-          self.cursorGoto(nextBookmarks[-1], ignoreActiveHand = True)
-          if not(nextBookmarks[-1] in self.cursorsRight) :
-            print(f"[WARNING] Bookmark #{self.bookmarks.index(nextBookmarks[-1])} has nothing on the right hand.")
-
-        else :
-          self.cursorGoto(nextBookmarks[-1])
-      
       else :
-        print(f"[INFO] First bookmark reached")
+        prevBookmarks = [x for x in self.bookmarks if (x < self.cursor)]  
+        if prevBookmarks :
+          self.cursorGoto(prevBookmarks[-1])
+        else :
+          print(f"[INFO] First bookmark reached")
 
 
 
@@ -783,49 +808,11 @@ class Score(widget.Widget) :
     
     The function does not change the 'Score.activeHands' attribute.
     """
-    
+
     prevCursor = self.getCursor()
 
-    if (hand == NOTE_LEFT_HAND) :
-      
-      # TODO: guards needed here. There are case where the sets can be void.
-      if (direction > 0) : 
-        subList = [x >= self.cursor for x in self.cursorsLeft]
-        self.cursor = subList[0]
+    self.cursorGoto(self.getCursor())
 
-      elif (direction < 0) : 
-        subList = [x <= self.cursor for x in self.cursorsLeft]
-        self.cursor = subList[-1]
-
-      else :
-        minIndex = 0
-        dist = abs(self.cursor - self.cursorsLeft[0])
-        for (index, cursorLeft) in enumerate(self.cursorsLeft[1:]) :
-          if (abs(self.cursor - cursorLeft) < dist) :
-            dist = abs(self.cursor - cursorLeft)
-            minIndex = index+1          
-        self.cursor = self.cursorsLeft[minIndex]
-
-
-    if (hand == NOTE_RIGHT_HAND) :
-    
-      if (direction > 0) : 
-        subList = [x >= self.cursor for x in self.cursorsRight]
-        self.cursor = subList[0]
-
-      elif (direction < 0) : 
-        subList = [x <= self.cursor for x in self.cursorsRight]
-        self.cursor = subList[-1]
-
-      else :
-        minIndex = 0
-        dist = abs(self.cursor - self.cursorsRight[0])
-        for (index, cursorRight) in enumerate(self.cursorsRight[1:]) :
-          if (abs(self.cursor - cursorRight) < dist) :
-            dist = abs(self.cursor - cursorRight)
-            minIndex = index+1
-        self.cursor = self.cursorsRight[minIndex]
-      
     delta = self.getCursor() - prevCursor
     if (delta > 0) :
       print(f"[DEBUG] Cursor changed because it was not aligned with the requested active hand (+{delta})")
@@ -833,6 +820,54 @@ class Score(widget.Widget) :
       print(f"[DEBUG] Cursor changed because it was not aligned with the requested active hand ({delta})")
     else :
       pass
+
+    # if (hand == NOTE_LEFT_HAND) :
+      
+    #   # TODO: guards needed here. There are case where the sets can be void.
+    #   if (direction > 0) : 
+    #     subList = [x >= self.cursor for x in self.cursorsLeft]
+    #     self.cursor = subList[0]
+
+    #   elif (direction < 0) : 
+    #     subList = [x <= self.cursor for x in self.cursorsLeft]
+    #     self.cursor = subList[-1]
+
+    #   else :
+    #     minIndex = 0
+    #     dist = abs(self.cursor - self.cursorsLeft[0])
+    #     for (index, cursorLeft) in enumerate(self.cursorsLeft[1:]) :
+    #       if (abs(self.cursor - cursorLeft) < dist) :
+    #         dist = abs(self.cursor - cursorLeft)
+    #         minIndex = index+1          
+    #     self.cursor = self.cursorsLeft[minIndex]
+
+
+    # if (hand == NOTE_RIGHT_HAND) :
+    
+    #   if (direction > 0) : 
+    #     subList = [x >= self.cursor for x in self.cursorsRight]
+    #     self.cursor = subList[0]
+
+    #   elif (direction < 0) : 
+    #     subList = [x <= self.cursor for x in self.cursorsRight]
+    #     self.cursor = subList[-1]
+
+    #   else :
+    #     minIndex = 0
+    #     dist = abs(self.cursor - self.cursorsRight[0])
+    #     for (index, cursorRight) in enumerate(self.cursorsRight[1:]) :
+    #       if (abs(self.cursor - cursorRight) < dist) :
+    #         dist = abs(self.cursor - cursorRight)
+    #         minIndex = index+1
+    #     self.cursor = self.cursorsRight[minIndex]
+      
+    # delta = self.getCursor() - prevCursor
+    # if (delta > 0) :
+    #   print(f"[DEBUG] Cursor changed because it was not aligned with the requested active hand (+{delta})")
+    # elif (delta < 0) :
+    #   print(f"[DEBUG] Cursor changed because it was not aligned with the requested active hand ({delta})")
+    # else :
+    #   pass
 
 
 
@@ -1109,44 +1144,33 @@ class Score(widget.Widget) :
     Returns the list of all notes that must be pressed at the current cursor
     location in the score.
     
-    Only notes that are pressed at this very cursor are returned.
-    The notes that were pressed before and held up to the current cursor are
-    not included.
+    Only notes pressed at this cursor are returned.
+    Sustained notes (notes that were pressed before and held up to the current 
+    cursor) are not included in the list.
+
+    TODO: confirm that sustained notes are not returned
     """
     
-    if (self.cachedCursor == self.cursor) :
-      return self.cachedTeacherNotes
+    # Return the values in cache if the cursor has not changed
+    if (self.getCursor() == self.teacherNotesCursorCached) :
+      pass
     
+    # Otherwise, regenerate the cache
     else :
-      self._updateTeacherNotes()
-      self.cachedCursor = self.cursor
-      self.cachedTeacherNotes = self.teacherNotes
-      
-      return self.teacherNotes
+      self._calculateTeacherNotes()
+      self.teacherNotesCursorCached = self.getCursor()
 
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score._resetCache()                                        [PRIVATE]
-  # ---------------------------------------------------------------------------
-  def _resetCache(self) :
-    """
-    Resets the teacher notes cache.
-    Teacher notes are determined once per cursor. Cacheing avoids doing this 
-    task multiple times when the cursor hasn't changed.
-    """
-    
-    self.cachedCursor = -1
+    return self.teacherNotes
 
 
 
   # ---------------------------------------------------------------------------
   # METHOD Score._updateTeacherNotes()
   # ---------------------------------------------------------------------------
-  def _updateTeacherNotes(self) :
+  def _calculateTeacherNotes(self) :
     """
-    Builds the list <teacherNotes> of current expected notes to be played at 
-    the current cursor.
+    Builds the 'teacherNotes' attribute of current expected notes to be played 
+    at the current cursor.
     """
     
     # Reset the play attributes of the previous notes before deleting them.
@@ -1156,12 +1180,14 @@ class Score(widget.Widget) :
       noteObj.sustained = False
       noteObj.inactive = False
 
+    # Reset the cache
     self.teacherNotes = []
     
     # Loop on all notes in the score
     for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
-      for (staffIndex, _) in enumerate(self.pianoRoll) :
-        for noteObj in self.pianoRoll[staffIndex][pitch] :
+      for channel in range(SCORE_N_STAFF) :
+      #for (staffIndex, _) in enumerate(self.pianoRoll) :
+        for noteObj in self.pianoRoll[channel][pitch] :
 
           # Detect a note pressed at this timecode
           if (noteObj.startTime == self.getCurrentTimecode()) :
@@ -1188,6 +1214,21 @@ class Score(widget.Widget) :
 
     if (len(self.teacherNotes) == 0) :
       print(f"[WARNING] Corrupted database: timecode is listed (t = {self.getCurrentTimecode()}), but no note was found starting at that moment.")
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score._resetCache()                                        [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _resetCache(self) :
+    """
+    Resets the teacher notes cache.
+    Teacher notes are determined once per cursor. Cacheing avoids doing this 
+    task multiple times when the cursor hasn't changed.
+    """
+    
+    self.cachedCursor = -1
 
 
 
@@ -1352,44 +1393,6 @@ class Score(widget.Widget) :
     else :
       print("[INFO] Could not find the current MIDI notes in the score!")
       return (False, [])
-
-
-
-  # # ---------------------------------------------------------------------------
-  # # METHOD Score.toggleLeftHandPractice()
-  # # ---------------------------------------------------------------------------
-  # def toggleLeftHandPractice(self) :
-  #   """
-  #   Activates/deactivates the left hand practice.
-  #   """
-
-  #   if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_RIGHT)) :
-  #     self.activeHands = ACTIVE_HANDS_LEFT
-  #     self.cursorAlignToActiveHand(NOTE_LEFT_HAND)
-    
-  #   else :
-  #     self.activeHands = ACTIVE_HANDS_BOTH
-
-  #   self._resetCache()
-
-
-
-  # # ---------------------------------------------------------------------------
-  # # METHOD Score.toggleRightHandPractice()
-  # # ---------------------------------------------------------------------------
-  # def toggleRightHandPractice(self) :
-  #   """
-  #   Activates/deactivates the right hand practice.
-  #   """
-      
-  #   if ((self.activeHands == ACTIVE_HANDS_BOTH) or (self.activeHands == ACTIVE_HANDS_LEFT)) :
-  #     self.activeHands = ACTIVE_HANDS_RIGHT
-  #     self.cursorAlignToActiveHand(NOTE_RIGHT_HAND)
-    
-  #   else :
-  #     self.activeHands = ACTIVE_HANDS_BOTH
-
-  #   self._resetCache()
 
 
 
@@ -1571,9 +1574,27 @@ if (__name__ == "__main__") :
   # Comparing the input and output file helps to make sure no information
   # is lost in the process. 
   songFile = SONG_PATH + "/" + "Rachmaninoff_Piano_Concerto_No2_Op18.pr"
+  scoreRef = Score(None)
+  scoreRef.loadGQFile(songFile)
+  scoreRef.exportToGQFile(songFile, backup = True)
+
+  scoreNew = Score(None)
+  scoreNew.loadGQFile(songFile)
+
+  # Now compare attributes between 'scoreNew' and 'scoreOld'
+  # No major difference should show, especially in the internal score 
+  # database (notes, fingersatz, etc.)
+  # ...
+  # This section is TODO.
+  # ...
+
+
+
+
+  # GQ file v3 experiments
+  songFile = SONG_PATH + "/" + "Rachmaninoff_Piano_Concerto_No2_Op18.pr"
   score = Score(None)
   score.loadGQFile(songFile)
-  score.exportToGQFile(songFile, backup = True)
+  score.exportToGQv3File(songFile)
 
-  # Now diff the original file 'in.gq' with 'out.gq'.
-  # Files must be identical (except for the revision number)
+

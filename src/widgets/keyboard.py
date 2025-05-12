@@ -29,7 +29,7 @@ from shapely.geometry import Point, Polygon
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS POOL
 # =============================================================================
 # None.
 
@@ -57,7 +57,7 @@ class Keyboard(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc)
 
-    # Populated after calling "Keyboard.makePolygons()"
+    # Populated after calling "Keyboard._makePolygons()"
     self.polygons = []
 
     # Rectangle of a note being played by both 
@@ -89,169 +89,6 @@ class Keyboard(widget.Widget) :
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD: Keyboard._makePolygons()                                  [PRIVATE]
-  # ---------------------------------------------------------------------------
-  def _makePolygons(self, grandPianoMode = True) :
-    """
-    Generates the polygons drawing the notes of a full MIDI keyboard 
-    (i.e. 128 notes)
-    
-    If 'grandPianoMode' is set to True, polygon generation is restricted to 
-    the notes of a grand piano (i.e. from A0 to C8).
-
-    This function populates the attribute 'polygons'. 
-    It is a 128 elements array, such that 'polygons[i]' is an array
-    containing the vertices required to draw the note with MIDI code 'i'.
-
-    This function only needs to be called once at init.
-    """
-
-    # Initialise output
-    self.polygons = [[] for _ in range(128)]
-
-    # Some shortcuts for readability
-    wnh = KEYBOARD_WHITE_NOTE_HEIGHT
-    wnw = KEYBOARD_WHITE_NOTE_WIDTH
-    bnh = KEYBOARD_BLACK_NOTE_HEIGHT 
-    bnw = KEYBOARD_BLACK_NOTE_WIDTH
-    nc = KEYBOARD_NOTE_CHANFER
-    ns = KEYBOARD_NOTE_SPACING
-
-    x0 = self.x - (12*wnw); y0 = self.y
-
-    # Generate polygons for each note
-    for i in range(0, 128, 12) :
-      
-      # Note C
-      if (grandPianoMode and (i == 108)) :
-        self.polygons[i] = [(x0+ns, y0)]
-        self.polygons[i] += utils.Vector2D(0, wnh-nc)
-        self.polygons[i] += utils.Vector2D(nc, nc)
-        self.polygons[i] += utils.Vector2D(wnw-(2*nc)-(2*ns), 0)
-        self.polygons[i] += utils.Vector2D(nc, -nc)
-        self.polygons[i] += utils.Vector2D(0, -(wnh-nc))
-      else :
-        self.polygons[i] = [(x0+ns, y0)]
-        self.polygons[i] += utils.Vector2D(0, wnh-nc)
-        self.polygons[i] += utils.Vector2D(nc, nc)
-        self.polygons[i] += utils.Vector2D(wnw-(2*nc)-(2*ns), 0)
-        self.polygons[i] += utils.Vector2D(nc, -nc)
-        self.polygons[i] += utils.Vector2D(0, -(wnh-bnh-ns-nc))
-        self.polygons[i] += utils.Vector2D(-2*bnw//3, 0)
-        self.polygons[i] += utils.Vector2D(0, -(bnh+ns))
-
-      # Note Db
-      self.polygons[i+1] = [(x0+wnw-(2*bnw//3)+ns, y0)]
-      self.polygons[i+1] += utils.Vector2D(0, bnh-ns)
-      self.polygons[i+1] += utils.Vector2D(bnw-(2*ns), 0)
-      self.polygons[i+1] += utils.Vector2D(0, -(bnh-ns))
-
-      # Note D
-      self.polygons[i+2] = [(x0+wnw+(bnw//3)+ns, y0)]
-      self.polygons[i+2] += utils.Vector2D(0, bnh+ns)
-      self.polygons[i+2] += utils.Vector2D(-bnw//3, 0)
-      self.polygons[i+2] += utils.Vector2D(0, wnh-bnh-ns-nc)
-      self.polygons[i+2] += utils.Vector2D(nc,nc)
-      self.polygons[i+2] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
-      self.polygons[i+2] += utils.Vector2D(nc,-nc)
-      self.polygons[i+2] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
-      self.polygons[i+2] += utils.Vector2D(-bnw//3,0)
-      self.polygons[i+2] += utils.Vector2D(0,-(bnh+ns))
-
-      # Note Eb
-      self.polygons[i+3] = [(x0+(2*wnw)-(bnw//3)+ns, y0)]
-      self.polygons[i+3] += utils.Vector2D(0,bnh-ns)
-      self.polygons[i+3] += utils.Vector2D(bnw-(2*ns),0)
-      self.polygons[i+3] += utils.Vector2D(0,-(bnh-ns))
-
-      # Note Eb
-      self.polygons[i+4] = [(x0+(2*wnw)+(2*bnw//3)+ns, y0)]
-      self.polygons[i+4] += utils.Vector2D(0,bnh+ns)
-      self.polygons[i+4] += utils.Vector2D(-2*bnw//3,0)
-      self.polygons[i+4] += utils.Vector2D(0,wnh-bnh-ns-nc)
-      self.polygons[i+4] += utils.Vector2D(nc,nc)
-      self.polygons[i+4] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
-      self.polygons[i+4] += utils.Vector2D(nc,-nc)
-      self.polygons[i+4] += utils.Vector2D(0,-(wnh-nc))
-
-      # Note F
-      self.polygons[i+5] = [(x0+(3*wnw)+ns, y0)]
-      self.polygons[i+5] += utils.Vector2D(0,wnh-nc)
-      self.polygons[i+5] += utils.Vector2D(nc,nc)
-      self.polygons[i+5] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
-      self.polygons[i+5] += utils.Vector2D(nc,-nc)
-      self.polygons[i+5] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
-      self.polygons[i+5] += utils.Vector2D(-2*bnw//3,0)
-      self.polygons[i+5] += utils.Vector2D(0,-(bnh+ns))
-
-      # Note Gb
-      self.polygons[i+6] = [(x0+(4*wnw)-(2*bnw//3)+ns, y0)]
-      self.polygons[i+6] += utils.Vector2D(0,bnh-ns)
-      self.polygons[i+6] += utils.Vector2D(bnw-(2*ns),0)
-      self.polygons[i+6] += utils.Vector2D(0,-(bnh-ns))
-
-      # Note G
-      self.polygons[i+7] = [(x0+(4*wnw)+(bnw//3)+ns, y0)]
-      self.polygons[i+7] += utils.Vector2D(0,bnh+ns)
-      self.polygons[i+7] += utils.Vector2D(-bnw//3,0)
-      self.polygons[i+7] += utils.Vector2D(0,wnh-bnh-ns-nc)
-      self.polygons[i+7] += utils.Vector2D(nc,nc)
-      self.polygons[i+7] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
-      self.polygons[i+7] += utils.Vector2D(nc,-nc)
-      self.polygons[i+7] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
-      self.polygons[i+7] += utils.Vector2D(-bnw//2,0)
-      self.polygons[i+7] += utils.Vector2D(0,-(bnh+ns))
-
-      if ((i+8) < 127) :
-
-        # Note Ab
-        self.polygons[i+8] = [(x0+(5*wnw)-(bnw//2)+ns, y0)]
-        self.polygons[i+8] += utils.Vector2D(0,bnh-ns)
-        self.polygons[i+8] += utils.Vector2D(bnw-(2*ns),0)
-        self.polygons[i+8] += utils.Vector2D(0,-(bnh-ns))
-
-        # Note A
-        if (grandPianoMode and ((i+9) == 21)) :
-          self.polygons[i+9] = [(x0+(5*wnw)+ns, y0)]
-          self.polygons[i+9] += utils.Vector2D(0,wnh-nc)
-          self.polygons[i+9] += utils.Vector2D(nc,nc)
-          self.polygons[i+9] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
-          self.polygons[i+9] += utils.Vector2D(nc,-nc)
-          self.polygons[i+9] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
-          self.polygons[i+9] += utils.Vector2D(-bnw//3,0)
-          self.polygons[i+9] += utils.Vector2D(0,-(bnh+ns))
-        else :
-          self.polygons[i+9] = [(x0+(5*wnw)+(bnw//2)+ns, y0)]
-          self.polygons[i+9] += utils.Vector2D(0, bnh+ns)
-          self.polygons[i+9] += utils.Vector2D(-bnw//2, 0)
-          self.polygons[i+9] += utils.Vector2D(0, wnh-bnh-ns-nc)
-          self.polygons[i+9] += utils.Vector2D(nc,nc)
-          self.polygons[i+9] += utils.Vector2D(wnw-(2*nc)-(2*ns), 0)
-          self.polygons[i+9] += utils.Vector2D(nc, -nc)
-          self.polygons[i+9] += utils.Vector2D(0, -(wnh-bnh-ns-nc))
-          self.polygons[i+9] += utils.Vector2D(-bnw//3, 0)
-          self.polygons[i+9] += utils.Vector2D(0,-(bnh+ns))
-
-        # Note Bb
-        self.polygons[i+10] = [(x0+(6*wnw)-(bnw//3)+ns, y0)]
-        self.polygons[i+10] += utils.Vector2D(0,bnh-ns)
-        self.polygons[i+10] += utils.Vector2D(bnw-(2*ns),0)
-        self.polygons[i+10] += utils.Vector2D(0,-(bnh-ns))
-
-        # Note B
-        self.polygons[i+11] = [(x0+(6*wnw)+(2*bnw//3)+ns, y0)]
-        self.polygons[i+11] += utils.Vector2D(0,bnh+ns)
-        self.polygons[i+11] += utils.Vector2D(-2*bnw//3,0)
-        self.polygons[i+11] += utils.Vector2D(0,wnh-bnh-ns-nc)
-        self.polygons[i+11] += utils.Vector2D(nc,nc)
-        self.polygons[i+11] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
-        self.polygons[i+11] += utils.Vector2D(nc,-nc)
-        self.polygons[i+11] += utils.Vector2D(0,-(wnh-nc))
-
-      x0 += 7*wnw
-
-
 
   # ---------------------------------------------------------------------------
   # METHOD: Keyboard.render()
@@ -259,6 +96,8 @@ class Keyboard(widget.Widget) :
   def render(self) :
     """
     Draw the keyboard using the polygons generated for each note.
+
+    This function is called every time the app renders a new frame.
     """
 
     # Draw keys from MIDI code 21 (A0) to MIDI code 108 (C8) i.e. notes of a grand piano.
@@ -269,13 +108,31 @@ class Keyboard(widget.Widget) :
         pygame.draw.polygon(self.top.screen, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
 
 
+    # Draw the teacher notes (from Score) i.e. the notes that must be played
+    self.top.widgets[WIDGET_ID_SCORE].
+
+
+    # Draw the user notes (from the MIDI keyboard input)
+    # TODO: list in comprehension might do a better job here
+    midiNoteList = []
+    for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
+      if (pianoArbiter.midiCurr[pitch] == 1) :
+        newMidiNote = note.Note(pitch)
+        newMidiNote.fromKeyboardInput = True
+        newMidiNote.hand = UNDEFINED_HAND
+        newMidiNote.finger = 0
+        midiNoteList.append(newMidiNote)
+    
+    keyboardWidget.keyPress(screen, midiNoteList)
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD Keyboard.keyPress
   # ---------------------------------------------------------------------------
   def keyPress(self, screenInst, noteList) :
     """
-    Highlights the notes in <noteList> on the keyboard.
+    Highlights the notes in 'noteList' on the keyboard.
     
     Indicates the hand to be used and the required finger if the information is 
     available.
@@ -574,6 +431,173 @@ class Keyboard(widget.Widget) :
   def reset(self) :
     self.activeNotes = []
     self.litKeysPolygons = []
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Keyboard._makePolygons()                                  [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _makePolygons(self, grandPianoMode = True) :
+    """
+    Generates the polygons drawing the notes of a full MIDI keyboard 
+    (i.e. 128 notes)
+    
+    If 'grandPianoMode' is set to True, polygon generation is restricted to 
+    the notes of a grand piano (i.e. from A0 to C8).
+
+    This function populates the attribute 'polygons'. 
+    It is a 128 elements array, such that 'polygons[i]' is an array
+    containing the vertices required to draw the note with MIDI code 'i'.
+
+    This function only needs to be called once at init.
+    """
+
+    # Initialise output
+    self.polygons = [[] for _ in range(128)]
+
+    # Some shortcuts for readability
+    wnh = KEYBOARD_WHITE_NOTE_HEIGHT
+    wnw = KEYBOARD_WHITE_NOTE_WIDTH
+    bnh = KEYBOARD_BLACK_NOTE_HEIGHT 
+    bnw = KEYBOARD_BLACK_NOTE_WIDTH
+    nc = KEYBOARD_NOTE_CHANFER
+    ns = KEYBOARD_NOTE_SPACING
+
+    x0 = self.x - (12*wnw); y0 = self.y
+
+    # Generate polygons for each note
+    for i in range(0, 128, 12) :
+      
+      # Note C
+      if (grandPianoMode and (i == 108)) :
+        self.polygons[i] = [(x0+ns, y0)]
+        self.polygons[i] += utils.Vector2D(0, wnh-nc)
+        self.polygons[i] += utils.Vector2D(nc, nc)
+        self.polygons[i] += utils.Vector2D(wnw-(2*nc)-(2*ns), 0)
+        self.polygons[i] += utils.Vector2D(nc, -nc)
+        self.polygons[i] += utils.Vector2D(0, -(wnh-nc))
+      else :
+        self.polygons[i] = [(x0+ns, y0)]
+        self.polygons[i] += utils.Vector2D(0, wnh-nc)
+        self.polygons[i] += utils.Vector2D(nc, nc)
+        self.polygons[i] += utils.Vector2D(wnw-(2*nc)-(2*ns), 0)
+        self.polygons[i] += utils.Vector2D(nc, -nc)
+        self.polygons[i] += utils.Vector2D(0, -(wnh-bnh-ns-nc))
+        self.polygons[i] += utils.Vector2D(-2*bnw//3, 0)
+        self.polygons[i] += utils.Vector2D(0, -(bnh+ns))
+
+      # Note Db
+      self.polygons[i+1] = [(x0+wnw-(2*bnw//3)+ns, y0)]
+      self.polygons[i+1] += utils.Vector2D(0, bnh-ns)
+      self.polygons[i+1] += utils.Vector2D(bnw-(2*ns), 0)
+      self.polygons[i+1] += utils.Vector2D(0, -(bnh-ns))
+
+      # Note D
+      self.polygons[i+2] = [(x0+wnw+(bnw//3)+ns, y0)]
+      self.polygons[i+2] += utils.Vector2D(0, bnh+ns)
+      self.polygons[i+2] += utils.Vector2D(-bnw//3, 0)
+      self.polygons[i+2] += utils.Vector2D(0, wnh-bnh-ns-nc)
+      self.polygons[i+2] += utils.Vector2D(nc,nc)
+      self.polygons[i+2] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+      self.polygons[i+2] += utils.Vector2D(nc,-nc)
+      self.polygons[i+2] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
+      self.polygons[i+2] += utils.Vector2D(-bnw//3,0)
+      self.polygons[i+2] += utils.Vector2D(0,-(bnh+ns))
+
+      # Note Eb
+      self.polygons[i+3] = [(x0+(2*wnw)-(bnw//3)+ns, y0)]
+      self.polygons[i+3] += utils.Vector2D(0,bnh-ns)
+      self.polygons[i+3] += utils.Vector2D(bnw-(2*ns),0)
+      self.polygons[i+3] += utils.Vector2D(0,-(bnh-ns))
+
+      # Note Eb
+      self.polygons[i+4] = [(x0+(2*wnw)+(2*bnw//3)+ns, y0)]
+      self.polygons[i+4] += utils.Vector2D(0,bnh+ns)
+      self.polygons[i+4] += utils.Vector2D(-2*bnw//3,0)
+      self.polygons[i+4] += utils.Vector2D(0,wnh-bnh-ns-nc)
+      self.polygons[i+4] += utils.Vector2D(nc,nc)
+      self.polygons[i+4] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+      self.polygons[i+4] += utils.Vector2D(nc,-nc)
+      self.polygons[i+4] += utils.Vector2D(0,-(wnh-nc))
+
+      # Note F
+      self.polygons[i+5] = [(x0+(3*wnw)+ns, y0)]
+      self.polygons[i+5] += utils.Vector2D(0,wnh-nc)
+      self.polygons[i+5] += utils.Vector2D(nc,nc)
+      self.polygons[i+5] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+      self.polygons[i+5] += utils.Vector2D(nc,-nc)
+      self.polygons[i+5] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
+      self.polygons[i+5] += utils.Vector2D(-2*bnw//3,0)
+      self.polygons[i+5] += utils.Vector2D(0,-(bnh+ns))
+
+      # Note Gb
+      self.polygons[i+6] = [(x0+(4*wnw)-(2*bnw//3)+ns, y0)]
+      self.polygons[i+6] += utils.Vector2D(0,bnh-ns)
+      self.polygons[i+6] += utils.Vector2D(bnw-(2*ns),0)
+      self.polygons[i+6] += utils.Vector2D(0,-(bnh-ns))
+
+      # Note G
+      self.polygons[i+7] = [(x0+(4*wnw)+(bnw//3)+ns, y0)]
+      self.polygons[i+7] += utils.Vector2D(0,bnh+ns)
+      self.polygons[i+7] += utils.Vector2D(-bnw//3,0)
+      self.polygons[i+7] += utils.Vector2D(0,wnh-bnh-ns-nc)
+      self.polygons[i+7] += utils.Vector2D(nc,nc)
+      self.polygons[i+7] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+      self.polygons[i+7] += utils.Vector2D(nc,-nc)
+      self.polygons[i+7] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
+      self.polygons[i+7] += utils.Vector2D(-bnw//2,0)
+      self.polygons[i+7] += utils.Vector2D(0,-(bnh+ns))
+
+      if ((i+8) < 127) :
+
+        # Note Ab
+        self.polygons[i+8] = [(x0+(5*wnw)-(bnw//2)+ns, y0)]
+        self.polygons[i+8] += utils.Vector2D(0,bnh-ns)
+        self.polygons[i+8] += utils.Vector2D(bnw-(2*ns),0)
+        self.polygons[i+8] += utils.Vector2D(0,-(bnh-ns))
+
+        # Note A
+        if (grandPianoMode and ((i+9) == 21)) :
+          self.polygons[i+9] = [(x0+(5*wnw)+ns, y0)]
+          self.polygons[i+9] += utils.Vector2D(0,wnh-nc)
+          self.polygons[i+9] += utils.Vector2D(nc,nc)
+          self.polygons[i+9] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+          self.polygons[i+9] += utils.Vector2D(nc,-nc)
+          self.polygons[i+9] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
+          self.polygons[i+9] += utils.Vector2D(-bnw//3,0)
+          self.polygons[i+9] += utils.Vector2D(0,-(bnh+ns))
+        else :
+          self.polygons[i+9] = [(x0+(5*wnw)+(bnw//2)+ns, y0)]
+          self.polygons[i+9] += utils.Vector2D(0, bnh+ns)
+          self.polygons[i+9] += utils.Vector2D(-bnw//2, 0)
+          self.polygons[i+9] += utils.Vector2D(0, wnh-bnh-ns-nc)
+          self.polygons[i+9] += utils.Vector2D(nc,nc)
+          self.polygons[i+9] += utils.Vector2D(wnw-(2*nc)-(2*ns), 0)
+          self.polygons[i+9] += utils.Vector2D(nc, -nc)
+          self.polygons[i+9] += utils.Vector2D(0, -(wnh-bnh-ns-nc))
+          self.polygons[i+9] += utils.Vector2D(-bnw//3, 0)
+          self.polygons[i+9] += utils.Vector2D(0,-(bnh+ns))
+
+        # Note Bb
+        self.polygons[i+10] = [(x0+(6*wnw)-(bnw//3)+ns, y0)]
+        self.polygons[i+10] += utils.Vector2D(0,bnh-ns)
+        self.polygons[i+10] += utils.Vector2D(bnw-(2*ns),0)
+        self.polygons[i+10] += utils.Vector2D(0,-(bnh-ns))
+
+        # Note B
+        self.polygons[i+11] = [(x0+(6*wnw)+(2*bnw//3)+ns, y0)]
+        self.polygons[i+11] += utils.Vector2D(0,bnh+ns)
+        self.polygons[i+11] += utils.Vector2D(-2*bnw//3,0)
+        self.polygons[i+11] += utils.Vector2D(0,wnh-bnh-ns-nc)
+        self.polygons[i+11] += utils.Vector2D(nc,nc)
+        self.polygons[i+11] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+        self.polygons[i+11] += utils.Vector2D(nc,-nc)
+        self.polygons[i+11] += utils.Vector2D(0,-(wnh-nc))
+
+      x0 += 7*wnw
+
+
 
 
 

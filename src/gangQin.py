@@ -101,7 +101,7 @@ class GangQin :
     self.widgets = {
       WIDGET_ID_SCORE : score.Score(self),
       WIDGET_ID_KEYBOARD: keyboard.Keyboard(self, loc = (10, 300)),
-      #WIDGET_ID_PIANOROLL: pianoRoll.PianoRoll(self, loc = (10, 50)),
+      WIDGET_ID_PIANOROLL: pianoRoll.PianoRoll(self, loc = (10, 50)),
       WIDGET_ID_STAFFSCOPE: staffScope.StaffScope(self),
       #fingerSelector.FingerSelector(self),
       #metronome.Metronome(self),

@@ -277,15 +277,21 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.loadGQFile()
+  # METHOD Score.loadPRFile()
   # ---------------------------------------------------------------------------
-  def loadGQFile(self, gqFile: str) -> None :
+  def loadPRFile(self, prFile: str) -> None :
     """
+
+    ********
+    WARNING: pr files have been deprecated since gangQin v.3
+    Use 'Score.loadGQ3File()' instead.
+    ********
+
     Loads and initialises the Score object from a .gq file.
 
-    'gqFile' must be the full path to the file.
+    'prFile' must be the full path to the file.
 
-    Unlike MIDI files, .gq files store all the user annotated information 
+    Unlike MIDI files, .pr files store all the user annotated information 
     about the score (bookmarks, fingersatz, tempo, etc.)
     """
     
@@ -293,7 +299,7 @@ class Score(widget.Widget) :
     startTime = time.time()
     
     # Open the file as a JSON
-    with open(gqFile, "r") as fileHandler :
+    with open(prFile, "r") as fileHandler :
       importDict = json.load(fileHandler)
 
     # Read the revision
@@ -420,10 +426,166 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.exportToGQFile()
+  # METHOD Score.loadPRFile()
   # ---------------------------------------------------------------------------
-  def exportToGQFile(self, gqFile: str, backup = False) -> None :
+  def loadPRFile(self, prFile: str) -> None :
     """
+
+    ********
+    WARNING: pr files have been deprecated since gangQin v.3
+    Use 'Score.loadGQ3File()' instead.
+    ********
+
+    Loads and initialises the Score object from a .gq file.
+
+    'prFile' must be the full path to the file.
+
+    Unlike MIDI files, .pr files store all the user annotated information 
+    about the score (bookmarks, fingersatz, tempo, etc.)
+    """
+    
+    # For statistics
+    startTime = time.time()
+    
+    # Open the file as a JSON
+    with open(prFile, "r") as fileHandler :
+      importDict = json.load(fileHandler)
+
+    # Read the revision
+    rev = importDict["revision"][1:].split(".")
+    revMajor = int(rev[0])
+    revMinor = int(rev[1])
+    
+    # Fallback dictionary in case some fields do not exist.
+    safeDict = {
+      "revision"                  : "v0.0",
+      "nStaffs"                   : 2,
+      "avgNoteDuration"           : 100.0,
+      "cursor"                    : 0,
+      "cursorsLeft"               : [],
+      "cursorsRight"              : [],
+      "bookmarks"                 : [],
+      "activeHands"               : "LR",
+      "tempoSections"             : [(1, 120)],
+      "weakArbitrationSections"   : []
+    }
+  
+    # Load every existing field
+    for currKey in safeDict :
+      if currKey in importDict :
+        safeDict[currKey] = importDict[currKey]
+
+    # Initialize the object
+    self.cursor           = safeDict["cursor"]
+    self.bookmarks        = safeDict["bookmarks"]
+    self.avgNoteDuration  = safeDict["avgNoteDuration"]
+    
+    # -----------------------------
+    # Pianoroll import - v0.X style
+    # -----------------------------
+    if (revMajor == 0) :
+      print("[INFO] Importing dinosaur .pr file (versions v0.X) has been deprecated since gangQin v1.6")
+      exit()
+      
+    # ---------------------------------
+    # Pianoroll import - v1.0 and above
+    # ---------------------------------
+    # From version 1.0, the pianoroll is flattened.
+    # From version 1.3, the variables:
+    # - 'noteOntimecodes'
+    # - 'noteOntimecodesMerged'
+    # - 'cursorsLeft'
+    # - 'cursorsRight'
+    # are rebuilt from the notes properties in the pianoroll.
+    else :
+      
+      self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
+      self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
+      noteCount = 0
+      masteredNoteCount = 0
+      for noteObjImported in importDict["pianoRoll"] :
+
+        # Create the object
+        noteObj = note.Note(0)
+        
+        # List of all properties in a Note object, make a dictionary out of it.
+        noteAttrDict = noteObj.__dict__.copy()
+        
+        # Make sure the ID is treated first, so that the warning later in the for loop
+        # can display the ID of the edited note.
+        noteObj.id = noteObjImported["id"]; del noteAttrDict["id"]
+
+        # Detect manual editions
+        noteNameExpected = note.getFriendlyName(noteObjImported["pitch"])
+        noteNameActual   = noteObjImported["name"]
+        newColor = NOTE_WHITE_KEY if ((noteObjImported["pitch"] % 12) in MIDI_CODE_WHITE_NOTES_MOD12) else NOTE_BLACK_KEY
+        if (noteNameExpected != noteNameActual) :
+          print(f"[INFO] Note ID {noteObj.id}: manual edition detected.")
+          print(f"Following fields will be replaced:")
+          print(f"- note name: {noteNameActual} -> {noteNameExpected}")
+          print(f"- key color: {newColor}")
+          noteObjImported["name"]     = noteNameExpected
+          noteObjImported["keyColor"] = newColor
+
+        # Loop on the attributes of the Note object
+        # Set the attribute by string
+        for noteAttr in noteAttrDict :
+          if noteAttr in noteObjImported :
+            setattr(noteObj, noteAttr, noteObjImported[noteAttr])
+        
+        if (noteObj.finger != 0) :
+          masteredNoteCount += 1
+
+        self.pianoRoll[noteObjImported["hand"]][noteObjImported["pitch"]].append(noteObj)
+        
+        if (noteObjImported["hand"] == NOTE_LEFT_HAND) :
+          self.noteOnTimecodes["L"].append(noteObj.startTime)
+        elif (noteObjImported["hand"] == NOTE_RIGHT_HAND) :
+          self.noteOnTimecodes["R"].append(noteObj.startTime)
+
+        self.noteOnTimecodes["LR_full"].append(noteObj.startTime)
+        
+        noteCount += 1
+        
+    # Tidy up:
+    # - sort the timecodes by ascending values
+    # - remove duplicate entries
+    self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
+    self.noteOnTimecodes["LR_full"].sort()
+
+    self.noteOnTimecodes["LR"] = set(self.noteOnTimecodes["LR_full"])
+    self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
+    self.noteOnTimecodes["LR"].sort()
+
+    # Build "cursorsLeft" and "cursorsRight".
+    # Each one is a list of all cursors where something has to be played 
+    # either on the left (cursorsLeft) or right hand (cursorsRight)
+    self._buildCursorsLR()
+
+    self.length = len(self.noteOnTimecodes["LR"])
+    self.cursorMax = self.length-1
+
+    stopTime = time.time()
+    print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
+    print(f"[INFO] {noteCount} notes read from .gq file.")
+    print(f"[INFO] Score length: {self.length} steps")
+    
+    print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.exportToPRFile()
+  # ---------------------------------------------------------------------------
+  def exportToPRFile(self, prFile: str, backup = False) -> None :
+    """
+
+    ********
+    WARNING: pr files have been deprecated since gangQin v.3
+    Use 'Score.loadGQ3File()' instead.
+    ********
+
     Exports the annotated score and all metadata (finger, hand, comments etc.) in 
     a .gq file (JSON) that can be imported later to restore the session.
 
@@ -469,7 +631,7 @@ class Score(widget.Widget) :
           exportDict["pianoRoll"].append(noteExportAttr)
 
     if backup :
-      (root, _) = os.path.splitext(gqFile)
+      (root, _) = os.path.splitext(prFile)
       exportFile = root + ".bak"
     
     with open(exportFile, "w") as fileHandler :
@@ -486,7 +648,7 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.exportToGQv3File()
+  # METHOD Score.exportToGQ3File()
   # ---------------------------------------------------------------------------
   def exportToGQ3File(self, gqFile: str, backup = False) -> None :
     """
@@ -496,14 +658,22 @@ class Score(widget.Widget) :
     Experimenting a format that is more 'diff' and 'merge' friendly.
     """
 
-    exportDict = {}
-    exportDict["revision"]        = f"v{REV_MAJOR}.{REV_MINOR}"
-    exportDict["avgNoteDuration"] = self.avgNoteDuration
-    exportDict["cursor"]          = self.getCursor()
-    exportDict["bookmarks"]       = self.bookmarks
+    output = {}
+    output["revision"]  = f"v{REV_MAJOR}.{REV_MINOR}"
+    output["cursor"]    = self.getCursor()
+    output["bookmarks"] = self.bookmarks
+    output["database"]  = []
+
+    # Flatten the database
+    noteList = []
+    for track in self.pianoRoll :
+      for pitchClass in track :
+        for noteObj in pitchClass :
+          noteList.append(noteObj)
+
+    noteList.sort(key = lambda obj: obj.startTime)
 
     noteCount = 0
-    exportDict["pianoRoll"] = []
     for notesInTrack in self.pianoRoll :
       for notesInPitch in notesInTrack :
         for noteObj in notesInPitch :
@@ -1575,11 +1745,11 @@ if (__name__ == "__main__") :
   # is lost in the process. 
   songFile = SONG_PATH + "/" + "Rachmaninoff_Piano_Concerto_No2_Op18.pr"
   scoreRef = Score(None)
-  scoreRef.loadGQFile(songFile)
-  scoreRef.exportToGQFile(songFile, backup = True)
+  scoreRef.loadPRFile(songFile)
+  scoreRef.exportToPRFile(songFile, backup = True)
 
   scoreNew = Score(None)
-  scoreNew.loadGQFile(songFile)
+  scoreNew.loadPRFile(songFile)
 
   # Now compare attributes between 'scoreNew' and 'scoreOld'
   # No major difference should show, especially in the internal score 
@@ -1591,10 +1761,10 @@ if (__name__ == "__main__") :
 
 
 
-  # GQ file v3 experiments
+  # Experiments with GQ3 file format (gangQin v.3)
   songFile = SONG_PATH + "/" + "Rachmaninoff_Piano_Concerto_No2_Op18.pr"
   score = Score(None)
-  score.loadGQFile(songFile)
-  score.exportToGQv3File(songFile)
+  score.loadPRFile(songFile)
+  score.exportToGQ3File(songFile)
 
 

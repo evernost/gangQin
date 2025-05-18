@@ -646,7 +646,7 @@ class Score(widget.Widget) :
     Prototype function
     Exporting to GQ file v3
 
-    Experimenting a format that is more 'diff' and 'merge' friendly.
+    Experimenting a format that is hopefully more 'diff' and 'merge' friendly.
     """
 
     output = {}
@@ -654,34 +654,38 @@ class Score(widget.Widget) :
     output["cursor"]    = self.getCursor()
     output["bookmarks"] = self.bookmarks
     output["notelist"]  = []
+    output["timecodelist"]  = []
 
     # Flatten the database
+    # NOTE: will be deprecated as soon as the database structure is changed
     noteList = []
-    for track in self.pianoRoll :
-      for pitchClass in track :
-        for noteObj in pitchClass :
-          noteList.append(noteObj)
-
-    noteList.sort(key = lambda obj: obj.startTime)
-
-    noteCount = 0
     for notesInTrack in self.pianoRoll :
       for notesInPitch in notesInTrack :
         for noteObj in notesInPitch :
-          noteCount += 1
-          
-          noteObjCopy = copy.deepcopy(noteObj)
-          noteExportAttr = noteObjCopy.__dict__
+          noteList.append(noteObj)
 
-          # Filter out some note attributes that need not to be exported
-          del noteExportAttr["highlight"]
-          del noteExportAttr["upcoming"]
-          del noteExportAttr["upcomingDistance"]
-          del noteExportAttr["fromKeyboardInput"]
-          del noteExportAttr["lookAheadDistance"]
-          del noteExportAttr["visible"]
+    # Sort the notes chronologically
+    noteList.sort(key = lambda obj: obj.startTime)
 
-          exportDict["pianoRoll"].append(noteExportAttr)
+    noteCount = 0
+    for noteObj in noteList :
+      noteAsDict = {
+        "pitch"   : noteObj.pitch,
+        "hand"    : noteObj.hand,
+        "finger"  : noteObj.finger,
+        "voice"   : noteObj.voice,
+        "name"    : noteObj.name
+      }
+      output["notelist"].append(noteAsDict)
+      
+      timeMarkAsDict = {
+        "starttime" : noteObj.startTime,
+        "stoptime"  : noteObj.stopTime
+      }
+      output["timecodelist"].append(timeMarkAsDict)
+      
+      noteCount += 1
+
 
     if backup :
       (root, _) = os.path.splitext(gqFile)
@@ -691,7 +695,7 @@ class Score(widget.Widget) :
       exportFile = root + ".gq3"
     
     with open(exportFile, "w") as fileHandler :
-      json.dump(exportDict, fileHandler, indent = 2)
+      json.dump(output, fileHandler, indent = 2)
 
     currTime = datetime.datetime.now()
     if backup :
@@ -700,11 +704,6 @@ class Score(widget.Widget) :
       currTime = datetime.datetime.now()
       print(f"[DEBUG] {noteCount} notes written in .pr file.")
       print(f"[INFO] Saved to '{exportFile}' at {currTime.strftime('%H:%M:%S')}")
-
-
-
-
-
 
 
 

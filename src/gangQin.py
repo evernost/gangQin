@@ -144,7 +144,7 @@ class GangQin :
       self.widgets[WIDGET_ID_SCORE].loadMIDIFile(songFile, midiTracks)
     else :
       self.songType = "gq"
-      self.widgets[WIDGET_ID_SCORE].loadGQFile(songFile)
+      self.widgets[WIDGET_ID_SCORE].loadGQ3File(songFile)
       self.widgets[WIDGET_ID_STAFFSCOPE].load(songFile)
 
     # Initialise the MIDI keyboard interface

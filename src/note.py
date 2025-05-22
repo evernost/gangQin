@@ -85,7 +85,7 @@ class Note :
   @pitch.setter
   def pitch(self, newPitch):
     self._pitch   = newPitch
-    self.name     = self._getFriendlyName()   # Human-readable name, like "C4", "Eb3" etc.
+    self.name     = getFriendlyName(self._pitch)
     self.keyColor = self._getKeyColor()
 
 
@@ -263,25 +263,48 @@ class Note :
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD: Note._getFriendlyName()                                   [PRIVATE]
-  # ---------------------------------------------------------------------------
-  def _getFriendlyName(self) :
-    """
-    Converts a MIDI code (integer) to a human understandable note name.
+  # # ---------------------------------------------------------------------------
+  # # METHOD: Note._getFriendlyName()                                   [PRIVATE]
+  # # ---------------------------------------------------------------------------
+  # def _getFriendlyName(self) :
+  #   """
+  #   Converts a MIDI code (integer) to a human understandable note name.
     
-    EXAMPLES
-    > Note(60)._getFriendlyName(60) = "C4"
-    """
+  #   EXAMPLES
+  #   > Note(60)._getFriendlyName(60) = "C4"
+  #   """
       
-    if ((self.pitch > 0) and (self.pitch < 128)) :
-      noteRefs = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
-      octave = (self.pitch // 12) - 1
-      noteIndex = self.pitch % 12
+  #   if ((self.pitch > 0) and (self.pitch < 128)) :
+  #     noteRefs = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
+  #     octave = (self.pitch // 12) - 1
+  #     noteIndex = self.pitch % 12
 
-      return f"{noteRefs[noteIndex]}{octave}"
-    else :
-      return ""
+  #     return f"{noteRefs[noteIndex]}{octave}"
+  #   else :
+  #     return ""
+
+
+# ---------------------------------------------------------------------------
+# UTILITY: getFriendlyName()
+# ---------------------------------------------------------------------------
+def getFriendlyName(pitch) -> str :
+  """
+  Converts a MIDI code (integer) to a human understandable note name.
+  
+  TODO: add an option to choose flats or sharps
+
+  EXAMPLES
+  > Note(60)._getFriendlyName(60) = "C4"
+  """
+    
+  if ((pitch > 0) and (pitch < 128)) :
+    noteRefs = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
+    octave = (pitch // 12) - 1
+    noteIndex = pitch % 12
+
+    return f"{noteRefs[noteIndex]}{octave}"
+  else :
+    return ""
 
 
 

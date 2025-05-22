@@ -200,7 +200,12 @@ class Score(widget.Widget) :
               # Append the new note to the list
               # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
               insertIndex = len(self.pianoRoll[trackID][pitch])
-              self.pianoRoll[trackID][pitch].append(note.Note(pitch, hand = trackID, noteIndex = insertIndex, startTime = currTime, stopTime = NOTE_END_UNKNOWN))
+              newNote = note.Note(pitch)
+              newNote.hand = trackID
+              newNote.id = insertIndex
+              newNote.startTime = currTime
+              newNote.stopTime = NOTE_END_UNKNOWN
+              self.pianoRoll[trackID][pitch].append(newNote)
               
               if (trackID == SCORE_LEFT_HAND_TRACK_ID) :
                 self.noteOnTimecodes["L"].append(currTime)
@@ -643,8 +648,7 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   def exportToGQ3File(self, gqFile: str, backup = False) -> None :
     """
-    Prototype function
-    Exporting to GQ file v3
+    Prototype function: export to GQ3 file (GangQin 3)
 
     Experimenting a format that is hopefully more 'diff' and 'merge' friendly.
     """
@@ -1751,7 +1755,20 @@ if (__name__ == "__main__") :
 
 
 
+
+
   # Experiments with GQ3 file format (gangQin v.3)
+  songFile = SONG_PATH + "/" + "Medtner_-_Forgotten Melodies_Op_38_II_Danza_graziosa_rev0.mid"
+  score = Score(None)
+  score.loadMIDIFile(songFile, ['R', 'L'])
+  score.exportToGQ3File(SONG_PATH + "/" + "Medtner0.gq3")
+
+  songFile = SONG_PATH + "/" + "Medtner_-_Forgotten Melodies_Op_38_II_Danza_graziosa_rev1.mid"
+  score = Score(None)
+  score.loadMIDIFile(songFile, ['R', 'L'])
+  score.exportToGQ3File(SONG_PATH + "/" + "Medtner1.gq3")
+
+
   songFile = SONG_PATH + "/" + "Rachmaninoff_Piano_Concerto_No2_Op18.pr"
   score = Score(None)
   score.loadPRFile(songFile)

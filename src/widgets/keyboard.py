@@ -109,7 +109,7 @@ class Keyboard(widget.Widget) :
 
 
     # Draw the teacher notes (from Score) i.e. the notes that must be played
-    self.top.widgets[WIDGET_ID_SCORE].
+    #self.top.widgets[WIDGET_ID_SCORE].
 
 
     # Draw the user notes (from the MIDI keyboard input)

@@ -1,4 +1,4 @@
-# gangQin v3.0 - Release notes (May 2025)
+# gangQin v3.0 - Release notes (June 2025)
 
 ## What's New
 ### gangQin Player
@@ -6,6 +6,7 @@
 - [ ] new keyboard style
 - [ ] perspective view in the pianoroll
 - [ ] bookmarks visible in staffscope
+- [ ] edit notes with wrong pitch directly from the app (no more manual file edition)
 - [ ] added a rehearsal mode
 - [ ] added a transposed mode (either transposed input, or transposed output)
 - [ ] added a weak arbitration mode

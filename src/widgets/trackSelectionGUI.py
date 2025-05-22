@@ -12,7 +12,7 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNAL LIBS
 # =============================================================================
 import mido
 import tkinter as tk
@@ -285,7 +285,14 @@ class TrackSelectionGUI :
   # ---------------------------------------------------------------------------
   def getTrackLinks(self) :
     """
-    Generates a dictonary corresponding to the track selection.
+    Generates a list corresponding to the track selection.
+
+    The output consists in a list that has as many elements as there are 
+    channels.
+    The list is such that 
+    - out[leftChannelIndex]     = 'L'
+    - out[rightChannelIndex]    = 'R'
+    - out[...anything else...]  = ''
     """
     
     out = [T.panning for T in self.tracks]

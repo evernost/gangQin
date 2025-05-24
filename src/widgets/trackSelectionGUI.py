@@ -12,7 +12,7 @@
 # =============================================================================
 
 # =============================================================================
-# EXTERNAL LIBS
+# EXTERNALS
 # =============================================================================
 import mido
 import tkinter as tk
@@ -39,7 +39,7 @@ ASSIGN_DEFAULT = True
 class TrackSelectionGUI :
 
   """
-  TRACKSELECTIONGUI object
+  TRACK_SELECTION_GUI object
 
   Self-contained class containing all the necessary functions to show the MIDI
   Track selection GUI on screen.

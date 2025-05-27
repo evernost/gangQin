@@ -29,7 +29,7 @@ from shapely.geometry import Point, Polygon
 
 
 # =============================================================================
-# CONSTANTS POOL
+# CONSTANTS
 # =============================================================================
 # None.
 
@@ -86,6 +86,8 @@ class Keyboard(widget.Widget) :
 
     # List of notes currently pressed
     self.activeNotes = []
+    self.activeNotesMIDI  = []
+    self.activeNotesScore = []
 
 
 
@@ -100,7 +102,7 @@ class Keyboard(widget.Widget) :
     This function is called every time the app renders a new frame.
     """
 
-    # Draw keys from MIDI code 21 (A0) to MIDI code 108 (C8) i.e. notes of a grand piano.
+    # Render the keys of the grand piano
     for i in MIDI_CODE_GRAND_PIANO_RANGE :
       if ((i % 12) in MIDI_CODE_BLACK_NOTES_MOD12) :
         pygame.draw.polygon(self.top.screen, KEYBOARD_BLACK_NOTE_COLOR, self.polygons[i])
@@ -108,12 +110,11 @@ class Keyboard(widget.Widget) :
         pygame.draw.polygon(self.top.screen, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
 
 
-    # Draw the teacher notes (from Score) i.e. the notes that must be played
-    #self.top.widgets[WIDGET_ID_SCORE].
+    # Render the teacher notes (from Score)
+    self.activeNotesScore = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
 
 
-    # Draw the user notes (from the MIDI keyboard input)
-    # TODO: list in comprehension might do a better job here
+    # Render the user notes (from the MIDI keyboard input)
     midiNoteList = []
     for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
       if (pianoArbiter.midiCurr[pitch] == 1) :
@@ -434,6 +435,22 @@ class Keyboard(widget.Widget) :
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD: Keyboard.updateFromMidi()
+  # ---------------------------------------------------------------------------
+  def updateFromMidi(self, midiMessage) :
+    """
+    Updates the internal state of the object with the latest external MIDI
+    inputs from the keyboard.
+
+    This function must be called every time something happens on the MIDI
+    input.
+    """
+
+    self.activeNotesMIDI  = []
+    self.activeNotesScore = []
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD: Keyboard._makePolygons()                                  [PRIVATE]
@@ -600,9 +617,8 @@ class Keyboard(widget.Widget) :
 
 
 
-
 # =============================================================================
-# Unit tests
+# UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
   print("[INFO] There are no unit tests available for 'keyboard.py'")

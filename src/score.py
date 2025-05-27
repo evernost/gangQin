@@ -90,7 +90,7 @@ class Score(widget.Widget) :
 
     # Options for Score.getTeacherNotes()
     self.teacherNotes = []
-    self.teacherNotesCursorCached = -1
+    self.teacherNotesCursor = -1
     self.lookAheadDistance = 0
     self.activeHands = "LR"
     
@@ -1305,8 +1305,8 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   def getTeacherNotes(self) :
     """
-    Returns the list of all notes that must be pressed at the current cursor
-    location in the score.
+    Returns the list of all notes that must be pressed at the current position
+    in the score.
     
     Only notes pressed at this cursor are returned.
     Sustained notes (notes that were pressed before and held up to the current 
@@ -1316,13 +1316,13 @@ class Score(widget.Widget) :
     """
     
     # Return the values in cache if the cursor has not changed
-    if (self.getCursor() == self.teacherNotesCursorCached) :
+    if (self.getCursor() == self.teacherNotesCursor) :
       pass
     
     # Otherwise, regenerate the cache
     else :
       self._calculateTeacherNotes()
-      self.teacherNotesCursorCached = self.getCursor()
+      self.teacherNotesCursor = self.getCursor()
 
     return self.teacherNotes
 

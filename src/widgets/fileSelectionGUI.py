@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
 # Project       : gangQin
-# Module name   : fileSelectGUI
-# File name     : fileSelectGUI.py
+# Module name   : fileSelectionGUI
+# File name     : fileSelectionGUI.py
 # Purpose       : shows the song selection GUI for gangQin
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : Sunday, 24 Sept 2023
@@ -34,10 +34,10 @@ from tkinter import ttk
 # =============================================================================
 # CLASS DEFINITION
 # =============================================================================
-class FileSelectGUI :
+class FileSelectionGUI :
 
   """
-  FILESELECTGUI object
+  FILE_SELECTION_GUI object
 
   Self-contained class containing all the necessary functions to show the 
   song and MIDI keyboard interface selector.
@@ -174,7 +174,11 @@ class FileSelectGUI :
   # ---------------------------------------------------------------------------
   def _listMidiDevices(self) :
     """
-    Description is TODO.
+    Lists all the MIDI keyboards detected on the computer.
+    Devices are listed with their string descriptor.
+
+    The list always contains the element "None" for the 'navigation mode' 
+    i.e. gangQin without external keyboard.
     """
 
     self.midiDevices = mido.get_input_names()
@@ -410,7 +414,7 @@ class FileSelectGUI :
 
 # Factory function
 def new() :
-  return FileSelectGUI()
+  return FileSelectionGUI()
 
 
 

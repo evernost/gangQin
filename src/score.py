@@ -1333,8 +1333,8 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   def _calculateTeacherNotes(self) :
     """
-    Builds the 'teacherNotes' attribute of current expected notes to be played 
-    at the current cursor.
+    Builds the 'teacherNotes' attribute i.e. the list of notes that must be 
+    played at the current location in the score.
     """
     
     # Reset the play attributes of the previous notes before deleting them.

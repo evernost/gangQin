@@ -153,7 +153,7 @@ class GangQin :
     # Update the app properties
     pygame.display.set_caption(f"gangQin player - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {self.songName}")
 
-    # Initialise the MIDI interface
+    # Initialise the selected MIDI interface (if any)
     self._midiInterfaceInit(selectedDevice)
 
 
@@ -337,12 +337,14 @@ class GangQin :
   # ---------------------------------------------------------------------------
   # METHOD: GangQin._midiInterfaceInit()                              [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _midiInterfaceInit(self, selectedDevice) :
+  def _midiInterfaceInit(self, selectedDevice: str) :
     """
-    Description is TODO.
+    Opens the MIDI keyboard interface pointed by the string descriptor in 
+    'selectedDevice'.
+
+    When not using any MIDI keyboard, use selectedDevice = "None".
     """
 
-    # Initialise the MIDI keyboard interface
     if (selectedDevice != "None") :
       try :
         self.midiPort = mido.open_input(selectedDevice, callback = self._midiCallback)

@@ -102,16 +102,16 @@ class GangQin :
 
     # Initialise the widgets
     self.widgets = {
-      WIDGET_ID_SCORE       : score.Score(self),
-      WIDGET_ID_KEYBOARD    : keyboard.Keyboard(self, loc = (10, 300)),
-      WIDGET_ID_PIANOROLL   : pianoRoll.PianoRoll(self, loc = (10, 50)),
-      WIDGET_ID_STAFFSCOPE  : staffScope.StaffScope(self),
-      #fingerSelector.FingerSelector(self),
+      WIDGET_ID_SCORE           : score.Score(self),
+      WIDGET_ID_KEYBOARD        : keyboard.Keyboard(self, loc = (10, 300)),
+      WIDGET_ID_PIANOROLL       : pianoRoll.PianoRoll(self, loc = (10, 50)),
+      WIDGET_ID_STAFFSCOPE      : staffScope.StaffScope(self),
+      #WIDGET_ID_FINGERSELECTOR  : fingerSelector.FingerSelector(self),
       #metronome.Metronome(self),
       #arbiter.Arbiter(self),
       #stats.Stats(self),
       #notify.Notify(self)
-      WIDGET_ID_SEQUENCER   : sequencer.Sequencer(self)
+      WIDGET_ID_SEQUENCER       : sequencer.Sequencer(self)
     }
     
 
@@ -121,7 +121,8 @@ class GangQin :
   # ---------------------------------------------------------------------------
   def loadSong(self) :
     """
-    Initialises the gangQin application with the song to work on (.mid or .gq file)
+    Calls the song/MIDI interface selector.
+    Initialises the application accordingly.
     """
 
     # Call the file selection GUI
@@ -145,8 +146,12 @@ class GangQin :
       trackSel.load(songFile)
       midiTracks = trackSel.show()
       self.widgets[WIDGET_ID_SCORE].loadMIDIFile(songFile, midiTracks)
-    else :
+    elif songFile.endswith(".gq") :
       self.songType = "gq"
+      self.widgets[WIDGET_ID_SCORE].loadGQFile(songFile)
+      self.widgets[WIDGET_ID_STAFFSCOPE].load(songFile)
+    else :
+      self.songType = "gq3"
       self.widgets[WIDGET_ID_SCORE].loadGQ3File(songFile)
       self.widgets[WIDGET_ID_STAFFSCOPE].load(songFile)
 
@@ -208,7 +213,7 @@ class GangQin :
     keyboard.
     """
 
-    self.widgets[WIDGET_ID_KEYBOARD].updateFromMidi(midiMessage)
+    self.widgets[WIDGET_ID_KEYBOARD].onExternalMidiEvent(midiMessage)
     self.widgets[WIDGET_ID_ARBITER].updateMidiState(midiMessage)
     self.widgets[WIDGET_ID_STATS].userActivity()
 
@@ -342,7 +347,9 @@ class GangQin :
     Opens the MIDI keyboard interface pointed by the string descriptor in 
     'selectedDevice'.
 
-    When not using any MIDI keyboard, use selectedDevice = "None".
+    Assigns the callback function that catches the MIDI events.
+
+    NOTE: when no MIDI keyboard is needed, use selectedDevice = "None".
     """
 
     if (selectedDevice != "None") :

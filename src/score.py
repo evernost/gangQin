@@ -77,7 +77,7 @@ class Score(widget.Widget) :
     super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
    
     # Pointer in the score
-    self.cursor = 0
+    self.cursor = 0         # Range: 0 ... score.cursorMax
     self.cursorsLeft = []
     self.cursorsRight = []
     self.bookmarks = []
@@ -289,7 +289,8 @@ class Score(widget.Widget) :
 
     ********
     WARNING: pr files have been deprecated since gangQin v.3
-    Use 'Score.loadGQ3File()' instead.
+    Use this function for conversion from .pr to .gq3 format only.
+    Future version will use 'Score.loadGQ3File()' instead.
     ********
 
     Loads and initialises the Score object from a .pr file.
@@ -629,6 +630,8 @@ class Score(widget.Widget) :
     if backup :
       (root, _) = os.path.splitext(prFile)
       exportFile = root + ".bak"
+    else :
+      exportFile = prFile
     
     with open(exportFile, "w") as fileHandler :
       json.dump(exportDict, fileHandler, indent = 2)
@@ -947,6 +950,7 @@ class Score(widget.Widget) :
     """
     Returns True if the current position in the score is bookmarked.
     """
+
     return (self.cursor in self.bookmarks)
   
 
@@ -1315,11 +1319,11 @@ class Score(widget.Widget) :
     TODO: confirm that sustained notes are not returned
     """
     
-    # Return the values in cache if the cursor has not changed
+    # Cursor hasn't changed since last request: return the cache
     if (self.getCursor() == self.teacherNotesCursor) :
       pass
     
-    # Otherwise, regenerate the cache
+    # Otherwise: regenerate the cache
     else :
       self._calculateTeacherNotes()
       self.teacherNotesCursor = self.getCursor()
@@ -1335,49 +1339,61 @@ class Score(widget.Widget) :
     """
     Builds the 'teacherNotes' attribute i.e. the list of notes that must be 
     played at the current location in the score.
+
+    'Score.teacherNotes' contains a list of Note objects with appropriate
+    properties for the rendering and arbitration.
     """
     
     # Reset the play attributes of the previous notes before deleting them.
     # Note attributes are used for the display and the arbiter.
-    for noteObj in self.teacherNotes :
-      noteObj.visible = True
-      noteObj.sustained = False
-      noteObj.inactive = False
+    # for noteObj in self.teacherNotes :
+    #   noteObj.visible = True
+    #   noteObj.sustained = False
+    #   noteObj.inactive = False
 
     # Reset the cache
     self.teacherNotes = []
     
     # Loop on all notes in the score
-    for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
-      for channel in range(SCORE_N_STAFF) :
-      #for (staffIndex, _) in enumerate(self.pianoRoll) :
+    for channel in range(SCORE_N_STAFF) :
+      for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
         for noteObj in self.pianoRoll[channel][pitch] :
 
-          # Detect a note pressed at this timecode
-          if (noteObj.startTime == self.getCurrentTimecode()) :
+          N = note.Note(noteObj.pitch)
+          N.startTime = noteObj.startTime
+          N.stopTime = noteObj.stopTime
+
+          # CASE 1: a note is pressed at this timecode
+          if (noteObj.startTime == self.getTimecode()) :
             
             # SINGLE HAND PRACTICE
-            # Adds the notes of the inactive hand to the list.
-            # Sets their "inactive" property to "True" so that it is displayed with the appropriate color.
-            if ((self.activeHands == SCORE_ACTIVE_HANDS_LEFT) and (staffIndex == NOTE_RIGHT_HAND)) :
-              noteObj.inactive = True
-              self.teacherNotes.append(noteObj)
+            # Adds the notes with their "inactive" property to "True" 
+            # so that it is displayed with the appropriate color.
+            if (self.activeHands == SCORE_ACTIVE_HANDS_BOTH) :
+              N.inactive = False
+              self.teacherNotes.append(N)
+            
+            elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
+              if (channel != NOTE_LEFT_HAND) : 
+                N.inactive = True
+                self.teacherNotes.append(N)
 
-            elif ((self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) and (staffIndex == NOTE_LEFT_HAND)) :
-              noteObj.inactive = True
-              self.teacherNotes.append(noteObj)
+            elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
+              if (channel != NOTE_RIGHT_HAND) :
+                N.inactive = True
+                self.teacherNotes.append(N)
 
-            else :
-              noteObj.inactive = False
-              self.teacherNotes.append(noteObj)
+          # CASE 2: a note is held at this timecode
+          elif ((self.getTimecode() > noteObj.startTime) and (self.getTimecode() <= noteObj.stopTime)) :
+            N.sustained = True
+            self.teacherNotes.append(N)
 
-          # Detect a note held at this timecode
-          if ((self.getCurrentTimecode() > noteObj.startTime) and (self.getCurrentTimecode() <= noteObj.stopTime)) :
-            noteObj.sustained = True
-            self.teacherNotes.append(noteObj)
+          # CASE 3: a note is out of the current window
+          else :
+            pass
 
     if (len(self.teacherNotes) == 0) :
-      print(f"[WARNING] Corrupted database: timecode is listed (t = {self.getCurrentTimecode()}), but no note was found starting at that moment.")
+      print(f"[WARNING] Corrupted database: timecode is listed (t = {self.getTimecode()}), but no note was found starting at that moment.")
 
 
 

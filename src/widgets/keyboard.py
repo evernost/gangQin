@@ -17,14 +17,13 @@
 # Project specific constants
 from src.commons import *
 
+import src.note as note
 import src.text as text
 import src.utils as utils
 import src.widgets.widget as widget
 
 import pygame
-
-# For point in polygon test
-from shapely.geometry import Point, Polygon
+from shapely.geometry import Point, Polygon   # For point in polygon test
 
 
 
@@ -102,7 +101,7 @@ class Keyboard(widget.Widget) :
     This function is called every time the app renders a new frame.
     """
 
-    # Render the keys of the grand piano
+    # Render the keyboard
     for i in MIDI_CODE_GRAND_PIANO_RANGE :
       if ((i % 12) in MIDI_CODE_BLACK_NOTES_MOD12) :
         pygame.draw.polygon(self.top.screen, KEYBOARD_BLACK_NOTE_COLOR, self.polygons[i])
@@ -110,45 +109,47 @@ class Keyboard(widget.Widget) :
         pygame.draw.polygon(self.top.screen, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
 
 
-    # Render the teacher notes (from Score)
+    # Render the teacher notes overlay (from Score)
     self.activeNotesScore = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
+    self.keyPress(self.activeNotesScore)
 
 
-    # Render the user notes (from the MIDI keyboard input)
-    midiNoteList = []
-    for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
-      if (pianoArbiter.midiCurr[pitch] == 1) :
-        newMidiNote = note.Note(pitch)
-        newMidiNote.fromKeyboardInput = True
-        newMidiNote.hand = UNDEFINED_HAND
-        newMidiNote.finger = 0
-        midiNoteList.append(newMidiNote)
+    # Render the user notes overlay (from the MIDI keyboard input)
+    # midiNoteList = []
+    # for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
+    #   if (pianoArbiter.midiCurr[pitch] == 1) :
+    #     newMidiNote = note.Note(pitch)
+    #     newMidiNote.fromKeyboardInput = True
+    #     newMidiNote.hand = UNDEFINED_HAND
+    #     newMidiNote.finger = 0
+    #     midiNoteList.append(newMidiNote)
     
-    keyboardWidget.keyPress(screen, midiNoteList)
+    # keyboardWidget.keyPress(screen, midiNoteList)
 
 
 
   # ---------------------------------------------------------------------------
   # METHOD Keyboard.keyPress
   # ---------------------------------------------------------------------------
-  def keyPress(self, screenInst, noteList) :
+  def keyPress(self, notes) :
     """
-    Highlights the notes in 'noteList' on the keyboard.
-    
-    Indicates the hand to be used and the required finger if the information is 
-    available.
+    Highlights on the keyboard widget the notes in 'notes'.
+    The display method will be inferred from the attributes of the note objects.
+
+    This function can be called several times to render a single frame. 
+    The polygons will be superimposed.
     """
 
     # Preprocess the list so that the earliest notes are drawn first
     # This avoids the sustained notes to be drawn on top.
-    noteList.sort(key = lambda x: x.startTime)
+    notes.sort(key = lambda x: x.startTime)
 
     # -------------------------------
     # Filter notes with null duration
     # -------------------------------
     # A bit of an oddity. I am still unsure as of why that might happen.
     newNoteList = []
-    for noteObj in noteList :
+    for noteObj in notes :
       if not(noteObj.fromKeyboardInput) :
         if (noteObj.startTime != noteObj.stopTime):
           newNoteList.append(noteObj)
@@ -156,7 +157,7 @@ class Keyboard(widget.Widget) :
         #   print("[WARNING] Null duration note detected")
       else :
         newNoteList.append(noteObj)
-    noteList = newNoteList
+    notes = newNoteList
 
     # -----------------------------
     # Detect "doubly" pressed notes
@@ -168,7 +169,7 @@ class Keyboard(widget.Widget) :
     # If the key is pressed by several fingers of the same hand, there is no
     # special processing to be done. 
     noteListByPitch = [[] for x in range(128)]
-    for (index, noteObj) in enumerate(noteList) :
+    for (index, noteObj) in enumerate(notes) :
       if not(noteObj.sustained) :
         noteListByPitch[noteObj.pitch].append([index, noteObj])
       
@@ -184,7 +185,7 @@ class Keyboard(widget.Widget) :
           
             # White note highlighting
             if ((noteObj1.pitch % 12) in MIDI_CODE_WHITE_NOTES_MOD12) :
-              self._doubleHandWhiteKeyPress(screenInst, noteObj1)
+              self._doubleHandWhiteKeyPress(self.top.screen, noteObj1)
 
             # Black note highlighting
             if ((noteObj1.pitch % 12) in MIDI_CODE_BLACK_NOTES_MOD12) :
@@ -211,15 +212,15 @@ class Keyboard(widget.Widget) :
     # --------------
     # "Normal" notes
     # --------------
-    for noteObj in noteList :
+    for noteObj in notes :
 
       # White note highlighting
       if (noteObj.keyColor == NOTE_WHITE_KEY) :
-        self._singleHandWhiteKeyPress(screenInst, noteObj)
+        self._singleHandWhiteKeyPress(self.top.screen, noteObj)
 
       # Black note highlighting
       if (noteObj.keyColor == NOTE_BLACK_KEY) :
-        self._singleHandBlackKeyPress(screenInst, noteObj)
+        self._singleHandBlackKeyPress(self.top.screen, noteObj)
       
       # ------------------------------
       # Note click detection materials
@@ -436,9 +437,9 @@ class Keyboard(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: Keyboard.updateFromMidi()
+  # METHOD: Keyboard.onExternalMidiEvent()
   # ---------------------------------------------------------------------------
-  def updateFromMidi(self, midiMessage) :
+  def onExternalMidiEvent(self, midiMessage) :
     """
     Updates the internal state of the object with the latest external MIDI
     inputs from the keyboard.
@@ -447,8 +448,11 @@ class Keyboard(widget.Widget) :
     input.
     """
 
+    # Build a note object
+    note = note.Note()
+
     self.activeNotesMIDI  = []
-    self.activeNotesScore = []
+    #self.activeNotesScore = []
 
 
 

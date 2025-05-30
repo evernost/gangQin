@@ -44,13 +44,11 @@ class Note :
 
   def __init__(self, pitch) :
     
-    # Protected attributes
-    self._pitch = None
-
     # Note general attributes (fields preserved during file import/export)
     self.pitch    = pitch
     self.hand     = NOTE_UNDEFINED_HAND
     self.finger   = NOTE_UNDEFINED_FINGER
+    self.name     = getFriendlyName(pitch)
     self.voice    = NOTE_VOICE_DEFAULT
 
     # Note database attributes (fields partially preserved during file import/export)
@@ -60,34 +58,20 @@ class Note :
     self.id         = -1    # Note unique identifier in the score (might change from a session to the other)
     
     # Note display attributes (fields not preserved during file import/export)
+    self.color      = None
+    self.keyColor   = self._getKeyColor()
     self.sustained  = False     # True if the note is held at a given time
     self.highlight  = False     # True if the note fingersatz is being edited
     self.inactive   = False     # True if the note shall be ignored by the arbiter (single hand practice)
     self.upcoming   = False     # True if the note is about to be played soon
     self.upcomingDistance = 0   # The highest the value, the further the note
-    self.color      = self.getNoteColor()
     
     # Not used anymore?
-    self.visible = False
-    self.disabled   = False         # True if the note shall be ignored by the arbiter (unplayable note)
-    self.fromKeyboardInput = False  # True if it is a note played by the user from the MIDI input
-    self.lookAheadDistance = 0      # Define how far away this note is located relative to the current cursor
+    self.visible            = False
+    self.disabled           = False   # True if the note shall be ignored by the arbiter (unplayable note)
+    self.fromKeyboardInput  = False   # True if it is a note played by the user from the MIDI input
+    self.lookAheadDistance  = 0       # Define how far away this note is located relative to the current cursor
     
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD: 'pitch' attribute setter/getter
-  # ---------------------------------------------------------------------------
-  @property
-  def pitch(self) :
-    return self._pitch
-
-  @pitch.setter
-  def pitch(self, newPitch):
-    self._pitch   = newPitch
-    self.name     = getFriendlyName(self._pitch)
-    self.keyColor = self._getKeyColor()
-
 
 
   # ---------------------------------------------------------------------------
@@ -110,11 +94,12 @@ class Note :
   # ---------------------------------------------------------------------------
   def getNoteColor(self) :
     """
-    Returns the color of the note (as a RGB-tuple) based on the state of its 
-    attributes.
+    Returns the color of 3 elements of the note:
+    - the rectangle overlay on the keyboard
+    - the outline of the rectangle overlay on the keyboard
+    - the rectangle on the piano roll
 
-    This function is called every time the note needs to be drawn on the 
-    keyboard widget.
+    All 3 are a 3-tuples with the RGB values.
     """
 
     # 
@@ -204,6 +189,22 @@ class Note :
 
 
     return (rectColor, rectOutlineColor, pianoRollColor)
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Note.setPitch()
+  # ---------------------------------------------------------------------------
+  def setPitch(self, newPitch: int) -> None :
+    """
+    Changes the pitch of the note.
+    Do not try to modify the 'pitch' attribute manually as some side attributes
+    would not be up to date anymore.
+    """
+      
+    self.pitch    = newPitch
+    self.name     = getFriendlyName(newPitch)
+    self.keyColor = self._getKeyColor()
 
 
 

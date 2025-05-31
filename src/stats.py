@@ -12,7 +12,7 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
 # Project specific constants
 from commons import *
@@ -25,7 +25,7 @@ import time
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 TICK_INTERVAL_MS = 500                # Deprecated.
 MINIMAL_SESSION_DURATION_SEC = 60*5   # Minimal duration required for a session to have its stats saved
@@ -34,11 +34,13 @@ IDLE_TIME_THRESHOLD_SEC = 20          # After this amount of time without any us
 
 
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
 class Stats :
 
   """
+  STATS Object
+  
   Monitors the activity, right/wrong notes to provide some statistics.
   It gives access to various hindsights relative to the performance on the song like:
   - active time spent learning the score
@@ -372,6 +374,7 @@ class Stats :
     Resets the idle timer (inactivity detection) e.g. when activity shows on 
     the input keyboard.
     """
+
     self.cursorIdleTimer = 0
 
 
@@ -460,7 +463,7 @@ class Stats :
 
 
 # =============================================================================
-# Unit tests
+# UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
   print("[INFO] There are no unit tests available for 'stats.py'")

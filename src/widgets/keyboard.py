@@ -110,8 +110,9 @@ class Keyboard(widget.Widget) :
 
 
     # Render the teacher notes overlay (from Score)
-    self.activeNotesScore = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
-    self.keyPress(self.activeNotesScore)
+    if (WIDGET_ID_SCORE in self.top.widgets) :
+      self.activeNotesScore = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
+      self.keyPress(self.activeNotesScore)
 
 
     # Render the user notes overlay (from the MIDI keyboard input)
@@ -189,7 +190,7 @@ class Keyboard(widget.Widget) :
 
             # Black note highlighting
             if ((noteObj1.pitch % 12) in MIDI_CODE_BLACK_NOTES_MOD12) :
-              self._doubleHandBlackKeyPress(screenInst, noteObj1)
+              self._doubleHandBlackKeyPress(self.top.screen, noteObj1)
 
             # These notes are now displayed, we can remove them from the list
             # and go on with the "normal" notes

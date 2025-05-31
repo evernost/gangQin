@@ -17,26 +17,28 @@
 - [ ] major code refactor, more modular, overall code more coherent and less duplicates
 - [X] constants centralised and reorganised in 'commons.py'
 
-### gangQin Player:
-- [X] track selection for MIDI file now fully integrated
+### gangQin Player
 - [ ] cursor auto-increment during fingersatz edition when a single hand is playing
-- [ ] song selector proposes the most practiced songs first
+- [ ] new mode in the song selector: list the most practiced songs first
 - [ ] wrong note counter is disabled in looped practice (so that the counter does not go crazy. See issue #15)
 - [ ] added more shortcuts for the finger selector
 - [ ] improved hand selector for the single hand practice
 - [ ] auto-backup of .gq if overwritten by a new generation from .mid
 - [ ] auto-backup of .gq during practice
-- [X] more robust single hand practice
 - [ ] double key press replaced by an orange note, the user must indicate what hand should play
 - [ ] auto-detection of odd fingersatz in chords
 - [ ] clearer stat cues
+- [ ] playing stats shown in more human readable formats
+- [X] track selection for MIDI file now fully integrated
+- [X] more robust single hand practice
+- [X] more robust MIDI file import (in particular for keypress overlaps)
 
-### gangQin Fusion:
+### gangQin Fusion
 - [ ] auto-repeat function for the playglows
 - [ ] song selector defaults to the last song
 - [ ] ghost mode on the mouse cursor to help placing the playglow
 
-### gangQin Capture:
+### gangQin Capture
 - [ ] added snapshot counter
 - [ ] added context to the score (page number, capture number within the page, editor's name, etc.)
 

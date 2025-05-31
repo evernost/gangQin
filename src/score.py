@@ -85,7 +85,8 @@ class Score(widget.Widget) :
     self.length = 0
 
     # Internal representation
-    self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
+    self.noteList = []
+    self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]   # Cursed old school format (deprecated)
     self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
 
     # Options for Score.getTeacherNotes()
@@ -112,22 +113,28 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.loadMIDIFile()
+  # METHOD Score.loadMIDIFile_v2_DEPRECATED()
   # ---------------------------------------------------------------------------
-  def loadMIDIFile(self, midiFile: str, midiTracks: list[str]) -> None :
+  def loadMIDIFile_v2_DEPRECATED(self, midiFile: str, midiTracks: list[str]) -> None :
     """
+    ********
+    WARNING: this version generates the old school score database from MIDI.
+    Use it for compatibility from gangQin v2 to v3 only.
+    ********
+    
     Loads and initialises the Score object from a MIDI file.
 
-    'midiFile' must be the full path to the file.
+    'midiFile' must be the full path to the file with its extension.
+    Example: './songs/Chopin_Etude_Op_10_No_1.mid'
     """
     
-    print("[INFO] Processing MIDI file... ")
+    print("[INFO] Importing MIDI file... ")
     
     # For statistics
     startTime = time.time()
 
     # Open MIDI file
-    mid = mido.MidiFile(midiFile)
+    midiData = mido.MidiFile(midiFile)
 
     # Initialise attributes 
     self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
@@ -138,7 +145,7 @@ class Score(widget.Widget) :
     id = 0
 
     # Loop on the tracks, decode the MIDI messages
-    for (i, track) in enumerate(mid.tracks) :
+    for (i, track) in enumerate(midiData.tracks) :
       
       # Process the track if it is linked to left or right hand
       # Ignore it otherwise
@@ -278,7 +285,153 @@ class Score(widget.Widget) :
 
     stopTime = time.time()
     print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.loadMIDIFile()
+  # ---------------------------------------------------------------------------
+  def loadMIDIFile(self, midiFile: str, midiTracks: list[str]) -> None :
+    """
+    Loads and initialises the Score object from a MIDI file.
+
+    'midiFile' must be the full path to the file with its extension.
+    Example: './songs/Chopin_Etude_Op_10_No_1.mid'
+    """
     
+    print("[INFO] Importing MIDI file... ")
+    
+    # For statistics
+    startTime = time.time()
+
+    # Open MIDI file
+    midiData = mido.MidiFile(midiFile)
+
+    # Initialise attributes
+    self.noteList = []
+    self.noteOnTimecodes = {
+      "L"       : [],
+      "R"       : [],
+      "LR"      : [],
+      "LR_full" : []
+    }
+    
+    noteCount = 0
+    noteDuration = 0
+    insertIndex = 0
+    noteTracker = NoteTracker()
+
+    # Loop on the tracks
+    for (i, track) in enumerate(midiData.tracks) :
+      
+      # The track number has been paired with a hand 
+      if (midiTracks[i] != "") :
+        if (midiTracks[i] == "R") : trackID = SCORE_RIGHT_HAND_TRACK_ID
+        if (midiTracks[i] == "L") : trackID = SCORE_LEFT_HAND_TRACK_ID
+      
+        # Loop on the notes within a track
+        currTime = 0
+        currTempo = 0
+        for msg in track :
+
+          currTime += msg.time
+
+          if (msg.type in ["note_on", "note_off"]) :
+            pitch = msg.note
+          
+          # MIDI EVENT: keypress
+          if ((msg.type == "note_on") and (msg.velocity > 0)) :
+            
+            # Detect an overlapping keypress (new keypress without prior release)
+            # This case is not supposed to happen.
+            if noteTracker.isActive(pitch, trackID) :
+              print(f"[WARNING] Score.loadMIDIFile(): odd keypress overlap on the same hand detected")
+              i = noteTracker.getIndex(pitch, trackID)
+              self.noteList[i].stopTime = currTime
+              noteTracker.end(pitch, trackID)
+
+            # Register the keypress in the database
+            N = note.Note(pitch)
+            N.hand      = trackID
+            N.dbIndex   = insertIndex
+            N.id        = insertIndex
+            N.velocity  = msg.velocity
+            N.startTime = currTime
+            N.stopTime  = NOTE_END_UNKNOWN
+            self.noteList.append(N)
+
+            self.noteOnTimecodes["LR_full"].append(currTime)
+            if (trackID == SCORE_LEFT_HAND_TRACK_ID)  : self.noteOnTimecodes["L"].append(currTime)
+            if (trackID == SCORE_RIGHT_HAND_TRACK_ID) : self.noteOnTimecodes["R"].append(currTime)
+            
+            noteTracker.begin(pitch, trackID, insertIndex)
+            insertIndex += 1
+            
+            #       # User should decide here.
+            #       currNote.stopTime = currTime
+            #       noteDuration += (currNote.stopTime - currNote.startTime)
+            #       noteCount += 1.0
+            #       id += 1
+
+
+          # MIDI EVENT: key release
+          elif ((msg.type == "note_off") or ((msg.type == "note_on") and (msg.velocity == 0))) :            
+            
+            if noteTracker.isActive(pitch, trackID) :
+              i = noteTracker.getIndex(pitch, trackID)
+              self.noteList[i].stopTime = currTime
+              noteTracker.end(pitch, trackID)
+              
+            else :
+              print(f"[WARNING] Score.loadMIDIFile(): read 'NOTE OFF' event with no matching 'NOTE ON'.")
+
+          # MIDI EVENT: time signature change
+          elif (msg.type == 'time_signature') :
+            print(f"- read time signature: {msg.numerator}/{msg.denominator} (timecode = {currTime})")
+            #eventTime = mido.tick2second(current_time, ticks_per_beat, tempo) for a display in seconds
+
+          # MIDI EVENT: key signature change
+          elif (msg.type == 'key_signature') :
+            print(f"- read key signature: {msg.key} (timecode = {currTime})")
+
+          # MIDI EVENT: tempo change
+          elif (msg.type == 'set_tempo') :
+            #print(f"- read new tempo: {msg.tempo} (timecode = {currTime})")
+            currTempo = msg.tempo
+
+          elif (msg.type == 'control_change') :
+            pass
+
+          elif (msg.type == 'program_change') :
+            pass
+
+
+    # Tidy up:
+    # - sort the timecodes by ascending values
+    # - remove duplicate entries
+    self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
+    self.noteOnTimecodes["LR_full"].sort()
+
+    self.noteOnTimecodes["LR"] = list(set(self.noteOnTimecodes["LR_full"]))
+    self.noteOnTimecodes["LR"].sort()
+
+    # Build 'cursorsLeft' and 'cursorsRight' attributes
+    self._buildCursorsLR()
+
+    # Estimate average note duration (needed for the pianoroll display)
+    self.avgNoteDuration = noteDuration/noteCount
+    
+    self.length = len(self.noteOnTimecodes["LR"])
+    self.cursorMax = self.length-1
+    
+    print(f"- score length: {self.length} steps")
+
+    stopTime = time.time()
+    print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
+    
+
+
+
 
 
   # ---------------------------------------------------------------------------
@@ -1361,7 +1514,13 @@ class Score(widget.Widget) :
 
           N = note.Note(noteObj.pitch)
           N.startTime = noteObj.startTime
-          N.stopTime = noteObj.stopTime
+          N.stopTime  = noteObj.stopTime
+          N.hand      = noteObj.hand
+          N.finger    = noteObj.finger
+          N.voice     = noteObj.voice
+          N.velocity  = noteObj.velocity
+          N.sustained = False
+          N.inactive  = False
 
           # CASE 1: a note is pressed at this timecode
           if (noteObj.startTime == self.getTimecode()) :
@@ -1738,7 +1897,70 @@ class Score(widget.Widget) :
         
 
 
+# ---------------------------------------------------------------------------
+# NOTE_TRACKER CLASS (helper class for the MIDI import)
+# ---------------------------------------------------------------------------
+class NoteTracker :
 
+  def __init__(self) :
+    self._pitch = {
+      SCORE_RIGHT_HAND_TRACK_ID : [],
+      SCORE_LEFT_HAND_TRACK_ID  : []
+    }
+    self._dbIndex = {
+      SCORE_RIGHT_HAND_TRACK_ID : [],
+      SCORE_LEFT_HAND_TRACK_ID  : []
+    }
+
+
+
+  def begin(self, pitch, channel, index) :
+    """
+    Declares a note starting in the score.
+    """
+
+    if (pitch in self._pitch[channel]) :
+      print("[WARNING] NoteTracker.begin(): a note with this pitch is already active in the channel")
+    else :
+      self._pitch[channel].append(pitch)
+      self._dbIndex[channel].append(index)
+
+
+
+  def end(self, pitch, channel) :
+    """
+    Declares a note ending in the score.
+    """
+
+    if not(pitch in self._pitch[channel]) :
+      print("[WARNING] NoteTracker.end(): trying to terminate a note already terminated or a note that never started.")
+    else :
+      i = self._pitch[channel].index(pitch)
+      del self._pitch[channel][i]
+      del self._dbIndex[channel][i]
+
+
+
+  def isActive(self, pitch, channel) :
+    """
+    Checks if a note is active in the channel. 
+    """
+
+    return (pitch in self._pitch[channel])
+  
+
+
+  def getIndex(self, pitch, channel) :
+    """
+    Returns the database index of an active note.
+    """
+
+    if not(pitch in self._pitch[channel]) :
+      print("[WARNING] NoteTracker.getIndex(): the active note could not be found.")
+      return -1
+    else :
+      i = self._pitch[channel].index(pitch)
+      return self._dbIndex[channel][i]
 
 
 
@@ -1749,10 +1971,23 @@ if (__name__ == "__main__") :
   
   print("[INFO] Library 'Score' called as main: running unit tests...")
 
+  # *****************
+  # TEST: MIDI IMPORT
+  # *****************
+  # Try to import all MIDI files available
+  midiFiles = [SONG_PATH + "/" + f for f in os.listdir(SONG_PATH) if f.endswith(".mid") and os.path.isfile(os.path.join(SONG_PATH, f))]
+  for file in midiFiles :
+    scoreNew = Score(None)
+    scoreNew.loadMIDIFile(file, ['R', 'L'])
+
+
+  # *****************************
+  # TEST: DATA LOSS IN GQ3 FORMAT
+  # *****************************
   # Import and then export a .gq file without any modifications 
   # (under a different name)
-  # Comparing the input and output file helps to make sure no information
-  # is lost in the process. 
+  # Compare the input and output file, make sure no information is lost in the 
+  # process. 
   songFile = SONG_PATH + "/" + "Rachmaninoff_Piano_Concerto_No2_Op18.pr"
   scoreRef = Score(None)
   scoreRef.loadPRFile(songFile)

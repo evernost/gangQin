@@ -213,9 +213,14 @@ class GangQin :
     keyboard.
     """
 
-    self.widgets[WIDGET_ID_KEYBOARD].onExternalMidiEvent(midiMessage)
-    self.widgets[WIDGET_ID_ARBITER].updateMidiState(midiMessage)
-    self.widgets[WIDGET_ID_STATS].userActivity()
+    if (WIDGET_ID_KEYBOARD in self.widgets) :
+      self.widgets[WIDGET_ID_KEYBOARD].onExternalMidiEvent(midiMessage)
+    
+    if (WIDGET_ID_ARBITER in self.widgets) :
+      self.widgets[WIDGET_ID_ARBITER].updateMidiState(midiMessage)
+    
+    if (WIDGET_ID_STATS in self.widgets) :
+      self.widgets[WIDGET_ID_STATS].userActivity()
 
 
 
@@ -312,9 +317,12 @@ class GangQin :
     if (self.midiPort != None) :
       self.midiPort.close()
 
-    #statsObj.userActivity()
-    #statsObj.save()
-    self.widgets[WIDGET_ID_SCORE].exportToPrFile(backup = True)
+    if (WIDGET_ID_STATS in self.widgets) :
+      pass
+      #statsObj.userActivity()
+      #statsObj.save()
+    
+    self.widgets[WIDGET_ID_SCORE].exportToPRFile(backup = True)
 
     print("")
     print("See you!")

@@ -50,6 +50,7 @@ class Note :
     self.finger   = NOTE_UNDEFINED_FINGER
     self.name     = getFriendlyName(pitch)
     self.voice    = NOTE_VOICE_DEFAULT
+    self.velocity = 0
 
     # Note database attributes (fields partially preserved during file import/export)
     self.startTime  = 0     # Timecode of the key press event

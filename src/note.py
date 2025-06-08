@@ -54,7 +54,7 @@ class Note :
 
     # Note database attributes (fields partially preserved during file import/export)
     self.startTime  = 0     # Timecode of the key press event
-    self.stopTime   = 0     # Timecode of the key release event
+    self.stopTime   = []    # Timecode of the key release event
     self.dbIndex    = -1    # Index of the note in the score database
     self.id         = -1    # Note unique identifier in the score (might change from a session to the other)
     
@@ -206,6 +206,38 @@ class Note :
     self.pitch    = newPitch
     self.name     = getFriendlyName(newPitch)
     self.keyColor = self._getKeyColor()
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Note.start()
+  # ---------------------------------------------------------------------------
+  def start(self, startTime: int) -> None :
+    """
+    Sets the start time attribute of the note.
+    """
+      
+    self.startTime = startTime
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Note.stop()
+  # ---------------------------------------------------------------------------
+  def stop(self, stopTime: int) -> None :
+    """
+    Sets the stop time attribute of the note.
+    Warning: unlike 'Note.stop()', this method does not overwrite the 'stopTime'
+    attribute but appends a stop time to the list.
+
+    MIDI notation causes inherent ambiguity on the stop time: more than 1 
+    'note on' event can occur on the same hand and pitch before it is even 
+    released. 
+    To let the user choose the proper note duration, all possible stoptime are
+    stored.
+    """
+    
+    self.stopTime.append(stopTime)
 
 
 

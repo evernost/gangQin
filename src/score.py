@@ -342,48 +342,35 @@ class Score(widget.Widget) :
           # MIDI EVENT: keypress
           if ((msg.type == "note_on") and (msg.velocity > 0)) :
             
-            # Detect an overlapping keypress (new keypress without prior release)
-            # This case is not supposed to happen.
-            if noteTracker.isActive(pitch, trackID) :
-              print(f"[WARNING] Score.loadMIDIFile(): odd keypress overlap on the same hand detected")
-              i = noteTracker.getIndex(pitch, trackID)
-              self.noteList[i].stopTime = currTime
-              noteTracker.end(pitch, trackID)
-
-            # Register the keypress in the database
+            # Create and edit the note             
             N = note.Note(pitch)
             N.hand      = trackID
             N.dbIndex   = insertIndex
-            N.id        = insertIndex
             N.velocity  = msg.velocity
-            N.startTime = currTime
-            N.stopTime  = NOTE_END_UNKNOWN
+            
+            # Register the note in the database
             self.noteList.append(N)
+            
+            # Start the tracking on this note
+            noteTracker.keyPress(N, currTime)
 
+            # Register the note timecode
             self.noteOnTimecodes["LR_full"].append(currTime)
             if (trackID == SCORE_LEFT_HAND_TRACK_ID)  : self.noteOnTimecodes["L"].append(currTime)
             if (trackID == SCORE_RIGHT_HAND_TRACK_ID) : self.noteOnTimecodes["R"].append(currTime)
             
-            noteTracker.begin(pitch, trackID, insertIndex)
             insertIndex += 1
-            
-            #       # User should decide here.
-            #       currNote.stopTime = currTime
-            #       noteDuration += (currNote.stopTime - currNote.startTime)
-            #       noteCount += 1.0
-            #       id += 1
+
 
 
           # MIDI EVENT: key release
           elif ((msg.type == "note_off") or ((msg.type == "note_on") and (msg.velocity == 0))) :            
             
-            if noteTracker.isActive(pitch, trackID) :
-              i = noteTracker.getIndex(pitch, trackID)
-              self.noteList[i].stopTime = currTime
-              noteTracker.end(pitch, trackID)
-              
-            else :
-              print(f"[WARNING] Score.loadMIDIFile(): read 'NOTE OFF' event with no matching 'NOTE ON'.")
+            # Close the note
+            noteTracker.keyRelease(pitch, trackID, currTime)
+
+
+
 
           # MIDI EVENT: time signature change
           elif (msg.type == 'time_signature') :
@@ -405,6 +392,10 @@ class Score(widget.Widget) :
           elif (msg.type == 'program_change') :
             pass
 
+    
+    # Report odd notes
+    noteTracker.close()
+
 
     # Tidy up:
     # - sort the timecodes by ascending values
@@ -419,7 +410,7 @@ class Score(widget.Widget) :
     self._buildCursorsLR()
 
     # Estimate average note duration (needed for the pianoroll display)
-    self.avgNoteDuration = noteDuration/noteCount
+    #self.avgNoteDuration = noteDuration/noteCount
     
     self.length = len(self.noteOnTimecodes["LR"])
     self.cursorMax = self.length-1
@@ -1902,65 +1893,81 @@ class Score(widget.Widget) :
 # ---------------------------------------------------------------------------
 class NoteTracker :
 
+  """
+  NOTE_TRACKER object
+  
+  The NoteTracker class is a helper to keep track of the active notes while 
+  reading a MIDI file.
+
+  The MIDI file format has an intrisic flaw that causes ambiguity on the 
+  exact moment a note stops if it is pressed multiple times before being 
+  released. Although you cannot press a note twice, it makes sense in 
+  musical notation, but it translates poorly to a MIDI file. 
+  
+  The NoteTracker takes this into account and gives the possibility to 
+  restore the proper way to play based on the information in the MIDI file.
+  """
+
   def __init__(self) :
-    self._pitch = {
-      SCORE_RIGHT_HAND_TRACK_ID : [],
-      SCORE_LEFT_HAND_TRACK_ID  : []
-    }
-    self._dbIndex = {
-      SCORE_RIGHT_HAND_TRACK_ID : [],
-      SCORE_LEFT_HAND_TRACK_ID  : []
+
+    self.activeNotes = {
+      SCORE_RIGHT_HAND_TRACK_ID : [[] for _ in range(128)],
+      SCORE_LEFT_HAND_TRACK_ID  : [[] for _ in range(128)]
     }
 
+    self.keyPressCount = {
+      SCORE_RIGHT_HAND_TRACK_ID : [0 for _ in range(128)],
+      SCORE_LEFT_HAND_TRACK_ID  : [0 for _ in range(128)]
+    }
 
 
-  def begin(self, pitch, channel, index) :
+
+  def keyPress(self, noteObj, timecode: int) :
     """
     Declares a note starting in the score.
+    Takes a Note object as argument.
     """
 
-    if (pitch in self._pitch[channel]) :
-      print("[WARNING] NoteTracker.begin(): a note with this pitch is already active in the channel")
-    else :
-      self._pitch[channel].append(pitch)
-      self._dbIndex[channel].append(index)
+    noteObj.start(timecode)
+
+    self.activeNotes[noteObj.hand][noteObj.pitch].append(noteObj)
+    self.keyPressCount[noteObj.hand][noteObj.pitch] += 1
 
 
 
-  def end(self, pitch, channel) :
+  def keyRelease(self, pitch: int, channel: int, timecode: int) -> None :
     """
     Declares a note ending in the score.
     """
 
-    if not(pitch in self._pitch[channel]) :
-      print("[WARNING] NoteTracker.end(): trying to terminate a note already terminated or a note that never started.")
+    if (self.keyPressCount[channel][pitch] == 0) :
+      print("[WARNING] NoteTracker.keyRelease(): trying to terminate a note already terminated or a note that never started.")
+    
     else :
-      i = self._pitch[channel].index(pitch)
-      del self._pitch[channel][i]
-      del self._dbIndex[channel][i]
+      
+      self.keyPressCount[channel][pitch] -= 1
+      
+      # Add this timecode as a possible end timecode for all the overlapping notes
+      for noteInPitch in self.activeNotes[channel][pitch] :
+        noteInPitch.stop(timecode)
+
+      if (self.keyPressCount[channel][pitch] == 0) :
+        if (len(self.activeNotes[channel][pitch]) > 1) :
+          print(f"[DEBUG] Closing multiple keypress (n = {len(self.activeNotes[channel][pitch])}, channel = {channel}, pitch = {pitch})")
+        
+        self.activeNotes[channel][pitch] = []
+      
 
 
-
-  def isActive(self, pitch, channel) :
+  def close(self) -> None :
     """
-    Checks if a note is active in the channel. 
+    Checks the database before closing
     """
 
-    return (pitch in self._pitch[channel])
-  
-
-
-  def getIndex(self, pitch, channel) :
-    """
-    Returns the database index of an active note.
-    """
-
-    if not(pitch in self._pitch[channel]) :
-      print("[WARNING] NoteTracker.getIndex(): the active note could not be found.")
-      return -1
-    else :
-      i = self._pitch[channel].index(pitch)
-      return self._dbIndex[channel][i]
+    for channel in self.activeNotes :
+      for pitch in range(128) :
+        if (len(self.activeNotes[channel][pitch]) > 0) :
+          print(f"[WARNING] Odd")
 
 
 
@@ -1977,8 +1984,11 @@ if (__name__ == "__main__") :
   # Try to import all MIDI files available
   midiFiles = [SONG_PATH + "/" + f for f in os.listdir(SONG_PATH) if f.endswith(".mid") and os.path.isfile(os.path.join(SONG_PATH, f))]
   for file in midiFiles :
+    print("")
+    print(f"***** FILE: {file} *****")
+    print("")
     scoreNew = Score(None)
-    scoreNew.loadMIDIFile(file, ['R', 'L'])
+    scoreNew.loadMIDIFile(file, ['R', 'L', '', '', '', '', '', '', ''])
 
 
   # *****************************

@@ -370,8 +370,6 @@ class Score(widget.Widget) :
             noteTracker.keyRelease(pitch, trackID, currTime)
 
 
-
-
           # MIDI EVENT: time signature change
           elif (msg.type == 'time_signature') :
             print(f"- read time signature: {msg.numerator}/{msg.denominator} (timecode = {currTime})")
@@ -395,6 +393,11 @@ class Score(widget.Widget) :
     
     # Report odd notes
     noteTracker.close()
+
+
+    # Register db index for all notes with possible ending uncertainty
+    # ...
+
 
 
     # Tidy up:
@@ -1906,57 +1909,103 @@ class NoteTracker :
   
   The NoteTracker takes this into account and gives the possibility to 
   restore the proper way to play based on the information in the MIDI file.
+
+  Attributes:
+  - activeNotes: list of note objects that are/have been pressed with 
+    an overlap condition
+  - activeNotesCount: incremented on a keypress, decremented on a keyrelease.
+    Each pitch and track (left or right) has its own counter.
+    Most of the time, the counter reaches 1.
+    For overlapping notes (pressed again without prior release), it can go to 2.
+    So far, no MIDI file made this counter go higher than 2.
   """
 
   def __init__(self) :
 
-    self.activeNotes = {
+    self._currChannel = SCORE_RIGHT_HAND_TRACK_ID
+    self._currPitch = 0
+
+    self.active = {
       SCORE_RIGHT_HAND_TRACK_ID : [[] for _ in range(128)],
       SCORE_LEFT_HAND_TRACK_ID  : [[] for _ in range(128)]
     }
 
-    self.keyPressCount = {
-      SCORE_RIGHT_HAND_TRACK_ID : [0 for _ in range(128)],
-      SCORE_LEFT_HAND_TRACK_ID  : [0 for _ in range(128)]
-    }
+    # self.overlapNotes = {
+    #   SCORE_RIGHT_HAND_TRACK_ID : [[] for _ in range(128)],
+    #   SCORE_LEFT_HAND_TRACK_ID  : [[] for _ in range(128)]
+    # }
+
+    # self.activeNotesCount = {
+    #   SCORE_RIGHT_HAND_TRACK_ID : [0 for _ in range(128)],
+    #   SCORE_LEFT_HAND_TRACK_ID  : [0 for _ in range(128)]
+    # }
+
+    # self.keyPressCountMax = {
+    #   SCORE_RIGHT_HAND_TRACK_ID : [0 for _ in range(128)],
+    #   SCORE_LEFT_HAND_TRACK_ID  : [0 for _ in range(128)]
+    # }
+
+    # self.activeNotesEarliest = {
+    #   SCORE_RIGHT_HAND_TRACK_ID : [[] for _ in range(128)],
+    #   SCORE_LEFT_HAND_TRACK_ID  : [[] for _ in range(128)]
+    # }
 
 
 
-  def keyPress(self, noteObj, timecode: int) :
+
+  def keyPress(self, noteObj, timecode: int) -> None :
     """
     Declares a note starting in the score.
     Takes a Note object as argument.
     """
 
+    # Set the note start time
     noteObj.start(timecode)
 
-    self.activeNotes[noteObj.hand][noteObj.pitch].append(noteObj)
-    self.keyPressCount[noteObj.hand][noteObj.pitch] += 1
+    # Register the keypress
+    self.active[noteObj.hand][noteObj.pitch].append(noteObj)
 
+    # startTimes = [N.startTime for N in self.activeNotes[noteObj.hand][noteObj.pitch]]
+    # if noteObj.startTime in startTimes :
+    #   print("[WARNING] NoteTracker.keyPress(): detected multiple keypresses at the same time.")
+      
+    # if (len(self.activeNotes[noteObj.hand][noteObj.pitch]) == 1) :
+    #   self.activeNotesEarliest[noteObj.hand][noteObj.pitch] = noteObj
+    
+    # self.activeNotes[noteObj.hand][noteObj.pitch].append(noteObj)    
+    # self.activeNotesCount[noteObj.hand][noteObj.pitch] += 1
 
+    
 
   def keyRelease(self, pitch: int, channel: int, timecode: int) -> None :
     """
     Declares a note ending in the score.
     """
 
-    if (self.keyPressCount[channel][pitch] == 0) :
-      print("[WARNING] NoteTracker.keyRelease(): trying to terminate a note already terminated or a note that never started.")
+    if (len(self.active[channel][pitch]) == 0) :
+      print(f"[WARNING] NoteTracker.keyRelease(): read a 'keyRelease' with no matching 'keyPress'. Note will be ignored (timecode = {timecode})")
     
     else :
       
-      self.keyPressCount[channel][pitch] -= 1
+      # One note is active
+      if (len(self.active[channel][pitch]) == 1) :  
+        self.active[channel][pitch][0].stop(timecode)
+        self.active[channel][pitch] = []
       
-      # Add this timecode as a possible end timecode for all the overlapping notes
-      for noteInPitch in self.activeNotes[channel][pitch] :
-        noteInPitch.stop(timecode)
-
-      if (self.keyPressCount[channel][pitch] == 0) :
-        if (len(self.activeNotes[channel][pitch]) > 1) :
-          print(f"[DEBUG] Closing multiple keypress (n = {len(self.activeNotes[channel][pitch])}, channel = {channel}, pitch = {pitch})")
+      # More than one note are active
+      # Close the latest notes first
+      else :
         
-        self.activeNotes[channel][pitch] = []
+        nNotes = len(self.active[channel][pitch])
+        if (nNotes > 2) :
+          print("[WARNING] NoteTracker.keyRelease(): unusual number of overlapping keypresses (> 2)")
+
+        # Close the notes    
+        for i in range(1, nNotes) :
+          self.active[channel][pitch][i].stop(timecode)
       
+        # Remove them
+        self.active[channel][pitch][1:] = []
 
 
   def close(self) -> None :
@@ -1964,10 +2013,16 @@ class NoteTracker :
     Checks the database before closing
     """
 
-    for channel in self.activeNotes :
+    isValid = True
+
+    for channel in self.active :
       for pitch in range(128) :
-        if (len(self.activeNotes[channel][pitch]) > 0) :
-          print(f"[WARNING] Odd")
+        if (len(self.active[channel][pitch]) > 0) :
+          print(f"[WARNING] Active notes remaining")
+          isValid = False
+
+    if isValid :
+      print("All good")
 
 
 

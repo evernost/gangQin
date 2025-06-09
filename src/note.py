@@ -53,10 +53,10 @@ class Note :
     self.velocity = 0
 
     # Note database attributes (fields partially preserved during file import/export)
-    self.startTime  = 0     # Timecode of the key press event
-    self.stopTime   = []    # Timecode of the key release event
-    self.dbIndex    = -1    # Index of the note in the score database
-    self.id         = -1    # Note unique identifier in the score (might change from a session to the other)
+    self.startTime  = 0                 # Timecode of the key press event
+    self.stopTime   = NOTE_END_UNKNOWN  # Timecode of the key release event
+    self.dbIndex    = -1                # Index of the note in the score database
+    self.id         = -1                # Note unique identifier in the score (might change from a session to the other)
     
     # Note display attributes (fields not preserved during file import/export)
     self.color      = None
@@ -237,7 +237,7 @@ class Note :
     stored.
     """
     
-    self.stopTime.append(stopTime)
+    self.stopTime = stopTime
 
 
 

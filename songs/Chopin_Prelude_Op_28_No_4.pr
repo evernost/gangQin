@@ -3,7 +3,9 @@
   "nStaffs": 2,
   "avgNoteDuration": 305.0066225165563,
   "cursor": 0,
-  "bookmarks": [],
+  "bookmarks": [
+    0
+  ],
   "activeHands": "LR",
   "pianoRoll": [
     {

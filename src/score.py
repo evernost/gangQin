@@ -113,13 +113,16 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.loadMIDIFile_v2_DEPRECATED()
+  # METHOD Score.loadMidiFile_DEPRECATED()
   # ---------------------------------------------------------------------------
-  def loadMIDIFile_v2_DEPRECATED(self, midiFile: str, midiTracks: list[str]) -> None :
+  def loadMidiFile_DEPRECATED(self, midiFile: str, midiTracks: list[str]) -> None :
     """
     ********
-    WARNING: this version generates the old school score database from MIDI.
-    Use it for compatibility from gangQin v2 to v3 only.
+    WARNING: this version generates the old school score database from 
+    a MIDI file.
+    There is no use for this function anymore. DO NOT USE IT.
+    
+    Will be removed in a future release.
     ********
     
     Loads and initialises the Score object from a MIDI file.
@@ -289,14 +292,20 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.loadMIDIFile()
+  # METHOD Score.loadMidiFile()
   # ---------------------------------------------------------------------------
-  def loadMIDIFile(self, midiFile: str, midiTracks: list[str]) -> None :
+  def loadMidiFile(self, midiFile: str, midiTracks: list[str]) -> None :
     """
     Loads and initialises the Score object from a MIDI file.
 
     'midiFile' must be the full path to the file with its extension.
-    Example: './songs/Chopin_Etude_Op_10_No_1.mid'
+    EXAMPLE: midiFile = './songs/Chopin_Etude_Op_10_No_1.mid'
+
+    'midiTracks' is a list of strings containing as many elements as there
+    are tracks in the MIDI file.
+    Indices containing the string 'L' / 'R' indicate the tracks 
+    that will be read.
+    EXAMPLE: midiTracks = ['R', 'L', '', ''] -> read track 0 and 1.
     """
     
     print("[INFO] Importing MIDI file... ")
@@ -418,22 +427,19 @@ class Score(widget.Widget) :
     
 
 
-
-
-
   # ---------------------------------------------------------------------------
-  # METHOD Score.loadPRFile()
+  # METHOD Score.loadPrFile()
   # ---------------------------------------------------------------------------
-  def loadPRFile(self, prFile: str) -> None :
+  def loadPrFile(self, prFile: str) -> None :
     """
 
     ********
-    WARNING: pr files have been deprecated since gangQin v.3
-    Use this function for conversion from .pr to .gq3 format only.
-    Future version will use 'Score.loadGQ3File()' instead.
+    WARNING: '.pr' files have been deprecated since gangQin version 3.
+    Use this function for conversion from '.pr' to '.gq3' format only.
+    Next versions use 'Score.loadGQ3File()' instead.
     ********
 
-    Loads and initialises the Score object from a .pr file.
+    Loads and initialises the Score object from a '.pr' file.
 
     'prFile' must be the full path to the file.
 
@@ -575,18 +581,23 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.loadGQ3File()
+  # METHOD Score.loadGq3File()
   # ---------------------------------------------------------------------------
-  def loadGQ3File(self, prFile: str) -> None :
+  def loadGq3File(self, gq3File: str) -> None :
     """
-    Description is TODO.
+    Loads and initialises the Score object from a '.gq3' file (gangQin v3 file)
+
+    'gq3File' must be the full path to the file.
+
+    Unlike MIDI files, .pr files store all the user annotated information 
+    about the score (bookmarks, fingersatz, tempo, etc.)
     """
     
     # For statistics
     startTime = time.time()
     
     # Open the file as a JSON
-    with open(prFile, "r") as fileHandler :
+    with open(gq3File, "r") as fileHandler :
       importDict = json.load(fileHandler)
 
     # Read the revision
@@ -713,23 +724,23 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.exportToPRFile()
+  # METHOD Score.exportToPrFile_DEPRECATED()
   # ---------------------------------------------------------------------------
-  def exportToPRFile(self, prFile: str, backup = False) -> None :
+  def exportToPrFile_DEPRECATED(self, prFile: str, backup = False) -> None :
     """
 
     ********
-    WARNING: pr files have been deprecated since gangQin v.3
-    Use 'Score.loadGQ3File()' instead.
+    WARNING: '.pr' files have been deprecated since gangQin version 3.
+    New files must be saved in '.gq3' format using 'Score.loadGQ3File()'.
     ********
 
     Exports the annotated score and all metadata (finger, hand, comments etc.) in 
-    a .gq file (JSON) that can be imported later to restore the session.
+    a '.pr' file (JSON) that can be imported later to restore the session.
 
-    'gqFile' must be the full path to the file.
+    'prFile' must be the full path to the file.
 
     Call the function with 'backup = True' to save under a '.bak' extension instead
-    so that the original file is not overwritten. 
+    so that the original file is not overwritten (used e.g. for autosave)
     """
 
     if backup :
@@ -787,13 +798,17 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.exportToGQ3File()
+  # METHOD Score.exportToGq3File()
   # ---------------------------------------------------------------------------
-  def exportToGQ3File(self, gqFile: str, backup = False) -> None :
+  def exportToGq3File(self, gq3File: str, backup = False) -> None :
     """
-    Prototype function: export to GQ3 file (GangQin 3)
+    Exports the annotated score and all metadata (finger, hand, comments etc.) in 
+    a '.gq3' file (JSON) that can be imported later to restore the session.
 
-    Experimenting a format that is hopefully more 'diff' and 'merge' friendly.
+    'gq3File' must be the full path to the file.
+
+    Call the function with 'backup = True' to save under a '.bak' extension instead
+    so that the original file is not overwritten (used e.g. for autosave)
     """
 
     output = {}
@@ -835,10 +850,10 @@ class Score(widget.Widget) :
 
 
     if backup :
-      (root, _) = os.path.splitext(gqFile)
+      (root, _) = os.path.splitext(gq3File)
       exportFile = root + ".bak"
     else :
-      (root, _) = os.path.splitext(gqFile)
+      (root, _) = os.path.splitext(gq3File)
       exportFile = root + ".gq3"
     
     with open(exportFile, "w") as fileHandler :
@@ -1370,20 +1385,21 @@ class Score(widget.Widget) :
     value to get stored in the file.
     """
     
-    self.cursorsLeft = []; self.cursorsRight = []
+    self.cursorsLeft  = [] 
+    self.cursorsRight = []
 
     for (index, timecode) in enumerate(self.noteOnTimecodes["LR"]) :
-      unaffected = True
+      unassigned = True
       if (timecode in self.noteOnTimecodes["L"]) :
         self.cursorsLeft.append(index)
-        unaffected = False
+        unassigned = False
 
       if (timecode in self.noteOnTimecodes["R"]) :
         self.cursorsRight.append(index)
-        unaffected = False
+        unassigned = False
       
-      if unaffected :
-        print("[INTERNAL ERROR] Score._buildCursorsLR: something odd happened!")
+      if unassigned :
+        print("[ERROR] Score._buildCursorsLR: a note was found with an unlisted time code (INTERNAL ERROR)")
 
 
 
@@ -2005,32 +2021,33 @@ if (__name__ == "__main__") :
   # *****************
   # TEST: MIDI IMPORT
   # *****************
-  # Try to import all MIDI files available
+  # List all MIDI files
   midiFiles = [SONG_PATH + "/" + f for f in os.listdir(SONG_PATH) if f.endswith(".mid") and os.path.isfile(os.path.join(SONG_PATH, f))]
+  
+  # Test the import on all of them
   for file in midiFiles :
     print("")
     print(f"***** FILE: {file} *****")
     print("")
-    scoreNew = Score(None)
-    scoreNew.loadMIDIFile(file, ['R', 'L', '', '', '', '', '', '', ''])
+    scoreNew = Score(top = None)
+    scoreNew.loadMidiFile(file, ['R', 'L', '', '', '', '', '', '', ''])
 
 
   # *****************************
   # TEST: DATA LOSS IN GQ3 FORMAT
   # *****************************
-  # Import and then export a .gq file without any modifications 
-  # (under a different name)
-  # Compare the input and output file, make sure no information is lost in the 
+  # Import a '.gq3' file, export a copy without any modifications.
+  # Compare the input and output file. No information shall be lost in the 
   # process. 
-  songFile = SONG_PATH + "/" + "Rachmaninoff_Piano_Concerto_No2_Op18.pr"
-  scoreRef = Score(None)
-  scoreRef.loadPRFile(songFile)
-  scoreRef.exportToPRFile(songFile, backup = True)
+  songFile = SONG_PATH + "/" + "Rachmaninoff_Piano_Concerto_No2_Op18.gq3"
+  scoreRef = Score(top = None)
+  scoreRef.loadGq3File(songFile)
+  scoreRef.exportToGq3File(songFile, backup = True)
 
-  scoreNew = Score(None)
-  scoreNew.loadPRFile(songFile)
+  scoreNew = Score(top = None)
+  scoreNew.loadGq3File(songFile)
 
-  # Now compare attributes between 'scoreNew' and 'scoreOld'
+  # Compare attributes between 'scoreNew' and 'scoreOld'
   # No major difference should show, especially in the internal score 
   # database (notes, fingersatz, etc.)
   # ...
@@ -2044,18 +2061,18 @@ if (__name__ == "__main__") :
 
   # Experiments with GQ3 file format (gangQin v.3)
   songFile = SONG_PATH + "/" + "Medtner_-_Forgotten Melodies_Op_38_II_Danza_graziosa_rev0.mid"
-  score = Score(None)
+  score = Score(top = None)
   score.loadMIDIFile(songFile, ['R', 'L'])
   score.exportToGQ3File(SONG_PATH + "/" + "Medtner0.gq3")
 
   songFile = SONG_PATH + "/" + "Medtner_-_Forgotten Melodies_Op_38_II_Danza_graziosa_rev1.mid"
-  score = Score(None)
+  score = Score(top = None)
   score.loadMIDIFile(songFile, ['R', 'L'])
   score.exportToGQ3File(SONG_PATH + "/" + "Medtner1.gq3")
 
 
   songFile = SONG_PATH + "/" + "Rachmaninoff_Piano_Concerto_No2_Op18.pr"
-  score = Score(None)
+  score = Score(top = None)
   score.loadPRFile(songFile)
   score.exportToGQ3File(songFile)
 

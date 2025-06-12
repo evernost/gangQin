@@ -145,14 +145,14 @@ class GangQin :
       trackSel = trackSelectionGUI.new()
       trackSel.load(songFile)
       midiTracks = trackSel.show()
-      self.widgets[WIDGET_ID_SCORE].loadMIDIFile(songFile, midiTracks)
-    elif songFile.endswith(".gq") :
-      self.songType = "gq"
-      self.widgets[WIDGET_ID_SCORE].loadGQFile(songFile)
+      self.widgets[WIDGET_ID_SCORE].loadMidiFile(songFile, midiTracks)
+    elif songFile.endswith(".pr") :
+      self.songType = "pr"
+      self.widgets[WIDGET_ID_SCORE].loadPrFile(songFile)
       self.widgets[WIDGET_ID_STAFFSCOPE].load(songFile)
     else :
       self.songType = "gq3"
-      self.widgets[WIDGET_ID_SCORE].loadGQ3File(songFile)
+      self.widgets[WIDGET_ID_SCORE].loadGq3File(songFile)
       self.widgets[WIDGET_ID_STAFFSCOPE].load(songFile)
 
     # Update the app properties

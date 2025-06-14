@@ -87,7 +87,12 @@ class Score(widget.Widget) :
     # Internal representation
     self.noteList = []
     self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]   # Cursed old school format (deprecated)
-    self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
+    self.noteOnTimecodes = {
+      "L"       : [],   # Timecodes for the left hand keypresses
+      "R"       : [],   # Timecodes for the right hand keypresses
+      "LR"      : [],   # Timecodes for the left and right hand keypresses (merged, no duplicates)
+      "LR_full" : []    # Timecodes for the left and right hand keypresses (merged, with duplicates)
+    }
 
     # Options for Score.getTeacherNotes()
     self.teacherNotes = []
@@ -303,8 +308,8 @@ class Score(widget.Widget) :
 
     'midiTracks' is a list of strings containing as many elements as there
     are tracks in the MIDI file.
-    Indices containing the string 'L' / 'R' indicate the tracks 
-    that will be read.
+    Indices containing the string 'L' and/or 'R' indicate the tracks 
+    that will be read and assigns them to the corresponding track.
     EXAMPLE: midiTracks = ['R', 'L', '', ''] -> read track 0 and 1.
     """
     
@@ -319,10 +324,10 @@ class Score(widget.Widget) :
     # Initialise attributes
     self.noteList = []
     self.noteOnTimecodes = {
-      "L"       : [],   # Timecodes for the left hand keypresses
-      "R"       : [],   # Timecodes for the right hand keypresses
-      "LR"      : [],   # Timecodes for the left and right hand keypresses (merged, no duplicates)
-      "LR_full" : []    # Timecodes for the left and right hand keypresses (merged, with duplicates)
+      "L"       : [],
+      "R"       : [],
+      "LR"      : [],
+      "LR_full" : []
     }
     
     noteCount = 0
@@ -360,6 +365,7 @@ class Score(widget.Widget) :
             
             # Register the note in the database
             self.noteList.append(N)
+            noteCount += 1
             
             # Start the tracking on this note
             noteTracker.keyPress(N, currTime)
@@ -405,7 +411,8 @@ class Score(widget.Widget) :
     # Tidy up:
     # - sort the timecodes by ascending values
     # - remove duplicate entries
-    self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
+    self.noteOnTimecodes["L"].sort() 
+    self.noteOnTimecodes["R"].sort()
     self.noteOnTimecodes["LR_full"].sort()
 
     self.noteOnTimecodes["LR"] = list(set(self.noteOnTimecodes["LR_full"]))
@@ -416,6 +423,7 @@ class Score(widget.Widget) :
 
     # Estimate average note duration (needed for the pianoroll display)
     #self.avgNoteDuration = noteDuration/noteCount
+    self.avgNoteDuration = 100
     
     self.length = len(self.noteOnTimecodes["LR"])
     self.cursorMax = self.length-1
@@ -1455,7 +1463,7 @@ class Score(widget.Widget) :
     Returns the MIDI timecode of the current location in the score.
     """
     
-    # TODO: incorrect for single hand practice mode
+    # TODO: might be incorrect for single hand practice mode
     return self.noteOnTimecodes["LR"][self.getCursor()]
 
 

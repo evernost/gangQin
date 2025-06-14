@@ -72,7 +72,8 @@ class Keyboard(widget.Widget) :
     self.sqBlackNoteOverlapRightRGB = (140, 255, 146)
 
     # Define shorthand notations
-    self.c = KEYBOARD_BLACK_NOTE_HEIGHT; self.d = KEYBOARD_BLACK_NOTE_WIDTH
+    self.c = KEYBOARD_BLACK_NOTE_HEIGHT
+    self.d = KEYBOARD_BLACK_NOTE_WIDTH
     self.s = KEYBOARD_NOTE_CHANFER
     self.e = KEYBOARD_NOTE_SPACING
     self.x = self.loc[0]; self.y = self.loc[1]

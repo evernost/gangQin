@@ -39,7 +39,11 @@ TARGET_HEIGHT = 230
 class StaffScope(widget.Widget) :
 
   """
+  STAFF_SCOPE object
+  
   Class definition for the staffscope widget.
+
+  The StaffScope class derives from the Widget class.
   """
 
   def __init__(self, top) :

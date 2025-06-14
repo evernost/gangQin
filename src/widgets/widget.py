@@ -144,5 +144,6 @@ class Widget :
     # SAMPLE CODE
     if (type == pygame.MOUSEBUTTONDOWN) :
       if (button == MOUSE_SCROLL_UP) :
-        print("[DEBUG] Widget._onMouseEvent(): scroll up!")
+        pass
+        #print("[DEBUG] Widget._onMouseEvent(): scroll up!")
 

@@ -108,7 +108,7 @@ class FileSelectionGUI :
     self.guiFileExtChoice = tk.StringVar()
     self.guiRadioButtonMIDI = ttk.Radiobutton(self.guiFrameFileSel, text = ".mid file", value = ".mid", variable = self.guiFileExtChoice, command = self.CLBK_onFileTypeChange)
     self.guiRadioButtonMIDI.grid(row = 0, column = 1, padx = 1, pady = 1, sticky = "w")
-    self.guiRadioButtonGQ = ttk.Radiobutton(self.guiFrameFileSel, text = ".gq file" , value = ".pr" , variable = self.guiFileExtChoice, command = self.CLBK_onFileTypeChange)
+    self.guiRadioButtonGQ = ttk.Radiobutton(self.guiFrameFileSel, text = ".pr file [SOON: .gq3]" , value = ".pr" , variable = self.guiFileExtChoice, command = self.CLBK_onFileTypeChange)
     self.guiRadioButtonGQ.grid(row = 0, column = 2, padx = 1, pady = 1, sticky = "e")
     self._setToLastFileExt(self.guiFileExtChoice)
 

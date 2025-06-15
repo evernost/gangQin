@@ -61,18 +61,13 @@ class PianoRoll(widget.Widget) :
     self.nStaffs = 0
     
     # Color scheme
-    self.backgroundRGB = PIANOROLL_BACKGROUND_COLOR       # Background color for the piano roll
-    self.keyLineRGB = PIANOROLL_NOTE_LINE_COLOR           # Color of the lines separating each notes in the piano roll
+    #self.backgroundRGB = PIANOROLL_BACKGROUND_COLOR       # Background color for the piano roll
+    #self.keyLineRGB = PIANOROLL_NOTE_LINE_COLOR           # Color of the lines separating each notes in the piano roll
     self.leftNoteOutlineRGB = (243, 35, 35)               # Border color for the notes in the piano roll
     self.rightNoteOutlineRGB = (35, 243, 118)
     self.leftNoteRGB = PIANOROLL_NOTE_COLOR_LEFT_HAND     # Color of a left hand note in piano roll
     self.rightNoteRGB = PIANOROLL_NOTE_COLOR_RIGHT_HAND   # Color of a right hand note in piano roll
     
-    # Shortcuts for the key sizes
-    #self.b = KEYBOARD_WHITE_NOTE_WIDTH
-    self.d = KEYBOARD_BLACK_NOTE_WIDTH
-    self.e = KEYBOARD_NOTE_SPACING
-
 
 
   # ---------------------------------------------------------------------------
@@ -80,7 +75,7 @@ class PianoRoll(widget.Widget) :
   # ---------------------------------------------------------------------------
   def _renderKeyLines(self) :
     """
-    Draws the thin lines separating each note.
+    Draws the thin lines separating each key on the virtual keyboard.
     """
 
     # Some shortcuts
@@ -110,7 +105,6 @@ class PianoRoll(widget.Widget) :
         x0+(6*wnw)-(bnw//3),
         x0+(6*wnw)+(2*bnw//3)
       ]
-
       x0 += 7*wnw
 
     self.xLines += [
@@ -127,14 +121,31 @@ class PianoRoll(widget.Widget) :
     ]
 
     # TODO: make the rectangle transparent    
-    pygame.draw.polygon(self.top.screen, self.backgroundRGB, backRect)
+    pygame.draw.polygon(self.top.screen, PIANOROLL_BACKGROUND_COLOR, backRect)
+
+
+    # # Create a transparent surface
+    # transparentSurface = pygame.Surface((400, 400), pygame.SRCALPHA)
+
+    # # Draw the polygon onto the transparent surface (red with 50% transparency)
+    # pygame.draw.polygon(transparentSurface, (255, 0, 0, 128), [(100, 100), (300, 100), (200, 300)])
+
+
+    # while running:
+    #     screen.fill((255, 255, 255))  # Clear screen to white
+    #     screen.blit(transparentSurface, (0, 0))  # Blit the polygon with transparency
+    #     pygame.display.flip()
+    #     for event in pygame.event.get():
+    #         if event.type == pygame.QUIT:
+    #             running = False
+    #     clock.tick(60)
 
     # Draw the lines
     for x in self.xLines :
-      pygame.draw.line(self.top.screen, self.keyLineRGB, (x, self.yTop), (x, self.yBottom), 1)
+      pygame.draw.line(self.top.screen, PIANOROLL_NOTE_LINE_COLOR, (x, self.yTop), (x, self.yBottom), 1)
 
     # Close the rectangle
-    pygame.draw.line(self.top.screen, self.keyLineRGB, (self.xLines[0], self.yTop), (self.xLines[-1], self.yTop), 1)
+    pygame.draw.line(self.top.screen, PIANOROLL_NOTE_LINE_COLOR, (self.xLines[0], self.yTop), (self.xLines[-1], self.yTop), 1)
 
 
 
@@ -155,17 +166,20 @@ class PianoRoll(widget.Widget) :
     # Draw the notes
     # NOTE: some processing could be avoided here since the notes are sorted by startTime
     # Once the notes start way after the end of the window, why bother exploring the rest?
-    for (staffIndex, _) in enumerate(self.noteArray) :
-      for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
-        for note in self.noteArray[staffIndex][pitch] :
+    # for (staffIndex, _) in enumerate(self.noteArray) :
+    #   for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
+    #     for note in self.noteArray[staffIndex][pitch] :
           
-          # Shortcuts
-          a = startTimecode; b = startTimecode + self.viewSpan
-          c = note.startTime; d = note.stopTime
+    #       # Shortcuts
+    #       a = startTimecode; b = startTimecode + self.viewSpan
+    #       c = note.startTime; d = note.stopTime
         
-          # Does the note span intersect the current view window?
-          if (((c >= a) and (c < b)) or ((d >= a) and (d < b)) or ((c <= a) and (d >= b))) :
-            notesInWindow.append(note)
+    #       # Does the note span intersect the current view window?
+    #       if (((c >= a) and (c < b)) or ((d >= a) and (d < b)) or ((c <= a) and (d >= b))) :
+    #         notesInWindow.append(note)
+    for noteObj in self.top.widgets[WIDGET_ID_SCORE].noteList :
+      pass
+
 
     # Sort the notes to display them in a given order.
     # Longest notes are displayed first
@@ -206,21 +220,6 @@ class PianoRoll(widget.Widget) :
       pygame.draw.line(self.top.screen, color, sq[3], sq[0], 3)
       
       pygame.draw.polygon(self.top.screen, rectColor, sq)
-            
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD PianoRoll.loadPianoRoll(noteArray)
-  # ---------------------------------------------------------------------------
-  def loadPianoRoll(self, noteArray) :
-    """
-    TODO
-    """
-
-    # Use .copy instead of direct assign for safety 
-    # (we don't want the pianoroll widget to mess with the real score)
-    self.noteArray = noteArray.copy()
-
 
 
 
@@ -229,12 +228,12 @@ class PianoRoll(widget.Widget) :
   # ---------------------------------------------------------------------------
   def render(self) :
     """
-    
+    Draws the pianoroll on screen.
+    This function is called every time the app renders a new frame.
     """
 
     self._renderKeyLines()
-    #self._renderNotes()
-
+    self._renderNotes()
 
 
 

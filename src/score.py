@@ -77,7 +77,7 @@ class Score(widget.Widget) :
     super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
    
     # Pointer in the score
-    self.cursor = 0         # Range: 0 ... score.cursorMax
+    self.cursor = 0         # Range: 0 ... Score.cursorMax
     self.cursorsLeft = []
     self.cursorsRight = []
     self.bookmarks = []

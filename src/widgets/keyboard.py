@@ -97,8 +97,7 @@ class Keyboard(widget.Widget) :
   # ---------------------------------------------------------------------------
   def render(self) :
     """
-    Draw the keyboard using the polygons generated for each note.
-
+    Draws the keyboard using the polygons generated for each note.
     This function is called every time the app renders a new frame.
     """
 
@@ -162,7 +161,7 @@ class Keyboard(widget.Widget) :
     notes = newNoteList
 
     # -----------------------------
-    # Detect "doubly" pressed notes
+    # Detect "double-pressed" notes
     # -----------------------------
     # Occurs when the score requests to press a key by one finger of each hand.
     # How many fingers are pressing this key is not very important per se

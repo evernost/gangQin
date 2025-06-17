@@ -2,7 +2,7 @@
   "revision": "v2.1",
   "nStaffs": 2,
   "avgNoteDuration": 305.0066225165563,
-  "cursor": 0,
+  "cursor": 37,
   "bookmarks": [
     0
   ],
@@ -511,7 +511,7 @@
       "noteIndex": 0,
       "startTime": 8160,
       "stopTime": 9599,
-      "sustained": false,
+      "sustained": true,
       "inactive": false,
       "disabled": false,
       "voice": 0,

@@ -122,13 +122,13 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   def loadMidiFile_DEPRECATED(self, midiFile: str, midiTracks: list[str]) -> None :
     """
-    ********
+    *******
     WARNING: this version generates the old school score database from 
     a MIDI file.
     There is no use for this function anymore. DO NOT USE IT.
     
-    Will be removed in a future release.
-    ********
+    This function will be removed in a future release.
+    *******
     
     Loads and initialises the Score object from a MIDI file.
 
@@ -441,11 +441,11 @@ class Score(widget.Widget) :
   def loadPrFile(self, prFile: str) -> None :
     """
 
-    ********
+    *******
     WARNING: '.pr' files have been deprecated since gangQin version 3.
-    Use this function for conversion from '.pr' to '.gq3' format only.
+    Use this function to upgrade from '.pr' to '.gq3' format only.
     Next versions use 'Score.loadGQ3File()' instead.
-    ********
+    *******
 
     Loads and initialises the Score object from a '.pr' file.
 
@@ -466,6 +466,7 @@ class Score(widget.Widget) :
     rev = importDict["revision"][1:].split(".")
     revMajor = int(rev[0])
     revMinor = int(rev[1])
+    print(f"[INFO] Reading gangQin v{revMajor}.{revMinor} file...")
     
     # Fallback dictionary in case some fields do not exist.
     safeDict = {
@@ -498,68 +499,74 @@ class Score(widget.Widget) :
     # ---------------------------------
     # Pianoroll import - v1.0 and above
     # ---------------------------------
-    self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
-    self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
+    # Initialise attributes
+    self.noteList = []
+    self.noteOnTimecodes = {
+      "L"       : [],
+      "R"       : [],
+      "LR"      : [],
+      "LR_full" : []
+    }
+    
     noteCount = 0
+    
+    #self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
+    #self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
+    noteTracker = NoteTracker()
+    #noteCount = 0
+    noteListTmp = []
     masteredNoteCount = 0
     for noteAsDict in importDict["pianoRoll"] :
 
-
-      # # Note general attributes (fields preserved during file import/export)
-      # self.pitch    = pitch
-      # self.hand     = NOTE_UNDEFINED_HAND
-      # self.finger   = NOTE_UNDEFINED_FINGER
-      # self.voice    = NOTE_VOICE_DEFAULT
-
-      # # Note database attributes (fields partially preserved during file import/export)
-      # self.startTime  = 0     # Timecode of the key press event
-      # self.stopTime   = 0     # Timecode of the key release event
-      # self.dbIndex    = -1    # Index of the note in the score database
-      # self.id         = -1    # Note unique identifier in the score (might change from a session to the other)
+      # Create and edit the note             
+      N = note.Note(noteAsDict["pitch"])
+      N.hand      = noteAsDict["hand"]
+      N.finger    = noteAsDict["finger"]
+      N.voice     = noteAsDict["voice"]
+      N.velocity  = 64                      # Note velocity was introduced in gangQin v3; '.pr' files don't have it.
+      N.startTime = noteAsDict["startTime"]
+      N.stopTime  = noteAsDict["stopTime"]
+      N.dbIndex   = -1
+      N.id        = noteCount
       
-      # # Note display attributes (fields not preserved during file import/export)
-      # self.sustained  = False     # True if the note is held at a given time
-      # self.highlight  = False     # True if the note fingersatz is being edited
-      # self.inactive   = False     # True if the note shall be ignored by the arbiter (single hand practice)
-      # self.upcoming   = False     # True if the note is about to be played soon
-      # self.upcomingDistance = 0   # The highest the value, the further the note
-      # self.color      = self.getNoteColor()
-      
-      # # Not used anymore?
-      # self.visible = False
-      # self.disabled   = False         # True if the note shall be ignored by the arbiter (unplayable note)
-      # self.fromKeyboardInput = False  # True if it is a note played by the user from the MIDI input
-      # self.lookAheadDistance = 0      # Define how far away this note is located relative to the current cursor
-      
-      noteObj = note.Note(noteAsDict["pitch"])
-      
-      # Detect manual editions
-      if (noteAsDict["name"] != noteObj.name) :
-        print(f"[INFO] Manual edition detected: the new pitch will override the name.")
-        print(f"- note name: {noteAsDict['name']} -> {noteObj.name}")
-        print(f"- key color: {noteObj.keyColor}")
-
-      noteObj.hand      = noteAsDict["hand"]
-      noteObj.finger    = noteAsDict["finger"]
-      noteObj.voice     = noteAsDict["voice"]
-      noteObj.startTime = noteAsDict["startTime"]
-      noteObj.stopTime  = noteAsDict["stopTime"]
-      noteObj.dbIndex   = -1
-      noteObj.id        = noteCount
-      
-      if (noteObj.finger != 0) :
+      if (N.finger != 0) :
         masteredNoteCount += 1
-
-      self.pianoRoll[noteObj.hand][noteObj.pitch].append(noteObj)
       
-      if (noteObj.hand == NOTE_LEFT_HAND) :
-        self.noteOnTimecodes["L"].append(noteObj.startTime)
-      elif (noteObj.hand == NOTE_RIGHT_HAND) :
-        self.noteOnTimecodes["R"].append(noteObj.startTime)
-
-      self.noteOnTimecodes["LR_full"].append(noteObj.startTime)
-      
+      # Register the note in the database
+      noteListTmp.append(N)
       noteCount += 1
+      
+      # Register this timecode
+      self.noteOnTimecodes["LR_full"].append(noteAsDict["startTime"])
+      if (noteAsDict["hand"] == SCORE_LEFT_HAND_TRACK_ID)  : self.noteOnTimecodes["L"].append(noteAsDict["startTime"])
+      if (noteAsDict["hand"] == SCORE_RIGHT_HAND_TRACK_ID) : self.noteOnTimecodes["R"].append(noteAsDict["startTime"])
+
+    # Sort notes by ascending keypress timecode
+    self.noteList = sorted(noteListTmp, key = lambda noteObj: noteObj.startTime)
+
+    # TODO: 
+    # At the time, MIDI file import had a very different strategy
+    # to deal with multiple keypresses on a given note without prior release.
+    # So the following flows:
+    # - MIDI import -> '.pr' generation  -> '.pr' import
+    # - MIDI import -> '.gq3' generation -> '.gq3' import
+    # might produce a slightly different internal database.
+    # In particular, the notes will not have the same release timecode.
+    #
+    # This is can cause an issue in this scenario:
+    # 1. The user has a '.pr' file with many metadata
+    # 2. The user upgrades to gangQin v3
+    # 3. '.pr' file is converted to '.gq3'
+    # 4. Original MIDI file got upgraded
+    # 5. The user wants to do an incremental upgrade of the .'gq3' from the MIDI file
+    # It will be very hard to diff the old '.gq3' with the new '.gq3'.
+    #
+    # Some processing needs to be done to minimise the differences
+    # between the two.
+
+    # Start the tracking on this note
+    # for N in self.noteList :
+    #   noteTracker.keyPress(N, noteAsDict["startTime"])
 
     # Tidy up:
     # - sort the timecodes by ascending values
@@ -571,7 +578,7 @@ class Score(widget.Widget) :
     self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
     self.noteOnTimecodes["LR"].sort()
 
-    # Build "cursorsLeft" and "cursorsRight".
+    # Build "cursorsLeft" and "cursorsRight" arrays.
     # Each one is a list of all cursors where something has to be played 
     # either on the left (cursorsLeft) or right hand (cursorsRight)
     self._buildCursorsLR()
@@ -737,10 +744,11 @@ class Score(widget.Widget) :
   def exportToPrFile_DEPRECATED(self, prFile: str, backup = False) -> None :
     """
 
-    ********
+    *******
     WARNING: '.pr' files have been deprecated since gangQin version 3.
     New files must be saved in '.gq3' format using 'Score.loadGQ3File()'.
-    ********
+    Do not maintain '.pr' file format.
+    *******
 
     Exports the annotated score and all metadata (finger, hand, comments etc.) in 
     a '.pr' file (JSON) that can be imported later to restore the session.
@@ -1564,7 +1572,6 @@ class Score(widget.Widget) :
 
     if (len(self.teacherNotes) == 0) :
       print(f"[WARNING] Corrupted database: timecode is listed (t = {self.getTimecode()}), but no note was found starting at that moment.")
-
 
 
 

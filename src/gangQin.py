@@ -322,7 +322,7 @@ class GangQin :
       #statsObj.userActivity()
       #statsObj.save()
     
-    self.widgets[WIDGET_ID_SCORE].exportToPRFile(backup = True)
+    self.widgets[WIDGET_ID_SCORE].exportToGq3File(backup = True)
 
     print("")
     print("See you!")

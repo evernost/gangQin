@@ -983,14 +983,17 @@ class Score(widget.Widget) :
     Jumps in the score with a relative step (positive or negative)
     
     Jump is done by adding/subtracting the step to the cursor value.
-    Jump value is protected, it cannot go out of bounds.
+    Cursor value is protected, it cannot go out of bounds.
     
     NOTES
     - The jump ignores any loop settings i.e. it does not wrap if the step
-      sets the cursor beyond the end of the loop.
-      Use <cursorNext> instead to take the loop into account and wrap accordingly.
-    - The cursor steps depending on the current hand practice mode. 
-      In single hand practice mode, the jump will not be linear!
+      sets the cursor outside the loop boudaries.
+      Use 'Score.cursorNext()' instead to take the loop into account and wrap 
+      accordingly.
+    - The actual jump depends on the current hand practice mode.  
+      In single hand practice mode, the cursor can only jump to a location
+      when something happens on the active hand.
+      So the actual jump can be different from the requested jump. 
     """
     
     if (delta > 0) :
@@ -1001,7 +1004,7 @@ class Score(widget.Widget) :
 
       # SINGLE HAND PRACTICE (LEFT)
       elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
-        index = self._getCursorsLeftPointer(self.getCursor())
+        index = self._getIndexInCursorsLeft(self.getCursor())
         
         if (index == -1) :
           print("[INTERNAL ERROR] Left hand practice is active, but there is no event on the left hand at this cursor. Cannot browse from here!")
@@ -1011,7 +1014,7 @@ class Score(widget.Widget) :
 
       # SINGLE HAND PRACTICE (RIGHT)
       elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
-        index = self._getCursorsRightPointer(self.getCursor())
+        index = self._getIndexInCursorsRight(self.getCursor())
 
         if (index == -1) :
           print("[INTERNAL ERROR] Right hand practice is active, but there is no event on the right hand at this cursor. Cannot browse from here!")
@@ -1032,7 +1035,7 @@ class Score(widget.Widget) :
 
       # SINGLE HAND PRACTICE (LEFT)
       elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
-        index = self._getCursorsLeftPointer(self.getCursor())
+        index = self._getIndexInCursorsLeft(self.getCursor())
         
         if (index == -1) :
           print("[INTERNAL ERROR] Left hand practice is active, but there is no event on the left hand at this cursor. Cannot browse from here!")
@@ -1042,7 +1045,7 @@ class Score(widget.Widget) :
 
       # SINGLE HAND PRACTICE (RIGHT)
       elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
-        index = self._getCursorsRightPointer(self.getCursor())
+        index = self._getIndexInCursorsRight(self.getCursor())
 
         if (index == -1) :
           print("[INTERNAL ERROR] Right hand practice is active, but there is no event on the right hand at this cursor. Cannot browse from here!")
@@ -1081,9 +1084,9 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.cursorGotoClosestBookmark()
+  # METHOD Score.cursorGotoNearestBookmark()
   # ---------------------------------------------------------------------------
-  def cursorGotoClosestBookmark(self, direction : int) -> None :
+  def cursorGotoNearestBookmark(self, direction : int) -> None :
     """
     Sets the cursor to the next closest bookmark.
     Does nothing if there are no bookmarks.
@@ -1324,14 +1327,16 @@ class Score(widget.Widget) :
     Returns the index 'i' such that 'Score.cursorsLeft[i]' is equal to the 
     requested value 'cursorReq'.
 
-    By default, it returns the index that gives the closest cursor to the 
-    target value, in case no exact match can be found.
+    In case there is no solution, by default it returns the index that gives 
+    the closest cursor to the target value.
+    
     The closest match can be either before or after the target cursor.
 
-    When force = True, it returns -1 when there is no exact solution.
+    When force = True, it returns -1 when there is no exact solution instead
+    of giving the nearest solution.
     """
     
-    # An exact solution exists 
+    # An exact solution exists
     if (cursorReq in self.cursorsLeft) :
       return self.cursorsLeft.index(cursorReq)
     
@@ -1360,14 +1365,16 @@ class Score(widget.Widget) :
     Returns the index 'i' such that 'Score.cursorsRight[i]' is equal to the 
     requested value 'cursorReq'.
 
-    By default, it returns the index that gives the closest cursor to the 
-    target value, in case no exact match can be found.
+    In case there is no solution, by default it returns the index that gives 
+    the closest cursor to the target value.
+    
     The closest match can be either before or after the target cursor.
 
-    When force = True, it returns -1 when there is no exact solution.
+    When force = True, it returns -1 when there is no exact solution instead
+    of giving the nearest solution.
     """
     
-    # An exact solution exists 
+    # An exact solution exists
     if (cursorReq in self.cursorsRight) :
       return self.cursorsRight.index(cursorReq)
     
@@ -1396,12 +1403,12 @@ class Score(widget.Widget) :
     Populates the fields 'Score.cursorsLeft' and 'Score.cursorsRight' from the 
     list of timecodes of all note on events ('Score.noteOnTimeCodes' dictionary).
     
-    This method is usually called after loading a MIDI or even .gq file, since 
+    This method is usually called after loading a MIDI or .gq3 file, since 
     the information in these fields is redundant and does not bring added
     value to get stored in the file.
     """
     
-    self.cursorsLeft  = [] 
+    self.cursorsLeft  = []
     self.cursorsRight = []
 
     for (index, timecode) in enumerate(self.noteOnTimecodes["LR"]) :
@@ -1526,52 +1533,47 @@ class Score(widget.Widget) :
     # Reset the cache
     self.teacherNotes = []
     
-    # Loop on all notes in the score
-    for channel in range(SCORE_N_STAFF) :
-      for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
-        for noteObj in self.pianoRoll[channel][pitch] :
+    for N in self.noteList :
 
-          N = note.Note(noteObj.pitch)
-          N.startTime = noteObj.startTime
-          N.stopTime  = noteObj.stopTime
-          N.hand      = noteObj.hand
-          N.finger    = noteObj.finger
-          N.voice     = noteObj.voice
-          N.velocity  = noteObj.velocity
-          N.sustained = False
-          N.inactive  = False
+      # TODO: optimise the 'for' loop. 
+      # Notes are stored in chronological order in 'Score.noteList'
+      # It is not necessary to explore the entire list at each function call.
+      # Beyond a certain point, we know for sure that no more
+      # note will be added to 'Score.teacherNotes'.
 
-          # CASE 1: a note is pressed at this timecode
-          if (noteObj.startTime == self.getTimecode()) :
-            
-            # SINGLE HAND PRACTICE
-            # Adds the notes with their "inactive" property to "True" 
-            # so that it is displayed with the appropriate color.
-            if (self.activeHands == SCORE_ACTIVE_HANDS_BOTH) :
-              N.inactive = False
-              self.teacherNotes.append(N)
-            
-            elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
-              if (channel != NOTE_LEFT_HAND) : 
-                N.inactive = True
-                self.teacherNotes.append(N)
-
-            elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
-              if (channel != NOTE_RIGHT_HAND) :
-                N.inactive = True
-                self.teacherNotes.append(N)
-
-          # CASE 2: a note is held at this timecode
-          elif ((self.getTimecode() > noteObj.startTime) and (self.getTimecode() <= noteObj.stopTime)) :
-            N.sustained = True
+      # CASE 1: a note is pressed at this timecode
+      if (N.startTime == self.getTimecode()) :
+        
+        # SINGLE HAND PRACTICE
+        # Adds the notes with their "inactive" property to "True" 
+        # so that it is displayed with the appropriate color.
+        if (self.activeHands == SCORE_ACTIVE_HANDS_BOTH) :
+          N.inactive = False
+          self.teacherNotes.append(N)
+        
+        elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
+          if (N.hand != NOTE_LEFT_HAND) : 
+            N.inactive = True
             self.teacherNotes.append(N)
 
-          # CASE 3: a note is out of the current window
-          else :
-            pass
+        elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
+          if (N.hand != NOTE_RIGHT_HAND) :
+            N.inactive = True
+            self.teacherNotes.append(N)
 
+      # CASE 2: the note is held at this timecode
+      elif ((N.startTime < self.getTimecode()) and (N.stopTime >= self.getTimecode())) :
+        N.sustained = True
+        self.teacherNotes.append(N)
+
+      # CASE 3: the note is out of the current window
+      else :
+        pass
+
+    # Detect void list of teacher notes
+    # This is not supposed to happen
     if (len(self.teacherNotes) == 0) :
-      print(f"[WARNING] Corrupted database: timecode is listed (t = {self.getTimecode()}), but no note was found starting at that moment.")
+      print(f"[WARNING] Empty list of teacher notes (t = {self.getTimecode()}), possible internal error.")
 
 
 
@@ -1886,12 +1888,15 @@ class Score(widget.Widget) :
     This function is called at every frame of the top level application.
     """
 
-    text.showCursor(self.top.screen, self.getCursor(), self.length)
-    text.showBookmark(self.top.screen, self.getBookmarkIndex())
-    text.showActiveHands(self.top.screen, self.activeHands)
+    # Display the cursor value
+    text.render(self.top.screen, f"CURSOR: {self.getCursor()+1} / {self.length}", (12, 20), 2, GUI_TEXT_COLOR)
 
+    # Display the bookmark number
+    if self.cursorIsBookmarked() :
+      text.render(self.top.screen, f"BOOKMARK #{self.getBookmarkIndex()}", (10, 470), 2, GUI_TEXT_COLOR)
 
-
+    # Display the active hands
+    text.render(self.top.screen, self.activeHands, (1288, 470), 2, GUI_TEXT_COLOR)
 
 
 

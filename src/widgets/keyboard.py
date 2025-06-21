@@ -78,7 +78,7 @@ class Keyboard(widget.Widget) :
     self.e = KEYBOARD_NOTE_SPACING
     self.x = self.loc[0]; self.y = self.loc[1]
 
-    # TODO: description
+    # TODO: add description
     self.litKeysPolygons = []
 
     # Generate polygons for all notes and store them in 'Keyboard.polygons'
@@ -88,7 +88,6 @@ class Keyboard(widget.Widget) :
     self.activeNotes = []
     self.activeNotesMIDI  = []
     self.activeNotesScore = []
-
 
 
 

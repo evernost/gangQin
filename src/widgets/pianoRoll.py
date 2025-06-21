@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
 # Project specific constants
 from src.commons import *
@@ -23,7 +23,7 @@ import pygame
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 # None.
 
@@ -48,7 +48,7 @@ class PianoRoll(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc)
   
-    # Drawing location
+    # Widget location
     self.x = loc[0]
     self.yTop = loc[1]
     self.yBottom = 300-2
@@ -56,19 +56,12 @@ class PianoRoll(widget.Widget) :
     # Defines the amount of notes shown in the piano roll view
     # Units are in timecodes. Use "avgNoteDuration" to use it conveniently
     self.viewSpan = 1000
-
-    self.noteArray = [[] for _ in range(128)]
-    self.nStaffs = 0
     
     # Color scheme
-    #self.backgroundRGB = PIANOROLL_BACKGROUND_COLOR       # Background color for the piano roll
-    #self.keyLineRGB = PIANOROLL_NOTE_LINE_COLOR           # Color of the lines separating each notes in the piano roll
-    self.leftNoteOutlineRGB = (243, 35, 35)               # Border color for the notes in the piano roll
-    self.rightNoteOutlineRGB = (35, 243, 118)
-    self.leftNoteRGB = PIANOROLL_NOTE_COLOR_LEFT_HAND     # Color of a left hand note in piano roll
-    self.rightNoteRGB = PIANOROLL_NOTE_COLOR_RIGHT_HAND   # Color of a right hand note in piano roll
+    self.leftNoteOutlineRGB = PIANOROLL_NOTE_BORDER_COLOR_LEFT = (243, 35, 35)   # Border color for the notes in the piano roll
+    self.rightNoteOutlineRGB = PIANOROLL_NOTE_BORDER_COLOR_RIGHT = (35, 243, 118)
     
-
+    
 
   # ---------------------------------------------------------------------------
   # METHOD PianoRoll._renderKeyLines()                                [PRIVATE]
@@ -130,7 +123,6 @@ class PianoRoll(widget.Widget) :
     # # Draw the polygon onto the transparent surface (red with 50% transparency)
     # pygame.draw.polygon(transparentSurface, (255, 0, 0, 128), [(100, 100), (300, 100), (200, 300)])
 
-
     # while running:
     #     screen.fill((255, 255, 255))  # Clear screen to white
     #     screen.blit(transparentSurface, (0, 0))  # Blit the polygon with transparency
@@ -142,10 +134,10 @@ class PianoRoll(widget.Widget) :
 
     # Draw the lines
     for x in self.xLines :
-      pygame.draw.line(self.top.screen, PIANOROLL_NOTE_LINE_COLOR, (x, self.yTop), (x, self.yBottom), 1)
+      pygame.draw.line(self.top.screen, PIANOROLL_NOTE_LINE_SEP_COLOR, (x, self.yTop), (x, self.yBottom), 1)
 
     # Close the rectangle
-    pygame.draw.line(self.top.screen, PIANOROLL_NOTE_LINE_COLOR, (self.xLines[0], self.yTop), (self.xLines[-1], self.yTop), 1)
+    pygame.draw.line(self.top.screen, PIANOROLL_NOTE_LINE_SEP_COLOR, (self.xLines[0], self.yTop), (self.xLines[-1], self.yTop), 1)
 
 
 
@@ -158,67 +150,69 @@ class PianoRoll(widget.Widget) :
     """
     
     # Get the current timecode
-    startTimecode = self.top.widgets[WIDGET_ID_SCORE].getTimecode()
+    currTimecode = self.top.widgets[WIDGET_ID_SCORE].getTimecode()
 
     # List the notes that intersect the current window
     notesInWindow = []
 
-    # Draw the notes
-    # NOTE: some processing could be avoided here since the notes are sorted by startTime
-    # Once the notes start way after the end of the window, why bother exploring the rest?
-    # for (staffIndex, _) in enumerate(self.noteArray) :
-    #   for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
-    #     for note in self.noteArray[staffIndex][pitch] :
-          
-    #       # Shortcuts
-    #       a = startTimecode; b = startTimecode + self.viewSpan
-    #       c = note.startTime; d = note.stopTime
+    for N in self.top.widgets[WIDGET_ID_SCORE].noteList :
+      
+      # Shorcuts
+      winStart  = currTimecode 
+      winEnd    = currTimecode + self.viewSpan
+      noteStart = N.startTime 
+      noteEnd   = N.stopTime
         
-    #       # Does the note span intersect the current view window?
-    #       if (((c >= a) and (c < b)) or ((d >= a) and (d < b)) or ((c <= a) and (d >= b))) :
-    #         notesInWindow.append(note)
-    for noteObj in self.top.widgets[WIDGET_ID_SCORE].noteList :
-      pass
+      # Does the note span intersect the current view window?
+      if (
+        ((noteStart >= winStart)  and (noteStart < winEnd)) or    # The note starts in the window
+        ((noteEnd >= winStart)    and (noteEnd < winEnd))   or    # The note ends in the window
+        ((noteStart <= winStart)  and (noteEnd >= winEnd))        # The note starts before the window and ends after the window
+      ) : notesInWindow.append(N)
 
 
     # Sort the notes to display them in a given order.
     # Longest notes are displayed first
-    notesInWindow.sort(key = lambda x : -(x.stopTime-x.startTime))
+    notesInWindow.sort(key = lambda N : -(N.stopTime-N.startTime))
 
     # Draw the notes
-    for note in notesInWindow :
+    for N in notesInWindow :
 
       # Shortcuts
-      a = startTimecode; b = startTimecode + self.viewSpan
-      c = note.startTime; d = note.stopTime
+      winStart  = currTimecode
+      winEnd    = currTimecode + self.viewSpan
+      noteStart = N.startTime
+      noteEnd   = N.stopTime
 
-      # Convert the size measured in "time" to a size in pixels
-      rectBottom = -((self.yBottom-self.yTop)*(c-b)/(b-a)) + self.yTop
-      rectTop = -((self.yBottom-self.yTop)*(d-b)/(b-a)) + self.yTop
+      # Convert the size from time units to pixels
+      rectBottom  = self.yTop - ((self.yBottom-self.yTop)*(noteStart-winEnd)/(winEnd-winStart))
+      rectTop     = self.yTop - ((self.yBottom-self.yTop)*(noteEnd-winEnd)/(winEnd-winStart))
       
-      # Trim the rectangle representing the note to the current view
-      rectBottom = max([rectBottom, self.yTop]); rectBottom = min([rectBottom, self.yBottom])
-      rectTop = max([rectTop, self.yTop]); rectTop = min([rectTop, self.yBottom])
+      # Limit the coordinates to the view size
+      rectBottom = max([rectBottom, self.yTop])
+      rectBottom = min([rectBottom, self.yBottom])
+      rectTop = max([rectTop, self.yTop])
+      rectTop = min([rectTop, self.yBottom])
 
-      sq = [(self.xLines[note.pitch-21]+2, rectBottom),
-            (self.xLines[note.pitch-21]+2, rectTop),
-            (self.xLines[note.pitch+1-21]-2, rectTop),
-            (self.xLines[note.pitch+1-21]-2, rectBottom)
-          ]
+      # TODO: remove the magic constants
+      sq = [
+        (self.xLines[N.pitch-21]+2, rectBottom),
+        (self.xLines[N.pitch-21]+2, rectTop),
+        (self.xLines[N.pitch+1-21]-2, rectTop),
+        (self.xLines[N.pitch+1-21]-2, rectBottom)
+      ]
       
+      # Draw the outline
       # TODO: replace with a call to getNoteColor()
-      if (note.hand == NOTE_LEFT_HAND) :
-        color = self.leftNoteOutlineRGB
-      
-      if (note.hand == NOTE_RIGHT_HAND) :
-        color = self.rightNoteOutlineRGB
-
-      (rectColor, rectOutlineColor, pianoRollColor) = note.getNoteColor()
+      if (N.hand == NOTE_LEFT_HAND)   : color = PIANOROLL_NOTE_BORDER_COLOR_LEFT
+      if (N.hand == NOTE_RIGHT_HAND)  : color = PIANOROLL_NOTE_BORDER_COLOR_RIGHT
       pygame.draw.line(self.top.screen, color, sq[0], sq[1], 3)
       pygame.draw.line(self.top.screen, color, sq[1], sq[2], 3)
       pygame.draw.line(self.top.screen, color, sq[2], sq[3], 3)
       pygame.draw.line(self.top.screen, color, sq[3], sq[0], 3)
       
+      # Draw the rectangle
+      (rectColor, _, _) = N.getNoteColor()
       pygame.draw.polygon(self.top.screen, rectColor, sq)
 
 

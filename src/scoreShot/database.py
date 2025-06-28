@@ -4,7 +4,7 @@
 # Module name   : database
 # File name     : database.py
 # File type     : Python script (Python 3)
-# Purpose       : score capture database class
+# Purpose       : visual database for music scores
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Tuesday, 01 October 2024
 # -----------------------------------------------------------------------------
@@ -12,7 +12,7 @@
 # =============================================================================
 
 # =============================================================================
-# External libs 
+# EXTERNALS
 # =============================================================================
 import src.scoreShot.snapshot as snapshot
 
@@ -23,7 +23,7 @@ import random
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 # None.
 
@@ -35,17 +35,19 @@ import random
 class Database :
 
   """
+  STAFF_SCOPE object
+  
   Class definition for the snapshot database.
-  This class only manages the snapshots files and their arrangement within 
+  
+  This class manages the snapshots files and their arrangement within 
   the database.
   """
-  def __init__(self, prFile) :
+  def __init__(self, jsonFile) :
     
-    self.nSnapshots = 0
+    self.nSnapshots = 0             # Number of snapshots available in the database
     self.snapshots = []
     self.isEmpty = True
     
-    self.songName     = ""          # Name of the song file
     self.jsonName     = ""          # Name of the database file
     self.jsonFile     = ""          # Full name of the databse file (path + filename)
     self.depotFolder  = ""          # Directory where all the snapshots of the song are stored
@@ -60,47 +62,47 @@ class Database :
 
 
     # Initialisation procedures
-    self._loadNames(prFile)
+    self._initFileNames(jsonFile)
     self._loadJSON()
     self._integrityCheck()
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database._loadNames()
+  # METHOD Database._initFileNames()                                  [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _loadNames(self, prFile) :
+  def _initFileNames(self, jsonFile) :
     """
     Generates the various names of files and directories associated with the 
     database.
     """
     
-    # TODO: forbid any whitespace in the name, or dots, commas, etc.
-    
-    (rootDir, rootNameExt) = os.path.split(prFile)
+    (_, rootNameExt) = os.path.split(jsonFile)
     (rootName, _) = os.path.splitext(rootNameExt)
     self.songName     = rootName
-    self.songFile     = rootNameExt
     self.jsonName     = rootName + ".json"          # Example: "my_song.json"
-    self.jsonFile     = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
     self.depotFolder  = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database._loadJSON()
+  # METHOD Database._loadJSON()                                       [PRIVATE]
   # ---------------------------------------------------------------------------
   def _loadJSON(self) :
     """
     Loads the database file (JSON), creates one if it does not exist.
     
-    NOTE: the JSON and the snapshot folder are seen as inseparable. 
-    If any is missing, it starts over with a new database.
-    We do not want to deal with partial databases, attempt recoveries or any sort
-    of thing. Just don't touch the database files and let the app access and manage it!
+    NOTE: the 'jsonFile' and the 'depotFolder' are seen as one. 
+    If one of them is missing, it starts over with a new database.
+    
+    We do not want to deal with partial databases ('depotFolder' exists but
+    not 'jsonFile', etc.) attempt recoveries or any sort of thing. 
+    
+    Just don't touch the database files and let the app access and manage it!
     """
         
-    # Snapshot folder inexistent: the JSON is discarded for a new one.
+    # The 'jsonFile' exists but not the 'depotFolder'
+    # A new 'depotFolder' is created.
     if not(os.path.exists(self.depotFolder)) :
       os.makedirs(self.depotFolder)
 
@@ -113,7 +115,7 @@ class Database :
       # ...
 
 
-    # Snapshot folder exists
+    # The 'depotFolder' exists
     else :
       if not(os.path.exists(self.jsonFile)) :
         print("[DEBUG] The snapshot directory exists, but there is no JSON.")
@@ -134,7 +136,7 @@ class Database :
 
     
   # ---------------------------------------------------------------------------
-  # METHOD Database._integrityCheck()
+  # METHOD Database._integrityCheck()                                 [PRIVATE]
   # ---------------------------------------------------------------------------
   def _integrityCheck(self) :
     """
@@ -143,13 +145,10 @@ class Database :
     - checks if cursor ranges are inconsistent
     """
     
-    print("[WARNING] Method 'Database._integrityCheck' is not implemented yet.")
+    print("[WARNING] Method 'Database._integrityCheck()' is not implemented yet.")
   
     
 
-
-  
-  
   # ---------------------------------------------------------------------------
   # METHOD Database.insert()
   # ---------------------------------------------------------------------------

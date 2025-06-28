@@ -226,8 +226,15 @@ class PianoRoll(widget.Widget) :
     This function is called every time the app renders a new frame.
     """
 
-    self._renderKeyLines()
-    self._renderNotes()
+    # Disable piano roll rendering if the staffscope has something available
+    # to show
+    if (WIDGET_ID_STAFFSCOPE in self.top.widgets) :
+      if not(self.widgets[WIDGET_ID_STAFFSCOPE].isViewEmpty()) :
+        pass
+
+    else :
+      self._renderKeyLines()
+      self._renderNotes()
 
 
 

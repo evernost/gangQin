@@ -4,7 +4,7 @@
 # Module name   : staffScope
 # File name     : staffScope.py
 # File type     : Python script (Python 3)
-# Purpose       : viewer widget showing the actual score as the user plays
+# Purpose       : viewer widget containing the music score
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Sunday, 20 October 2024
 # -----------------------------------------------------------------------------
@@ -12,7 +12,7 @@
 # =============================================================================
 
 # =============================================================================
-# External libs 
+# EXTERNALS
 # =============================================================================
 # Project specific constants
 from src.commons import *
@@ -21,12 +21,13 @@ import src.scoreShot.database as database
 import src.widgets.playGlow as playGlow
 import src.widgets.widget as widget
 
-import pygame
+import os
+import pygame     # For image scaling
 
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 TARGET_WIDTH = 1300
 TARGET_HEIGHT = 230
@@ -34,15 +35,20 @@ TARGET_HEIGHT = 230
 
 
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
 class StaffScope(widget.Widget) :
 
   """
   STAFF_SCOPE object
-  
-  Class definition for the staffscope widget.
 
+  Class definition for the staffscope widget.
+  
+  The staffscope viewer displays the actual music score one snapshot at a time.
+  The snapshot updates as the user plays and progresses in the song.
+  Some visual cues highlight the current notes expected as well as some 
+  stats about the estimated difficulty of a section.
+  
   The StaffScope class derives from the Widget class.
   """
 
@@ -51,6 +57,11 @@ class StaffScope(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
 
+    self.songName     = ""
+    self.jsonName     = ""      # Name of the database file
+    self.jsonFile     = ""      # Full name of the databse file (path + filename)
+    self.depotFolder  = ""      # Directory where all the snapshots of the song are stored
+    
     self.db = None
         
     self.cursor = -1
@@ -81,24 +92,59 @@ class StaffScope(widget.Widget) :
 
     self.cursorWrongNoteCount = []
 
-    # User interaction queues
-    self.msgQueueIn = []
-    self.msgQueueOut = []
-
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database.load(string)
+  # METHOD StaffScope.load()
   # ---------------------------------------------------------------------------
-  def load(self, songFile) :
+  def load(self, gq3File: str) -> None :
     """
-    Loads the snapshot database associated with the filename given as argument.
+    Loads and initialises the Staffscope object from a '.gq3' file.
     Displays the first staff available from the database.
+
+    'gq3File' must be the full path to the file.
     """
 
-    self.db = database.Database(songFile)
+    self._initFileNames(gq3File)
+
+    self.db = database.Database(self.jsonFile)
     if (self.db.nSnapshots != 0) :
       self.loadStaffByIndex(0)
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope._initFileNames()                                [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _initFileNames(self, gq3File) :
+    """
+    Generates the various names of files and directories associated with the 
+    database.
+    """
+    
+    # TODO: forbid any whitespace in the name, or dots, commas, etc.
+    
+    (_, rootNameExt) = os.path.split(gq3File)
+    (rootName, _) = os.path.splitext(rootNameExt)
+    self.songName     = rootName
+    self.songFile     = rootNameExt
+    self.jsonName     = rootName + ".json"          # Example: "my_song.json"
+    self.jsonFile     = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.isViewEmpty()
+  # ---------------------------------------------------------------------------
+  def isViewEmpty(self) -> bool :
+    """
+    Returns True if the current cursor has a scope view attached to it.
+
+    In other words, if 'StaffScope.isViewEmpty()' returns False, there is no 
+    staff view to display.
+    """
+
+    return True
 
 
 

@@ -3,31 +3,30 @@
 # Project       : gangQin
 # Module name   : snapshot
 # File name     : snapshot.py
+# File type     : Python script (Python 3)
 # Purpose       : snapshot object definition
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Friday, 04 October 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
 
-
-
 # =============================================================================
-# External libs 
+# EXTERNALS
 # =============================================================================
 import src.widgets.playGlow as playGlow
 
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 # None.
 
 
 
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
 class Snapshot :
   def __init__(self) :
@@ -249,7 +248,7 @@ class Snapshot :
 
 
 # =============================================================================
-# Unit tests
+# UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
   print("[INFO] There are no unit tests available for 'snapshot.py'")

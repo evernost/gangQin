@@ -21,7 +21,7 @@ import src.scoreShot.database as database
 import src.widgets.playGlow as playGlow
 import src.widgets.widget as widget
 
-import os
+import os         # For file name manipulation
 import pygame     # For image scaling
 
 
@@ -57,7 +57,7 @@ class StaffScope(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
 
-    self.songName     = ""
+    self.songName     = ""      # Name of the song
     self.jsonName     = ""      # Name of the database file
     self.jsonFile     = ""      # Full name of the databse file (path + filename)
     self.depotFolder  = ""      # Directory where all the snapshots of the song are stored
@@ -138,9 +138,9 @@ class StaffScope(widget.Widget) :
   # ---------------------------------------------------------------------------
   def isViewEmpty(self) -> bool :
     """
-    Returns True if the current cursor has a scope view attached to it.
+    Returns True if the current cursor has no score snapshot attached to it.
 
-    In other words, if 'StaffScope.isViewEmpty()' returns False, there is no 
+    In other words, if 'StaffScope.isViewEmpty()' returns True, there is no 
     staff view to display.
     """
 

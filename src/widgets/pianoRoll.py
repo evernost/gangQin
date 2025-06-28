@@ -229,7 +229,11 @@ class PianoRoll(widget.Widget) :
     # Disable piano roll rendering if the staffscope has something available
     # to show
     if (WIDGET_ID_STAFFSCOPE in self.top.widgets) :
-      if not(self.widgets[WIDGET_ID_STAFFSCOPE].isViewEmpty()) :
+      if self.top.widgets[WIDGET_ID_STAFFSCOPE].isViewEmpty() :
+        self._renderKeyLines()
+        self._renderNotes()
+
+      else :
         pass
 
     else :

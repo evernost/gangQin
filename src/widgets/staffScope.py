@@ -62,11 +62,15 @@ class StaffScope(widget.Widget) :
     self.jsonFile     = ""      # Full name of the databse file (path + filename)
     self.depotFolder  = ""      # Directory where all the snapshots of the song are stored
     
-    self.db = None
+    self.db = None              # Reference to the Database object
+    self._dbIndex = -1          # Current index loaded from the database (-1 when none is loaded)
+    self._dbCursor = -1
         
-    self.cursor = -1
+    self.cursor = -1            # Description is TODO
+    
+    #self._snapshotIndex = -1   # Index of the snapshot loaded (-1 when nothing is loaded)
 
-    self.img = None
+    self.img = None             # Description is TODO
     self.imgScaled = None
     self.imgFile = ""
     self.imgSpan = [-1,-1]
@@ -76,8 +80,6 @@ class StaffScope(widget.Widget) :
     self.imgCoordY = -1
     self.imgBox = (-1, -1, -1, -1)
     self.imgScaling = 0
-
-    self._snapshotIndex = -1      # Index of the snapshot loaded (-1 when nothing is loaded)
 
     self.playGlows = []
     self.playGlowDragged = -1     # Index of the playGlow currently mouse dragged
@@ -97,26 +99,27 @@ class StaffScope(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD StaffScope.load()
   # ---------------------------------------------------------------------------
-  def load(self, gq3File: str) -> None :
+  def load(self, songFile: str) -> None :
     """
-    Loads and initialises the Staffscope object from a '.gq3' file.
+    Loads and initialises the Staffscope object from a song file (usually '.pr' 
+    or '.gq3' file)
     Displays the first staff available from the database.
 
-    'gq3File' must be the full path to the file.
+    'songFile' must be the full path to the file.
     """
 
-    self._initFileNames(gq3File)
+    self._initFileNames(songFile)
 
     self.db = database.Database(self.jsonFile)
-    if (self.db.nSnapshots != 0) :
-      self.loadStaffByIndex(0)
+    if not(self.db.isEmpty()) :
+      self.loadViewByIndex(0)
 
 
 
   # ---------------------------------------------------------------------------
   # METHOD StaffScope._initFileNames()                                [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _initFileNames(self, gq3File) :
+  def _initFileNames(self, songFile) :
     """
     Generates the various names of files and directories associated with the 
     database.
@@ -124,10 +127,9 @@ class StaffScope(widget.Widget) :
     
     # TODO: forbid any whitespace in the name, or dots, commas, etc.
     
-    (_, rootNameExt) = os.path.split(gq3File)
+    (_, rootNameExt) = os.path.split(songFile)
     (rootName, _) = os.path.splitext(rootNameExt)
     self.songName     = rootName
-    self.songFile     = rootNameExt
     self.jsonName     = rootName + ".json"          # Example: "my_song.json"
     self.jsonFile     = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
 
@@ -144,26 +146,30 @@ class StaffScope(widget.Widget) :
     staff view to display.
     """
 
+    # Function is TODO.
     return True
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database.checkEmpty()
+  # METHOD Database.isDbEmpty()
   # ---------------------------------------------------------------------------
-  def checkEmpty(self, exitOnEmpty = True) :
+  def isDbEmpty(self, exitOnEmpty = True) :
     """
-    Checks if the database is empty. 
-    Exits the app if the corresponding option is set.
+    Returns True if the database is empty. 
+    Exits the app if the option 'exitOnEmpty' is set.
     """
 
-    if (self.db.nSnapshots == 0) :
+    if self.db.isEmpty() :
       if exitOnEmpty :
         print("[ERROR] Staffscope database is empty! Capture the score first before calling this tool.")
         exit()
       
       else :
         print("[NOTE] Staffscope database is empty!")
+        return True
+
+    return False
 
 
 
@@ -176,8 +182,8 @@ class StaffScope(widget.Widget) :
     Clamps to the last staff when reaching the end of the score.
     """
     
-    if ((self._snapshotIndex + 1) <= (self.db.nSnapshots-1)) :
-      self.loadStaffByIndex(self._snapshotIndex+1)
+    if ((self._dbIndex + 1) <= (self.db.nSnapshots-1)) :
+      self.loadViewByIndex(self._dbIndex+1)
     
     else :
       print("[DEBUG] StaffScope.nextStaff(): end of database reached. No more staff to show.")
@@ -193,31 +199,40 @@ class StaffScope(widget.Widget) :
     Clamps to the first staff when reaching the beginning of the score.
     """
     
-    if ((self._snapshotIndex - 1) >= 0) :
-      self.loadStaffByIndex(self._snapshotIndex-1)
+    if ((self._dbIndex - 1) >= 0) :
+      self.loadViewByIndex(self._dbIndex-1)
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.loadStaffByIndex()
+  # METHOD StaffScope.loadViewByIndex()
   # ---------------------------------------------------------------------------
-  def loadStaffByIndex(self, index) :
+  def loadViewByIndex(self, index) :
     """
-    Loads the content located at position "index" in the snapshot database.
-    Once loaded, the "_snapshotIndex" is updated with the requested index.
+    Loads the content located at position "index" in the snapshots array.
+    Once loaded, the "_dbIndex" is updated with the requested index.
+
+    Use this if you know the exact index of the snapshot you want to load from
+    the database.
+
+    Usually, this information is unknown and you might want to use 
+    'StaffScope.loadViewByCursor()' instead.
     """
     
     # Load only if not cached yet
-    if (self._snapshotIndex != index) :
+    if (index != self._dbIndex) :
 
+      # Request the name of the file at that index
       self.imgFile = self.db.getSnapshotFileByIndex(index)
+      
+      # If there is such file (index is valid)
       if (self.imgFile != "") :
         
-        # Load the file
+        # Load the image
         self.img = pygame.image.load(self.imgFile)
         (self.imgWidth, self.imgHeight) = self.img.get_size()
 
-        # Adjust the image to the widget target dimension
+        # Resize the image to the target dimension of the widget
         sWidth = TARGET_WIDTH/self.imgWidth
         sHeight = TARGET_HEIGHT/self.imgHeight
         self.imgScaling = min(sWidth, sHeight)      
@@ -233,50 +248,51 @@ class StaffScope(widget.Widget) :
           self.imgCoordY + int(self.imgHeight*self.imgScaling)
         )
 
-        self._snapshotIndex = index
+        # Loading success: update the current index pointer
+        self._dbIndex = index
 
       else : 
-        print(f"[DEBUG] Index = {index} has no image associated to it.")
+        print(f"[WARNING] StaffScope.loadViewByIndex(): index {index} is out of range or image could not be found")
         self.imgScaled = None
         self.imgWidth = -1
         self.imgHeight = -1
-        self._snapshotIndex = index
+        self._dbIndex = -1
 
         
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.loadCursor()
+  # METHOD StaffScope.loadViewByCursor()
   # ---------------------------------------------------------------------------
-  def loadCursor(self, cursor) :
+  def loadViewByCursor(self, cursor) :
     """
     Sets the staffscope content according to the input cursor:
     - load the staff image file that covers the cursor
     - load the playglows (left and right hand)
     
-    The function has a cache feature to avoid useless workload at each frame.
+    The function has a cache feature to avoid useless workload at each render
+    call.
     """
     
     # Load the staff if:
     # - either the cursor changed
     # - a "clear cache" request occured
-    if ((cursor != self.cursor) or self._cacheClearReq) :
+    if ((cursor != self._dbCursor) or self._cacheClearReq) :
       dbIndex = self.db.getIndexByCursor(cursor)
     
       if (dbIndex != -1) :
-        self.loadStaffByIndex(dbIndex)
+        self.loadViewByIndex(dbIndex)
         if self.ghostMode :
           self.playGlows = self.db.snapshots[dbIndex].getPlayGlowsInSnapshot(activeCursor = cursor)
         else :
           self.playGlows = self.db.snapshots[dbIndex].getPlayGlowsAtCursor(cursor)
         
       # The cursor is not linked to any staff (dbIndex = -1)
-      # - load a default dbIndex (the one pointed by the user)
-      # - no playglow is shown, waiting for user input.
+      # Clear the list of playglows to be rendered
       else :
-        self.loadStaffByIndex(self._snapshotIndex)
+        #self.loadViewByIndex(self._dbIndex)
         self.playGlows = []
 
-      self.cursor = cursor
+      self._dbCursor = cursor
       self._cacheClearReq = False
 
     # Cursor hasn't changed: read from cache.
@@ -298,23 +314,36 @@ class StaffScope(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.render
+  # METHOD StaffScope.render()
   # ---------------------------------------------------------------------------
   def render(self) :
     """
-    Renders on screen the staff and the playglows.
-    The function shall be called at each frame.
+    Renders the staff and the playglows on screen.
+    This function is called at every frame of the top level application.
     
     A staff must have been loaded prior to calling this function 
-    ('loadStaffByIndex' or 'loadStaffByCursor')
+    ('StaffScope.loadViewByIndex()' or 'StaffScope.loadViewByCursor()')
 
     When the 'ghost mode' is ON, all the playglows of the snapshot are rendered.
     A color scheme helps distinguish the active/inactive playglows.
     """
     
+    # In the v2.0 main:
+    # if staffScopeWidget.isStaffAvailable(userScore.getCursor()) :
+    #   staffScopeWidget.loadCursor(userScore.getCursor())
+    #   staffScopeWidget.declareStats(statsObj.cursorWrongNoteCount)
+    #   staffScopeWidget.render()
+    
+    # Ask the current cursor from the Score object
+    cursor = self.top.widgets[WIDGET_ID_SCORE].getCursor()
+
+    self.loadViewByCursor(cursor)
+
+
+
     # Test if a staff has been loaded
-    if (self.imgScaled == None) :
-      return
+    # if (self.imgScaled == None) :
+    #   return
 
     # ----------------------
     # Render the staff image
@@ -365,8 +394,8 @@ class StaffScope(widget.Widget) :
     if ((len(self.playGlows) > 0) and (len(self.cursorWrongNoteCount) > 0)) :
       
       # List all playglows on the staff with a non-zero wrong note count
-      minCursor = self.db.snapshots[self._snapshotIndex].cursorMin
-      maxCursor = self.db.snapshots[self._snapshotIndex].cursorMax
+      minCursor = self.db.snapshots[self._dbIndex].cursorMin
+      maxCursor = self.db.snapshots[self._dbIndex].cursorMax
       leftHand_y = [-1]
       rightHand_y = [10000]
       wrongNotesHist = []
@@ -376,7 +405,7 @@ class StaffScope(widget.Widget) :
       for n in range(minCursor, maxCursor + 1) :
         if str(n) in self.cursorWrongNoteCount :
           wrongNotesHist.append(self.cursorWrongNoteCount[str(n)])
-        playglows = self.db.snapshots[self._snapshotIndex].getPlayGlowsAtCursor(n)
+        playglows = self.db.snapshots[self._dbIndex].getPlayGlowsAtCursor(n)
         for p in playglows :
           if p.active :
             if (p.hand == 'L') :
@@ -389,7 +418,7 @@ class StaffScope(widget.Widget) :
       for n in range(minCursor, maxCursor + 1) :
         
         # Calculate the transparency based on the wrong note count
-        playglows = self.db.snapshots[self._snapshotIndex].getPlayGlowsAtCursor(n)
+        playglows = self.db.snapshots[self._dbIndex].getPlayGlowsAtCursor(n)
         if str(n) in self.cursorWrongNoteCount :
           if (min(wrongNotesHist) != max(wrongNotesHist)) :
             alphaMin = 10
@@ -432,7 +461,7 @@ class StaffScope(widget.Widget) :
     self.playGlowDragged = -1
     
     # Is a staff loaded?
-    if (self._snapshotIndex != -1) :
+    if (self._dbIndex != -1) :
       
       # Is the click on the staff?
       (img_xMin, img_yMin, img_xMax, img_yMax) = self.imgBox
@@ -466,7 +495,7 @@ class StaffScope(widget.Widget) :
           p = playGlow.PlayGlow()
           p.load((x-5, y-5, 10, 30))
           p.hand = self.activeHand
-          self.db.snapshots[self._snapshotIndex].setPlayGlowAtCursor(self.cursor, p)
+          self.db.snapshots[self._dbIndex].setPlayGlowAtCursor(self._dbCursor, p)
           self.playGlows.append(p)
 
 
@@ -523,7 +552,7 @@ class StaffScope(widget.Widget) :
     
       # Commit the changes to the database
       p = self.playGlows[self.playGlowDragged]
-      self.db.snapshots[self._snapshotIndex].setPlayGlowAtCursor(self.cursor, p)
+      self.db.snapshots[self._dbIndex].setPlayGlowAtCursor(self._dbCursor, p)
 
       # Force a reload from the database
       self._cacheClearReq = True
@@ -558,10 +587,10 @@ class StaffScope(widget.Widget) :
     
     for (i, p) in enumerate(self.playGlows) :
       if (p.hand == self.activeHand) :
-        print(f"[INFO] Deleting playglow at cursor {self.cursor} (hand = '{self.activeHand}')")
+        print(f"[INFO] Deleting playglow at cursor {self._dbCursor} (hand = '{self.activeHand}')")
         del self.playGlows[i]
         
-        self.db.snapshots[self._snapshotIndex].delPlayGlowAtCursor(self.cursor, p.hand)
+        self.db.snapshots[self._dbIndex].delPlayGlowAtCursor(self._dbCursor, p.hand)
         
         break
 
@@ -576,8 +605,8 @@ class StaffScope(widget.Widget) :
     """
     
     # Read the content of the database at that cursor
-    if (self._snapshotIndex != -1) :
-      s = self.db.snapshots[self._snapshotIndex].leftHandRectCoords
+    if (self._dbIndex != -1) :
+      s = self.db.snapshots[self._dbIndex].leftHandRectCoords
 
     # Convert to a playGlow object
     # ...
@@ -652,3 +681,13 @@ class StaffScope(widget.Widget) :
     self.cursorWrongNoteCount = cursorWrongNoteCount
 
 
+# =============================================================================
+# UNIT TESTS
+# =============================================================================
+if (__name__ == "__main__") :
+  
+  print("[INFO] Library 'StaffScope' called as main: running unit tests...")
+
+  songFile = SONG_PATH + "/" + "Rachmaninoff_Piano_Concerto_No2_Op18.gq3"
+  scope = StaffScope(top = None)
+  scope.load(songFile)

@@ -169,6 +169,17 @@ class Database :
 
 
 
+    # TODO: indicate what percentage of the cursor span has snapshot
+    # associated to them.
+    # ...
+
+
+    # TODO: check if there are overlaps in the snapshots cursor span.
+    # There should be none.
+    # ...
+
+
+
   # ---------------------------------------------------------------------------
   # METHOD Database.isEmpty()
   # ---------------------------------------------------------------------------

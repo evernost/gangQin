@@ -2075,10 +2075,6 @@ if (__name__ == "__main__") :
   # ...
 
 
-
-
-
-
   # Experiments with GQ3 file format (gangQin v.3)
   songFile = SONG_PATH + "/" + "Medtner_-_Forgotten Melodies_Op_38_II_Danza_graziosa_rev0.mid"
   score = Score(top = None)

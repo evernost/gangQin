@@ -2,7 +2,7 @@
   "revision": "v2.1",
   "nStaffs": 2,
   "avgNoteDuration": 287.5864155094184,
-  "cursor": 2206,
+  "cursor": 728,
   "bookmarks": [
     0,
     19,
@@ -3972,7 +3972,7 @@
     {
       "pitch": 58,
       "hand": 0,
-      "finger": 1,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 20,
       "startTime": 107200,
@@ -4002,7 +4002,7 @@
     {
       "pitch": 58,
       "hand": 0,
-      "finger": 1,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 22,
       "startTime": 108160,
@@ -4553,6 +4553,21 @@
       "voice": 0,
       "name": "B3",
       "id": 3666
+    },
+    {
+      "pitch": 59,
+      "hand": 0,
+      "finger": 1,
+      "keyColor": 0,
+      "noteIndex": 22,
+      "startTime": 118560,
+      "stopTime": 118719,
+      "sustained": false,
+      "inactive": false,
+      "disabled": false,
+      "voice": 0,
+      "name": "B3",
+      "id": 4238
     },
     {
       "pitch": 60,
@@ -6147,7 +6162,7 @@
     {
       "pitch": 60,
       "hand": 0,
-      "finger": 2,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 63,
       "startTime": 107360,
@@ -6177,7 +6192,7 @@
     {
       "pitch": 60,
       "hand": 0,
-      "finger": 1,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 65,
       "startTime": 108000,
@@ -9098,6 +9113,21 @@
       "voice": 0,
       "name": "Eb4",
       "id": 3675
+    },
+    {
+      "pitch": 63,
+      "hand": 0,
+      "finger": 1,
+      "keyColor": 1,
+      "noteIndex": 33,
+      "startTime": 115840,
+      "stopTime": 115999,
+      "sustained": false,
+      "inactive": false,
+      "disabled": false,
+      "voice": 0,
+      "name": "Eb4",
+      "id": 4220
     },
     {
       "pitch": 64,
@@ -14442,7 +14472,7 @@
     {
       "pitch": 67,
       "hand": 0,
-      "finger": 4,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 22,
       "startTime": 107520,
@@ -14513,6 +14543,21 @@
       "voice": 0,
       "name": "G4",
       "id": 4240
+    },
+    {
+      "pitch": 67,
+      "hand": 0,
+      "finger": 2,
+      "keyColor": 0,
+      "noteIndex": 25,
+      "startTime": 116000,
+      "stopTime": 116159,
+      "sustained": false,
+      "inactive": false,
+      "disabled": false,
+      "voice": 0,
+      "name": "G4",
+      "id": 4221
     },
     {
       "pitch": 68,
@@ -18777,7 +18822,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 31,
       "startTime": 295080,
@@ -50607,7 +50652,7 @@
     {
       "pitch": 91,
       "hand": 0,
-      "finger": 4,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 12,
       "startTime": 264800,
@@ -80264,21 +80309,6 @@
       "hand": 1,
       "finger": 0,
       "keyColor": 0,
-      "noteIndex": 22,
-      "startTime": 118560,
-      "stopTime": 118719,
-      "sustained": false,
-      "inactive": false,
-      "disabled": false,
-      "voice": 0,
-      "name": "B3",
-      "id": 4238
-    },
-    {
-      "pitch": 59,
-      "hand": 1,
-      "finger": 0,
-      "keyColor": 0,
       "noteIndex": 23,
       "startTime": 128480,
       "stopTime": 128639,
@@ -83172,7 +83202,7 @@
     {
       "pitch": 60,
       "hand": 1,
-      "finger": 1,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 129,
       "startTime": 414560,
@@ -89699,21 +89729,6 @@
       "hand": 1,
       "finger": 0,
       "keyColor": 1,
-      "noteIndex": 33,
-      "startTime": 115840,
-      "stopTime": 115999,
-      "sustained": false,
-      "inactive": false,
-      "disabled": false,
-      "voice": 0,
-      "name": "Eb4",
-      "id": 4220
-    },
-    {
-      "pitch": 63,
-      "hand": 1,
-      "finger": 0,
-      "keyColor": 1,
       "noteIndex": 34,
       "startTime": 116800,
       "stopTime": 116959,
@@ -94227,7 +94242,7 @@
     {
       "pitch": 65,
       "hand": 1,
-      "finger": 5,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 54,
       "startTime": 294480,
@@ -96357,7 +96372,7 @@
     {
       "pitch": 66,
       "hand": 1,
-      "finger": 4,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 19,
       "startTime": 294240,
@@ -97538,21 +97553,6 @@
       "voice": 0,
       "name": "G4",
       "id": 4119
-    },
-    {
-      "pitch": 67,
-      "hand": 1,
-      "finger": 1,
-      "keyColor": 0,
-      "noteIndex": 25,
-      "startTime": 116000,
-      "stopTime": 116159,
-      "sustained": false,
-      "inactive": false,
-      "disabled": false,
-      "voice": 0,
-      "name": "G4",
-      "id": 4221
     },
     {
       "pitch": 67,

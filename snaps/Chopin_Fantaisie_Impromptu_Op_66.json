@@ -1,0 +1,1167 @@
+{
+  "nSnapshots": 41,
+  "snapshots": [
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "936U34.png",
+      "index": 0,
+      "displayName": "Capture 1",
+      "description": "",
+      "cursorMin": 0,
+      "cursorMax": 48,
+      "playGlowsLeft": {
+        "0": [
+          370,
+          197,
+          10,
+          30
+        ],
+        "1": [
+          449,
+          213,
+          10,
+          30
+        ],
+        "2": [
+          467,
+          172,
+          10,
+          30
+        ],
+        "3": [
+          483,
+          161,
+          10,
+          30
+        ],
+        "4": [
+          500,
+          160,
+          10,
+          30
+        ],
+        "5": [
+          517,
+          162,
+          10,
+          30
+        ],
+        "6": [
+          531,
+          172,
+          10,
+          30
+        ],
+        "7": [
+          549,
+          210,
+          10,
+          30
+        ],
+        "8": [
+          564,
+          194,
+          10,
+          30
+        ],
+        "9": [
+          581,
+          181,
+          10,
+          30
+        ],
+        "10": [
+          596,
+          171,
+          10,
+          30
+        ],
+        "11": [
+          614,
+          178,
+          10,
+          30
+        ],
+        "12": [
+          629,
+          194,
+          10,
+          30
+        ],
+        "13": [
+          664,
+          208,
+          10,
+          30
+        ],
+        "14": [
+          681,
+          190,
+          10,
+          30
+        ],
+        "15": [
+          697,
+          180,
+          10,
+          30
+        ],
+        "16": [
+          714,
+          172,
+          10,
+          30
+        ],
+        "17": [
+          731,
+          181,
+          10,
+          30
+        ],
+        "18": [
+          745,
+          194,
+          10,
+          30
+        ],
+        "19": [
+          761,
+          208,
+          10,
+          30
+        ],
+        "20": [
+          779,
+          193,
+          10,
+          30
+        ],
+        "21": [
+          794,
+          179,
+          10,
+          30
+        ],
+        "22": [
+          811,
+          171,
+          10,
+          30
+        ],
+        "23": [
+          828,
+          179,
+          10,
+          30
+        ],
+        "24": [
+          844,
+          192,
+          10,
+          30
+        ],
+        "25": [
+          880,
+          209,
+          10,
+          30
+        ],
+        "27": [
+          893,
+          194,
+          10,
+          30
+        ],
+        "29": [
+          909,
+          182,
+          10,
+          30
+        ],
+        "31": [
+          941,
+          171,
+          10,
+          30
+        ],
+        "33": [
+          957,
+          181,
+          10,
+          30
+        ],
+        "35": [
+          973,
+          192,
+          10,
+          30
+        ],
+        "37": [
+          995,
+          201,
+          10,
+          30
+        ],
+        "39": [
+          1012,
+          192,
+          10,
+          30
+        ],
+        "41": [
+          1026,
+          183,
+          10,
+          30
+        ],
+        "43": [
+          1057,
+          172,
+          10,
+          30
+        ],
+        "45": [
+          1075,
+          182,
+          10,
+          30
+        ],
+        "47": [
+          1090,
+          194,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "26": [
+          893,
+          105,
+          10,
+          30
+        ],
+        "28": [
+          907,
+          98,
+          10,
+          30
+        ],
+        "30": [
+          919,
+          104,
+          10,
+          30
+        ],
+        "32": [
+          955,
+          102,
+          10,
+          30
+        ],
+        "34": [
+          968,
+          92,
+          10,
+          30
+        ],
+        "36": [
+          982,
+          84,
+          10,
+          30
+        ],
+        "31": [
+          941,
+          107,
+          10,
+          30
+        ],
+        "37": [
+          995,
+          107,
+          10,
+          30
+        ],
+        "38": [
+          1009,
+          111,
+          10,
+          30
+        ],
+        "40": [
+          1022,
+          105,
+          10,
+          30
+        ],
+        "42": [
+          1036,
+          110,
+          10,
+          30
+        ],
+        "43": [
+          1057,
+          114,
+          10,
+          30
+        ],
+        "44": [
+          1071,
+          109,
+          10,
+          30
+        ],
+        "46": [
+          1085,
+          101,
+          10,
+          30
+        ],
+        "48": [
+          1100,
+          94,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "TH43E7.png",
+      "index": 1,
+      "displayName": "Capture 2",
+      "description": "",
+      "cursorMin": 49,
+      "cursorMax": 119,
+      "playGlowsLeft": {
+        "49": [
+          244,
+          213,
+          10,
+          30
+        ],
+        "51": [
+          269,
+          194,
+          10,
+          30
+        ],
+        "53": [
+          289,
+          180,
+          10,
+          30
+        ],
+        "55": [
+          322,
+          169,
+          10,
+          30
+        ],
+        "57": [
+          348,
+          180,
+          10,
+          30
+        ],
+        "59": [
+          366,
+          196,
+          10,
+          30
+        ],
+        "61": [
+          394,
+          202,
+          10,
+          30
+        ],
+        "63": [
+          420,
+          193,
+          10,
+          30
+        ],
+        "65": [
+          440,
+          179,
+          10,
+          30
+        ],
+        "67": [
+          475,
+          172,
+          10,
+          30
+        ],
+        "69": [
+          497,
+          179,
+          10,
+          30
+        ],
+        "71": [
+          518,
+          197,
+          10,
+          30
+        ],
+        "73": [
+          570,
+          207,
+          10,
+          30
+        ],
+        "75": [
+          594,
+          186,
+          10,
+          30
+        ],
+        "77": [
+          613,
+          177,
+          10,
+          30
+        ],
+        "79": [
+          640,
+          167,
+          10,
+          30
+        ],
+        "81": [
+          661,
+          180,
+          10,
+          30
+        ],
+        "83": [
+          685,
+          189,
+          10,
+          30
+        ],
+        "85": [
+          712,
+          198,
+          10,
+          30
+        ],
+        "87": [
+          734,
+          180,
+          10,
+          30
+        ],
+        "89": [
+          757,
+          176,
+          10,
+          30
+        ],
+        "91": [
+          785,
+          158,
+          10,
+          30
+        ],
+        "93": [
+          806,
+          177,
+          10,
+          30
+        ],
+        "95": [
+          825,
+          180,
+          10,
+          30
+        ],
+        "97": [
+          874,
+          226,
+          10,
+          30
+        ],
+        "99": [
+          899,
+          207,
+          10,
+          30
+        ],
+        "101": [
+          915,
+          199,
+          10,
+          30
+        ],
+        "103": [
+          943,
+          180,
+          10,
+          30
+        ],
+        "105": [
+          966,
+          198,
+          10,
+          30
+        ],
+        "107": [
+          985,
+          209,
+          10,
+          30
+        ],
+        "109": [
+          1015,
+          226,
+          10,
+          30
+        ],
+        "111": [
+          1042,
+          209,
+          10,
+          30
+        ],
+        "113": [
+          1061,
+          200,
+          10,
+          30
+        ],
+        "115": [
+          1088,
+          183,
+          10,
+          30
+        ],
+        "117": [
+          1116,
+          199,
+          10,
+          30
+        ],
+        "119": [
+          1141,
+          210,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "50": [
+          262,
+          107,
+          10,
+          30
+        ],
+        "52": [
+          282,
+          101,
+          10,
+          30
+        ],
+        "54": [
+          299,
+          109,
+          10,
+          30
+        ],
+        "55": [
+          322,
+          107,
+          10,
+          30
+        ],
+        "56": [
+          342,
+          106,
+          10,
+          30
+        ],
+        "58": [
+          362,
+          93,
+          10,
+          30
+        ],
+        "60": [
+          378,
+          84,
+          10,
+          30
+        ],
+        "61": [
+          396,
+          109,
+          10,
+          30
+        ],
+        "62": [
+          414,
+          110,
+          10,
+          30
+        ],
+        "64": [
+          432,
+          103,
+          10,
+          30
+        ],
+        "66": [
+          451,
+          112,
+          10,
+          30
+        ],
+        "67": [
+          476,
+          118,
+          10,
+          30
+        ],
+        "68": [
+          498,
+          112,
+          10,
+          30
+        ],
+        "70": [
+          513,
+          99,
+          10,
+          30
+        ],
+        "72": [
+          529,
+          92,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "WTA49Q.png",
+      "index": 2,
+      "displayName": "Capture 3",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "5W4ZTY.png",
+      "index": 3,
+      "displayName": "Capture 4",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "EFN44V.png",
+      "index": 4,
+      "displayName": "Capture 5",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "QNBPQQ.png",
+      "index": 5,
+      "displayName": "Capture 6",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "TCBKGV.png",
+      "index": 6,
+      "displayName": "Capture 7",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "6HWPBV.png",
+      "index": 7,
+      "displayName": "Capture 8",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "34H6QZ.png",
+      "index": 8,
+      "displayName": "Capture 9",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "2TXNYP.png",
+      "index": 9,
+      "displayName": "Capture 10",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "NKBHB3.png",
+      "index": 10,
+      "displayName": "Capture 11",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "8928YH.png",
+      "index": 11,
+      "displayName": "Capture 12",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "7M5QE7.png",
+      "index": 12,
+      "displayName": "Capture 13",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "KBGNPV.png",
+      "index": 13,
+      "displayName": "Capture 14",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "ACQQHE.png",
+      "index": 14,
+      "displayName": "Capture 15",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "N5H266.png",
+      "index": 15,
+      "displayName": "Capture 16",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "V7C4UK.png",
+      "index": 16,
+      "displayName": "Capture 17",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "CMGZUA.png",
+      "index": 17,
+      "displayName": "Capture 18",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "AKAZBG.png",
+      "index": 18,
+      "displayName": "Capture 19",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "ERTCZ3.png",
+      "index": 19,
+      "displayName": "Capture 20",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "CVER5M.png",
+      "index": 20,
+      "displayName": "Capture 21",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "MP6QKH.png",
+      "index": 21,
+      "displayName": "Capture 22",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "8NCF5P.png",
+      "index": 22,
+      "displayName": "Capture 23",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "ZGAA5Z.png",
+      "index": 23,
+      "displayName": "Capture 24",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "P3QQ4M.png",
+      "index": 24,
+      "displayName": "Capture 25",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "H69WRF.png",
+      "index": 25,
+      "displayName": "Capture 26",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "FGXKQG.png",
+      "index": 26,
+      "displayName": "Capture 27",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "2XD8PP.png",
+      "index": 27,
+      "displayName": "Capture 28",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "NTUZ92.png",
+      "index": 28,
+      "displayName": "Capture 29",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "CGQFVV.png",
+      "index": 29,
+      "displayName": "Capture 30",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "4X6WQM.png",
+      "index": 30,
+      "displayName": "Capture 31",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "3KNX5X.png",
+      "index": 31,
+      "displayName": "Capture 32",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "Y37ZER.png",
+      "index": 32,
+      "displayName": "Capture 33",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "P7Z68D.png",
+      "index": 33,
+      "displayName": "Capture 34",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "PEC32P.png",
+      "index": 34,
+      "displayName": "Capture 35",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "A3CFEM.png",
+      "index": 35,
+      "displayName": "Capture 36",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "2EURK4.png",
+      "index": 36,
+      "displayName": "Capture 37",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "6RHCXD.png",
+      "index": 37,
+      "displayName": "Capture 38",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "RKY3Q6.png",
+      "index": 38,
+      "displayName": "Capture 39",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "RZ6M7V.png",
+      "index": 39,
+      "displayName": "Capture 40",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+      "file": "DP9GPV.png",
+      "index": 40,
+      "displayName": "Capture 41",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    }
+  ],
+  "isEmpty": false,
+  "songName": "Chopin_Fantaisie_Impromptu_Op_66",
+  "songFile": "Chopin_Fantaisie_Impromptu_Op_66.pr",
+  "jsonName": "Chopin_Fantaisie_Impromptu_Op_66.json",
+  "jsonFile": "./snaps/Chopin_Fantaisie_Impromptu_Op_66.json",
+  "depotFolder": "./snaps/db__Chopin_Fantaisie_Impromptu_Op_66",
+  "hasUnsavedChanges": false
+}

@@ -66,10 +66,8 @@ class StaffScope(widget.Widget) :
     self._dbIndex = -1          # Current index loaded from the database (-1 when none is loaded)
     self._dbCursor = -1
         
-    self.cursor = -1            # Description is TODO
+    #self.cursor = -1           # Not used anymore
     
-    #self._snapshotIndex = -1   # Index of the snapshot loaded (-1 when nothing is loaded)
-
     self.img = None             # Description is TODO
     self.imgScaled = None
     self.imgFile = ""
@@ -112,7 +110,7 @@ class StaffScope(widget.Widget) :
 
     self.db = database.Database(self.jsonFile)
     if not(self.db.isEmpty()) :
-      self.loadViewByIndex(0)
+      self.loadImageByIndex(0)
 
 
 
@@ -146,8 +144,7 @@ class StaffScope(widget.Widget) :
     staff view to display.
     """
 
-    # Function is TODO.
-    return True
+    return (self._dbCursor == -1)
 
 
 
@@ -183,7 +180,7 @@ class StaffScope(widget.Widget) :
     """
     
     if ((self._dbIndex + 1) <= (self.db.nSnapshots-1)) :
-      self.loadViewByIndex(self._dbIndex+1)
+      self.loadImageByIndex(self._dbIndex+1)
     
     else :
       print("[DEBUG] StaffScope.nextStaff(): end of database reached. No more staff to show.")
@@ -200,23 +197,25 @@ class StaffScope(widget.Widget) :
     """
     
     if ((self._dbIndex - 1) >= 0) :
-      self.loadViewByIndex(self._dbIndex-1)
+      self.loadImageByIndex(self._dbIndex-1)
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.loadViewByIndex()
+  # METHOD StaffScope.loadImageByIndex()
   # ---------------------------------------------------------------------------
-  def loadViewByIndex(self, index) :
+  def loadImageByIndex(self, index: int) -> None :
     """
-    Loads the content located at position "index" in the snapshots array.
-    Once loaded, the "_dbIndex" is updated with the requested index.
+    Loads and adjusts the image at position 'index' in the snapshots array.
+    Once loaded, the '_dbIndex' is updated with the requested index.
+    If no image exists at the requested index (either index is out of range,
+    or the image cannot be found) then _dbIndex = -1.
 
     Use this if you know the exact index of the snapshot you want to load from
     the database.
 
-    Usually, this information is unknown and you might want to use 
-    'StaffScope.loadViewByCursor()' instead.
+    Usually though, this information is unknown and you might want to use 
+    'StaffScope.loadImageByCursor()' instead.
     """
     
     # Load only if not cached yet
@@ -252,25 +251,20 @@ class StaffScope(widget.Widget) :
         self._dbIndex = index
 
       else : 
-        print(f"[WARNING] StaffScope.loadViewByIndex(): index {index} is out of range or image could not be found")
-        self.imgScaled = None
-        self.imgWidth = -1
-        self.imgHeight = -1
-        self._dbIndex = -1
+        print(f"[WARNING] StaffScope.loadImageByIndex(): index {index} is out of range or image could not be found")
+        self.imgScaled  = None
+        self.imgWidth   = -1
+        self.imgHeight  = -1
+        self._dbIndex   = -1
 
         
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.loadViewByCursor()
+  # METHOD StaffScope.loadImageByCursor()
   # ---------------------------------------------------------------------------
-  def loadViewByCursor(self, cursor) :
+  def loadImageByCursor(self, cursor: int) -> None :
     """
-    Sets the staffscope content according to the input cursor:
-    - load the staff image file that covers the cursor
-    - load the playglows (left and right hand)
-    
-    The function has a cache feature to avoid useless workload at each render
-    call.
+    Loads and adjusts the image corresponding to the Score 'cursor' value.
     """
     
     # Load the staff if:
@@ -280,33 +274,48 @@ class StaffScope(widget.Widget) :
       dbIndex = self.db.getIndexByCursor(cursor)
     
       if (dbIndex != -1) :
-        self.loadViewByIndex(dbIndex)
-        if self.ghostMode :
-          self.playGlows = self.db.snapshots[dbIndex].getPlayGlowsInSnapshot(activeCursor = cursor)
-        else :
-          self.playGlows = self.db.snapshots[dbIndex].getPlayGlowsAtCursor(cursor)
+        self.loadImageByIndex(dbIndex)
         
-      # The cursor is not linked to any staff (dbIndex = -1)
-      # Clear the list of playglows to be rendered
-      else :
-        #self.loadViewByIndex(self._dbIndex)
-        self.playGlows = []
-
+        # TODO: move to a function
+        # if self.ghostMode :
+        #   self.playGlows = self.db.snapshots[dbIndex].getPlayGlowsInSnapshot(activeCursor = cursor)
+        # else :
+        #   self.playGlows = self.db.snapshots[dbIndex].getPlayGlowsAtCursor(cursor)
+        
       self._dbCursor = cursor
       self._cacheClearReq = False
 
-    # Cursor hasn't changed: read from cache.
-    else : 
-      pass
-
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.isStaffAvailable(cursor)
+  # METHOD StaffScope.loadPlayGlowsByCursor()
   # ---------------------------------------------------------------------------
-  def isStaffAvailable(self, cursor) :
+  def loadPlayGlowsByCursor(self, cursor: int) -> None :
     """
-    Returns True if the current cursor has a score associated to it.
+    Loads the playglows corresponding to the Score 'cursor' value.
+    """
+    
+    dbIndex = self.db.getIndexByCursor(cursor)
+  
+    if (dbIndex != -1) :
+      if self.ghostMode :
+        self.playGlows = self.db.snapshots[dbIndex].getPlayGlowsInSnapshot(activeCursor = cursor)
+      else :
+        self.playGlows = self.db.snapshots[dbIndex].getPlayGlowsAtCursor(cursor)
+        
+    # The cursor is not linked to any staff (dbIndex = -1)
+    # Clear the list of playglows to be rendered
+    else :
+      self.playGlows = []
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.isStaffAvailable()
+  # ---------------------------------------------------------------------------
+  def isStaffAvailable(self, cursor: int) :
+    """
+    Returns True if the current Score cursor has a score capture associated to it.
     """
     
     return (self.db.getIndexByCursor(cursor) != -1)
@@ -322,7 +331,7 @@ class StaffScope(widget.Widget) :
     This function is called at every frame of the top level application.
     
     A staff must have been loaded prior to calling this function 
-    ('StaffScope.loadViewByIndex()' or 'StaffScope.loadViewByCursor()')
+    ('StaffScope.loadImageByIndex()' or 'StaffScope.loadImageByCursor()')
 
     When the 'ghost mode' is ON, all the playglows of the snapshot are rendered.
     A color scheme helps distinguish the active/inactive playglows.
@@ -335,10 +344,10 @@ class StaffScope(widget.Widget) :
     #   staffScopeWidget.render()
     
     # Ask the current cursor from the Score object
-    cursor = self.top.widgets[WIDGET_ID_SCORE].getCursor()
+    scoreCursor = self.top.widgets[WIDGET_ID_SCORE].getCursor()
 
-    self.loadViewByCursor(cursor)
-
+    self.loadImageByCursor(scoreCursor)
+    self.loadPlayGlowsByCursor(scoreCursor)
 
 
     # Test if a staff has been loaded

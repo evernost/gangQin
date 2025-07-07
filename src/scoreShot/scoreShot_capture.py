@@ -12,7 +12,7 @@
 # =============================================================================
 
 # =============================================================================
-# External libs 
+# EXTERNALS
 # =============================================================================
 import src.scoreShot.fileSelectionGUI as fileSelectionGUI
 
@@ -22,14 +22,9 @@ import tkinter as tk
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
-# Some high resolution screens use a scaling factor that messes with the 
-# coordinates of 'Imagegrab'.
-# You might need to adjust depending on this scaling factor:
-# - zoom factor 100%: SCREEN_SCALING = 1.0
-# - zoom factor 250%: SCREEN_SCALING = 2.5
-SCREEN_SCALING = 1.0
+# None.
 
 
 
@@ -51,11 +46,14 @@ print("- 'l'                    : enable/disable resizing the capture window")
 print("- 'q'                    : exit app")
 print("- 'r'                    : temporarily recall the last snapshot")
 print("- 's'                    : save database")
+print("- 't'                    : takes a test snapshot for a setup check")
 print("")
 print("Main window shortcuts:")
 print("- Del                    : delete the selected snapshot [NOT IMPLEMENTED YET]")
 print("- 'q'                    : exit app")
 print("- 's'                    : save database")
+
+
 
 # =============================================================================
 # CAPTURE GUI

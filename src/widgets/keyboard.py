@@ -14,14 +14,12 @@
 # =============================================================================
 # EXTERNALS
 # =============================================================================
-# Project specific constants
 from src.commons import *
-
-import src.note as note
 import src.text as text
 import src.utils as utils
 import src.widgets.widget as widget
 
+# Standard libraries
 import pygame
 from shapely.geometry import Point, Polygon   # For point in polygon test
 
@@ -107,7 +105,6 @@ class Keyboard(widget.Widget) :
       else :
         pygame.draw.polygon(self.top.screen, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
 
-
     # Render the teacher notes overlay (from Score)
     if (WIDGET_ID_SCORE in self.top.widgets) :
       self.activeNotesScore = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
@@ -128,13 +125,28 @@ class Keyboard(widget.Widget) :
 
 
 
+    # Change the mouse cursor appearance when hovering over the notes
+    (mouse_x, mouse_y) = pygame.mouse.get_pos()
+  
+    # TODO: infer hitbox from geometry, delete magic values
+    if ((10 <= mouse_x <= 1310) and (300 <= mouse_y <= 450)) :  
+      detectedNote = self.isCoordOnActiveNote(mouse_x, mouse_y)
+      if detectedNote :
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+      else :
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+    else:
+      pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+
+
+
   # ---------------------------------------------------------------------------
   # METHOD Keyboard.keyPress
   # ---------------------------------------------------------------------------
   def keyPress(self, notes) :
     """
-    Highlights on the keyboard widget the notes in 'notes'.
-    The display method will be inferred from the attributes of the note objects.
+    Highlights on the keyboard widget all the 'Note' objects in the 'notes' array.
+    The rendering color is inferred from the attributes of the notes.
 
     This function can be called several times to render a single frame. 
     The polygons will be superimposed.
@@ -392,19 +404,17 @@ class Keyboard(widget.Widget) :
 
   
   # ---------------------------------------------------------------------------
-  # METHOD Keyboard.isActiveNoteClicked
+  # METHOD Keyboard.isCoordOnActiveNote
   # ---------------------------------------------------------------------------
-  def isActiveNoteClicked(self, clickCoord) :
+  def isCoordOnActiveNote(self, mouse_x, mouse_y) :
     """
-    Given a click coordinates, indicate whether it is an active key (a "lit" key)
+    Indicates whether it is an active key (a "lit" key)
     that has been clicked.
     """
 
     candidates = []
-    (clickX, clickY) = clickCoord
-
     for (currLitNotePolygon, currNote) in self.litKeysPolygons :  
-      if Point(clickX, clickY).within(Polygon(currLitNotePolygon)) :        
+      if Point(mouse_x, mouse_y).within(Polygon(currLitNotePolygon)) :        
         candidates.append(currNote)
 
     # Multiple candidates: quite possibly one is pressed, the others are sustained

@@ -14,13 +14,12 @@
 # =============================================================================
 # EXTERNALS
 # =============================================================================
-# Project specific constants
 from src.commons import *
-
 import src.scoreShot.database as database
 import src.widgets.playGlow as playGlow
 import src.widgets.widget as widget
 
+# Standard libraries
 import os         # For file name manipulation
 import pygame     # For image scaling
 
@@ -54,7 +53,7 @@ class StaffScope(widget.Widget) :
 
   def __init__(self, top) :
     
-    # Call the Widget init method
+    # Initialise the parent class (Widget)
     super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
 
     self.songName     = ""      # Name of the song
@@ -62,11 +61,9 @@ class StaffScope(widget.Widget) :
     self.jsonFile     = ""      # Full name of the databse file (path + filename)
     self.depotFolder  = ""      # Directory where all the snapshots of the song are stored
     
-    self.db = None              # Reference to the Database object
-    self._dbIndex = -1          # Current index loaded from the database (-1 when none is loaded)
-    self._dbCursor = -1
-        
-    #self.cursor = -1           # Not used anymore
+    self.db         = None      # Reference to the Database object
+    self._dbIndex   = -1        # Current index loaded from the database (-1 when none is loaded)
+    self._dbCursor  = -1        # Current cursor value covered by the snapshot
     
     self.img = None             # Description is TODO
     self.imgScaled = None
@@ -271,19 +268,21 @@ class StaffScope(widget.Widget) :
     # - either the cursor changed
     # - a "clear cache" request occured
     if ((cursor != self._dbCursor) or self._cacheClearReq) :
+      
+      # Try to find the snapshot db index for this cursor
       dbIndex = self.db.getIndexByCursor(cursor)
     
       if (dbIndex != -1) :
         self.loadImageByIndex(dbIndex)
-        
-        # TODO: move to a function
-        # if self.ghostMode :
-        #   self.playGlows = self.db.snapshots[dbIndex].getPlayGlowsInSnapshot(activeCursor = cursor)
-        # else :
-        #   self.playGlows = self.db.snapshots[dbIndex].getPlayGlowsAtCursor(cursor)
-        
-      self._dbCursor = cursor
-      self._cacheClearReq = False
+
+        self._dbIndex   = dbIndex
+        self._dbCursor  = cursor
+        self._cacheClearReq = False
+
+      else :
+        self._dbIndex   = -1
+        self._dbCursor  = -1
+        self._cacheClearReq = False
 
 
 
@@ -295,6 +294,7 @@ class StaffScope(widget.Widget) :
     Loads the playglows corresponding to the Score 'cursor' value.
     """
     
+    # Try to find the snapshot db index for this cursor
     dbIndex = self.db.getIndexByCursor(cursor)
   
     if (dbIndex != -1) :
@@ -346,18 +346,13 @@ class StaffScope(widget.Widget) :
     # Ask the current cursor from the Score object
     scoreCursor = self.top.widgets[WIDGET_ID_SCORE].getCursor()
 
+    # -------------------------------
+    # Render the score image snapshot
+    # -------------------------------
     self.loadImageByCursor(scoreCursor)
-    self.loadPlayGlowsByCursor(scoreCursor)
 
-
-    # Test if a staff has been loaded
-    # if (self.imgScaled == None) :
-    #   return
-
-    # ----------------------
-    # Render the staff image
-    # ----------------------
-    self.top.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))
+    # TODO: use a proper function for that
+    if (self.imgScaled != None) : self.top.screen.blit(self.imgScaled, (self.imgCoordX, self.imgCoordY))
     
 
 
@@ -375,6 +370,7 @@ class StaffScope(widget.Widget) :
     # --------------------
     # Render the playGlows
     # --------------------
+    self.loadPlayGlowsByCursor(scoreCursor)
     transparent_surface = pygame.Surface((self.top.screenWidth, self.top.screenHeight), pygame.SRCALPHA)
     transparent_surface.fill((0, 0, 0, 0))  # Completely transparent
     

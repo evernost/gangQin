@@ -14,16 +14,14 @@
 # =============================================================================
 # EXTERNALS
 # =============================================================================
-# Project specific constants
 from src.commons import *
-
 import src.note as note
 import src.widgets.widget as widget
-import text
+import src.text as text
 
-import copy
+import copy       # mostly used in deprecated functions
 import datetime
-import json       # for .gq file database import/export
+import json       # for .gq3 file database import/export
 import mido       # for MIDI file manipulation
 import os         # for filename manipulation
 import pygame

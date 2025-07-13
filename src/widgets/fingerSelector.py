@@ -3,35 +3,30 @@
 # Project       : gangQin
 # Module name   : fingerSelector
 # File name     : fingerSelector.py
+# File type     : Python script (Python 3)
 # Purpose       : widget to edit the 'finger' property of a note.
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Sunday, 8 Oct 2023
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
-# Project specific constants
 from src.commons import *
-
 import src.widgets.widget as widget
-import text
+import src.text as text
 
-# Standard libs
+# Standard libraries
 import pygame
 
 
 
-
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
-FINGERSEL_NONE_SELECTED = -1
-FINGERSEL_UNCHANGED = 0
-FINGERSEL_CHANGED = 1
-FINGERSEL_HAND_CHANGE = 3
+# None.
 
 
 
@@ -40,17 +35,30 @@ FINGERSEL_HAND_CHANGE = 3
 # =============================================================================
 class FingerSelector(widget.Widget) :
 
-  def __init__(self, top, loc) :
+  """
+  FINGER_SELECTOR object
+
+  Class definition for the fingerSelector widget.
+  
+  The fingerSelector viewer displays shows the UI element interacting with
+  the user to define the finger to use on a selected note.
+  
+  It also provides some shorthand functions:
+  - auto-increment
+  - fingersatz recommendations for chords
+  
+  The selector is not shown by default, and gets invoked as a key is selected 
+  on screen for edition.
+
+  The FingerSelector class derives from the Widget class.
+  """
+
+  def __init__(self, top) :
     
-    # Call the Widget init method
-    super().__init__(top, loc)
+    # Initialise the parent class (Widget)
+    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
 
-    # Define the events the widgets must react to
-    self.uiSensivityList = [pygame.K_TAB]
-
-    # UI interaction queues
-    self.msgQueueIn = []
-    self.msgQueueOut = []
+    self.visible = False
 
     # -1 = nothing is selected
     #  0 = left hand, finger 5
@@ -64,13 +72,11 @@ class FingerSelector(widget.Widget) :
     # 11 = right hand, finger 5
     self.currentSel = FINGERSEL_NONE_SELECTED
 
-    self.visible = False
-
     self.editedNote = None
     self.editedCursor = -1
 
     # *** Graphical properties ***
-    (self.locX, self.locY) = loc
+    #(self.locX, self.locY) = loc
     self.textColor = GUI_TEXT_COLOR
     self.textColorL = (145, 7, 0)
     self.textColorR = (0, 145, 7)
@@ -82,53 +88,39 @@ class FingerSelector(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Metronome.keyPress(pygameKeys)
+  # METHOD: FingerSelector.render()
   # ---------------------------------------------------------------------------
-  def keyPress(self, pygameKeys) :
+  def render(self) :
     """
-    TODO
+    Renders the finger selection buttons and graphical elements on screen.
     """
-
-    if pygameKeys[pygame.K_TAB] :      
-      print("[DEBUG] Fingersatz edition using (shift) tab is not done yet!")
-      self.msgQueueIn.append("TAB")
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD: FingerSelector.show()
-  # ---------------------------------------------------------------------------
-  def show(self, screen) :
-    """
-    Render the finger selection widget on screen.
-    Screen object (in a Pygame sense) must be provided as argument.
-    """
+    
     if (self.visible) :
       labels = ["5 ", "4 ", "3 ", "2 ", "1 ", "- ", "- ", "1 ", "2 ", "3 ", "4 ", "5 "]
       
       # Note: 96 = 8*10 + 8*2, i.e. 8 x char size + 8 x space in-between
-      text.render(screen, f"FINGER: ", (self.locX, self.locY), 2, self.textColor)      
+      text.render(self.top.screen, f"FINGER: ", (self.locX, self.locY), 2, self.textColor)      
       
-      for i in range(12) :
+      for (i, label) in enumerate(labels) :
         if (i <= 5) :          
           if (self.currentSel == i) :
-            text.render(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelL)
+            text.render(self.top.screen, label, (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelL)
           else :
-            text.render(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorL)
+            text.render(self.top.screen, label, (self.locX + 96 + (i*23), self.locY), 2, self.textColorL)
 
         else :
           if (self.currentSel == i) :
-            text.render(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelR)
+            text.render(self.top.screen, label, (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelR)
           else :
-            text.render(screen, labels[i], (self.locX + 96 + (i*23), self.locY), 2, self.textColorR)
+            text.render(self.top.screen, label, (self.locX + 96 + (i*23), self.locY), 2, self.textColorR)
 
       x0 = self.locX + 96 - 7
       yTop = self.locY + 3; yBottom = self.locY + 12
       for i in range(13) :
         if (i == 6) :
-          pygame.draw.line(screen, self.lineColor, (x0 + (i*23), yTop-8), (x0 + (i*23), yBottom+6), 1)
+          pygame.draw.line(self.top.screen, self.lineColor, (x0 + (i*23), yTop-8), (x0 + (i*23), yBottom+6), 1)
         else :
-          pygame.draw.line(screen, self.lineColor, (x0 + (i*23), yTop), (x0 + (i*23), yBottom), 1)
+          pygame.draw.line(self.top.screen, self.lineColor, (x0 + (i*23), yTop), (x0 + (i*23), yBottom), 1)
     
 
 
@@ -254,7 +246,7 @@ class FingerSelector(widget.Widget) :
       activeNotes.sort(key = lambda x: x.pitch)
       
       # Keep notes not yet assigned
-      tmp = [x for x in activeNotes if (x.finger == UNDEFINED_FINGER)]
+      tmp = [x for x in activeNotes if (x.finger == NOTE_UNDEFINED_FINGER)]
       
       # Are all notes already assigned to a finger? -> start over
       if (len(tmp) == 0) :
@@ -350,18 +342,15 @@ class FingerSelector(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: FingerSelector.uiEvent()
+  # METHOD Score._onKeyEvent()                                        [PRIVATE]
   # ---------------------------------------------------------------------------
-  def uiEvent(self, pygameEvent) :
+  def _onKeyEvent(self, key, type, modifier = "") :
     """
-    This function is called every time a pygame event listed in 'uiSensitivityList'
-    happens.
+    Function triggered by a keypress.
     """
     
-    if pygameEvent in self.uiSensivityList :
+    if (type == pygame.KEYDOWN) :
       pass
-
-
 
 
 
@@ -381,10 +370,12 @@ class FingerSelector(widget.Widget) :
 
 
 
-
 # =============================================================================
-# Unit tests
+# UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
-  print("[INFO] There are no unit tests available for 'fingerSelector.py'")
+  
+  print("[INFO] Library 'fingerSelector' called as main: running unit tests...")
+
+
 

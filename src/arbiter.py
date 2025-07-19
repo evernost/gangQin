@@ -34,6 +34,10 @@ MSG_RESET_COMBO = 1
 class Arbiter :
 
   """
+  ARBITER object
+
+  Class definition for the Arbiter widget.
+  
   Provides all the machinery that determines if the keyboard inputs
   are valid and whether it allows to progress in the song.
 
@@ -67,11 +71,6 @@ class Arbiter :
   They will be removed in future releases.
   """
   
-  
-  
-  # ---------------------------------------------------------------------------
-  # METHOD: Arbiter.__init__ (constructor)
-  # ---------------------------------------------------------------------------
   def __init__(self, comparisonMode) :
     
     self.status = False  

@@ -15,6 +15,7 @@
 # EXTERNALS
 # =============================================================================
 from src.commons import *
+import src.note as note
 import src.text as text
 import src.utils as utils
 import src.widgets.widget as widget
@@ -83,7 +84,7 @@ class Keyboard(widget.Widget) :
     self._makePolygons()
 
     # List of notes currently pressed
-    self.activeNotes = []
+    #self.activeNotes      = []
     self.activeNotesMIDI  = []
     self.activeNotesScore = []
 
@@ -110,18 +111,8 @@ class Keyboard(widget.Widget) :
       self.activeNotesScore = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
       self.keyPress(self.activeNotesScore)
 
-
     # Render the user notes overlay (from the MIDI keyboard input)
-    # midiNoteList = []
-    # for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
-    #   if (pianoArbiter.midiCurr[pitch] == 1) :
-    #     newMidiNote = note.Note(pitch)
-    #     newMidiNote.fromKeyboardInput = True
-    #     newMidiNote.hand = UNDEFINED_HAND
-    #     newMidiNote.finger = 0
-    #     midiNoteList.append(newMidiNote)
-    
-    # keyboardWidget.keyPress(screen, midiNoteList)
+    # TODO
 
 
 
@@ -130,6 +121,8 @@ class Keyboard(widget.Widget) :
   
     # TODO: infer hitbox from geometry, delete magic values
     if ((10 <= mouse_x <= 1310) and (300 <= mouse_y <= 450)) :  
+      
+      # TODO: 'detectedNotes' must contain active notes only (no sustained note)
       detectedNote = self.isCoordOnActiveNote(mouse_x, mouse_y)
       if detectedNote :
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
@@ -141,7 +134,7 @@ class Keyboard(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Keyboard.keyPress
+  # METHOD Keyboard.keyPress()
   # ---------------------------------------------------------------------------
   def keyPress(self, notes) :
     """
@@ -451,18 +444,17 @@ class Keyboard(widget.Widget) :
   # ---------------------------------------------------------------------------
   def onExternalMidiEvent(self, midiMessage) :
     """
-    Updates the internal state of the object with the latest external MIDI
-    inputs from the keyboard.
-
-    This function must be called every time something happens on the MIDI
-    input.
+    Updates the list of active MIDI notes coming from the keyboard so that 
+    they can be displayed at rendering.
     """
 
-    # Build a note object
-    note = note.Note()
-
-    self.activeNotesMIDI  = []
-    #self.activeNotesScore = []
+    if (midiMessage.type == 'note_on') :
+      N = note.Note(midiMessage.note)
+      N.fromKeyboardInput = True
+      self.activeNotesMIDI.append(N)
+      
+    elif (midiMessage.type == 'note_off') :
+      self.activeNotesMIDI = [N for N in self.activeNotesMIDI if (N.pitch != midiMessage.note)]
 
 
 

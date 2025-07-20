@@ -12,16 +12,13 @@
 # =============================================================================
 
 # =============================================================================
-# External libs 
+# EXTERNALS
 # =============================================================================
-# Project specific constants
+# Project libraries
 from src.commons import *
 
-
+# Standard libraries
 import pygame
-
-
-
 
 
 
@@ -37,7 +34,6 @@ class Widget :
   - 'uiEvent': defines how the widget reacts to user inputs (click, keypress)
 
   This widget class itself does not do anything.
-
   Widgets implemented in the gangQin app suite (gangQin player, gangQin capture
   gangQin fusion) must inherit from this class.
   """
@@ -100,7 +96,7 @@ class Widget :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: Widget.render() [ABSTRACT]
+  # METHOD: Widget.render()                                          [ABSTRACT]
   # ---------------------------------------------------------------------------
   def render(self) :
     """
@@ -123,11 +119,13 @@ class Widget :
     
     This function must be overriden with the specific code of the widget.
     """
-    
+
     # SAMPLE CODE
-    if (type == pygame.KEYDOWN) :
-      if (key == pygame.K_q) :
-        print("[DEBUG] Widget._onKeyEvent(): 'Q' was pressed!")
+    # if (type == pygame.KEYDOWN) :
+    #   if (key == pygame.K_q) :
+    #     print("[DEBUG] Widget._onKeyEvent(): 'Q' was pressed!")
+
+    pass
 
 
 
@@ -142,8 +140,10 @@ class Widget :
     """
     
     # SAMPLE CODE
-    if (type == pygame.MOUSEBUTTONDOWN) :
-      if (button == MOUSE_SCROLL_UP) :
-        pass
-        #print("[DEBUG] Widget._onMouseEvent(): scroll up!")
+    # if (type == pygame.MOUSEBUTTONDOWN) :
+    #   if (button == MOUSE_SCROLL_UP) :    
+    #     print("[DEBUG] Widget._onMouseEvent(): scroll up!")
 
+    pass
+
+  

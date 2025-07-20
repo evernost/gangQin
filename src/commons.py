@@ -12,9 +12,13 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
+# Projet libraries
 # None.
+
+# Standard libraries
+from enum import Enum   # For enumerated types in FSM
 
 
 
@@ -123,7 +127,6 @@ FINGERSEL_HAND_CHANGE   = 3
 
 
 
-
 WIDGET_LOC_UNDEFINED = (-1, -1)
 
 # Pygame click codes
@@ -134,7 +137,7 @@ MOUSE_SCROLL_DOWN = 5
 
 
 
-# Path of the songs (.pr and .mid)
+# Path of the songs (.gq3 and .mid)
 SONG_PATH = "./songs"
 
 # Backup feature (autosave)

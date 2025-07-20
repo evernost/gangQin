@@ -106,15 +106,11 @@ class Keyboard(widget.Widget) :
       else :
         pygame.draw.polygon(self.top.screen, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
 
-    # Render the teacher notes overlay (from Score)
+    # Render the notes from Score and from the keyboard input
     if (WIDGET_ID_SCORE in self.top.widgets) :
       self.activeNotesScore = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
       self.keyPress(self.activeNotesScore)
-
-    # Render the user notes overlay (from the MIDI keyboard input)
-    # TODO
-
-
+      self.keyPress(self.activeNotesMIDI)
 
     # Change the mouse cursor appearance when hovering over the notes
     (mouse_x, mouse_y) = pygame.mouse.get_pos()

@@ -14,11 +14,13 @@
 # =============================================================================
 # EXTERNALS
 # =============================================================================
+# Project libraries
 from src.commons import *
 import src.note as note
 import src.widgets.widget as widget
 import src.text as text
 
+# Standard libraries
 import copy       # mostly used in deprecated functions
 import datetime
 import json       # for .gq3 file database import/export
@@ -1486,8 +1488,8 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   def getTeacherNotes(self) :
     """
-    Returns the list of all notes that must be pressed at the current position
-    in the score.
+    Returns a list with all the notes that must be pressed at the current 
+    position in the score.
     
     Only notes pressed at this cursor are returned.
     Sustained notes (notes that were pressed before and held up to the current 

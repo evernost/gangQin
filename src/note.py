@@ -12,19 +12,27 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
-# Project specific constants
+# Project libraries
 from src.commons import *
-
 import src.utils as utils
 
+# Standard libraries
+from enum import Enum   # For enumerated types in FSM
+
 
 
 # =============================================================================
-# CONSTANTS POOL
+# CONSTANTS
 # =============================================================================
-# None.
+class keyColor(Enum) :
+  WHITE = 0
+  BLACK = 1
+
+class hand(Enum) :
+  LEFT  = 0
+  RIGHT = 1
 
 
 

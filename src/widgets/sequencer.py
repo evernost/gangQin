@@ -12,20 +12,20 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
-# Project specific constants
+# Project libraries
 from src.commons import *
-
 import src.widgets.widget as widget
+import arbiter
 
-
-import pygame
+# Standard libraries
+import pygame       # For keyboard/mouse interactions
 
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 # None.
 
@@ -39,18 +39,22 @@ class Sequencer(widget.Widget) :
   """
   SEQUENCER object
 
-  - controls the position in the score
-  - manages the loops 
-  - reads arbiter decision
-  - automatic play 
-
-
+  The Sequencer controls the position in the Score.
+  
+  It can be determined by:
+  - the user (scrolling)
+  - the MIDI keyboard inputs (if approved by the Arbiter)
+  - the inner clock (for playback)
+  - the 'note search' feature
   """
 
   def __init__(self, top) :
     
     # Call the Widget init method
     super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
+
+    # Internal attributes
+    # ...
 
 
 
@@ -60,7 +64,6 @@ class Sequencer(widget.Widget) :
   def _onKeyEvent(self, key, type, modifier = "") :
     """
     Function is triggered by a keypress.
-    Override this function with your own handlers.
     """
     
     if (type == pygame.KEYDOWN) :
@@ -112,8 +115,6 @@ class Sequencer(widget.Widget) :
   def _onMouseEvent(self, button, type) :
     """
     Function is triggered by a keypress.
-    
-    This function must be overriden with the specific code of the widget.
     """
     
     # Read the keyboard state
@@ -169,10 +170,30 @@ class Sequencer(widget.Widget) :
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD: Sequencer.onExternalMidiEvent()
+  # ---------------------------------------------------------------------------
+  def onExternalMidiEvent(self, midiMessage) :
+    """
+    Updates the Sequencer machinery in case of an external MIDI input.
+    """
+
+    # TODO 
+    # In "normal" gameplay mode:
+    # - call the arbiter
+    # - ask his opinion about the user MIDI input
+    # In "automatic" gameplay mode:
+    # MIDI inputs are ignored.
+
+    decision = self.top.widgets[WIDGET_ID_ARBITER].eval()
+
+    if (decision == arbiter.msg.CURSOR_NEXT) :
+      self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
+
 
 
 # =============================================================================
-# Unit tests
+# UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
   print("[INFO] There are no unit tests available for 'sequencer.py'")

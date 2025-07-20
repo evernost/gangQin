@@ -107,9 +107,8 @@ class GangQin :
       WIDGET_ID_PIANOROLL       : pianoRoll.PianoRoll(self, loc = (10, 50)),
       WIDGET_ID_STAFFSCOPE      : staffScope.StaffScope(self),
       WIDGET_ID_FINGERSELECTOR  : fingerSelector.FingerSelector(self),
-      #WIDGET_ID_ARBITER         : arbiter.Arbiter(self),
+      WIDGET_ID_ARBITER         : arbiter.Arbiter(self),
       #metronome.Metronome(self),
-      #arbiter.Arbiter(self),
       #stats.Stats(self),
       #notify.Notify(self)
       WIDGET_ID_SEQUENCER       : sequencer.Sequencer(self)
@@ -218,7 +217,7 @@ class GangQin :
       self.widgets[WIDGET_ID_KEYBOARD].onExternalMidiEvent(midiMessage)
     
     if (WIDGET_ID_ARBITER in self.widgets) :
-      self.widgets[WIDGET_ID_ARBITER].updateMidiState(midiMessage)
+      self.widgets[WIDGET_ID_ARBITER].onExternalMidiEvent(midiMessage)
     
     if (WIDGET_ID_STATS in self.widgets) :
       self.widgets[WIDGET_ID_STATS].userActivity()

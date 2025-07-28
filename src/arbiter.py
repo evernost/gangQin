@@ -73,8 +73,11 @@ class Arbiter(widget.Widget) :
 
   """
   
-  def __init__(self) :
+  def __init__(self, top) :
     
+    # Call the Widget init method
+    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
+
     self.status = False  
     self.comparisonMode = "permissive"
     

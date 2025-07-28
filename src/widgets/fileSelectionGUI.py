@@ -51,13 +51,14 @@ class FileSelectionGUI :
     
     # Populated after calling 'FileSelectGUI._configLoad()'
     self.config = None
+    self.configFile = "./conf/conf.ini"
 
     # Populated after calling 'FileSelectGUI._listMidiDevices()'
     self.midiDevices = []
     
     # Populated after calling 'FileSelectGUI._listSongFiles()'
-    self.MIDIFiles = []
-    self.GQFiles = []
+    self.midiFiles  = []
+    self.gqFiles    = []
     
     # Populated after clicking on 'Start'
     self.selectedDevice = ""
@@ -133,39 +134,41 @@ class FileSelectionGUI :
 
     # Make the 'start' button default
     self.root.bind("<Return>", lambda event = None : self.guiButtonStart.invoke())
+
+    # Code executed upon exit
+    self.root.protocol("WM_DELETE_WINDOW", self.CLBK_onQuit)
     
     # Main loop
     self._centerWindow()
     self.root.mainloop()
   
-    # Return the selection (MIDI interface + file) to the main
-    return self._getSelection()
+    # Export this configuration to a .ini file
+    #self._readSelection()
+    #self._configSave()
+
+    # Return the selection (MIDI interface + file) to the main  
+    return (self.selectedDevice, self.selectedFile)
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD FileSelectGUI._getSelection()
+  # METHOD FileSelectGUI._readSelection()
   # ---------------------------------------------------------------------------
-  def _getSelection(self) :
+  def _readSelection(self) :
     """
     Returns a descriptor (dictionary) with the selected song and the selected
     input MIDI interface.
     """
   
-    # Save the selection to the configuration file
-    self.config["DEFAULT"] = {
-      "midi_interface": self.selectedDevice,
-      "song"          : self.selectedFile
-      }
+    # Read the file
+    comboIndex = self.guiComboFile.current()
+    if (self.guiFileExtChoice.get() == ".mid") : 
+      self.selectedFile = self.midiFiles[comboIndex]
+    else :
+      self.selectedFile = self.gqFiles[comboIndex]
 
-    # Create the './conf' dir if it does not exist
-    if not os.path.exists("./conf"):
-      os.makedirs("./conf")
-
-    with open("./conf/conf.ini", "w") as configfile :
-      self.config.write(configfile)
-
-    return (self.selectedDevice, self.selectedFile)
+    # Read the device
+    self.selectedDevice = self.guiComboMIDI.get()
 
 
 
@@ -194,13 +197,13 @@ class FileSelectionGUI :
     Description is TODO.
     """
 
-    self.MIDIFiles = self._listFilesWithExt(SONG_PATH, ".mid")
-    if not(self.MIDIFiles) :
-      self.MIDIFiles = ["None"]
+    self.midiFiles = self._listFilesWithExt(SONG_PATH, ".mid")
+    if not(self.midiFiles) :
+      self.midiFiles = ["None"]
 
-    self.GQFiles = self._listFilesWithExt(SONG_PATH, ".pr")
-    if not(self.GQFiles) :
-      self.GQFiles = ["None"]
+    self.gqFiles = self._listFilesWithExt(SONG_PATH, ".pr")
+    if not(self.gqFiles) :
+      self.gqFiles = ["None"]
 
 
 
@@ -227,7 +230,7 @@ class FileSelectionGUI :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD FileSelectGUI._configLoad()                              [PRIVATE]
+  # METHOD FileSelectGUI._configLoad()                                [PRIVATE]
   # ---------------------------------------------------------------------------
   def _configLoad(self) :
     """
@@ -235,10 +238,36 @@ class FileSelectionGUI :
     """
     
     self.config = configparser.ConfigParser()
-    if os.path.exists("./conf/conf.ini") :
-      self.config.read("./conf/conf.ini")
+    if os.path.exists(self.configFile) :
+      self.config.read(self.configFile)
     else :
       print("[INFO] No last configuration found: loading defaults.")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD FileSelectGUI._configSave()                                [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _configSave(self) :
+    """
+    Exports the current configuration to a .ini file.
+    """
+
+    print("exporting conf...")
+    print(f"- midi_interface: {self.selectedDevice}")
+    print(f"- song          : {self.selectedFile}")
+
+    self.config["DEFAULT"] = {
+      "midi_interface": self.selectedDevice,
+      "song"          : self.selectedFile
+    }
+
+    # Create the './conf' dir if it does not exist
+    if not os.path.exists("./conf"):
+      os.makedirs("./conf")
+
+    with open(self.configFile, "w") as configfile :
+      self.config.write(configfile)
 
 
 
@@ -272,9 +301,9 @@ class FileSelectionGUI :
     """
 
     if (self.guiFileExtChoice.get() == ".mid"): 
-      comboBox["values"] = [os.path.basename(file) for file in self.MIDIFiles]
+      comboBox["values"] = [os.path.basename(file) for file in self.midiFiles]
     elif (self.guiFileExtChoice.get() == ".pr") : 
-      comboBox["values"] = [os.path.basename(file) for file in self.GQFiles]
+      comboBox["values"] = [os.path.basename(file) for file in self.gqFiles]
     else :
       pass
 
@@ -290,7 +319,7 @@ class FileSelectionGUI :
     """
 
     if ("song" in self.config["DEFAULT"]) :
-      if self.config["DEFAULT"]["song"] in (self.MIDIFiles + self.GQFiles) :
+      if self.config["DEFAULT"]["song"] in (self.midiFiles + self.gqFiles) :
         comboBox.set(os.path.basename(self.config["DEFAULT"]["song"]))
       else :
         print(f"[INFO] The last practiced song is not available ({self.config["DEFAULT"]["song"]})")
@@ -310,7 +339,7 @@ class FileSelectionGUI :
     
     # Read the last practiced song, set the .mid/.gq selection accordingly
     if ("song" in self.config["DEFAULT"]) :
-      if self.config["DEFAULT"]["song"] in (self.MIDIFiles + self.GQFiles) :
+      if self.config["DEFAULT"]["song"] in (self.midiFiles + self.gqFiles) :
         (_, lastFileExt) = os.path.splitext(self.config["DEFAULT"]["song"])
         choice.set(lastFileExt)
       else :
@@ -367,9 +396,9 @@ class FileSelectionGUI :
     """
     
     if (self.guiFileExtChoice.get() == ".mid") : 
-      fileList = [os.path.basename(file) for file in self.MIDIFiles]
+      fileList = [os.path.basename(file) for file in self.midiFiles]
     elif (self.guiFileExtChoice.get() == ".pr") : 
-      fileList = [os.path.basename(file) for file in self.GQFiles]
+      fileList = [os.path.basename(file) for file in self.gqFiles]
     else :
       pass
     
@@ -392,19 +421,35 @@ class FileSelectionGUI :
   # METHOD FileSelectGUI.CLBK_onFileTypeChange()
   # ---------------------------------------------------------------------------
   def CLBK_onStart(self) :
-    
-    # Read the file
-    comboIndex = self.guiComboFile.current()
-    if (self.guiFileExtChoice.get() == ".mid") : 
-      self.selectedFile = self.MIDIFiles[comboIndex]
-    else :
-      self.selectedFile = self.GQFiles[comboIndex]
+    """
+    CALLBACK function
+    Description is TODO.
+    """
 
-    # Read the device
-    self.selectedDevice = self.guiComboMIDI.get()
+    self._readSelection()
+
+    # # Read the file
+    # comboIndex = self.guiComboFile.current()
+    # if (self.guiFileExtChoice.get() == ".mid") : 
+    #   self.selectedFile = self.midiFiles[comboIndex]
+    # else :
+    #   self.selectedFile = self.gqFiles[comboIndex]
+
+    # # Read the device
+    # self.selectedDevice = self.guiComboMIDI.get()
 
     self.root.destroy()
 
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD FileSelectGUI.CLBK_onQuit()
+  # ---------------------------------------------------------------------------
+  def CLBK_onQuit(self) :
+    self._readSelection()
+    self._configSave()
+    print("[INFO] User exit...")
+    exit()
 
 
 

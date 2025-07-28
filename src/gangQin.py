@@ -17,7 +17,7 @@
 # Project specific constants
 from commons import *
 
-# Graphic interface
+# Graphical interface
 import pygame
 
 # Widgets
@@ -33,10 +33,8 @@ import src.widgets.sequencer as sequencer
 # Utilities
 import arbiter
 import metronome
-import note
 import score
 import stats
-import text
 
 # MIDI
 import mido

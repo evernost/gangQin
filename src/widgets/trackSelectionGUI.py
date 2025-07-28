@@ -54,8 +54,8 @@ class TrackSelectionGUI :
     
     # Initialise attributes
     self.midiFile = ""
-    self.nTracks = 0
-    self.tracks = []
+    self.nTracks  = 0
+    self.tracks   = []
     
     # Initialise display
     self.root = None
@@ -190,7 +190,7 @@ class TrackSelectionGUI :
   # ---------------------------------------------------------------------------
   # METHOD TrackSelectionGUI.CLBK_onQuit()
   # ---------------------------------------------------------------------------
-  def CLBK_onQuit(self, event = None) :
+  def CLBK_onQuit(self) :
     print("[INFO] User exit...")
     exit()
 

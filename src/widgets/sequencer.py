@@ -187,7 +187,7 @@ class Sequencer(widget.Widget) :
 
     decision = self.top.widgets[WIDGET_ID_ARBITER].eval()
 
-    if (decision == arbiter.msg.CURSOR_NEXT) :
+    if (decision == arbiter.msg.VALID_INPUT) :
       self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
 
 

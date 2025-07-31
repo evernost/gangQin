@@ -106,10 +106,10 @@ class GangQin :
       WIDGET_ID_STAFFSCOPE      : staffScope.StaffScope(self),
       WIDGET_ID_FINGERSELECTOR  : fingerSelector.FingerSelector(self),
       WIDGET_ID_ARBITER         : arbiter.Arbiter(self),
+      WIDGET_ID_SEQUENCER       : sequencer.Sequencer(self)
       #metronome.Metronome(self),
       #stats.Stats(self),
       #notify.Notify(self)
-      WIDGET_ID_SEQUENCER       : sequencer.Sequencer(self)
     }
     
 
@@ -217,6 +217,9 @@ class GangQin :
     if (WIDGET_ID_ARBITER in self.widgets) :
       self.widgets[WIDGET_ID_ARBITER].onExternalMidiEvent(midiMessage)
     
+    if (WIDGET_ID_SEQUENCER in self.widgets) :
+      self.widgets[WIDGET_ID_SEQUENCER].onExternalMidiEvent(midiMessage)
+
     if (WIDGET_ID_STATS in self.widgets) :
       self.widgets[WIDGET_ID_STATS].userActivity()
 

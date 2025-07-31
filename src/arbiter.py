@@ -19,16 +19,18 @@ from commons import *
 import src.widgets.widget as widget
 
 # Standard libraries
-from enum import Enum   # For enumerated types in FSM
+import enum     # For enumerated types in FSM
 
 
 
 # =============================================================================
 # CONSTANTS
 # =============================================================================
-class msg(Enum) :
-  CURSOR_NEXT = 0
-  RESET_COMBO = 1
+class msg(enum.Enum) :
+  NO_INPUT          = 0
+  INCOMPLETE_INPUT  = 1
+  WRONG_NOTE        = 2
+  VALID_INPUT       = 3
 
 
 
@@ -146,9 +148,11 @@ class Arbiter(widget.Widget) :
     Compares the notes currently played on the keyboard ('self.midiCurr') with 
     the notes expected ('teacherNotes') and returns the decision in the 
     message queue 'msgQueue'.
-    Decision can either be
-    - MSG_CURSOR_NEXT: valid input
-    - MSG_RESET_COMBO: invalid input
+    Decision can either be:
+    - NO_INPUT          : waits for user input
+    - INCOMPLETE_INPUT  : the user hasn't pressed all the expected notes 
+    - WRONG_NOTE        : something is wrong in the user input
+    - VALID_INPUT       : the user input is correct
     """
 
     teacherNotes = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
@@ -156,11 +160,14 @@ class Arbiter(widget.Widget) :
     # Reformat the teacher notes, keep the 'new' notes only
     # (not the sustained ones, not the notes of the inactive hand)
     teacherNotesAsMidiArray = [0 for _ in range(128)]
+    noInput = True
     for noteObj in teacherNotes :
       if ((noteObj.sustained == False) and (noteObj.inactive == False)):
         teacherNotesAsMidiArray[noteObj.pitch] = 1
-    
-    msgQueue = []
+        noInput = False
+
+    if noInput :
+      ret = msg.NO_INPUT
 
     # STRATEGY: PERMISSIVE
     # Progress as long as the expected notes are pressed. 
@@ -168,17 +175,20 @@ class Arbiter(widget.Widget) :
     # 'Superfluous' notes need to be released and pressed again to be accepted later on.
     if (self.comparisonMode == "permissive") :
       allowProgress = True
+      
       for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
 
         # Case 1: a required note is missing.
         if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 0) and (self.midiSuperfluous[pitch] == 0)) :
           allowProgress = False
+          ret = msg.INCOMPLETE_INPUT
 
         # Case 2: a required note is here, but it was hit before (it wasn't even expected)
         # and has been maintained since then. 
         # Therefore, it does not count.
         if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1) and (self.midiSuperfluous[pitch] == 1)) :
           allowProgress = False
+          ret = msg.INCOMPLETE_INPUT
 
         # Case 3: a required note is here, but it was hit before and has been sustained since then.
         # Meanwhile, the score requires this note to be played again.
@@ -196,12 +206,13 @@ class Arbiter(widget.Widget) :
           # It cannot be used to trigger a new note of the same pitch.
           if not(self.midiAssociatedID[pitch] in expectedIDs) :
             allowProgress = False
+            ret = msg.INCOMPLETE_INPUT
           
         # Case 4: a wrong note is pressed.
         # Since it is permissive, it does not block the progress.
         # But it resets the combo counter and plays a notification.
         if ((teacherNotesAsMidiArray[pitch] == 0) and (self.midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 0)) :
-          msgQueue.append(msg.RESET_COMBO)
+          ret = msg.WRONG_NOTE
           
       # Case 5: progress is on hold because the "note finding" feature is active.
       # The current notes pressed are 'query' notes and all of them 
@@ -221,7 +232,6 @@ class Arbiter(widget.Widget) :
 
       # CONCLUSION
       if allowProgress :
-        msgQueue.append(msg.CURSOR_NEXT)
         
         # Update note status
         for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
@@ -243,7 +253,10 @@ class Arbiter(widget.Widget) :
             self.midiAssociatedID[pitch] = q[0].id
 
 
-    return msgQueue
+        ret = msg.VALID_INPUT
+
+
+    return ret
 
 
 

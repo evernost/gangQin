@@ -3,7 +3,7 @@
 # Project       : gangQin
 # Module name   : fileSelectionGUI
 # File name     : fileSelectionGUI.py
-# Purpose       : shows the song selection GUI for gangQin
+# Purpose       : shows the song and MIDI input selection GUI for gangQin
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : Sunday, 24 Sept 2023
 # -----------------------------------------------------------------------------
@@ -11,15 +11,16 @@
 # =============================================================================
 
 # =============================================================================
-# EXTERNAL LIBS
+# EXTERNALS
 # =============================================================================
-# Project specific constants
+# Project libraries
 from src.commons import *
 
-import configparser
-import mido
-import os
-import tkinter as tk
+# Standard libraries
+import configparser     # For .ini files
+import mido             # For read/write in MIDI files
+import os               # For paths
+import tkinter as tk    # For GUI
 from tkinter import ttk
 
 
@@ -78,9 +79,9 @@ class FileSelectionGUI :
   # ---------------------------------------------------------------------------
   def run(self) :
     """
-    Show the GUI and run its code.
+    Shows the GUI, loops until the user validates the configuration.
 
-    THe function returns the full name of the song (path included) and 
+    The function returns the full name of the song (path included) and 
     the name of the MIDI keyboard interface upon exiting.
     """
 
@@ -272,11 +273,28 @@ class FileSelectionGUI :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD FileSelectGUI._populateSongs()                             [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _populateSongs(self, comboBox) :
+    """
+    Populates the listed songs in the combo box.
+    """
+
+    if (self.guiFileExtChoice.get() == ".mid"): 
+      comboBox["values"] = [os.path.basename(file) for file in self.midiFiles]
+    elif (self.guiFileExtChoice.get() == ".pr") : 
+      comboBox["values"] = [os.path.basename(file) for file in self.gqFiles]
+    else :
+      pass
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD FileSelectGUI._setToLastMidiInterface()                    [PRIVATE]
   # ---------------------------------------------------------------------------
   def _setToLastMidiInterface(self, comboBox) :
     """
-    Description is TODO.
+    Sets the MIDI interface combo box to the last known configuration.
     """
 
     if ("midi_interface" in self.config["DEFAULT"]) :
@@ -292,30 +310,11 @@ class FileSelectionGUI :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD FileSelectGUI._populateSongs()                             [PRIVATE]
-  # ---------------------------------------------------------------------------
-  def _populateSongs(self, comboBox) :
-    """
-    Sets the combo box for the song file selection so that it points to the last
-    song practiced.
-    """
-
-    if (self.guiFileExtChoice.get() == ".mid"): 
-      comboBox["values"] = [os.path.basename(file) for file in self.midiFiles]
-    elif (self.guiFileExtChoice.get() == ".pr") : 
-      comboBox["values"] = [os.path.basename(file) for file in self.gqFiles]
-    else :
-      pass
-
-
-
-  # ---------------------------------------------------------------------------
   # METHOD FileSelectGUI._setToLastSong()                             [PRIVATE]
   # ---------------------------------------------------------------------------
   def _setToLastSong(self, comboBox) :
     """
-    Sets the combo box for the song file selection so that it points to the last
-    song practiced.
+    Sets the file selection combo box to the last song practiced.
     """
 
     if ("song" in self.config["DEFAULT"]) :
@@ -334,7 +333,7 @@ class FileSelectionGUI :
   # ---------------------------------------------------------------------------
   def _setToLastFileExt(self, choice) -> None :
     """
-    Description is TODO.
+    Sets the extension selector to the last type of song practiced.
     """
     
     # Read the last practiced song, set the .mid/.gq selection accordingly
@@ -367,7 +366,10 @@ class FileSelectionGUI :
   # ---------------------------------------------------------------------------
   # METHOD FileSelectGUI._centerWindow()                              [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _centerWindow(self):
+  def _centerWindow(self) :
+    """
+    Centers the window on screen.
+    """
     
     # Ensure widgets are updated before calculating size
     self.root.update_idletasks()
@@ -423,21 +425,11 @@ class FileSelectionGUI :
   def CLBK_onStart(self) :
     """
     CALLBACK function
-    Description is TODO.
+    This function is called when the user selection is done and committed.
     """
 
     self._readSelection()
-
-    # # Read the file
-    # comboIndex = self.guiComboFile.current()
-    # if (self.guiFileExtChoice.get() == ".mid") : 
-    #   self.selectedFile = self.midiFiles[comboIndex]
-    # else :
-    #   self.selectedFile = self.gqFiles[comboIndex]
-
-    # # Read the device
-    # self.selectedDevice = self.guiComboMIDI.get()
-
+    self._configSave()
     self.root.destroy()
 
 
@@ -446,6 +438,11 @@ class FileSelectionGUI :
   # METHOD FileSelectGUI.CLBK_onQuit()
   # ---------------------------------------------------------------------------
   def CLBK_onQuit(self) :
+    """
+    CALLBACK function
+    This function is called when the user prematurely exits the app.
+    """
+    
     self._readSelection()
     self._configSave()
     print("[INFO] User exit...")

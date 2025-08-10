@@ -89,7 +89,7 @@ class Score(widget.Widget) :
 
     # Internal representation
     self.noteList = []
-    self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]   # Cursed old school format (deprecated)
+    self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]   # Cursed old school format (DEPRECATED)
     self.noteOnTimecodes = {
       "L"       : [],   # Timecodes for the left hand keypresses
       "R"       : [],   # Timecodes for the right hand keypresses
@@ -840,25 +840,19 @@ class Score(widget.Widget) :
     """
 
     output = {}
-    output["revision"]      = f"v{REV_MAJOR}.{REV_MINOR}"
+    output["app_version"]   = f"v{REV_MAJOR}.{REV_MINOR}"
     output["cursor"]        = self.getCursor()
     output["bookmarks"]     = self.bookmarks
     output["notelist"]      = []
     output["timecodelist"]  = []
 
-    # Flatten the database
-    # NOTE: will be deprecated as soon as the database structure is changed
-    noteList = []
-    for notesInTrack in self.pianoRoll :
-      for notesInPitch in notesInTrack :
-        for noteObj in notesInPitch :
-          noteList.append(noteObj)
-
-    # Sort the notes chronologically
-    noteList.sort(key = lambda obj: obj.startTime)
+    # Create a copy, we don't want the sorting operations to affect
+    # the order in 'self.notelist'.
+    L = self.noteList.copy()
+    L.sort(key = lambda obj: obj.startTime)
 
     noteCount = 0
-    for noteObj in noteList :
+    for noteObj in L :
       noteAsDict = {
         "pitch"   : noteObj.pitch,
         "hand"    : noteObj.hand,

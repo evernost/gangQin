@@ -530,7 +530,7 @@ class Keyboard(widget.Widget) :
       self.polygons[i+3] += utils.Vector2D(bnw-(2*ns),0)
       self.polygons[i+3] += utils.Vector2D(0,-(bnh-ns))
 
-      # Note Eb
+      # Note E
       self.polygons[i+4] = [(x0+(2*wnw)+(2*bnw//3)+ns, y0)]
       self.polygons[i+4] += utils.Vector2D(0,bnh+ns)
       self.polygons[i+4] += utils.Vector2D(-2*bnw//3,0)

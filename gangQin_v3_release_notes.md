@@ -46,6 +46,7 @@
 - [ ] more robust MIDI keyboard detection (issue #9)
 - [ ] playglows disappearing (issue #13)
 - [X] crash during some MIDI file imports (issue #16)
+- [X] MIDI/song configuration loss when exiting the GUI prematurely (issue #TBD)
 
 # Performance
 TODO

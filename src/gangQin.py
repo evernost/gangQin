@@ -148,10 +148,12 @@ class GangQin :
       self.songType = "pr"
       self.widgets[WIDGET_ID_SCORE].loadPrFile(songFile)
       self.widgets[WIDGET_ID_STAFFSCOPE].load(songFile)
-    else :
+    elif songFile.endswith(".gq3") :
       self.songType = "gq3"
       self.widgets[WIDGET_ID_SCORE].loadGq3File(songFile)
       self.widgets[WIDGET_ID_STAFFSCOPE].load(songFile)
+    else :
+      print("[ERROR] Internal error.")
 
     # Update the app properties
     pygame.display.set_caption(f"gangQin player - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {self.songName}")
@@ -177,8 +179,13 @@ class GangQin :
       self.screen.blit(self.background, (0, 0))
     
       for event in pygame.event.get() :
-        if (event.type == pygame.QUIT) :
-          self.appRunning = False
+        if (event.type == pygame.KEYDOWN) :
+          if (event.key == pygame.K_q) :
+            self._onExit()
+          elif (event.key == pygame.K_s) :
+            self.widgets[WIDGET_ID_SCORE].save()
+        elif (event.type == pygame.QUIT) :
+          self._onExit()
 
         # Pass keyboard/click messages to the widgets
         for widget in self.widgets.values() :
@@ -315,6 +322,8 @@ class GangQin :
     externally.
     """
 
+    self.appRunning = False
+
     if (self.midiPort != None) :
       self.midiPort.close()
 
@@ -323,7 +332,9 @@ class GangQin :
       #statsObj.userActivity()
       #statsObj.save()
     
-    #self.widgets[WIDGET_ID_SCORE].exportToGq3File(self.songFile, backup = True)
+    if (WIDGET_ID_SCORE in self.widgets) :
+      print("[INFO] Exporting a backup...")
+      self.widgets[WIDGET_ID_SCORE].exportToGq3File(self.songFile, backup = True)
 
     print("")
     print("See you!")

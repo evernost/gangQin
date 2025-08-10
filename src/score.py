@@ -76,6 +76,9 @@ class Score(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
    
+    # Song (populated after a loadMidiFile / loadPrFile / loadGq3File)
+    self.songFile = ""
+
     # Pointer in the score
     self.cursor = 0         # Range: 0 ... Score.cursorMax
     self.cursorsLeft = []
@@ -312,7 +315,9 @@ class Score(widget.Widget) :
     that will be read and assigns them to the corresponding track.
     EXAMPLE: midiTracks = ['R', 'L', '', ''] -> read track 0 and 1.
     """
-    
+
+    self.songFile = midiFile
+
     print("[INFO] Importing MIDI file... ")
     
     # For statistics
@@ -455,6 +460,8 @@ class Score(widget.Widget) :
     about the score (bookmarks, fingersatz, tempo, etc.)
     """
     
+    self.songFile = prFile
+
     # For statistics
     startTime = time.time()
     
@@ -466,6 +473,7 @@ class Score(widget.Widget) :
     rev = importDict["revision"][1:].split(".")
     revMajor = int(rev[0])
     revMinor = int(rev[1])
+    print(f"[WARNING] .PR FILES WILL BE DEPRECATED IN FUTURE RELEASES.")
     print(f"[INFO] Reading gangQin v{revMajor}.{revMinor} file...")
     
     # Fallback dictionary in case some fields do not exist.
@@ -588,7 +596,7 @@ class Score(widget.Widget) :
 
     stopTime = time.time()
     print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
-    print(f"[INFO] {noteCount} notes read from .gq file.")
+    print(f"[INFO] {noteCount} notes read from .pr file.")
     print(f"[INFO] Score length: {self.length} steps")
     
     print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")
@@ -608,6 +616,8 @@ class Score(widget.Widget) :
     about the score (bookmarks, fingersatz, tempo, etc.)
     """
     
+    self.songFile = gq3File
+
     # For statistics
     startTime = time.time()
     
@@ -814,24 +824,26 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.exportToGq3File()
+  # METHOD Score.save()
   # ---------------------------------------------------------------------------
-  def exportToGq3File(self, gq3File: str, backup = False) -> None :
+  def save(self, gq3File: str = "", backup = False) -> None :
     """
     Exports the annotated score and all metadata (finger, hand, comments etc.) in 
     a '.gq3' file (JSON) that can be imported later to restore the session.
 
-    'gq3File' must be the full path to the file.
+    By default, the song is saved in the same folder, unless a non-empty 
+    directory specified.
+    'gq3File' must be the full path to the file + file name.
 
     Call the function with 'backup = True' to save under a '.bak' extension instead
     so that the original file is not overwritten (used e.g. for autosave)
     """
 
     output = {}
-    output["revision"]  = f"v{REV_MAJOR}.{REV_MINOR}"
-    output["cursor"]    = self.getCursor()
-    output["bookmarks"] = self.bookmarks
-    output["notelist"]  = []
+    output["revision"]      = f"v{REV_MAJOR}.{REV_MINOR}"
+    output["cursor"]        = self.getCursor()
+    output["bookmarks"]     = self.bookmarks
+    output["notelist"]      = []
     output["timecodelist"]  = []
 
     # Flatten the database
@@ -864,14 +876,18 @@ class Score(widget.Widget) :
       
       noteCount += 1
 
-
+    # By default, save under the same directory
+    if (gq3File == "") :
+      gq3File = self.songFile
+    
     if backup :
       (root, _) = os.path.splitext(gq3File)
       exportFile = root + ".bak"
     else :
       (root, _) = os.path.splitext(gq3File)
       exportFile = root + ".gq3"
-    
+
+    # Write to the file
     with open(exportFile, "w") as fileHandler :
       json.dump(output, fileHandler, indent = 2)
 
@@ -880,7 +896,7 @@ class Score(widget.Widget) :
       print(f"[INFO] Saved backup to '{exportFile}'")
     else :
       currTime = datetime.datetime.now()
-      print(f"[DEBUG] {noteCount} notes written in .pr file.")
+      print(f"[DEBUG] {noteCount} notes written in .gq3 file.")
       print(f"[INFO] Saved to '{exportFile}' at {currTime.strftime('%H:%M:%S')}")
 
 
@@ -2062,10 +2078,10 @@ if (__name__ == "__main__") :
   songFile = SONG_PATH + "/" + "Rachmaninoff_Piano_Concerto_No2_Op18.gq3"
   scoreRef = Score(top = None)
   scoreRef.loadGq3File(songFile)
-  scoreRef.exportToGq3File(songFile, backup = True)
+  scoreRef.save(songFile, backup = True)
 
   scoreNew = Score(top = None)
-  scoreNew.loadGq3File(songFile)
+  scoreNew.save(songFile)
 
   # Compare attributes between 'scoreNew' and 'scoreOld'
   # No major difference should show, especially in the internal score 
@@ -2079,17 +2095,17 @@ if (__name__ == "__main__") :
   songFile = SONG_PATH + "/" + "Medtner_-_Forgotten Melodies_Op_38_II_Danza_graziosa_rev0.mid"
   score = Score(top = None)
   score.loadMIDIFile(songFile, ['R', 'L'])
-  score.exportToGQ3File(SONG_PATH + "/" + "Medtner0.gq3")
+  score.save(SONG_PATH + "/" + "Medtner0.gq3")
 
   songFile = SONG_PATH + "/" + "Medtner_-_Forgotten Melodies_Op_38_II_Danza_graziosa_rev1.mid"
   score = Score(top = None)
   score.loadMIDIFile(songFile, ['R', 'L'])
-  score.exportToGQ3File(SONG_PATH + "/" + "Medtner1.gq3")
+  score.save(SONG_PATH + "/" + "Medtner1.gq3")
 
 
   songFile = SONG_PATH + "/" + "Rachmaninoff_Piano_Concerto_No2_Op18.pr"
   score = Score(top = None)
   score.loadPRFile(songFile)
-  score.exportToGQ3File(songFile)
+  score.save(songFile)
 
 

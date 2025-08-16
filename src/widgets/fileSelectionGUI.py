@@ -309,7 +309,7 @@ class FileSelectionGUI :
       if self.config["DEFAULT"]["midi_interface"] in self.midiDevices :
         comboBox.set(self.config["DEFAULT"]["midi_interface"])
       else :
-        print(f"[INFO] The last used interface is not available ({self.config["DEFAULT"]["midi_interface"]})")
+        print(f"[INFO] The last used interface is not available ({self.config['DEFAULT']['midi_interface']})")
         comboBox.set("None")
 
     else :
@@ -329,7 +329,7 @@ class FileSelectionGUI :
       if self.config["DEFAULT"]["song"] in (self.midiFiles + self.prFiles + self.gq3Files) :
         comboBox.set(os.path.basename(self.config["DEFAULT"]["song"]))
       else :
-        print(f"[INFO] The last practiced song is not available ({self.config["DEFAULT"]["song"]})")
+        print(f"[INFO] The last practiced song is not available ({self.config['DEFAULT']['song']})")
         comboBox.set(comboBox["values"][0])
     else :
       comboBox.set(comboBox["values"][0])

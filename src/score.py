@@ -625,102 +625,64 @@ class Score(widget.Widget) :
     with open(gq3File, "r") as fileHandler :
       importDict = json.load(fileHandler)
 
-    # Read the revision
-    rev = importDict["revision"][1:].split(".")
-    revMajor = int(rev[0])
-    revMinor = int(rev[1])
-    
     # Fallback dictionary in case some fields do not exist.
     safeDict = {
-      "revision"                  : "v0.0",
-      "nStaffs"                   : 2,
-      "avgNoteDuration"           : 100.0,
+      "appVersion"                : "v0.0",
       "cursor"                    : 0,
-      "cursorsLeft"               : [],
-      "cursorsRight"              : [],
       "bookmarks"                 : [],
-      "activeHands"               : "LR",
+      "noteList"                  : [],
+      "timecodeList"              : [],
       "tempoSections"             : [(1, 120)],
       "weakArbitrationSections"   : []
     }
-  
-    # Load every existing field
+
+    # Read the revision
+    rev = importDict["appVersion"][1:].split(".")
+    revMajor = int(rev[0])
+    revMinor = int(rev[1])
+    if (revMajor == 0) :
+      print("[INFO] Importing dinosaur .pr file (versions v0.X) has been deprecated since gangQin v1.6")
+      exit()
+
+    # Populate fields with the JSON
     for currKey in safeDict :
       if currKey in importDict :
         safeDict[currKey] = importDict[currKey]
 
     # Initialize the object
-    self.cursor           = safeDict["cursor"]
-    self.bookmarks        = safeDict["bookmarks"]
-    self.avgNoteDuration  = safeDict["avgNoteDuration"]
+    self.cursor     = safeDict["cursor"]
+    self.bookmarks  = safeDict["bookmarks"]
     
-    # -----------------------------
-    # Pianoroll import - v0.X style
-    # -----------------------------
-    if (revMajor == 0) :
-      print("[INFO] Importing dinosaur .pr file (versions v0.X) has been deprecated since gangQin v1.6")
+    if (len(safeDict["noteList"]) != len(safeDict["timecodeList"])) :
+      print("[ERROR] Lengths do not match.")
       exit()
-      
-    # ---------------------------------
-    # Pianoroll import - v1.0 and above
-    # ---------------------------------
-    # From version 1.0, the pianoroll is flattened.
-    # From version 1.3, the variables:
-    # - 'noteOntimecodes'
-    # - 'noteOntimecodesMerged'
-    # - 'cursorsLeft'
-    # - 'cursorsRight'
-    # are rebuilt from the notes properties in the pianoroll.
-    else :
-      
-      self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
-      self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
-      noteCount = 0
-      masteredNoteCount = 0
-      for noteObjImported in importDict["pianoRoll"] :
+    
+    noteCount = 0
+    annotatedNoteCount = 0
+    self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
+    self.noteList = []
+    for (i, noteAsDict) in enumerate(safeDict["noteList"]) :
+      N = note.Note(noteAsDict["pitch"])
+      N.hand      = noteAsDict["hand"]
+      N.finger    = noteAsDict["finger"]
+      N.voice     = noteAsDict["voice"]
+      N.startTime = safeDict["timecodeList"][i]["startTime"]
+      N.stopTime  = safeDict["timecodeList"][i]["stopTime"]
+      N.id        = i
+      self.noteList.append(N)
 
-        # Create the object
-        noteObj = note.Note(0)
-        
-        # List of all properties in a Note object, make a dictionary out of it.
-        noteAttrDict = noteObj.__dict__.copy()
-        
-        # Make sure the ID is treated first, so that the warning later in the for loop
-        # can display the ID of the edited note.
-        noteObj.id = noteObjImported["id"]; del noteAttrDict["id"]
+      if (N.finger != 0) :
+        annotatedNoteCount += 1
 
-        # Detect manual editions
-        noteNameExpected = note.getFriendlyName(noteObjImported["pitch"])
-        noteNameActual   = noteObjImported["name"]
-        newColor = NOTE_WHITE_KEY if ((noteObjImported["pitch"] % 12) in MIDI_CODE_WHITE_NOTES_MOD12) else NOTE_BLACK_KEY
-        if (noteNameExpected != noteNameActual) :
-          print(f"[INFO] Note ID {noteObj.id}: manual edition detected.")
-          print(f"Following fields will be replaced:")
-          print(f"- note name: {noteNameActual} -> {noteNameExpected}")
-          print(f"- key color: {newColor}")
-          noteObjImported["name"]     = noteNameExpected
-          noteObjImported["keyColor"] = newColor
+      if (N.hand == NOTE_LEFT_HAND) :
+        self.noteOnTimecodes["L"].append(N.startTime)
+      elif (N.hand == NOTE_RIGHT_HAND) :
+        self.noteOnTimecodes["R"].append(N.startTime)
 
-        # Loop on the attributes of the Note object
-        # Set the attribute by string
-        for noteAttr in noteAttrDict :
-          if noteAttr in noteObjImported :
-            setattr(noteObj, noteAttr, noteObjImported[noteAttr])
-        
-        if (noteObj.finger != 0) :
-          masteredNoteCount += 1
+      self.noteOnTimecodes["LR_full"].append(N.startTime)
 
-        self.pianoRoll[noteObjImported["hand"]][noteObjImported["pitch"]].append(noteObj)
-        
-        if (noteObjImported["hand"] == NOTE_LEFT_HAND) :
-          self.noteOnTimecodes["L"].append(noteObj.startTime)
-        elif (noteObjImported["hand"] == NOTE_RIGHT_HAND) :
-          self.noteOnTimecodes["R"].append(noteObj.startTime)
+      noteCount += 1
 
-        self.noteOnTimecodes["LR_full"].append(noteObj.startTime)
-        
-        noteCount += 1
-        
     # Tidy up:
     # - sort the timecodes by ascending values
     # - remove duplicate entries
@@ -731,9 +693,6 @@ class Score(widget.Widget) :
     self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
     self.noteOnTimecodes["LR"].sort()
 
-    # Build "cursorsLeft" and "cursorsRight".
-    # Each one is a list of all cursors where something has to be played 
-    # either on the left (cursorsLeft) or right hand (cursorsRight)
     self._buildCursorsLR()
 
     self.length = len(self.noteOnTimecodes["LR"])
@@ -741,10 +700,10 @@ class Score(widget.Widget) :
 
     stopTime = time.time()
     print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
-    print(f"[INFO] {noteCount} notes read from .gq file.")
+    print(f"[INFO] {noteCount} notes read from .gq3 file.")
     print(f"[INFO] Score length: {self.length} steps")
     
-    print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")
+    print(f"[INFO] Progress: {annotatedNoteCount}/{noteCount} ({100*annotatedNoteCount/noteCount:.1f}%)")
 
 
 
@@ -840,14 +799,14 @@ class Score(widget.Widget) :
     """
 
     output = {}
-    output["app_version"]   = f"v{REV_MAJOR}.{REV_MINOR}"
+    output["appVersion"]    = f"v{REV_MAJOR}.{REV_MINOR}"
     output["cursor"]        = self.getCursor()
     output["bookmarks"]     = self.bookmarks
-    output["notelist"]      = []
-    output["timecodelist"]  = []
-
+    output["noteList"]      = []
+    output["timecodeList"]  = []
+    
     # Create a copy, we don't want the sorting operations to affect
-    # the order in 'self.notelist'.
+    # the order in 'self.noteList'.
     L = self.noteList.copy()
     L.sort(key = lambda obj: obj.startTime)
 
@@ -860,15 +819,20 @@ class Score(widget.Widget) :
         "voice"   : noteObj.voice,
         "name"    : noteObj.name
       }
-      output["notelist"].append(noteAsDict)
+      output["noteList"].append(noteAsDict)
       
-      timeMarkAsDict = {
-        "starttime" : noteObj.startTime,
-        "stoptime"  : noteObj.stopTime
+      timecodeAsDict = {
+        "startTime" : noteObj.startTime,
+        "stopTime"  : noteObj.stopTime
       }
-      output["timecodelist"].append(timeMarkAsDict)
-      
+      output["timecodeList"].append(timecodeAsDict)
+
       noteCount += 1
+
+    # TODO
+    # Written at the end of the JSON to simplify diff/merges
+    output["tempoSections"] = []
+    output["weakArbitrationSections"] = []
 
     # By default, save under the same directory
     if (gq3File == "") :
@@ -887,7 +851,7 @@ class Score(widget.Widget) :
 
     currTime = datetime.datetime.now()
     if backup :
-      print(f"[INFO] Saved backup to '{exportFile}'")
+      print(f"[INFO] A backup of the current state was saved under '{exportFile}'")
     else :
       currTime = datetime.datetime.now()
       print(f"[DEBUG] {noteCount} notes written in .gq3 file.")

@@ -333,8 +333,7 @@ class GangQin :
       #statsObj.save()
     
     if (WIDGET_ID_SCORE in self.widgets) :
-      print("[INFO] Exporting a backup...")
-      self.widgets[WIDGET_ID_SCORE].exportToGq3File(self.songFile, backup = True)
+      self.widgets[WIDGET_ID_SCORE].save(backup = True)
 
     print("")
     print("See you!")

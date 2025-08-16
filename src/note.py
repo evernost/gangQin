@@ -288,6 +288,7 @@ class Note :
 
     ret = f"""Note object properties
     - pitch:     {self.pitch}
+    - name:      {self.name}
     - hand:      {self.hand} ({strHand})
     - finger:    {strFinger}
     - key color: {strKeyColor}
@@ -297,7 +298,6 @@ class Note :
     - visible:   {self.visible}
     - sustained: {self.sustained}
     - highlight: {self.highlight}
-    - name:      {self.name}
     - id:        {self.id}
     """
     

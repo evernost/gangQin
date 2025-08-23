@@ -119,7 +119,7 @@ class Keyboard(widget.Widget) :
     if ((10 <= mouse_x <= 1310) and (300 <= mouse_y <= 450)) :  
       
       # TODO: 'detectedNotes' must contain active notes only (no sustained note)
-      detectedNote = self.isCoordOnActiveNote(mouse_x, mouse_y)
+      detectedNote = self.clickHitTest((mouse_x, mouse_y))
       if detectedNote :
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
       else :
@@ -393,17 +393,18 @@ class Keyboard(widget.Widget) :
 
   
   # ---------------------------------------------------------------------------
-  # METHOD Keyboard.isCoordOnActiveNote
+  # METHOD Keyboard.clickHitTest
   # ---------------------------------------------------------------------------
-  def isCoordOnActiveNote(self, mouse_x, mouse_y) :
+  def clickHitTest(self, coord) :
     """
-    Indicates whether it is an active key (a "lit" key)
-    that has been clicked.
+    Detects if the click coordinates are in the hitbox of an active note.
+    Returns the note object or 'None' if nothing is hit.
     """
 
     candidates = []
+    (x,y) = coord
     for (currLitNotePolygon, currNote) in self.litKeysPolygons :  
-      if Point(mouse_x, mouse_y).within(Polygon(currLitNotePolygon)) :        
+      if Point(x, y).within(Polygon(currLitNotePolygon)) :        
         candidates.append(currNote)
 
     # Multiple candidates: quite possibly one is pressed, the others are sustained
@@ -416,7 +417,7 @@ class Keyboard(widget.Widget) :
     elif (len(candidates) == 1) :
       return candidates[0]
     
-    # This click hit none of the polygons shown
+    # This click hit none of the polygons displayed
     else :
       return None
 

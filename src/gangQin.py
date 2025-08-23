@@ -104,7 +104,7 @@ class GangQin :
       WIDGET_ID_KEYBOARD        : keyboard.Keyboard(self, loc = (10, 300)),
       WIDGET_ID_PIANOROLL       : pianoRoll.PianoRoll(self, loc = (10, 50)),
       WIDGET_ID_STAFFSCOPE      : staffScope.StaffScope(self),
-      WIDGET_ID_FINGERSELECTOR  : fingerSelector.FingerSelector(self),
+      WIDGET_ID_FINGERSELECTOR  : fingerSelector.FingerSelector(self, loc = (490, 470)),
       WIDGET_ID_ARBITER         : arbiter.Arbiter(self),
       WIDGET_ID_SEQUENCER       : sequencer.Sequencer(self)
       #metronome.Metronome(self),

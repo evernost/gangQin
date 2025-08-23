@@ -127,8 +127,8 @@ class Database :
       # The 'depotFolder' exists but not the 'jsonFile'.
       # There is now obvious way to recover from that.
       if os.path.exists(self.depotFolder) :
-        print("[ERROR] Orphaned depot folder without json file. Possible corruption.")
-        exit()
+        print("[WARNING] No json associated with the depot folder. Can't load the StaffScope view!")
+        #exit()
         
       # Nothing exists: they need to be created
       else :
@@ -150,18 +150,18 @@ class Database :
       if os.path.exists(self.depotFolder) :
         with open(self.jsonFile, "r") as jsonFile :
           jsonData = json.load(jsonFile)
-    
-    if (self.songName != jsonData["songName"]) :
-      print("[WARNING] Database._integrityCheck(): 'songName' attribute is inconsistent. Possible database corruption.")  
+          
+          if (self.songName != jsonData["songName"]) :
+            print("[WARNING] Database._integrityCheck(): 'songName' attribute is inconsistent. Possible database corruption.")  
 
-    if (self.jsonName != jsonData["jsonName"]) :
-      print("[WARNING] Database._integrityCheck(): 'jsonName' attribute is inconsistent. Possible database corruption.")
+          if (self.jsonName != jsonData["jsonName"]) :
+            print("[WARNING] Database._integrityCheck(): 'jsonName' attribute is inconsistent. Possible database corruption.")
 
-    if (self.jsonFile != jsonData["jsonFile"]) :
-      print("[WARNING] Database._integrityCheck(): 'jsonFile' attribute is inconsistent. Possible database corruption.")
+          if (self.jsonFile != jsonData["jsonFile"]) :
+            print("[WARNING] Database._integrityCheck(): 'jsonFile' attribute is inconsistent. Possible database corruption.")
 
-    if (self.depotFolder != jsonData["depotFolder"]) :
-      print("[WARNING] Database._integrityCheck(): 'depotFolder' attribute is inconsistent. Possible database corruption.")
+          if (self.depotFolder != jsonData["depotFolder"]) :
+            print("[WARNING] Database._integrityCheck(): 'depotFolder' attribute is inconsistent. Possible database corruption.")
 
 
     # TODO: check the snapshot attributes

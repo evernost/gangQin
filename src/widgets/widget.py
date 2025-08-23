@@ -134,7 +134,10 @@ class Widget :
   # ---------------------------------------------------------------------------
   def _onMouseEvent(self, button, type) :
     """
-    Function is triggered by a keypress.
+    Function is triggered by a mouse event.
+    Mouse events include:
+    - click (left/right)
+    - scroll (yes)
     
     This function must be overriden with the specific code of the widget.
     """

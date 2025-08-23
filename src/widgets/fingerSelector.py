@@ -53,10 +53,10 @@ class FingerSelector(widget.Widget) :
   The FingerSelector class derives from the Widget class.
   """
 
-  def __init__(self, top) :
+  def __init__(self, top, loc) :
     
-    # Initialise the parent class (Widget)
-    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
+    # Call the Widget init method
+    super().__init__(top, loc)
 
     self.visible = False
 
@@ -88,6 +88,41 @@ class FingerSelector(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD: FingerSelector._onMouseEvent()                          [INHERITED]
+  # ---------------------------------------------------------------------------
+  def _onMouseEvent(self, button, type) :
+    """
+    Function is triggered by a mouse event.
+    
+    This function must be overriden with the specific code of the widget.
+    """
+    
+    if (type == pygame.MOUSEBUTTONDOWN) :
+      if (button == MOUSE_LEFT_CLICK) :
+        N = self.top.widgets[WIDGET_ID_KEYBOARD].clickHitTest(pygame.mouse.get_pos())
+        
+        if not(N is None) :
+          print(f"Hey, that a {N.name}")
+          self.setEditedNote(N)
+        else :
+          print("hey")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score._onKeyEvent()                                      [INHERITED]
+  # ---------------------------------------------------------------------------
+  def _onKeyEvent(self, key, type, modifier = "") :
+    """
+    Function triggered by a keypress.
+    """
+    
+    if (type == pygame.KEYDOWN) :
+      pass
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD: FingerSelector.render()
   # ---------------------------------------------------------------------------
   def render(self) :
@@ -95,27 +130,29 @@ class FingerSelector(widget.Widget) :
     Renders the finger selection buttons and graphical elements on screen.
     """
     
+    (locX, locY) = self.loc
+
     if (self.visible) :
       labels = ["5 ", "4 ", "3 ", "2 ", "1 ", "- ", "- ", "1 ", "2 ", "3 ", "4 ", "5 "]
       
-      # Note: 96 = 8*10 + 8*2, i.e. 8 x char size + 8 x space in-between
-      text.render(self.top.screen, f"FINGER: ", (self.locX, self.locY), 2, self.textColor)      
+      text.render(self.top.screen, f"FINGER: ", (locX, locY), 2, self.textColor)      
       
       for (i, label) in enumerate(labels) :
         if (i <= 5) :          
           if (self.currentSel == i) :
-            text.render(self.top.screen, label, (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelL)
+            # Note: 96 = 8*10 + 8*2, i.e. 8 x char size + 8 x space in-between
+            text.render(self.top.screen, label, (locX + 96 + (i*23), locY), 2, self.textColorSelL)
           else :
-            text.render(self.top.screen, label, (self.locX + 96 + (i*23), self.locY), 2, self.textColorL)
+            text.render(self.top.screen, label, (locX + 96 + (i*23), locY), 2, self.textColorL)
 
         else :
           if (self.currentSel == i) :
-            text.render(self.top.screen, label, (self.locX + 96 + (i*23), self.locY), 2, self.textColorSelR)
+            text.render(self.top.screen, label, (locX + 96 + (i*23), locY), 2, self.textColorSelR)
           else :
-            text.render(self.top.screen, label, (self.locX + 96 + (i*23), self.locY), 2, self.textColorR)
+            text.render(self.top.screen, label, (locX + 96 + (i*23), locY), 2, self.textColorR)
 
-      x0 = self.locX + 96 - 7
-      yTop = self.locY + 3; yBottom = self.locY + 12
+      x0 = locX + 96 - 7
+      yTop = locY + 3; yBottom = locY + 12
       for i in range(13) :
         if (i == 6) :
           pygame.draw.line(self.top.screen, self.lineColor, (x0 + (i*23), yTop-8), (x0 + (i*23), yBottom+6), 1)
@@ -140,6 +177,7 @@ class FingerSelector(widget.Widget) :
     self.editedNote = noteObj
     self.editedCursor = cursor
     noteObj.highlight = True
+    self.visible = True
 
 
 
@@ -303,12 +341,12 @@ class FingerSelector(widget.Widget) :
   # ---------------------------------------------------------------------------
   def _setCurrentSel(self, finger, hand) :
     
-    if (hand == LEFT_HAND) :
+    if (hand == NOTE_LEFT_HAND) :
       self.currentSel = 5
       if (finger in [1,2,3,4,5]) :
         self.currentSel = 5 - finger
     
-    if (hand == RIGHT_HAND) :
+    if (hand == NOTE_RIGHT_HAND) :
       self.currentSel = 6
       if (finger in [1,2,3,4,5]) :
         self.currentSel = finger + 6
@@ -323,34 +361,24 @@ class FingerSelector(widget.Widget) :
   def _getFingerfromSel(self) :
         
     if (self.currentSel <= 4) :
-      return (LEFT_HAND, 5-self.currentSel)
+      return (NOTE_LEFT_HAND, 5-self.currentSel)
 
     if (self.currentSel == 5) :
-      return (LEFT_HAND, UNDEFINED_FINGER)
+      return (NOTE_LEFT_HAND, NOTE_UNDEFINED_FINGER)
       # self.editedNote.hand = ku.LEFT_HAND  => not supported yet
     
     if (self.currentSel == 6) :
-      return (RIGHT_HAND, UNDEFINED_FINGER)
+      return (NOTE_RIGHT_HAND, NOTE_UNDEFINED_FINGER)
       # self.editedNote.hand = ku.RIGHT_HAND  => not supported yet
     
     if (self.currentSel >= 7) :
-      return (RIGHT_HAND, self.currentSel - 6)
+      return (NOTE_RIGHT_HAND, self.currentSel - 6)
     
-    return (UNDEFINED_FINGER, UNDEFINED_HAND)
+    return (NOTE_UNDEFINED_FINGER, NOTE_UNDEFINED_HAND)
   
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD Score._onKeyEvent()                                        [PRIVATE]
-  # ---------------------------------------------------------------------------
-  def _onKeyEvent(self, key, type, modifier = "") :
-    """
-    Function triggered by a keypress.
-    """
-    
-    if (type == pygame.KEYDOWN) :
-      pass
 
 
 

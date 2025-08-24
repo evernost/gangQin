@@ -32,13 +32,12 @@ import src.widgets.sequencer as sequencer
 
 # Utilities
 import arbiter
-import metronome
 import score
-import stats
+
 
 # MIDI
 import mido
-import mido.backends.rtmidi   # Not used but necessary for the .exe generation
+import mido.backends.rtmidi   # Not used, but necessary for the .exe generation
 
 # Standard libs
 import os
@@ -195,14 +194,10 @@ class GangQin :
       for widget in self.widgets.values() :
         widget.render()
 
-      
-
-
       self.clock.tick(GUI_FPS)
 
       # Update the display
       pygame.display.flip()
-
 
     # Quit Pygame
     self._onExit()

@@ -56,6 +56,8 @@ class StaffScope(widget.Widget) :
     # Initialise the parent class (Widget)
     super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
 
+    self.name = "staffscope"
+
     self.songName     = ""      # Name of the song
     self.jsonName     = ""      # Name of the database file
     self.jsonFile     = ""      # Full name of the databse file (path + filename)

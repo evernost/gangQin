@@ -80,6 +80,8 @@ class Arbiter(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
 
+    self.name = "arbiter"
+
     self.status = False  
     self.comparisonMode = "permissive"
     

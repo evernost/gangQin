@@ -55,6 +55,8 @@ class Keyboard(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc)
 
+    self.name = "keyboard"
+
     # Populated after calling "Keyboard._makePolygons()"
     self.polygons = []
 
@@ -108,9 +110,10 @@ class Keyboard(widget.Widget) :
 
     # Render the notes from Score and from the keyboard input
     if (WIDGET_ID_SCORE in self.top.widgets) :
+      self.litKeysPolygons = []
       self.activeNotesScore = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
-      self.keyPress(self.activeNotesScore)
-      self.keyPress(self.activeNotesMIDI)
+      self._renderKeyPress(self.activeNotesScore)
+      self._renderKeyPress(self.activeNotesMIDI)
 
     # Change the mouse cursor appearance when hovering over the notes
     (mouse_x, mouse_y) = pygame.mouse.get_pos()
@@ -130,18 +133,17 @@ class Keyboard(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Keyboard.keyPress()
+  # METHOD Keyboard._renderKeyPress()                                 [PRIVATE]
   # ---------------------------------------------------------------------------
-  def keyPress(self, notes) :
+  def _renderKeyPress(self, notes) :
     """
-    Highlights on the keyboard widget all the 'Note' objects in the 'notes' array.
-    The rendering color is inferred from the attributes of the notes.
-
-    This function can be called several times to render a single frame. 
-    The polygons will be superimposed.
+    Renders a keypress on the keyboard.
+    
+    The function takes a list of 'Note' objects as input.
+    The rendering takes the note's attributes into account.
     """
 
-    # Preprocess the list so that the earliest notes are drawn first
+    # Preprocess the list so that the earliest notes are drawn first.
     # This avoids the sustained notes to be drawn on top.
     notes.sort(key = lambda x: x.startTime)
 
@@ -154,8 +156,8 @@ class Keyboard(widget.Widget) :
       if not(noteObj.fromKeyboardInput) :
         if (noteObj.startTime != noteObj.stopTime):
           newNoteList.append(noteObj)
-        # else :
-        #   print("[WARNING] Null duration note detected")
+        else :
+          print("[WARNING] Keyboard._renderKeyPress(): null duration note detected.")
       else :
         newNoteList.append(noteObj)
     notes = newNoteList
@@ -397,14 +399,14 @@ class Keyboard(widget.Widget) :
   # ---------------------------------------------------------------------------
   def clickHitTest(self, coord) :
     """
-    Detects if the click coordinates are in the hitbox of an active note.
-    Returns the note object or 'None' if nothing is hit.
+    Detects if the click's coordinates are in the hitbox of an active note.
+    Returns the note object, or 'None' if nothing is hit.
     """
 
     candidates = []
     (x,y) = coord
-    for (currLitNotePolygon, currNote) in self.litKeysPolygons :  
-      if Point(x, y).within(Polygon(currLitNotePolygon)) :        
+    for (currLitNotePolygon, currNote) in self.litKeysPolygons :
+      if Point(x, y).within(Polygon(currLitNotePolygon)) :
         candidates.append(currNote)
 
     # Multiple candidates: quite possibly one is pressed, the others are sustained

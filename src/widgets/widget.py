@@ -46,6 +46,9 @@ class Widget :
     # Position in the top level app
     self.loc = loc
 
+    # Name (override with your own)
+    self.name = "PURE CLASS"
+
     # GUI interactions
     self.keyboardCtrlKey = False
 

@@ -58,6 +58,8 @@ class FingerSelector(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc)
 
+    self.name = "finger selector"
+
     self.visible = False
 
     # -1 = nothing is selected
@@ -76,7 +78,6 @@ class FingerSelector(widget.Widget) :
     self.editedCursor = -1
 
     # *** Graphical properties ***
-    #(self.locX, self.locY) = loc
     self.textColor = GUI_TEXT_COLOR
     self.textColorL = (145, 7, 0)
     self.textColorR = (0, 145, 7)
@@ -84,41 +85,6 @@ class FingerSelector(widget.Widget) :
     
     self.textColorSelL = (244, 13, 0)
     self.textColorSelR = (0, 244, 13)
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD: FingerSelector._onMouseEvent()                          [INHERITED]
-  # ---------------------------------------------------------------------------
-  def _onMouseEvent(self, button, type) :
-    """
-    Function is triggered by a mouse event.
-    
-    This function must be overriden with the specific code of the widget.
-    """
-    
-    if (type == pygame.MOUSEBUTTONDOWN) :
-      if (button == MOUSE_LEFT_CLICK) :
-        N = self.top.widgets[WIDGET_ID_KEYBOARD].clickHitTest(pygame.mouse.get_pos())
-        
-        if not(N is None) :
-          print(f"Hey, that a {N.name}")
-          self.setEditedNote(N)
-        else :
-          print("hey")
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score._onKeyEvent()                                      [INHERITED]
-  # ---------------------------------------------------------------------------
-  def _onKeyEvent(self, key, type, modifier = "") :
-    """
-    Function triggered by a keypress.
-    """
-    
-    if (type == pygame.KEYDOWN) :
-      pass
 
 
 
@@ -170,6 +136,7 @@ class FingerSelector(widget.Widget) :
     A cursor value can be stored along with the note so that it is easier to 
     show/hide the widget in a specific context.
     """
+
     self._setCurrentSel(noteObj.finger, noteObj.hand)
     if (self.editedNote != None) :
       self.editedNote.highlight = False
@@ -335,9 +302,7 @@ class FingerSelector(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <_setCurrentSel> (private)
-  #
-  # TODO
+  # METHOD: FingerSelector._setCurrentSel()                           [PRIVATE]
   # ---------------------------------------------------------------------------
   def _setCurrentSel(self, finger, hand) :
     
@@ -395,6 +360,55 @@ class FingerSelector(widget.Widget) :
 
     if (key == pygame.K_m) :
       pass
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: FingerSelector._onMouseEvent()                          [INHERITED]
+  # ---------------------------------------------------------------------------
+  def _onMouseEvent(self, button, type) :
+    """
+    Function is triggered by a mouse event.
+    
+    This function must be overriden with the specific code of the widget.
+    """
+    
+    if (type == pygame.MOUSEBUTTONDOWN) :
+      if (button == MOUSE_LEFT_CLICK) :
+        N = self.top.widgets[WIDGET_ID_KEYBOARD].clickHitTest(pygame.mouse.get_pos())
+        
+        if not(N is None) :
+          print(f"Hey, that's a {N.name}")
+          self.setEditedNote(N)
+        else :
+          print("hey")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD FingerSelector._onKeyEvent()                             [INHERITED]
+  # ---------------------------------------------------------------------------
+  def _onKeyEvent(self, key, type, modifier = "") :
+    """
+    Function triggered by a keypress.
+    """
+    
+    if (type == pygame.KEYDOWN) :
+      
+      # Simple keypresses (no modifiers)
+      if (modifier == "") :
+        
+        # B: toggle bookmark
+        if (key == pygame.K_TAB) :
+          print("You hit tab! I'm so happy.")
+
+
+
+
+
+
+
 
 
 

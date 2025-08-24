@@ -76,16 +76,18 @@ class Score(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
    
+    self.name = "score"
+
     # Song (populated after a loadMidiFile / loadPrFile / loadGq3File)
     self.songFile = ""
 
     # Pointer in the score
-    self.cursor = 0         # Range: 0 ... Score.cursorMax
-    self.cursorsLeft = []
+    self.cursor       = 0         # Range: 0 ... Score.cursorMax
+    self.cursorsLeft  = []
     self.cursorsRight = []
-    self.bookmarks = []
-    self.cursorMax = 0
-    self.length = 0
+    self.bookmarks    = []
+    self.cursorMax    = 0
+    self.length       = 0
 
     # Internal representation
     self.noteList = []
@@ -1875,7 +1877,7 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score._onKeyEvent()                                        [PRIVATE]
+  # METHOD Score._onKeyEvent()                                      [INHERITED]
   # ---------------------------------------------------------------------------
   def _onKeyEvent(self, key, type, modifier = "") :
     """

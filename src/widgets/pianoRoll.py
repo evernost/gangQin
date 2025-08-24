@@ -48,6 +48,8 @@ class PianoRoll(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc)
   
+    self.name = "pianoroll"
+
     # Widget location
     self.x = loc[0]
     self.yTop = loc[1]

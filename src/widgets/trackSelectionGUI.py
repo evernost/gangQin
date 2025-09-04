@@ -132,8 +132,8 @@ class TrackSelectionGUI :
     tmp = tk.StringVar(value = self.displayTrackList)
     self.lstboxTracks = tk.Listbox(content, listvariable = tmp, width = 50, font = ("Consolas", 10))
 
-    btnSetLeft = ttk.Button(content, text = "Assign track to Left hand", command = self.CLBK_onLeftKey)
-    btnSetRight = ttk.Button(content, text = "Assign track to Right hand", command = self.CLBK_onRightKey)
+    btnSetLeft  = ttk.Button(content, text = "<- Assign track to Left hand", command = self.CLBK_onLeftKey)
+    btnSetRight = ttk.Button(content, text = "Assign track to Right hand ->", command = self.CLBK_onRightKey)
 
     btnGenerate = ttk.Button(content, text = "Generate", command = self.CLBK_onGenerate, default = "active")
     btnQuit = ttk.Button(content, text = "Quit", command = self.CLBK_onQuit)

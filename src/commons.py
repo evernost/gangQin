@@ -31,9 +31,9 @@ from enum import Enum   # For enumerated types in FSM
 # VERSION
 REV_MAJOR = 3
 REV_MINOR = 0
-REV_TYPE = "ALPHA" # "ALPHA", "BETA", "STABLE"
-REV_YEAR = 2025
-REV_MONTH = "August"
+REV_TYPE  = "ALPHA" # "ALPHA", "BETA", "STABLE"
+REV_YEAR  = 2025
+REV_MONTH = "September"
 
 # GUI SETTINGS (do not edit)
 GUI_SCREEN_WIDTH = 1320

@@ -80,16 +80,19 @@ class GangQin :
 
     # Initialise pygame
     pygame.init()
-    self.screen = pygame.display.set_mode((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT))
-    self.screenWidth = self.screen.get_size()[0]
+    self.screen       = pygame.display.set_mode((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT))
+    self.screenWidth  = self.screen.get_size()[0]
     self.screenHeight = self.screen.get_size()[1]
-    self.clock = pygame.time.Clock()
-    pygame.key.set_repeat(250, 50)    # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
+    self.clock        = pygame.time.Clock()
+    
+    # Enable key repeats (250 ms delay before repeat, repeat every 50 ms)
+    pygame.key.set_repeat(250, 50)
+    
     self._backgroundInit()
     self.running = False
     self.midiPort = None
 
-    # Limit the key events to avoid unnecessary processing
+    # Limit the supported key events to avoid unnecessary processing
     pygame.event.set_allowed([
       pygame.KEYDOWN,
       pygame.KEYUP,
@@ -97,7 +100,7 @@ class GangQin :
       pygame.QUIT
     ])
 
-    # Initialise the widgets
+    # Create the widgets
     self.widgets = {
       WIDGET_ID_SCORE           : score.Score(self),
       WIDGET_ID_KEYBOARD        : keyboard.Keyboard(self, loc = (10, 300)),
@@ -124,38 +127,38 @@ class GangQin :
 
     # Call the file selection GUI
     fsGUI = fileSelectionGUI.new()
-    (selectedDevice, songFile) = fsGUI.run()
+    (selectedDevice, selectedFile) = fsGUI.run()
 
-    if ((songFile == "") or (songFile == "None")) :
+    if ((selectedFile == "") or (selectedFile == "None")) :
       print("[INFO] No file selected, exiting...")
       exit()
     else :
-      (rootDir, rootNameExt) = os.path.split(songFile)
+      (rootDir, rootNameExt) = os.path.split(selectedFile)
       (rootName, _) = os.path.splitext(rootNameExt)
-      self.songFile = songFile
+      self.selectedFile = selectedFile
       self.songDir  = rootDir
       self.songName = rootName
 
     # If a MIDI file is selected, show the track selection GUI
-    if songFile.endswith(".mid") :
+    if selectedFile.endswith(".mid") :
       self.songType = "mid"
       trackSel = trackSelectionGUI.new()
-      trackSel.load(songFile)
+      trackSel.load(selectedFile)
       midiTracks = trackSel.show()
-      self.widgets[WIDGET_ID_SCORE].loadMidiFile(songFile, midiTracks)
-    elif songFile.endswith(".pr") :
+      self.widgets[WIDGET_ID_SCORE].loadMidiFile(selectedFile, midiTracks)
+    elif selectedFile.endswith(".pr") :
       self.songType = "pr"
-      self.widgets[WIDGET_ID_SCORE].loadPrFile(songFile)
-      self.widgets[WIDGET_ID_STAFFSCOPE].load(songFile)
-    elif songFile.endswith(".gq3") :
+      self.widgets[WIDGET_ID_SCORE].loadPrFile(selectedFile)
+      self.widgets[WIDGET_ID_STAFFSCOPE].load(selectedFile)
+    elif selectedFile.endswith(".gq3") :
       self.songType = "gq3"
-      self.widgets[WIDGET_ID_SCORE].loadGq3File(songFile)
-      self.widgets[WIDGET_ID_STAFFSCOPE].load(songFile)
+      self.widgets[WIDGET_ID_SCORE].loadGq3File(selectedFile)
+      self.widgets[WIDGET_ID_STAFFSCOPE].load(selectedFile)
     else :
-      print("[ERROR] Internal error.")
+      print("[ERROR] Internal error (unsupported file extension)")
 
     # Update the app properties
-    pygame.display.set_caption(f"gangQin player - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {self.songName}")
+    pygame.display.set_caption(f"gangQin player - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {rootNameExt}")
 
     # Initialise the selected MIDI interface (if any)
     self._midiInterfaceInit(selectedDevice)

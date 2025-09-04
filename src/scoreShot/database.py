@@ -42,7 +42,7 @@ class Database :
   This class manages the snapshots files and their arrangement within 
   the database.
   """
-  def __init__(self, jsonFile) :
+  def __init__(self, jsonFile = "") :
     
     self.nSnapshots = 0             # Number of score snapshots available in the database
     self.snapshots = []             # List of Snapshot objects
@@ -76,12 +76,13 @@ class Database :
     database.
     """
     
-    (_, rootNameExt) = os.path.split(jsonFile)
-    (rootName, _) = os.path.splitext(rootNameExt)
-    self.songName     = rootName
-    self.jsonFile     = jsonFile
-    self.jsonName     = rootName + ".json"          # Example: "my_song.json"
-    self.depotFolder  = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
+    if (jsonFile != "") :
+      (_, rootNameExt) = os.path.split(jsonFile)
+      (rootName, _) = os.path.splitext(rootNameExt)
+      self.songName     = rootName
+      self.jsonFile     = jsonFile
+      self.jsonName     = rootName + ".json"          # Example: "my_song.json"
+      self.depotFolder  = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
 
 
 

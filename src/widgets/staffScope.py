@@ -60,16 +60,17 @@ class StaffScope(widget.Widget) :
     # Name of the widget
     self.name = "staffscope"
 
-    self.songName     = ""      # Name of the song
-    self.jsonName     = ""      # Name of the database file
-    self.jsonFile     = ""      # Full name of the databse file (path + filename)
-    self.depotFolder  = ""      # Directory where all the snapshots of the song are stored
+    self.songName     = ""          # Name of the song
+    self.jsonName     = ""          # Name of the database file
+    self.jsonFile     = ""          # Full name of the databse file (path + filename)
+    self.depotFolder  = ""          # Directory where all the snapshots of the song are stored
     
-    self.db         = None      # Reference to the Database object
-    self._dbIndex   = -1        # Current index loaded from the database (-1 when none is loaded)
-    self._dbCursor  = -1        # Current cursor value covered by the snapshot
+    self.db = database.Database()   # Reference to the Database object
+
+    self._dbIndex   = -1            # Current index loaded from the database (-1 when none is loaded)
+    self._dbCursor  = -1            # Current cursor value covered by the snapshot
     
-    self.img = None             # Description is TODO
+    self.img = None                 # Description is TODO
     self.imgScaled = None
     self.imgFile = ""
     self.imgSpan = [-1,-1]
@@ -100,32 +101,35 @@ class StaffScope(widget.Widget) :
   # ---------------------------------------------------------------------------
   def load(self, songFile: str) -> None :
     """
-    Loads and initialises the Staffscope object from a song file (usually '.pr' 
-    or '.gq3' file)
-    Displays the first staff available from the database.
-
+    Loads and initialises the Staffscope object from a song file ('.pr' or 
+    '.gq3' file)
+    
     'songFile' must be the full path to the file.
     """
 
-    self._initFileNames(songFile)
+    # Derive the internal file/path names from the 'songFile'
+    self._loadInitFileNames(songFile)
 
+    # Load the database containting the snapshots of the score
     self.db = database.Database(self.jsonFile)
-    if not(self.db.isEmpty()) :
-      self.loadImageByIndex(0)
+    
+    # Is this really necessary?
+    # if not(self.db.isEmpty()) :
+    #   self.loadViewByIndex(0)
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope._initFileNames()                                [PRIVATE]
+  # METHOD StaffScope._loadInitFileNames()                            [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _initFileNames(self, songFile) :
+  def _loadInitFileNames(self, songFile) :
     """
     Generates the various names of files and directories associated with the 
     database.
     """
     
     # TODO: forbid any whitespace in the name, or dots, commas, etc.
-    
+
     (_, rootNameExt) = os.path.split(songFile)
     (rootName, _) = os.path.splitext(rootNameExt)
     self.songName     = rootName
@@ -135,27 +139,12 @@ class StaffScope(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.isViewEmpty()
+  # METHOD StaffScope.isEmpty()
   # ---------------------------------------------------------------------------
-  def isViewEmpty(self) -> bool :
+  def isEmpty(self, exitOnEmpty = True) :
     """
-    Returns True if the current cursor has no score snapshot attached to it.
-
-    In other words, if 'StaffScope.isViewEmpty()' returns True, there is no 
-    staff view to display.
-    """
-
-    return (self._dbCursor == -1)
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Database.isDbEmpty()
-  # ---------------------------------------------------------------------------
-  def isDbEmpty(self, exitOnEmpty = True) :
-    """
-    Returns True if the database is empty. 
-    Exits the app if the option 'exitOnEmpty' is set.
+    Returns True if the score database contains no snapshot. 
+    If the option 'exitOnEmpty' is set, the app also exits if empty.
     """
 
     if self.db.isEmpty() :
@@ -172,16 +161,33 @@ class StaffScope(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.nextStaff()
+  # METHOD StaffScope.isViewEmpty()
   # ---------------------------------------------------------------------------
-  def nextStaff(self) :
+  def isViewEmpty(self) -> bool :
     """
-    Loads and shows the next staff.
-    Clamps to the last staff when reaching the end of the score.
+    Returns True if the current cursor has no score snapshot attached to it.
+
+    In other words, if 'StaffScope.isViewEmpty()' returns True, there is nothing
+    available to show at the current cursor.
+
+    Possible cause: the user hasn't taken all the snapshots of the full score yet.
+    """
+
+    return (self._dbCursor == -1)
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD StaffScope.nextView()
+  # ---------------------------------------------------------------------------
+  def nextView(self) :
+    """
+    Loads and shows the next snapshot of the score stored in the database.
+    Clamps to the last view when reaching the end of the score.
     """
     
     if ((self._dbIndex + 1) <= (self.db.nSnapshots-1)) :
-      self.loadImageByIndex(self._dbIndex+1)
+      self.loadViewByIndex(self._dbIndex+1)
     
     else :
       print("[DEBUG] StaffScope.nextStaff(): end of database reached. No more staff to show.")
@@ -189,30 +195,31 @@ class StaffScope(widget.Widget) :
   
     
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.previousStaff()
+  # METHOD StaffScope.previousView()
   # ---------------------------------------------------------------------------
-  def previousStaff(self) :
+  def previousView(self) :
     """
-    Loads and shows the previous staff.
-    Clamps to the first staff when reaching the beginning of the score.
+    Loads and shows the previous snapshot of the score stored in the database.
+    Clamps to the first view when reaching the beginning of the score.
     """
     
     if ((self._dbIndex - 1) >= 0) :
-      self.loadImageByIndex(self._dbIndex-1)
+      self.loadViewByIndex(self._dbIndex-1)
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD StaffScope.loadImageByIndex()
+  # METHOD StaffScope.loadViewByIndex()
   # ---------------------------------------------------------------------------
-  def loadImageByIndex(self, index: int) -> None :
+  def loadViewByIndex(self, index: int) -> None :
     """
-    Loads and adjusts the image at position 'index' in the snapshots array.
-    Once loaded, the '_dbIndex' is updated with the requested index.
-    If no image exists at the requested index (either index is out of range,
-    or the image cannot be found) then _dbIndex = -1.
+    Loads the image numbered by 'index' from the snapshot database.
 
-    Use this if you know the exact index of the snapshot you want to load from
+    Once loaded, the '_dbIndex' is updated with the requested index.
+    If no image exists at the requested index (index is out of range, or the 
+    image cannot be found) then _dbIndex = -1.
+
+    Use this method if you know the index of the snapshot you want to load from
     the database.
 
     Usually though, this information is unknown and you might want to use 
@@ -252,7 +259,7 @@ class StaffScope(widget.Widget) :
         self._dbIndex = index
 
       else : 
-        print(f"[WARNING] StaffScope.loadImageByIndex(): index {index} is out of range or image could not be found")
+        print(f"[WARNING] StaffScope.loadViewByIndex(): index {index} is out of range or image could not be found")
         self.imgScaled  = None
         self.imgWidth   = -1
         self.imgHeight  = -1
@@ -277,7 +284,7 @@ class StaffScope(widget.Widget) :
       dbIndex = self.db.getIndexByCursor(cursor)
     
       if (dbIndex != -1) :
-        self.loadImageByIndex(dbIndex)
+        self.loadViewByIndex(dbIndex)
 
         self._dbIndex   = dbIndex
         self._dbCursor  = cursor
@@ -335,7 +342,7 @@ class StaffScope(widget.Widget) :
     This function is called at every frame of the top level application.
     
     A staff must have been loaded prior to calling this function 
-    ('StaffScope.loadImageByIndex()' or 'StaffScope.loadImageByCursor()')
+    ('StaffScope.loadViewByIndex()' or 'StaffScope.loadImageByCursor()')
 
     When the 'ghost mode' is ON, all the playglows of the snapshot are rendered.
     A color scheme helps distinguish the active/inactive playglows.

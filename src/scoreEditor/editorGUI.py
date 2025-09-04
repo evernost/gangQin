@@ -188,7 +188,7 @@ while running :
       # Page up: next snapshot
       # ----------------------
       if (keys[pygame.K_PAGEUP]) :
-        staffScopeWidget.nextStaff()
+        staffScopeWidget.nextView()
 
       # ----------------------------
       # Page down: previous snapshot

@@ -1551,6 +1551,20 @@ class Score(widget.Widget) :
     if (len(self.teacherNotes) == 0) :
       print(f"[WARNING] Empty list of teacher notes (t = {self.getTimecode()}), possible internal error.")
 
+    # TODO: filter out notes with 0 duration.
+    # Still not sure why it happens.
+    # See https://github.com/evernost/gangQin/issues/22
+    filteredList = []
+    for N in self.teacherNotes :
+      if not(N.fromKeyboardInput) :
+        if (N.startTime != N.stopTime):
+          filteredList.append(N)
+        else :
+          print("[WARNING] Keyboard._renderKeyPress(): null duration note detected.")
+      else :
+        filteredList.append(N)
+    self.teacherNotes = filteredList
+
 
 
   # ---------------------------------------------------------------------------

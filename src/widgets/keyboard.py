@@ -95,7 +95,7 @@ class Keyboard(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD: Keyboard.render()
   # ---------------------------------------------------------------------------
-  def render(self) :
+  def render(self) -> None :
     """
     Draws the keyboard using the polygons generated for each note.
     This function is called every time the app renders a new frame.
@@ -135,7 +135,7 @@ class Keyboard(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Keyboard._renderKeyPress()                                 [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _renderKeyPress(self, notes) :
+  def _renderKeyPress(self, notes) -> None :
     """
     Renders a keypress on the keyboard.
     
@@ -147,20 +147,20 @@ class Keyboard(widget.Widget) :
     # This avoids the sustained notes to be drawn on top.
     notes.sort(key = lambda x: x.startTime)
 
-    # -------------------------------
-    # Filter notes with null duration
-    # -------------------------------
-    # A bit of an oddity. I am still unsure as of why that might happen.
-    newNoteList = []
-    for noteObj in notes :
-      if not(noteObj.fromKeyboardInput) :
-        if (noteObj.startTime != noteObj.stopTime):
-          newNoteList.append(noteObj)
-        else :
-          print("[WARNING] Keyboard._renderKeyPress(): null duration note detected.")
-      else :
-        newNoteList.append(noteObj)
-    notes = newNoteList
+    # # -----------------------------------
+    # # Filter out notes with null duration
+    # # -----------------------------------
+    # # A bit of an oddity. I am still unsure as of why that might happen.
+    # newNoteList = []
+    # for noteObj in notes :
+    #   if not(noteObj.fromKeyboardInput) :
+    #     if (noteObj.startTime != noteObj.stopTime):
+    #       newNoteList.append(noteObj)
+    #     # else :
+    #     #   print("[WARNING] Keyboard._renderKeyPress(): null duration note detected.")
+    #   else :
+    #     newNoteList.append(noteObj)
+    # notes = newNoteList
 
     # -----------------------------
     # Detect "double-pressed" notes

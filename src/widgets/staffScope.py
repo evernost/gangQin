@@ -39,14 +39,15 @@ TARGET_HEIGHT = 230
 class StaffScope(widget.Widget) :
 
   """
-  STAFF_SCOPE object
+  STAFFSCOPE object
 
-  Class definition for the staffscope widget.
+  Class definition for the StaffScope widget.
   
-  The staffscope viewer displays the actual music score one snapshot at a time.
+  The staffscope viewer displays the music score and crops it to the exact
+  section being played.
   The snapshot updates as the user plays and progresses in the song.
-  Some visual cues highlight the current notes expected as well as some 
-  stats about the estimated difficulty of a section.
+  Some visual cues are overlayed to highlight the current position in the score 
+  as well as some stats about the difficulty of a section.
   
   The StaffScope class derives from the Widget class.
   """
@@ -56,6 +57,7 @@ class StaffScope(widget.Widget) :
     # Initialise the parent class (Widget)
     super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
 
+    # Name of the widget
     self.name = "staffscope"
 
     self.songName     = ""      # Name of the song

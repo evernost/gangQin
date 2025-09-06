@@ -58,12 +58,39 @@ class PianoRoll(widget.Widget) :
     # Defines the amount of notes shown in the piano roll view
     # Units are in timecodes. Use "avgNoteDuration" to use it conveniently
     self.viewSpan = 1000
-    
+
+    self.xLines = []
+
     # Color scheme
     self.leftNoteOutlineRGB   = PIANOROLL_NOTE_BORDER_COLOR_LEFT
     self.rightNoteOutlineRGB  = PIANOROLL_NOTE_BORDER_COLOR_RIGHT
     
-    
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD PianoRoll.render()
+  # ---------------------------------------------------------------------------
+  def render(self) :
+    """
+    Draws the pianoroll on screen.
+    This function is called every time the app renders a new frame.
+    """
+
+    # Disable piano roll rendering if the staffscope has something available
+    # to show
+    if (WIDGET_ID_STAFFSCOPE in self.top.widgets) :
+      if self.top.widgets[WIDGET_ID_STAFFSCOPE].isViewEmpty() :
+        self._renderKeyLines()
+        self._renderNotes()
+
+      else :
+        pass
+
+    else :
+      self._renderKeyLines()
+      self._renderNotes()
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD PianoRoll._renderKeyLines()                                [PRIVATE]
@@ -116,7 +143,16 @@ class PianoRoll(widget.Widget) :
     ]
 
     # TODO: make the rectangle transparent    
-    pygame.draw.polygon(self.top.screen, PIANOROLL_BACKGROUND_COLOR, backRect)
+    #pygame.draw.polygon(self.top.screen, PIANOROLL_BACKGROUND_COLOR, backRect)
+
+    # Create a transparent surface
+    tmpSurface = pygame.Surface((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT), pygame.SRCALPHA)
+
+    # Draw the polygon on the transparent surface
+    pygame.draw.polygon(tmpSurface, (*PIANOROLL_BACKGROUND_COLOR, PIANOROLL_TRANSPARENCY), backRect)
+
+    # Blit onto your main screen
+    self.top.screen.blit(tmpSurface, (0, 0))
 
 
     # # Create a transparent surface
@@ -217,30 +253,6 @@ class PianoRoll(widget.Widget) :
       (rectColor, _, _) = N.getNoteColor()
       pygame.draw.polygon(self.top.screen, rectColor, sq)
 
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD PianoRoll.render()
-  # ---------------------------------------------------------------------------
-  def render(self) :
-    """
-    Draws the pianoroll on screen.
-    This function is called every time the app renders a new frame.
-    """
-
-    # Disable piano roll rendering if the staffscope has something available
-    # to show
-    if (WIDGET_ID_STAFFSCOPE in self.top.widgets) :
-      if self.top.widgets[WIDGET_ID_STAFFSCOPE].isViewEmpty() :
-        self._renderKeyLines()
-        self._renderNotes()
-
-      else :
-        pass
-
-    else :
-      self._renderKeyLines()
-      self._renderNotes()
 
 
 

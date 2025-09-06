@@ -399,9 +399,23 @@ class FingerSelector(widget.Widget) :
       # Simple keypresses (no modifiers)
       if (modifier == "") :
         
-        # B: toggle bookmark
+        # Tab: highlight the next note for edition
         if (key == pygame.K_TAB) :
-          print("You hit tab! I'm so happy.")
+          print("[NOTE] FingerSelector: You hit tab! I'm so happy.")
+
+        elif (key == pygame.K_KP_0) :
+          print("[NOTE] FingerSelector: delete finger, keep current hand")
+
+        elif (key == pygame.K_KP_1) :
+          print("[NOTE] FingerSelector: set to finger 1")
+
+
+
+      elif (modifier == "shift") :
+        
+        # Tab: highlight the next note for edition
+        if (key == pygame.K_TAB) :
+          print("[NOTE] FingerSelector: You hit shift+tab! I'm even happier!!")
 
 
 

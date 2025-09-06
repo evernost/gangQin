@@ -255,7 +255,7 @@ class GangQin :
 
     #patternData = self._backgroundInitFromImage()
 
-    w, h = len(patternData[0]), len(patternData)
+    (w, h) = len(patternData[0]), len(patternData)
     patternSurface = pygame.Surface((w, h))
     for y in range(h):
       for x in range(w):

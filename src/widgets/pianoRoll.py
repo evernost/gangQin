@@ -35,7 +35,7 @@ import pygame
 class PianoRoll(widget.Widget) :
 
   """
-  PIANO_ROLL object
+  PIANOROLL object
   
   The PianoRoll class derives from the Widget class.
 
@@ -60,8 +60,8 @@ class PianoRoll(widget.Widget) :
     self.viewSpan = 1000
     
     # Color scheme
-    self.leftNoteOutlineRGB = PIANOROLL_NOTE_BORDER_COLOR_LEFT = (243, 35, 35)   # Border color for the notes in the piano roll
-    self.rightNoteOutlineRGB = PIANOROLL_NOTE_BORDER_COLOR_RIGHT = (35, 243, 118)
+    self.leftNoteOutlineRGB   = PIANOROLL_NOTE_BORDER_COLOR_LEFT
+    self.rightNoteOutlineRGB  = PIANOROLL_NOTE_BORDER_COLOR_RIGHT
     
     
 

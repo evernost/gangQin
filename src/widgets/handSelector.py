@@ -4,7 +4,7 @@
 # Module name   : handSelector
 # File name     : handSelector.py
 # File type     : Python script (Python 3)
-# Purpose       : widget to edit the properties of a given note.
+# Purpose       : 
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Saturday, 09 November 2024
 # -----------------------------------------------------------------------------
@@ -40,22 +40,23 @@ class Msg(Enum) :
 class HandSelector(widget.Widget) :
 
   """
-  TODO: description
+  HANDSELECTOR object
+  
+  The HandSelector object shows the widget that selects the active hand.
+  By default, right and left hand are active.
 
-  - controls the position in the score
-  - manages the loops 
-  - reads arbiter decision
-  - automatic play 
+  Using the widget, you can indicate to practice with single hand.
 
-
+  The HandSelector class derives from the Widget class.
   """
 
-  def __init__(self, top) :
+  def __init__(self, top, loc) :
     
     # Call the Widget init method
-    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
+    super().__init__(top, loc)
     
-    self.screen = None
+    # Name of the widget
+    self.name = "hand selector"
 
     self.loc = (1312, 470)  # Coordinates of the up right corner 
     self.xMin = self.loc[0] - (5*5*2) - (5*2)   # 5 chars, 5 horiz pixel per char, 1 pixel has size 2
@@ -71,7 +72,6 @@ class HandSelector(widget.Widget) :
 
 
 
-  
   # ---------------------------------------------------------------------------
   # METHOD: HandSelector.uiEvent()
   # ---------------------------------------------------------------------------
@@ -83,7 +83,7 @@ class HandSelector(widget.Widget) :
     
     # Keyboard events
     if (pygameEvent.type in (pygame.KEYUP, pygame.KEYDOWN)) :
-      keys    = pygame.key.get_pressed()
+      keys      = pygame.key.get_pressed()
       ctrlKey   = pygameEvent.mod & pygame.KMOD_CTRL
       altKey    = pygameEvent.mod & pygame.KMOD_ALT
       shiftKey  = pygameEvent.mod & pygame.KMOD_SHIFT

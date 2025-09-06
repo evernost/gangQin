@@ -1501,10 +1501,10 @@ class Score(widget.Widget) :
     
     # Reset the play attributes of the previous notes before deleting them.
     # Note attributes are used for the display and the arbiter.
-    # for noteObj in self.teacherNotes :
-    #   noteObj.visible = True
-    #   noteObj.sustained = False
-    #   noteObj.inactive = False
+    for N in self.teacherNotes :
+      N.sustained = False
+      # noteObj.visible = True
+      # noteObj.inactive = False
 
     # Reset the cache
     self.teacherNotes = []
@@ -1560,7 +1560,7 @@ class Score(widget.Widget) :
         if (N.startTime != N.stopTime):
           filteredList.append(N)
         else :
-          print("[WARNING] Keyboard._renderKeyPress(): null duration note detected.")
+          print("[DEBUG] Score._calculateTeacherNotes(): null duration note detected.")
       else :
         filteredList.append(N)
     self.teacherNotes = filteredList

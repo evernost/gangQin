@@ -48,6 +48,7 @@ class Keyboard(widget.Widget) :
   - highlighting the notes pressed by the user on his external MIDI keyboard
   - highlighting the notes that have to be played.
 
+  The Keyboard class derives from the Widget class.
   """
 
   def __init__(self, top, loc) :
@@ -55,6 +56,7 @@ class Keyboard(widget.Widget) :
     # Call the Widget init method
     super().__init__(top, loc)
 
+    # Name of the widget
     self.name = "keyboard"
 
     # Populated after calling "Keyboard._makePolygons()"

@@ -225,6 +225,9 @@ class GangQin :
     if (WIDGET_ID_SEQUENCER in self.widgets) :
       self.widgets[WIDGET_ID_SEQUENCER].onExternalMidiEvent(midiMessage)
 
+    if (WIDGET_ID_PIANOROLL in self.widgets) :
+      self.widgets[WIDGET_ID_PIANOROLL].onExternalMidiEvent(midiMessage)
+
     if (WIDGET_ID_STATS in self.widgets) :
       self.widgets[WIDGET_ID_STATS].userActivity()
 

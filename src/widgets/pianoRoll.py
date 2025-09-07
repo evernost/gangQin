@@ -61,6 +61,8 @@ class PianoRoll(widget.Widget) :
 
     self.xLines = []
 
+    self.activePitches = []
+
     # Color scheme
     self.leftNoteOutlineRGB   = PIANOROLL_NOTE_BORDER_COLOR_LEFT
     self.rightNoteOutlineRGB  = PIANOROLL_NOTE_BORDER_COLOR_RIGHT
@@ -76,8 +78,7 @@ class PianoRoll(widget.Widget) :
     This function is called every time the app renders a new frame.
     """
 
-    # Disable piano roll rendering if the staffscope has something available
-    # to show
+    # Disable rendering if the staffscope has something to show
     if (WIDGET_ID_STAFFSCOPE in self.top.widgets) :
       if self.top.widgets[WIDGET_ID_STAFFSCOPE].isViewEmpty() :
         self._renderKeyLines()
@@ -141,41 +142,41 @@ class PianoRoll(widget.Widget) :
       (self.xLines[-1], self.yTop),
       (self.xLines[0], self.yTop)
     ]
-
-    # TODO: make the rectangle transparent    
-    #pygame.draw.polygon(self.top.screen, PIANOROLL_BACKGROUND_COLOR, backRect)
-
-    # Create a transparent surface
     tmpSurface = pygame.Surface((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT), pygame.SRCALPHA)
-
-    # Draw the polygon on the transparent surface
     pygame.draw.polygon(tmpSurface, (*PIANOROLL_BACKGROUND_COLOR, PIANOROLL_TRANSPARENCY), backRect)
-
-    # Blit onto your main screen
     self.top.screen.blit(tmpSurface, (0, 0))
 
-
-    # # Create a transparent surface
-    # transparentSurface = pygame.Surface((400, 400), pygame.SRCALPHA)
-
-    # # Draw the polygon onto the transparent surface (red with 50% transparency)
-    # pygame.draw.polygon(transparentSurface, (255, 0, 0, 128), [(100, 100), (300, 100), (200, 300)])
-
-    # while running:
-    #     screen.fill((255, 255, 255))  # Clear screen to white
-    #     screen.blit(transparentSurface, (0, 0))  # Blit the polygon with transparency
-    #     pygame.display.flip()
-    #     for event in pygame.event.get():
-    #         if event.type == pygame.QUIT:
-    #             running = False
-    #     clock.tick(60)
-
-    # Draw the lines
+    # Draw the separation lines
     for x in self.xLines :
       pygame.draw.line(self.top.screen, PIANOROLL_NOTE_LINE_SEP_COLOR, (x, self.yTop), (x, self.yBottom), 1)
+    pygame.draw.line(self.top.screen, PIANOROLL_NOTE_LINE_SEP_COLOR, (self.xLines[0], self.yTop), (self.xLines[-1], self.yTop), 1)    # Close the rectangle
 
-    # Close the rectangle
-    pygame.draw.line(self.top.screen, PIANOROLL_NOTE_LINE_SEP_COLOR, (self.xLines[0], self.yTop), (self.xLines[-1], self.yTop), 1)
+    # Show the note played on keyboard
+    for pitch in self.activePitches :
+      rectBottom  = self.yBottom
+      rectTop     = self.yTop
+      
+      # TODO: remove the magic constants
+      sq = [
+        (self.xLines[pitch-21]+2, rectBottom),
+        (self.xLines[pitch-21]+2, rectTop),
+        (self.xLines[pitch+1-21]-2, rectTop),
+        (self.xLines[pitch+1-21]-2, rectBottom)
+      ]
+      
+      # Draw the outline
+      # color = PIANOROLL_NOTE_BORDER_COLOR_LEFT
+      # pygame.draw.line(self.top.screen, color, sq[0], sq[1], 3)
+      # pygame.draw.line(self.top.screen, color, sq[1], sq[2], 3)
+      # pygame.draw.line(self.top.screen, color, sq[2], sq[3], 3)
+      # pygame.draw.line(self.top.screen, color, sq[3], sq[0], 3)
+      
+      # Draw the rectangle
+      # pygame.draw.polygon(self.top.screen, (165, 250, 200), sq)
+
+      tmpSurface = pygame.Surface((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT), pygame.SRCALPHA)
+      pygame.draw.polygon(tmpSurface, (165, 250, 200, PIANOROLL_TRANSPARENCY), sq)
+      self.top.screen.blit(tmpSurface, (0, 0))
 
 
 
@@ -253,6 +254,22 @@ class PianoRoll(widget.Widget) :
       (rectColor, _, _) = N.getNoteColor()
       pygame.draw.polygon(self.top.screen, rectColor, sq)
 
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: PianoRoll.onExternalMidiEvent()
+  # ---------------------------------------------------------------------------
+  def onExternalMidiEvent(self, midiMessage) :
+    """
+    Updates the list of active MIDI notes coming from the keyboard so that 
+    they can be displayed at rendering.
+    """
+
+    if (midiMessage.type == "note_on") :
+      self.activePitches.append(midiMessage.note)
+      
+    elif (midiMessage.type == "note_off") :
+      self.activePitches = [pitch for pitch in self.activePitches if (pitch != midiMessage.note)]
 
 
 

@@ -77,7 +77,7 @@ class FingerSelector(widget.Widget) :
     self.editedNote = None
     self.editedCursor = -1
 
-    # *** Graphical properties ***
+    # Graphical properties
     self.textColor = GUI_TEXT_COLOR
     self.textColorL = (145, 7, 0)
     self.textColorR = (0, 145, 7)
@@ -99,12 +99,11 @@ class FingerSelector(widget.Widget) :
     (locX, locY) = self.loc
 
     if (self.visible) :
-      labels = ["5 ", "4 ", "3 ", "2 ", "1 ", "- ", "- ", "1 ", "2 ", "3 ", "4 ", "5 "]
       
-      text.render(self.top.screen, f"FINGER: ", (locX, locY), 2, self.textColor)      
+      text.render(self.top.screen, f"FINGER: ", (locX, locY), 2, self.textColor)
       
-      for (i, label) in enumerate(labels) :
-        if (i <= 5) :          
+      for (i, label) in enumerate(["5 ", "4 ", "3 ", "2 ", "1 ", "- ", "- ", "1 ", "2 ", "3 ", "4 ", "5 "]) :
+        if (i <= 5) :
           if (self.currentSel == i) :
             # Note: 96 = 8*10 + 8*2, i.e. 8 x char size + 8 x space in-between
             text.render(self.top.screen, label, (locX + 96 + (i*23), locY), 2, self.textColorSelL)

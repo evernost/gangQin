@@ -27,8 +27,8 @@ from enum import Enum   # For enumerated types in FSM
 # CONSTANTS
 # =============================================================================
 class keyColor(Enum) :
-  WHITE = 0
-  BLACK = 1
+  WHITE_NOTE = 0
+  BLACK_NOTE = 1
 
 class hand(Enum) :
   LEFT  = 0
@@ -68,17 +68,17 @@ class Note :
     
     # Note display attributes (fields not preserved during file import/export)
     self.color      = None
-    self.keyColor   = self._getKeyColor()
-    self.sustained  = False     # True if the note is held at a given time
-    self.highlight  = False     # True if the note fingersatz is being edited
-    self.inactive   = False     # True if the note shall be ignored by the arbiter (single hand practice)
-    self.upcoming   = False     # True if the note is about to be played soon
-    self.upcomingDistance = 0   # The highest the value, the further the note
-    
+    self.keyColor   = self._getKeyColor()   # White or Black note
+    self.sustained  = False                 # True if the note is held at a given time
+    self.highlight  = False                 # True if the note fingersatz is being edited
+    self.inactive   = False                 # True if the note shall be ignored by the arbiter (single hand practice)
+    self.upcoming   = False                 # True if the note is about to be played soon
+    self.upcomingDistance = 0               # The higher the value, the further the note in the score from the current location
+    self.fromKeyboardInput  = False         # True if it is a note played by the user from the MIDI input
+
     # Not used anymore?
     self.visible            = False
     self.disabled           = False   # True if the note shall be ignored by the arbiter (unplayable note)
-    self.fromKeyboardInput  = False   # True if it is a note played by the user from the MIDI input
     self.lookAheadDistance  = 0       # Define how far away this note is located relative to the current cursor
     
 
@@ -92,9 +92,9 @@ class Note :
     """
 
     if (self.pitch % 12) in MIDI_CODE_WHITE_NOTES_MOD12 :
-      return NOTE_WHITE_KEY
+      return keyColor.WHITE_NOTE
     else :
-      return NOTE_BLACK_KEY
+      return keyColor.BLACK_NOTE
 
 
 
@@ -281,8 +281,8 @@ class Note :
     if (self.hand == NOTE_LEFT_HAND)      : strHand = "left hand"
     if (self.hand == NOTE_UNDEFINED_HAND) : strHand = "undefined"
 
-    if (self.keyColor == NOTE_WHITE_KEY) : strKeyColor = "white key"
-    if (self.keyColor == NOTE_BLACK_KEY) : strKeyColor = "black key"
+    if (self.keyColor == keyColor.WHITE_NOTE) : strKeyColor = "white key"
+    if (self.keyColor == keyColor.BLACK_NOTE) : strKeyColor = "black key"
 
     strFinger = "undefined" if (self.finger == NOTE_UNDEFINED_FINGER) else self.finger
 

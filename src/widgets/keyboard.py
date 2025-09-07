@@ -220,11 +220,11 @@ class Keyboard(widget.Widget) :
     for noteObj in notes :
 
       # White note highlighting
-      if (noteObj.keyColor == NOTE_WHITE_KEY) :
+      if (noteObj.keyColor == note.keyColor.WHITE_NOTE) :
         self._singleHandWhiteKeyPress(self.top.screen, noteObj)
 
       # Black note highlighting
-      if (noteObj.keyColor == NOTE_BLACK_KEY) :
+      if (noteObj.keyColor == note.keyColor.BLACK_NOTE) :
         self._singleHandBlackKeyPress(self.top.screen, noteObj)
       
       # ------------------------------
@@ -449,12 +449,12 @@ class Keyboard(widget.Widget) :
     they can be displayed at rendering.
     """
 
-    if (midiMessage.type == 'note_on') :
+    if (midiMessage.type == "note_on") :
       N = note.Note(midiMessage.note)
       N.fromKeyboardInput = True
       self.activeNotesMIDI.append(N)
       
-    elif (midiMessage.type == 'note_off') :
+    elif (midiMessage.type == "note_off") :
       self.activeNotesMIDI = [N for N in self.activeNotesMIDI if (N.pitch != midiMessage.note)]
 
 

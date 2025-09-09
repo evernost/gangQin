@@ -124,8 +124,8 @@ class Keyboard(widget.Widget) :
     if ((10 <= mouse_x <= 1310) and (300 <= mouse_y <= 450)) :  
       
       # TODO: 'detectedNotes' must contain active notes only (no sustained note)
-      detectedNote = self.clickHitTest((mouse_x, mouse_y))
-      if detectedNote :
+      (isNoteHit, _) = self.clickHitTest((mouse_x, mouse_y))
+      if isNoteHit :
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
       else :
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
@@ -402,7 +402,9 @@ class Keyboard(widget.Widget) :
   def clickHitTest(self, coord) :
     """
     Detects if the click's coordinates are in the hitbox of an active note.
-    Returns the note object, or 'None' if nothing is hit.
+    
+    Returns (status, Note) where 'status' is the test result (True/False) and 
+    'N' the note object hit (or 'None' if nothing is hit)
     """
 
     candidates = []
@@ -415,15 +417,15 @@ class Keyboard(widget.Widget) :
     # Return the note that was pressed the most recently
     if (len(candidates) > 1) :
       candidates.sort(key = lambda x : -x.startTime)
-      return candidates[0]
+      return (True, candidates[0])
 
     # Only one candidate: return it
     elif (len(candidates) == 1) :
-      return candidates[0]
+      return (True, candidates[0])
     
-    # This click hit none of the polygons displayed
+    # The click didn't hit any active note
     else :
-      return None
+      return (False, None)
 
 
 
@@ -628,4 +630,6 @@ class Keyboard(widget.Widget) :
 # UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
-  print("[INFO] There are no unit tests available for 'keyboard.py'")
+  print("[INFO] There are no unit tests available for 'keyboard.py'.")
+
+

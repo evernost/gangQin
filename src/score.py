@@ -1462,7 +1462,7 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score.getTeacherNotes()
   # ---------------------------------------------------------------------------
-  def getTeacherNotes(self) :
+  def getTeacherNotes(self, includeSustain = False) :
     """
     Returns a list with all the notes that must be pressed at the current 
     position in the score.
@@ -1471,7 +1471,7 @@ class Score(widget.Widget) :
     Sustained notes (notes that were pressed before and held up to the current 
     cursor) are not included in the list.
 
-    TODO: confirm that sustained notes are not returned
+    TODO: confirm that sustained notes are not returned or add an option for that
     """
     
     # Cursor hasn't changed since last request: return the cache

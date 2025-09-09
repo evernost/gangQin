@@ -72,19 +72,14 @@ class FingerSelector(widget.Widget) :
     #  7 = right hand, finger 1
     # ...
     # 11 = right hand, finger 5
-    self.currentSel = FINGERSEL_NONE_SELECTED
+    self.sel    = -1
+    self.hand   = FingerSel_hand.UNDEFINED
+    self.finger = FingerSel_finger.UNDEFINED
 
     self.editedNote = None
     self.editedCursor = -1
 
-    # Graphical properties
-    self.textColor = GUI_TEXT_COLOR
-    self.textColorL = (145, 7, 0)
-    self.textColorR = (0, 145, 7)
-    self.lineColor = GUI_TEXT_COLOR
-    
-    self.textColorSelL = (244, 13, 0)
-    self.textColorSelR = (0, 244, 13)
+    self.activeNotes = []
 
 
 
@@ -100,29 +95,29 @@ class FingerSelector(widget.Widget) :
 
     if (self.visible) :
       
-      text.render(self.top.screen, f"FINGER: ", (locX, locY), 2, self.textColor)
+      text.render(self.top.screen, f"FINGER: ", self.loc, 2, FINGER_SELECTOR_TEXT_COLOR)
       
       for (i, label) in enumerate(["5 ", "4 ", "3 ", "2 ", "1 ", "- ", "- ", "1 ", "2 ", "3 ", "4 ", "5 "]) :
         if (i <= 5) :
-          if (self.currentSel == i) :
+          if (self.sel == i) :
             # Note: 96 = 8*10 + 8*2, i.e. 8 x char size + 8 x space in-between
-            text.render(self.top.screen, label, (locX + 96 + (i*23), locY), 2, self.textColorSelL)
+            text.render(self.top.screen, label, (locX + 96 + (i*23), locY), 2, FINGER_SELECTOR_TEXT_COLOR_SEL_L)
           else :
-            text.render(self.top.screen, label, (locX + 96 + (i*23), locY), 2, self.textColorL)
+            text.render(self.top.screen, label, (locX + 96 + (i*23), locY), 2, FINGER_SELECTOR_TEXT_COLOR_L)
 
         else :
-          if (self.currentSel == i) :
-            text.render(self.top.screen, label, (locX + 96 + (i*23), locY), 2, self.textColorSelR)
+          if (self.sel == i) :
+            text.render(self.top.screen, label, (locX + 96 + (i*23), locY), 2, FINGER_SELECTOR_TEXT_COLOR_SEL_R)
           else :
-            text.render(self.top.screen, label, (locX + 96 + (i*23), locY), 2, self.textColorR)
+            text.render(self.top.screen, label, (locX + 96 + (i*23), locY), 2, FINGER_SELECTOR_TEXT_COLOR_R)
 
       x0 = locX + 96 - 7
       yTop = locY + 3; yBottom = locY + 12
       for i in range(13) :
         if (i == 6) :
-          pygame.draw.line(self.top.screen, self.lineColor, (x0 + (i*23), yTop-8), (x0 + (i*23), yBottom+6), 1)
+          pygame.draw.line(self.top.screen, FINGER_SELECTOR_SEP_LINE_COLOR, (x0 + (i*23), yTop-8), (x0 + (i*23), yBottom+6), 1)
         else :
-          pygame.draw.line(self.top.screen, self.lineColor, (x0 + (i*23), yTop), (x0 + (i*23), yBottom), 1)
+          pygame.draw.line(self.top.screen, FINGER_SELECTOR_SEP_LINE_COLOR, (x0 + (i*23), yTop), (x0 + (i*23), yBottom), 1)
     
 
 
@@ -136,7 +131,7 @@ class FingerSelector(widget.Widget) :
     show/hide the widget in a specific context.
     """
 
-    self._setCurrentSel(noteObj.finger, noteObj.hand)
+    self._setSelector(noteObj.finger, noteObj.hand)
     if (self.editedNote != None) :
       self.editedNote.highlight = False
     
@@ -167,31 +162,31 @@ class FingerSelector(widget.Widget) :
     todo
     """
     
+    self.sel = -1
     self.editedNote.highlight = False
     self.editedNote = None
     self.editedCursor = -1
-    self.currentSel = -1
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: FingerSelector.setFingerWithClick(clickCoordinates)
+  # METHOD: FingerSelector._selectorHitTest()                         [PRIVATE]
   # ---------------------------------------------------------------------------
-  def setFingerWithClick(self, clickCoord) :
+  def _selectorHitTest(self, clickCoord) :
     """
-    Update the finger associated to the note being edited using a click on the 
-    widget.
+    Indicates if the click's coordinates hit the finger selector.
 
-    The function returns if the click actually hit something relevant on the 
-    widget and it got updated, or the click occured outside the scope and 
-    nothing changed.
+    Returns (status, index)
     """
+
+    (locX, locY) = self.loc
 
     (clickX, clickY) = clickCoord
-    x0 = self.locX + 96 - 7
-    yTop = self.locY + 3; yBottom = self.locY + 12
+    x0 = locX + 96 - 7
+    yTop    = locY + 3; 
+    yBottom = locY + 12
     
-    # Loop on the members of the widgets, test if any was hit with the click
+    # Loop on the members of the widgets
     for i in range(12) :
       xMin = x0 + (i*23) + 1
       xMax = x0 + ((i+1)*23) - 1
@@ -200,23 +195,31 @@ class FingerSelector(widget.Widget) :
 
       # If the click is in this current hit box
       if ((clickX >= xMin) and (clickX <= xMax) and (clickY >= yMin) and (clickY <= yMax)) :
+        return (True, i)
         
-        self.currentSel = i
-        (hand, finger) = self._getFingerfromSel()
-        
-        if (self.editedNote == None) :
-          print("[WARNING] No note selected!")
-          
-        else :
-          self.editedNote.finger = finger
-          
-          if (hand != self.editedNote.hand) :
-            return FINGERSEL_HAND_CHANGE
-          
-          return FINGERSEL_CHANGED
-      
-    return FINGERSEL_UNCHANGED
+    return (False, -1)
   
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: FingerSelector._highlightNext()                           [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _highlightNext(self) :
+    """
+    Highlights the next active note (in ascending order) currently shown on the 
+    keyboard.
+    """    
+    
+    # Ask the score to return the active notes
+    activeNotes = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
+    
+    # Sort by ascending pitch
+    if activeNotes :
+      activeNotes.sort(key = lambda N: N.pitch)
+    
+    
+    print(f"[DEBUG] Active notes: {len(activeNotes)}")
+
 
 
   # ---------------------------------------------------------------------------
@@ -226,8 +229,6 @@ class FingerSelector(widget.Widget) :
     """
     Takes a finger index, the context. Assigns the finger index to the relevant
     note.
-    
-    
     """
 
     # Sustained notes are not eligible to the note auto highlight
@@ -263,20 +264,20 @@ class FingerSelector(widget.Widget) :
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD <FingerSelector.highlightWithTab>
-  # ---------------------------------------------------------------------------
-  def highlightWithTab(self, teacherNotes) :
-    """
-    Highlights the editable notes one after the other every time the 'tab' or
-    'shift' + 'tab' combination is pressed.
-    """
+  # # ---------------------------------------------------------------------------
+  # # METHOD <FingerSelector.highlightWithTab>
+  # # ---------------------------------------------------------------------------
+  # def highlightWithTab(self, teacherNotes) :
+  #   """
+  #   Highlights the editable notes one after the other every time the 'tab' or
+  #   'shift' + 'tab' combination is pressed.
+  #   """
 
-    # Sustained notes are not editable through this mode 
-    # (is it supposed to be a shortcut)
-    activeNotes = [x for x in teacherNotes if not(x.sustained)]
+  #   # Sustained notes are not editable through this mode 
+  #   # (is it supposed to be a shortcut)
+  #   activeNotes = [x for x in teacherNotes if not(x.sustained)]
 
-    print("todo!")
+  #   print("todo!")
 
 
 
@@ -296,24 +297,27 @@ class FingerSelector(widget.Widget) :
     else :
       if finger in [1,2,3,4,5] :
         self.editedNote.finger = finger
-        self._setCurrentSel(finger, self.editedNote.hand)
+        self._setSelector(finger, self.editedNote.hand)
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: FingerSelector._setCurrentSel()                           [PRIVATE]
+  # METHOD: FingerSelector._setSelector()                             [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _setCurrentSel(self, finger, hand) :
+  def _setSelector(self, index) :
     
+    self.sel = index
+    finger, hand = (0,0)
+
     if (hand == NOTE_LEFT_HAND) :
-      self.currentSel = 5
+      self.sel = 5
       if (finger in [1,2,3,4,5]) :
-        self.currentSel = 5 - finger
+        self.sel = 5 - finger
     
     if (hand == NOTE_RIGHT_HAND) :
-      self.currentSel = 6
+      self.sel = 6
       if (finger in [1,2,3,4,5]) :
-        self.currentSel = finger + 6
+        self.sel = finger + 6
     
 
 
@@ -362,28 +366,44 @@ class FingerSelector(widget.Widget) :
 
 
 
-
   # ---------------------------------------------------------------------------
   # METHOD: FingerSelector._onMouseEvent()                          [INHERITED]
   # ---------------------------------------------------------------------------
   def _onMouseEvent(self, button, type) :
     """
-    Function is triggered by a mouse event.
+    Mouse event callback.
     
-    This function must be overriden with the specific code of the widget.
+    This function is inherited from the Widget class.
     """
     
     if (type == pygame.MOUSEBUTTONDOWN) :
       if (button == MOUSE_LEFT_CLICK) :
-        N = self.top.widgets[WIDGET_ID_KEYBOARD].clickHitTest(pygame.mouse.get_pos())
         
-        if not(N is None) :
-          print(f"Hey, that's a {N.name}")
+        # Click on an active note
+        (isNoteHit, N) = self.top.widgets[WIDGET_ID_KEYBOARD].clickHitTest(pygame.mouse.get_pos())
+        if isNoteHit :
+          print(f"[DEBUG] FingerSelector._onMouseEvent(): that's a {N.name}")
           self.setEditedNote(N)
-        else :
-          print("hey")
-
-
+        
+        # Click on the selector
+        (isSelectorHit, selectorIndex) = self._selectorHitTest(pygame.mouse.get_pos())
+        if isSelectorHit :
+          print(f"[DEBUG] FingerSelector._onMouseEvent(): you hit the selector (index = {selectorIndex})")
+          self.sel = selectorIndex
+          # (hand, finger) = self._getFingerfromSel()
+          
+          # if (self.editedNote == None) :
+          #   print("[WARNING] No note selected!")
+            
+          # else :
+          #   self.editedNote.finger = finger
+            
+          #   if (hand != self.editedNote.hand) :
+          #     return FINGERSEL_HAND_CHANGE
+            
+          #   return FINGERSEL_CHANGED
+          
+        
 
   # ---------------------------------------------------------------------------
   # METHOD FingerSelector._onKeyEvent()                             [INHERITED]
@@ -400,21 +420,23 @@ class FingerSelector(widget.Widget) :
         
         # Tab: highlight the next note for edition
         if (key == pygame.K_TAB) :
-          print("[NOTE] FingerSelector: You hit tab! I'm so happy.")
+          print("[NOTE] FingerSelector._onKeyEvent(): You hit tab! I'm so happy.")
+          self._highlightNext()
 
         elif (key == pygame.K_KP_0) :
-          print("[NOTE] FingerSelector: delete finger, keep current hand")
+          print("[NOTE] FingerSelector._onKeyEvent(): delete finger, keep current hand")
 
         elif (key == pygame.K_KP_1) :
-          print("[NOTE] FingerSelector: set to finger 1")
+          print("[NOTE] FingerSelector._onKeyEvent(): set to finger 1")
 
 
 
       elif (modifier == "shift") :
         
-        # Tab: highlight the next note for edition
+        # Tab: highlight the previous note for edition
         if (key == pygame.K_TAB) :
-          print("[NOTE] FingerSelector: You hit shift+tab! I'm even happier!!")
+          
+          print("[NOTE] FingerSelector._onKeyEvent(): You hit shift+tab! I'm even happier!!")
 
 
 
@@ -429,8 +451,7 @@ class FingerSelector(widget.Widget) :
 # UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
-  
-  print("[INFO] Library 'fingerSelector' called as main: running unit tests...")
+  print("[INFO] There are no unit tests available for 'fingerSelector.py'.")
 
 
 

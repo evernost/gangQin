@@ -1470,8 +1470,6 @@ class Score(widget.Widget) :
     Only notes pressed at this cursor are returned.
     Sustained notes (notes that were pressed before and held up to the current 
     cursor) are not included in the list.
-
-    TODO: confirm that sustained notes are not returned or add an option for that
     """
     
     # Cursor hasn't changed since last request: return the cache

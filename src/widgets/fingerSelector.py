@@ -139,10 +139,8 @@ class FingerSelector(widget.Widget) :
     This function is called during the processing of a 'tab' keypress.
     """
     
-    # Read the active notes
     includeSustainedNotes = True
-    self.activeNotes = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes(includeSustainedNotes)
-    
+
     # Read the cursor
     cursor = self.top.widgets[WIDGET_ID_SCORE].getCursor()
 
@@ -150,15 +148,18 @@ class FingerSelector(widget.Widget) :
     # done again
     if (cursor != self.editedCursor) :
       self.editedCursor = cursor
+
+      self.activeNotes = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes(includeSustainedNotes)
       if self.activeNotes :
         self.activeNotes.sort(key = lambda N: N.pitch)
 
-        for N in self.activeNotes :
-          print(f"- {N.pitch}")
+      print(f"[DEBUG] New req")
+      print([x.pitch for x in self.activeNotes])
 
     # Otherwise, just read from cache.
     else :
-      print(f"[DEBUG] Reading active notes from cache")
+      print(f"[DEBUG] Reading active notes from cache:")
+      print([x.pitch for x in self.activeNotes])
 
 
 
@@ -184,16 +185,12 @@ class FingerSelector(widget.Widget) :
         self._setSelector(N.finger, N.hand)
 
       else :
-        N = self.activeNotes[self.editedIndex]
-        N.highlight = False
-
-        if (self.editedIndex == (len(self.activeNotes)-1)) :
-          self.editedIndex = 0
-        else :
-          self.editedIndex += 1
-
+        self.activeNotes[self.editedIndex].highlight = False
+        self.editedIndex = (self.editedIndex + 1) % len(self.activeNotes)
+        
         N = self.activeNotes[self.editedIndex]
         N.highlight = True
+        self._setSelector(N.finger, N.hand)
 
 
 
@@ -412,10 +409,6 @@ class FingerSelector(widget.Widget) :
     
     return (NOTE_UNDEFINED_FINGER, NOTE_UNDEFINED_HAND)
   
-
-
-
-
 
 
   # ---------------------------------------------------------------------------

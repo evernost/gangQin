@@ -1,0 +1,633 @@
+{
+  "nSnapshots": 15,
+  "snapshots": [
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "CEKK5M.png",
+      "index": 0,
+      "displayName": "Capture 1",
+      "description": "",
+      "cursorMin": 0,
+      "cursorMax": 24,
+      "playGlowsLeft": {
+        "0": [
+          428,
+          195,
+          10,
+          30
+        ],
+        "1": [
+          457,
+          172,
+          10,
+          30
+        ],
+        "2": [
+          478,
+          186,
+          10,
+          30
+        ],
+        "3": [
+          499,
+          197,
+          10,
+          30
+        ],
+        "4": [
+          522,
+          165,
+          10,
+          30
+        ],
+        "5": [
+          551,
+          197,
+          10,
+          30
+        ],
+        "6": [
+          602,
+          188,
+          10,
+          30
+        ],
+        "7": [
+          631,
+          173,
+          10,
+          30
+        ],
+        "8": [
+          652,
+          184,
+          10,
+          30
+        ],
+        "9": [
+          672,
+          198,
+          10,
+          30
+        ],
+        "10": [
+          695,
+          167,
+          10,
+          30
+        ],
+        "11": [
+          726,
+          196,
+          10,
+          30
+        ],
+        "12": [
+          775,
+          190,
+          10,
+          30
+        ],
+        "13": [
+          804,
+          170,
+          10,
+          30
+        ],
+        "14": [
+          826,
+          183,
+          10,
+          30
+        ],
+        "15": [
+          845,
+          199,
+          10,
+          30
+        ],
+        "16": [
+          867,
+          166,
+          10,
+          30
+        ],
+        "17": [
+          898,
+          195,
+          10,
+          30
+        ],
+        "18": [
+          949,
+          207,
+          10,
+          30
+        ],
+        "19": [
+          979,
+          170,
+          10,
+          30
+        ],
+        "20": [
+          997,
+          187,
+          10,
+          30
+        ],
+        "21": [
+          1019,
+          197,
+          10,
+          30
+        ],
+        "22": [
+          1041,
+          165,
+          10,
+          30
+        ],
+        "23": [
+          1069,
+          196,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "22": [
+          1040,
+          98,
+          10,
+          30
+        ],
+        "24": [
+          1085,
+          105,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "9FYTN7.png",
+      "index": 1,
+      "displayName": "Capture 2",
+      "description": "",
+      "cursorMin": 25,
+      "cursorMax": 58,
+      "playGlowsLeft": {
+        "25": [
+          295,
+          211,
+          10,
+          30
+        ],
+        "26": [
+          324,
+          169,
+          10,
+          30
+        ],
+        "27": [
+          343,
+          179,
+          10,
+          30
+        ],
+        "28": [
+          363,
+          193,
+          10,
+          30
+        ],
+        "29": [
+          386,
+          163,
+          10,
+          30
+        ],
+        "30": [
+          412,
+          194,
+          10,
+          30
+        ],
+        "32": [
+          467,
+          182,
+          10,
+          30
+        ],
+        "33": [
+          495,
+          171,
+          10,
+          30
+        ],
+        "34": [
+          515,
+          179,
+          10,
+          30
+        ],
+        "35": [
+          535,
+          193,
+          10,
+          30
+        ],
+        "36": [
+          558,
+          162,
+          10,
+          30
+        ],
+        "37": [
+          586,
+          192,
+          10,
+          30
+        ],
+        "39": [
+          635,
+          188,
+          10,
+          30
+        ],
+        "40": [
+          663,
+          167,
+          10,
+          30
+        ],
+        "41": [
+          682,
+          179,
+          10,
+          30
+        ],
+        "42": [
+          703,
+          193,
+          10,
+          30
+        ],
+        "43": [
+          724,
+          161,
+          10,
+          30
+        ],
+        "44": [
+          750,
+          193,
+          10,
+          30
+        ],
+        "45": [
+          792,
+          204,
+          10,
+          30
+        ],
+        "46": [
+          819,
+          166,
+          10,
+          30
+        ],
+        "47": [
+          838,
+          184,
+          10,
+          30
+        ],
+        "48": [
+          859,
+          192,
+          10,
+          30
+        ],
+        "49": [
+          879,
+          162,
+          10,
+          30
+        ],
+        "50": [
+          903,
+          196,
+          10,
+          30
+        ],
+        "52": [
+          957,
+          192,
+          10,
+          30
+        ],
+        "53": [
+          983,
+          170,
+          10,
+          30
+        ],
+        "54": [
+          1003,
+          179,
+          10,
+          30
+        ],
+        "55": [
+          1024,
+          194,
+          10,
+          30
+        ],
+        "56": [
+          1047,
+          163,
+          10,
+          30
+        ],
+        "57": [
+          1074,
+          193,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "25": [
+          296,
+          106,
+          10,
+          30
+        ],
+        "29": [
+          386,
+          106,
+          10,
+          30
+        ],
+        "31": [
+          430,
+          110,
+          10,
+          30
+        ],
+        "32": [
+          468,
+          96,
+          10,
+          30
+        ],
+        "36": [
+          558,
+          108,
+          10,
+          30
+        ],
+        "38": [
+          601,
+          104,
+          10,
+          30
+        ],
+        "39": [
+          635,
+          103,
+          10,
+          30
+        ],
+        "49": [
+          879,
+          105,
+          10,
+          30
+        ],
+        "51": [
+          918,
+          110,
+          10,
+          30
+        ],
+        "52": [
+          957,
+          105,
+          10,
+          30
+        ],
+        "56": [
+          1045,
+          90,
+          10,
+          30
+        ],
+        "58": [
+          1086,
+          95,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "7WEWGV.png",
+      "index": 2,
+      "displayName": "Capture 3",
+      "description": "",
+      "cursorMin": 59,
+      "cursorMax": 59,
+      "playGlowsLeft": {
+        "59": [
+          296,
+          187,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "59": [
+          297,
+          92,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "VK5E57.png",
+      "index": 3,
+      "displayName": "Capture 4",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "VWYT9Q.png",
+      "index": 4,
+      "displayName": "Capture 5",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "EWM8FY.png",
+      "index": 5,
+      "displayName": "Capture 6",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "GANDU6.png",
+      "index": 6,
+      "displayName": "Capture 7",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "4R3E6G.png",
+      "index": 7,
+      "displayName": "Capture 8",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "2DU7U5.png",
+      "index": 8,
+      "displayName": "Capture 9",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "MFNCWX.png",
+      "index": 9,
+      "displayName": "Capture 10",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "9UECR6.png",
+      "index": 10,
+      "displayName": "Capture 11",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "GAWCQ5.png",
+      "index": 11,
+      "displayName": "Capture 12",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "V7U74W.png",
+      "index": 12,
+      "displayName": "Capture 13",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "XHW8D3.png",
+      "index": 13,
+      "displayName": "Capture 14",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+      "file": "KMY93Y.png",
+      "index": 14,
+      "displayName": "Capture 15",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    }
+  ],
+  "isEmpty": false,
+  "songName": "Faure_Romance_sans_paroles_No_3",
+  "songFile": "Faure_Romance_sans_paroles_No_3.pr",
+  "jsonName": "Faure_Romance_sans_paroles_No_3.json",
+  "jsonFile": "./snaps/Faure_Romance_sans_paroles_No_3.json",
+  "depotFolder": "./snaps/db__Faure_Romance_sans_paroles_No_3",
+  "hasUnsavedChanges": false
+}

@@ -9,7 +9,8 @@
     56,
     96,
     104,
-    120
+    120,
+    216
   ],
   "activeHands": "LR",
   "pianoRoll": [
@@ -1366,7 +1367,7 @@
     {
       "pitch": 63,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 21,
       "startTime": 19320,
@@ -1512,6 +1513,21 @@
       "voice": 0,
       "name": "Eb4",
       "id": 218
+    },
+    {
+      "pitch": 63,
+      "hand": 0,
+      "finger": 2,
+      "keyColor": 1,
+      "noteIndex": 25,
+      "startTime": 19080,
+      "stopTime": 19193,
+      "sustained": false,
+      "inactive": false,
+      "disabled": false,
+      "voice": 0,
+      "name": "Eb4",
+      "id": 390
     },
     {
       "pitch": 64,
@@ -4771,7 +4787,7 @@
     {
       "pitch": 54,
       "hand": 1,
-      "finger": 2,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 0,
       "startTime": 16560,
@@ -6777,21 +6793,6 @@
       "voice": 0,
       "name": "Eb4",
       "id": 365
-    },
-    {
-      "pitch": 63,
-      "hand": 1,
-      "finger": 1,
-      "keyColor": 1,
-      "noteIndex": 25,
-      "startTime": 19080,
-      "stopTime": 19193,
-      "sustained": false,
-      "inactive": false,
-      "disabled": false,
-      "voice": 0,
-      "name": "Eb4",
-      "id": 390
     },
     {
       "pitch": 63,

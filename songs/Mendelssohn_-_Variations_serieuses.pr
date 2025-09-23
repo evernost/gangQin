@@ -3,7 +3,12 @@
   "nStaffs": 2,
   "avgNoteDuration": 146.53725023157338,
   "cursor": 0,
-  "bookmarks": [],
+  "bookmarks": [
+    0,
+    16,
+    32,
+    775
+  ],
   "activeHands": "LR",
   "pianoRoll": [
     {
@@ -32274,7 +32279,7 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 3,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 0,
       "startTime": 720,
@@ -39189,7 +39194,7 @@
     {
       "pitch": 70,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 0,
       "startTime": 960,
@@ -39204,7 +39209,7 @@
     {
       "pitch": 70,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 1,
       "startTime": 3240,
@@ -46254,7 +46259,7 @@
     {
       "pitch": 73,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 0,
       "startTime": 1680,
@@ -48639,7 +48644,7 @@
     {
       "pitch": 74,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 0,
       "startTime": 960,
@@ -87654,7 +87659,7 @@
     {
       "pitch": 55,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 0,
       "startTime": 960,
@@ -110169,7 +110174,7 @@
     {
       "pitch": 67,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 0,
       "startTime": 960,

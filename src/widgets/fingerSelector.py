@@ -95,7 +95,9 @@ class FingerSelector(widget.Widget) :
     # Hide the widget as soon as the cursor changes
     # A cursor change assumes that the finger edition is done
     if (self.top.widgets[WIDGET_ID_SCORE].getCursor() != self.editedCursor) :
-      #self.reset()          # Reset state, remove note hilighting etc.
+      self.editedNote = None
+      self.editedIndex  = -1
+      self.editedCursor = -1
       self.visible = False
 
 
@@ -153,14 +155,6 @@ class FingerSelector(widget.Widget) :
       if self.activeNotes :
         self.activeNotes.sort(key = lambda N: N.pitch)
 
-      print(f"[DEBUG] New req")
-      print([x.pitch for x in self.activeNotes])
-
-    # Otherwise, just read from cache.
-    else :
-      print(f"[DEBUG] Reading active notes from cache:")
-      print([x.pitch for x in self.activeNotes])
-
 
 
   # ---------------------------------------------------------------------------
@@ -177,20 +171,10 @@ class FingerSelector(widget.Widget) :
     self._getActiveNotes()
 
     if self.activeNotes :
-      if (self.editedIndex == -1) :
-        self.editedIndex = 0
-        N = self.activeNotes[self.editedIndex]
-        N.highlight = True
-        
-        self._setSelector(N.finger, N.hand)
-
+      if (self.editedNote == None) :
+        self.setByArrayIndex(0)
       else :
-        self.activeNotes[self.editedIndex].highlight = False
-        self.editedIndex = (self.editedIndex + 1) % len(self.activeNotes)
-        
-        N = self.activeNotes[self.editedIndex]
-        N.highlight = True
-        self._setSelector(N.finger, N.hand)
+        self.setByArrayIndex((self.editedIndex + 1) % len(self.activeNotes))
 
 
 
@@ -207,6 +191,12 @@ class FingerSelector(widget.Widget) :
     self.visible = True
     self._getActiveNotes()
 
+    if self.activeNotes :
+      if (self.editedNote == None) :
+        self.setByArrayIndex(len(self.activeNotes)-1)
+      else :
+        self.setByArrayIndex((self.editedIndex - 1) % len(self.activeNotes))
+
 
 
   # ---------------------------------------------------------------------------
@@ -217,57 +207,50 @@ class FingerSelector(widget.Widget) :
     Clears the current highlighted note.
     """
     
-    self.activeNotes = []
-    self.activeCursor = -1
-    self.activeIndex = -1
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD: FingerSelector.setEditedNote()
-  # ---------------------------------------------------------------------------
-  def setEditedNote(self, noteObj, cursor = -1) :
-    """
-    Defines the note whose properties are shown in the finger selector.
-    A cursor value can be stored along with the note so that it is easier to 
-    show/hide the widget in a specific context.
-    """
-
-    self._setSelector(noteObj.finger, noteObj.hand)
-    if (self.editedNote != None) :
-      self.editedNote.highlight = False
-    
-    self.editedNote = noteObj
-    self.editedCursor = cursor
-    noteObj.highlight = True
-    self.visible = True
-
-
-
-  # # ---------------------------------------------------------------------------
-  # # METHOD: FingerSelector.getEditedNote()
-  # # ---------------------------------------------------------------------------
-  # def getEditedNote(self) :
-  #   """
-  #   todo
-  #   """
-    
-  #   return self.editedNote
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD: FingerSelector.resetEditedNote()
-  # ---------------------------------------------------------------------------
-  def resetEditedNote(self) :
-    """
-    todo
-    """
-    
-    self.sel = -1
-    self.editedNote.highlight = False
     self.editedNote = None
+    self.editedIndex  = -1
     self.editedCursor = -1
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: FingerSelector.setByArrayIndex()
+  # ---------------------------------------------------------------------------
+  def setByArrayIndex(self, index) :
+    """
+    Defines the 'edited note' based on the note pointed at a given index in the 
+    'activeNotes' property.
+    """
+
+    if ((index >= 0) and (index < len(self.activeNotes))) :
+      
+      if (self.editedNote != None) :
+        self.editedNote.highlight = False
+    
+      self.editedIndex = index
+      self.editedNote = self.activeNotes[self.editedIndex]
+      self.editedNote.highlight = True
+      self._setSelector(self.editedNote.finger, self.editedNote.hand)
+    else :
+      print("[WARNING] FingerSelector.setByArrayIndex(): ignoring out of range index")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: FingerSelector.setByObject()
+  # ---------------------------------------------------------------------------
+  def setByObject(self, noteObj) :
+    """
+    Defines the 'edited note' using a reference to a note object.
+    This function is usually called from the click event handler.
+
+    NOTE: the note has to be in the 'activeNotes' property list.
+    """
+
+    for (i, N) in enumerate(self.activeNotes) :
+      if (noteObj.id == N.id) :
+        self.setByArrayIndex(i)
+        break
 
 
 
@@ -304,68 +287,6 @@ class FingerSelector(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <FingerSelector.setFingerAutoHighlight>
-  # ---------------------------------------------------------------------------
-  # def setFingerAutoHighlight(self, fingerNumber, teacherNotes, activeHands) :
-  #   """
-  #   Takes a finger index, the context. Assigns the finger index to the relevant
-  #   note.
-  #   """
-
-  #   # Sustained notes are not eligible to the note auto highlight
-  #   activeNotes = [x for x in teacherNotes if not(x.sustained)]
-
-  #   # Find a note that does not have a finger assigned yet
-  #   if (len(activeNotes) > 1) :
-  #     singleHandContent = True
-  #     for x in activeNotes[1:] :
-  #       if (x.hand != activeNotes[0].hand) :
-  #         singleHandContent = False
-  #         break
-    
-  #   else :
-  #     singleHandContent = True
-    
-  #   if ((activeHands != "LR") or singleHandContent) :
-      
-  #     # Sort by ascending pitch
-  #     activeNotes.sort(key = lambda x: x.pitch)
-      
-  #     # Keep notes not yet assigned
-  #     tmp = [x for x in activeNotes if (x.finger == NOTE_UNDEFINED_FINGER)]
-      
-  #     # Are all notes already assigned to a finger? -> start over
-  #     if (len(tmp) == 0) :
-  #       print("[DEBUG] Not handled yet.")
-      
-  #     else :
-  #       self.setEditedNote(tmp[0])
-  #       self.setFinger(fingerNumber)
-  #       fingerNumber = -1
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD <setFinger>
-  #
-  # Update the finger associated to the note being edited by passing the 
-  # finger number directly.
-  #
-  # This will also update the widget
-  # ---------------------------------------------------------------------------
-  # def setFinger(self, finger) :
-    
-  #   if (self.editedNote == None) :
-  #     print("[WARNING] No note selected!")
-
-  #   else :
-  #     if finger in [1,2,3,4,5] :
-  #       self.editedNote.finger = finger
-  #       self._setSelector(finger, self.editedNote.hand)
-
-
-
-  # ---------------------------------------------------------------------------
   # METHOD: FingerSelector._setSelector()                             [PRIVATE]
   # ---------------------------------------------------------------------------
   def _setSelector(self, finger, hand) :
@@ -386,28 +307,28 @@ class FingerSelector(widget.Widget) :
     
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD <_getFingerfromSel> (private)
-  #
-  # TODO
-  # ---------------------------------------------------------------------------
-  def _getFingerfromSel(self) :
+  # # ---------------------------------------------------------------------------
+  # # METHOD <_getFingerfromSel> (private)
+  # #
+  # # TODO
+  # # ---------------------------------------------------------------------------
+  # def _getFingerfromSel(self) :
         
-    if (self.currentSel <= 4) :
-      return (NOTE_LEFT_HAND, 5-self.currentSel)
+  #   if (self.currentSel <= 4) :
+  #     return (NOTE_LEFT_HAND, 5-self.currentSel)
 
-    if (self.currentSel == 5) :
-      return (NOTE_LEFT_HAND, NOTE_UNDEFINED_FINGER)
-      # self.editedNote.hand = ku.LEFT_HAND  => not supported yet
+  #   if (self.currentSel == 5) :
+  #     return (NOTE_LEFT_HAND, NOTE_UNDEFINED_FINGER)
+  #     # self.editedNote.hand = ku.LEFT_HAND  => not supported yet
     
-    if (self.currentSel == 6) :
-      return (NOTE_RIGHT_HAND, NOTE_UNDEFINED_FINGER)
-      # self.editedNote.hand = ku.RIGHT_HAND  => not supported yet
+  #   if (self.currentSel == 6) :
+  #     return (NOTE_RIGHT_HAND, NOTE_UNDEFINED_FINGER)
+  #     # self.editedNote.hand = ku.RIGHT_HAND  => not supported yet
     
-    if (self.currentSel >= 7) :
-      return (NOTE_RIGHT_HAND, self.currentSel - 6)
+  #   if (self.currentSel >= 7) :
+  #     return (NOTE_RIGHT_HAND, self.currentSel - 6)
     
-    return (NOTE_UNDEFINED_FINGER, NOTE_UNDEFINED_HAND)
+  #   return (NOTE_UNDEFINED_FINGER, NOTE_UNDEFINED_HAND)
   
 
 
@@ -425,28 +346,15 @@ class FingerSelector(widget.Widget) :
       if (button == MOUSE_LEFT_CLICK) :
         
         # Click on an active note
-        (isNoteHit, N) = self.top.widgets[WIDGET_ID_KEYBOARD].clickHitTest(pygame.mouse.get_pos())
+        (isNoteHit, noteObj) = self.top.widgets[WIDGET_ID_KEYBOARD].clickHitTest(pygame.mouse.get_pos())
         if isNoteHit :
-          print(f"[DEBUG] FingerSelector._onMouseEvent(): that's a {N.name}")
-          self.setEditedNote(N)
+          self.setByObject(noteObj)
         
         # Click on the selector
         (isSelectorHit, selectorIndex) = self._selectorHitTest(pygame.mouse.get_pos())
         if isSelectorHit :
           print(f"[DEBUG] FingerSelector._onMouseEvent(): you hit the selector (index = {selectorIndex})")
           self.sel = selectorIndex
-          # (hand, finger) = self._getFingerfromSel()
-          
-          # if (self.editedNote == None) :
-          #   print("[WARNING] No note selected!")
-            
-          # else :
-          #   self.editedNote.finger = finger
-            
-          #   if (hand != self.editedNote.hand) :
-          #     return FINGERSEL_HAND_CHANGE
-            
-          #   return FINGERSEL_CHANGED
           
         
 

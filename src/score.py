@@ -1481,7 +1481,8 @@ class Score(widget.Widget) :
       self._calculateTeacherNotes()
       self.teacherNotesCursor = self.getCursor()
 
-    # Return a copy: we don't want the clients to mess with the list
+    # Return a copy of the elaborated list.
+    # We do not want the clients to mess with it
     return self.teacherNotes.copy()
 
 

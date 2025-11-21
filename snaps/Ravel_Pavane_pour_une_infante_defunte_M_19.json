@@ -1,0 +1,968 @@
+{
+  "nSnapshots": 24,
+  "snapshots": [
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "2U2V6W.png",
+      "index": 0,
+      "displayName": "Capture 1",
+      "description": "",
+      "cursorMin": 0,
+      "cursorMax": 23,
+      "playGlowsLeft": {
+        "2": [
+          473,
+          210,
+          10,
+          30
+        ],
+        "4": [
+          526,
+          226,
+          10,
+          30
+        ],
+        "6": [
+          581,
+          189,
+          10,
+          30
+        ],
+        "8": [
+          659,
+          222,
+          10,
+          30
+        ],
+        "10": [
+          711,
+          201,
+          10,
+          30
+        ],
+        "12": [
+          765,
+          219,
+          10,
+          30
+        ],
+        "14": [
+          818,
+          195,
+          10,
+          30
+        ],
+        "20": [
+          999,
+          224,
+          10,
+          30
+        ],
+        "22": [
+          1053,
+          201,
+          10,
+          30
+        ],
+        "18": [
+          946,
+          200,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "0": [
+          423,
+          111,
+          10,
+          30
+        ],
+        "1": [
+          450,
+          122,
+          10,
+          30
+        ],
+        "2": [
+          475,
+          129,
+          10,
+          30
+        ],
+        "3": [
+          502,
+          121,
+          10,
+          30
+        ],
+        "4": [
+          528,
+          131,
+          10,
+          30
+        ],
+        "5": [
+          554,
+          104,
+          10,
+          30
+        ],
+        "6": [
+          583,
+          113,
+          10,
+          30
+        ],
+        "7": [
+          609,
+          118,
+          10,
+          30
+        ],
+        "8": [
+          660,
+          123,
+          10,
+          30
+        ],
+        "9": [
+          686,
+          131,
+          10,
+          30
+        ],
+        "10": [
+          713,
+          121,
+          10,
+          30
+        ],
+        "11": [
+          739,
+          113,
+          10,
+          30
+        ],
+        "12": [
+          766,
+          118,
+          10,
+          30
+        ],
+        "13": [
+          792,
+          116,
+          10,
+          30
+        ],
+        "14": [
+          818,
+          121,
+          10,
+          30
+        ],
+        "15": [
+          846,
+          131,
+          10,
+          30
+        ],
+        "16": [
+          894,
+          105,
+          10,
+          30
+        ],
+        "17": [
+          918,
+          119,
+          10,
+          30
+        ],
+        "18": [
+          946,
+          126,
+          10,
+          30
+        ],
+        "19": [
+          973,
+          118,
+          10,
+          30
+        ],
+        "20": [
+          999,
+          128,
+          10,
+          30
+        ],
+        "21": [
+          1027,
+          99,
+          10,
+          30
+        ],
+        "22": [
+          1053,
+          108,
+          10,
+          30
+        ],
+        "23": [
+          1081,
+          109,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "F4NP4P.png",
+      "index": 1,
+      "displayName": "Capture 2",
+      "description": "",
+      "cursorMin": 24,
+      "cursorMax": 47,
+      "playGlowsLeft": {
+        "24": [
+          302,
+          209,
+          10,
+          30
+        ],
+        "26": [
+          362,
+          184,
+          10,
+          30
+        ],
+        "28": [
+          423,
+          226,
+          10,
+          30
+        ],
+        "30": [
+          486,
+          203,
+          10,
+          30
+        ],
+        "32": [
+          575,
+          214,
+          10,
+          30
+        ],
+        "34": [
+          639,
+          189,
+          10,
+          30
+        ],
+        "36": [
+          698,
+          229,
+          10,
+          30
+        ],
+        "38": [
+          759,
+          205,
+          10,
+          30
+        ],
+        "40": [
+          851,
+          219,
+          10,
+          30
+        ],
+        "44": [
+          972,
+          210,
+          10,
+          30
+        ],
+        "46": [
+          1034,
+          208,
+          10,
+          30
+        ],
+        "47": [
+          1066,
+          203,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "24": [
+          301,
+          115,
+          10,
+          30
+        ],
+        "25": [
+          332,
+          125,
+          10,
+          30
+        ],
+        "26": [
+          362,
+          113,
+          10,
+          30
+        ],
+        "27": [
+          392,
+          109,
+          10,
+          30
+        ],
+        "28": [
+          424,
+          135,
+          10,
+          30
+        ],
+        "29": [
+          454,
+          107,
+          10,
+          30
+        ],
+        "30": [
+          487,
+          116,
+          10,
+          30
+        ],
+        "31": [
+          516,
+          115,
+          10,
+          30
+        ],
+        "32": [
+          575,
+          122,
+          10,
+          30
+        ],
+        "33": [
+          606,
+          132,
+          10,
+          30
+        ],
+        "34": [
+          638,
+          119,
+          10,
+          30
+        ],
+        "35": [
+          668,
+          115,
+          10,
+          30
+        ],
+        "36": [
+          699,
+          119,
+          10,
+          30
+        ],
+        "37": [
+          729,
+          112,
+          10,
+          30
+        ],
+        "38": [
+          760,
+          121,
+          10,
+          30
+        ],
+        "39": [
+          791,
+          122,
+          10,
+          30
+        ],
+        "40": [
+          850,
+          124,
+          10,
+          30
+        ],
+        "41": [
+          880,
+          137,
+          10,
+          30
+        ],
+        "42": [
+          909,
+          129,
+          10,
+          30
+        ],
+        "43": [
+          943,
+          138,
+          10,
+          30
+        ],
+        "45": [
+          1004,
+          112,
+          10,
+          30
+        ],
+        "46": [
+          1034,
+          119,
+          10,
+          30
+        ],
+        "47": [
+          1065,
+          128,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "W9BWA8.png",
+      "index": 2,
+      "displayName": "Capture 3",
+      "description": "",
+      "cursorMin": 48,
+      "cursorMax": 73,
+      "playGlowsLeft": {
+        "48": [
+          301,
+          217,
+          10,
+          30
+        ],
+        "51": [
+          408,
+          235,
+          10,
+          30
+        ],
+        "58": [
+          540,
+          238,
+          10,
+          30
+        ],
+        "60": [
+          602,
+          198,
+          10,
+          30
+        ],
+        "63": [
+          702,
+          199,
+          10,
+          30
+        ],
+        "64": [
+          733,
+          187,
+          10,
+          30
+        ],
+        "65": [
+          767,
+          196,
+          10,
+          30
+        ],
+        "66": [
+          833,
+          181,
+          10,
+          30
+        ],
+        "67": [
+          866,
+          229,
+          10,
+          30
+        ],
+        "68": [
+          899,
+          189,
+          10,
+          30
+        ],
+        "72": [
+          1032,
+          182,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "48": [
+          301,
+          117,
+          10,
+          30
+        ],
+        "49": [
+          335,
+          126,
+          10,
+          30
+        ],
+        "50": [
+          366,
+          87,
+          10,
+          30
+        ],
+        "52": [
+          442,
+          87,
+          10,
+          30
+        ],
+        "53": [
+          462,
+          116,
+          10,
+          30
+        ],
+        "54": [
+          472,
+          108,
+          10,
+          30
+        ],
+        "55": [
+          482,
+          100,
+          10,
+          30
+        ],
+        "56": [
+          495,
+          89,
+          10,
+          30
+        ],
+        "57": [
+          504,
+          79,
+          10,
+          30
+        ],
+        "59": [
+          571,
+          125,
+          10,
+          30
+        ],
+        "60": [
+          603,
+          115,
+          10,
+          30
+        ],
+        "61": [
+          638,
+          122,
+          10,
+          30
+        ],
+        "62": [
+          667,
+          132,
+          10,
+          30
+        ],
+        "63": [
+          701,
+          106,
+          10,
+          30
+        ],
+        "64": [
+          734,
+          98,
+          10,
+          30
+        ],
+        "65": [
+          767,
+          106,
+          10,
+          30
+        ],
+        "66": [
+          834,
+          109,
+          10,
+          30
+        ],
+        "67": [
+          866,
+          127,
+          10,
+          30
+        ],
+        "68": [
+          901,
+          93,
+          10,
+          30
+        ],
+        "69": [
+          934,
+          124,
+          10,
+          30
+        ],
+        "70": [
+          965,
+          115,
+          10,
+          30
+        ],
+        "71": [
+          999,
+          123,
+          10,
+          30
+        ],
+        "72": [
+          1032,
+          93,
+          10,
+          30
+        ],
+        "73": [
+          1066,
+          124,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "ZUCRDQ.png",
+      "index": 3,
+      "displayName": "Capture 4",
+      "description": "",
+      "cursorMin": 74,
+      "cursorMax": 74,
+      "playGlowsLeft": {
+        "74": [
+          316,
+          171,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "74": [
+          318,
+          100,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "2YUHH9.png",
+      "index": 4,
+      "displayName": "Capture 5",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "YBBYMR.png",
+      "index": 5,
+      "displayName": "Capture 6",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "BQ6EM4.png",
+      "index": 6,
+      "displayName": "Capture 7",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "85PDAX.png",
+      "index": 7,
+      "displayName": "Capture 8",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "EFXXBW.png",
+      "index": 8,
+      "displayName": "Capture 9",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "XGHXNF.png",
+      "index": 9,
+      "displayName": "Capture 10",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "M6WNGK.png",
+      "index": 10,
+      "displayName": "Capture 11",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "6CB96E.png",
+      "index": 11,
+      "displayName": "Capture 12",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "3NY55N.png",
+      "index": 12,
+      "displayName": "Capture 13",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "M2A4NC.png",
+      "index": 13,
+      "displayName": "Capture 14",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "2C7QZA.png",
+      "index": 14,
+      "displayName": "Capture 15",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "GRTATF.png",
+      "index": 15,
+      "displayName": "Capture 16",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "X9AMMH.png",
+      "index": 16,
+      "displayName": "Capture 17",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "9B32UF.png",
+      "index": 17,
+      "displayName": "Capture 18",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "D399NF.png",
+      "index": 18,
+      "displayName": "Capture 19",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "C3BU3N.png",
+      "index": 19,
+      "displayName": "Capture 20",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "9KZA2K.png",
+      "index": 20,
+      "displayName": "Capture 21",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "Z6FXFM.png",
+      "index": 21,
+      "displayName": "Capture 22",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "7976DC.png",
+      "index": 22,
+      "displayName": "Capture 23",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+      "file": "GB33R5.png",
+      "index": 23,
+      "displayName": "Capture 24",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    }
+  ],
+  "isEmpty": false,
+  "songName": "Ravel_Pavane_pour_une_infante_defunte_M_19",
+  "songFile": "Ravel_Pavane_pour_une_infante_defunte_M_19.pr",
+  "jsonName": "Ravel_Pavane_pour_une_infante_defunte_M_19.json",
+  "jsonFile": "./snaps/Ravel_Pavane_pour_une_infante_defunte_M_19.json",
+  "depotFolder": "./snaps/db__Ravel_Pavane_pour_une_infante_defunte_M_19",
+  "hasUnsavedChanges": false
+}

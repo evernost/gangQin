@@ -89,18 +89,16 @@ class FingerSelector(widget.Widget) :
   # ---------------------------------------------------------------------------
   def render(self) :
     """
-    Renders the finger selection buttons and graphical elements on screen.
+    Renders the finger selector widget on screen.
     """
 
     # Hide the widget as soon as the cursor changes
-    # A cursor change assumes that the finger edition is done
+    # The cursor changing is a sign that the finger edition is done.
     if (self.top.widgets[WIDGET_ID_SCORE].getCursor() != self.editedCursor) :
-      self.editedNote = None
+      self.editedNote   = None
       self.editedIndex  = -1
       self.editedCursor = -1
-      self.visible = False
-
-
+      self.visible      = False
 
     if (self.visible) :
       (locX, locY) = self.loc  
@@ -259,7 +257,7 @@ class FingerSelector(widget.Widget) :
   # ---------------------------------------------------------------------------
   def _selectorHitTest(self, clickCoord) :
     """
-    Indicates if the click's coordinates hit the finger selector.
+    Indicates if the click's coordinates hit the finger selector widget.
 
     Returns (status, index)
     """
@@ -371,7 +369,7 @@ class FingerSelector(widget.Widget) :
       # Simple keypresses (no modifiers)
       if (modifier == "") :
         
-        # Tab: highlight the next note for edition
+        # Tab key: highlight the next note for edition
         if (key == pygame.K_TAB) :
           self._highlightNext()
 
@@ -379,13 +377,16 @@ class FingerSelector(widget.Widget) :
           print("[NOTE] FingerSelector._onKeyEvent(): delete finger, keep current hand")
 
         elif (key == pygame.K_KP_1) :
-          print("[NOTE] FingerSelector._onKeyEvent(): set to finger 1")
+          print("[NOTE] FingerSelector._onKeyEvent(): caught hit on key 1")
+
+        elif (key == pygame.K_KP_2) :
+          print("[NOTE] FingerSelector._onKeyEvent(): caught hit on key 2")
 
 
 
       elif (modifier == "shift") :
         
-        # Tab: highlight the previous note for edition
+        # Maj + Tab key: highlight the previous note for edition
         if (key == pygame.K_TAB) :
           self._highlightPrevious()
 

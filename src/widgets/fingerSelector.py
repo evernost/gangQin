@@ -133,10 +133,12 @@ class FingerSelector(widget.Widget) :
   # ---------------------------------------------------------------------------
   def _getActiveNotes(self) :
     """
-    Requests the active notes in the Score from the 'Score' widget.
-    Sort the notes in ascending order in 'activeNotes'.
+    Requests the list of active notes in the Score from the 'Score' widget.
+    Sort the notes in ascending pitch order.
 
-    This function is called during the processing of a 'tab' keypress.
+    Result is stored in 'activeNotes'.
+
+    This function is usually called during the processing of a 'tab' keypress.
     """
     
     includeSustainedNotes = True
@@ -160,8 +162,8 @@ class FingerSelector(widget.Widget) :
   # ---------------------------------------------------------------------------
   def _highlightNext(self) :
     """
-    Highlights the next active note (in ascending order) currently shown on the 
-    keyboard.
+    Highlights the next active note (in ascending pitch order) currently shown 
+    on the keyboard.
     Wraps around after the last note.
     """
     
@@ -170,9 +172,9 @@ class FingerSelector(widget.Widget) :
 
     if self.activeNotes :
       if (self.editedNote == None) :
-        self.setByArrayIndex(0)
+        self.highlightByIndex(0)
       else :
-        self.setByArrayIndex((self.editedIndex + 1) % len(self.activeNotes))
+        self.highlightByIndex((self.editedIndex + 1) % len(self.activeNotes))
 
 
 
@@ -181,8 +183,8 @@ class FingerSelector(widget.Widget) :
   # ---------------------------------------------------------------------------
   def _highlightPrevious(self) :
     """
-    Highlights the previous active note (in ascending order) currently shown on 
-    the keyboard.
+    Highlights the previous active note (in ascending pitch order) currently 
+    shown on the keyboard.
     Wraps around after the first note.
     """
     
@@ -191,9 +193,9 @@ class FingerSelector(widget.Widget) :
 
     if self.activeNotes :
       if (self.editedNote == None) :
-        self.setByArrayIndex(len(self.activeNotes)-1)
+        self.highlightByIndex(len(self.activeNotes)-1)
       else :
-        self.setByArrayIndex((self.editedIndex - 1) % len(self.activeNotes))
+        self.highlightByIndex((self.editedIndex - 1) % len(self.activeNotes))
 
 
 
@@ -205,23 +207,54 @@ class FingerSelector(widget.Widget) :
     Clears the current highlighted note.
     """
     
-    self.editedNote = None
+    self.editedNote   = None
     self.editedIndex  = -1
     self.editedCursor = -1
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: FingerSelector.setByArrayIndex()
+  # METHOD: FingerSelector.highlightByObject()
   # ---------------------------------------------------------------------------
-  def setByArrayIndex(self, index) :
+  def highlightByObject(self, noteObj) :
     """
-    Defines the 'edited note' based on the note pointed at a given index in the 
-    'activeNotes' property.
+    Defines the hightlighted note using a reference to a note object.
+    The note must be in the 'activeNotes' property (you can only edit the finger
+    of a note that is shown on screen for simplicity)
+
+    Also:
+    - The "highlight" attribute of the note gets set to True.
+    - The selector widget turns ON and tracks the selected note.
+    
+    This function is usually called from the click event handler.
+
+    Reference to notes that are not in 'activeNotes' are ignored.
+    """
+    
+    self._getActiveNotes()
+    for (i, N) in enumerate(self.activeNotes) :
+      if (noteObj.id == N.id) :
+        self.highlightByIndex(i)
+        break
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: FingerSelector.highlightByIndex()
+  # ---------------------------------------------------------------------------
+  def highlightByIndex(self, index) :
+    """
+    Highlights the note on keyboard using an index (given as argument) that 
+    points in the 'activeNotes' array.
+
+    Also:
+    - The 'highlight' attribute of the note is set to True.
+    - The selector widget turns ON and tracks the selected note.
+
+    Out of range indices are ignored.
     """
 
     if ((index >= 0) and (index < len(self.activeNotes))) :
-      
       if (self.editedNote != None) :
         self.editedNote.highlight = False
     
@@ -230,25 +263,35 @@ class FingerSelector(widget.Widget) :
       self.editedNote.highlight = True
       self._setSelector(self.editedNote.finger, self.editedNote.hand)
     else :
-      print("[WARNING] FingerSelector.setByArrayIndex(): ignoring out of range index")
+      print("[WARNING] FingerSelector.highlightByIndex(): ignoring out of range index")
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: FingerSelector.setByObject()
+  # METHOD: FingerSelector.highlightReset()
   # ---------------------------------------------------------------------------
-  def setByObject(self, noteObj) :
+  def highlightReset(self) :
     """
-    Defines the 'edited note' using a reference to a note object.
-    This function is usually called from the click event handler.
-
-    NOTE: the note has to be in the 'activeNotes' property list.
+    Turns off the selector Widget
+    Sets the 'highlight' attribute of the note to False.
     """
 
-    for (i, N) in enumerate(self.activeNotes) :
-      if (noteObj.id == N.id) :
-        self.setByArrayIndex(i)
-        break
+    print("Function is TODO.")
+
+  # ---------------------------------------------------------------------------
+  # METHOD: FingerSelector.assign()
+  # ---------------------------------------------------------------------------
+  def assign(self, finger, hand = NOTE_UNDEFINED_HAND) :
+    """
+    
+    """
+
+    if self.activeNotes :
+      print("hello")
+
+
+
+
 
 
 
@@ -257,9 +300,11 @@ class FingerSelector(widget.Widget) :
   # ---------------------------------------------------------------------------
   def _selectorHitTest(self, clickCoord) :
     """
-    Indicates if the click's coordinates hit the finger selector widget.
+    Indicates if the mouse click coordinates hit the finger selector widget.
 
-    Returns (status, index)
+    Returns (status, index) where:
+    - 'status' returns the test result (True/False)
+    - 'index' returns the index of the element that has been hit
     """
 
     (locX, locY) = self.loc
@@ -288,6 +333,9 @@ class FingerSelector(widget.Widget) :
   # METHOD: FingerSelector._setSelector()                             [PRIVATE]
   # ---------------------------------------------------------------------------
   def _setSelector(self, finger, hand) :
+    """
+    Description is TODO.
+    """
     
     #self.sel = index
     #finger, hand = (0,0)
@@ -346,15 +394,22 @@ class FingerSelector(widget.Widget) :
         # Click on an active note
         (isNoteHit, noteObj) = self.top.widgets[WIDGET_ID_KEYBOARD].clickHitTest(pygame.mouse.get_pos())
         if isNoteHit :
-          self.setByObject(noteObj)
+          self.highlightByObject(noteObj)
         
         # Click on the selector
         (isSelectorHit, selectorIndex) = self._selectorHitTest(pygame.mouse.get_pos())
         if isSelectorHit :
           print(f"[DEBUG] FingerSelector._onMouseEvent(): you hit the selector (index = {selectorIndex})")
           self.sel = selectorIndex
-          
-        
+
+      elif (button == MOUSE_SCROLL_UP) :
+        print("weeeee up, up, up!!!")
+
+      elif (button == MOUSE_SCROLL_DOWN) :
+        print("weeeee down, down, down!!!")
+
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD FingerSelector._onKeyEvent()                             [INHERITED]
@@ -366,27 +421,21 @@ class FingerSelector(widget.Widget) :
     
     if (type == pygame.KEYDOWN) :
       
-      # Simple keypresses (no modifiers)
+      # SIMPLE KEYPRESS
       if (modifier == "") :
-        
-        # Tab key: highlight the next note for edition
-        if (key == pygame.K_TAB) :
-          self._highlightNext()
-
-        elif (key == pygame.K_KP_0) :
+        if (key == pygame.K_KP_0) :
           print("[NOTE] FingerSelector._onKeyEvent(): delete finger, keep current hand")
-
         elif (key == pygame.K_KP_1) :
-          print("[NOTE] FingerSelector._onKeyEvent(): caught hit on key 1")
-
+          self.assign(finger = 1)
         elif (key == pygame.K_KP_2) :
           print("[NOTE] FingerSelector._onKeyEvent(): caught hit on key 2")
+        elif (key == pygame.K_TAB) :
+          self._highlightNext()
+        elif (key == pygame.K_DELETE) :
+          print("[NOTE] FingerSelector._onKeyEvent(): delete finger, keep current hand")
 
-
-
+      # SHIFT + KEYPRESS
       elif (modifier == "shift") :
-        
-        # Maj + Tab key: highlight the previous note for edition
         if (key == pygame.K_TAB) :
           self._highlightPrevious()
 

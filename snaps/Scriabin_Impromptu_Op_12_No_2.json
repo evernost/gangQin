@@ -1,0 +1,1381 @@
+{
+  "nSnapshots": 21,
+  "snapshots": [
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "4FD4HK.png",
+      "index": 0,
+      "displayName": "Capture 1",
+      "description": "",
+      "cursorMin": 0,
+      "cursorMax": 15,
+      "playGlowsLeft": {
+        "0": [
+          460,
+          234,
+          10,
+          30
+        ],
+        "1": [
+          516,
+          209,
+          10,
+          30
+        ],
+        "2": [
+          555,
+          170,
+          10,
+          30
+        ],
+        "3": [
+          631,
+          233,
+          10,
+          30
+        ],
+        "4": [
+          666,
+          213,
+          10,
+          30
+        ],
+        "5": [
+          707,
+          171,
+          10,
+          30
+        ],
+        "6": [
+          782,
+          235,
+          10,
+          30
+        ],
+        "7": [
+          841,
+          213,
+          10,
+          30
+        ],
+        "8": [
+          880,
+          170,
+          10,
+          30
+        ],
+        "11": [
+          955,
+          234,
+          10,
+          30
+        ],
+        "12": [
+          986,
+          217,
+          10,
+          30
+        ],
+        "13": [
+          1027,
+          176,
+          10,
+          30
+        ],
+        "15": [
+          1101,
+          233,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "14": [
+          1050,
+          114,
+          10,
+          30
+        ],
+        "15": [
+          1099,
+          109,
+          10,
+          30
+        ],
+        "7": [
+          840,
+          133,
+          10,
+          30
+        ],
+        "9": [
+          906,
+          127,
+          10,
+          30
+        ],
+        "10": [
+          931,
+          122,
+          10,
+          30
+        ],
+        "11": [
+          955,
+          112,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "YX48EW.png",
+      "index": 1,
+      "displayName": "Capture 2",
+      "description": "",
+      "cursorMin": 16,
+      "cursorMax": 45,
+      "playGlowsLeft": {
+        "16": [
+          307,
+          202,
+          10,
+          30
+        ],
+        "18": [
+          350,
+          156,
+          10,
+          30
+        ],
+        "30": [
+          655,
+          167,
+          10,
+          30
+        ],
+        "42": [
+          1046,
+          211,
+          10,
+          30
+        ],
+        "43": [
+          1087,
+          167,
+          10,
+          30
+        ],
+        "45": [
+          1152,
+          240,
+          10,
+          30
+        ],
+        "24": [
+          488,
+          155,
+          10,
+          30
+        ],
+        "22": [
+          446,
+          195,
+          10,
+          30
+        ],
+        "21": [
+          415,
+          229,
+          10,
+          30
+        ],
+        "27": [
+          553,
+          231,
+          10,
+          30
+        ],
+        "28": [
+          606,
+          195,
+          10,
+          30
+        ],
+        "32": [
+          729,
+          228,
+          10,
+          30
+        ],
+        "33": [
+          762,
+          199,
+          10,
+          30
+        ],
+        "34": [
+          802,
+          154,
+          10,
+          30
+        ],
+        "36": [
+          866,
+          227,
+          10,
+          30
+        ],
+        "37": [
+          914,
+          199,
+          10,
+          30
+        ],
+        "38": [
+          949,
+          154,
+          10,
+          30
+        ],
+        "41": [
+          1016,
+          231,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "17": [
+          328,
+          107,
+          10,
+          30
+        ],
+        "18": [
+          350,
+          100,
+          10,
+          30
+        ],
+        "19": [
+          373,
+          96,
+          10,
+          30
+        ],
+        "20": [
+          396,
+          80,
+          10,
+          30
+        ],
+        "21": [
+          417,
+          89,
+          10,
+          30
+        ],
+        "22": [
+          446,
+          93,
+          10,
+          30
+        ],
+        "23": [
+          468,
+          102,
+          10,
+          30
+        ],
+        "24": [
+          487,
+          105,
+          10,
+          30
+        ],
+        "25": [
+          509,
+          100,
+          10,
+          30
+        ],
+        "26": [
+          532,
+          116,
+          10,
+          30
+        ],
+        "27": [
+          553,
+          111,
+          10,
+          30
+        ],
+        "28": [
+          605,
+          112,
+          10,
+          30
+        ],
+        "29": [
+          634,
+          105,
+          10,
+          30
+        ],
+        "30": [
+          656,
+          99,
+          10,
+          30
+        ],
+        "31": [
+          689,
+          104,
+          10,
+          30
+        ],
+        "35": [
+          826,
+          111,
+          10,
+          30
+        ],
+        "37": [
+          914,
+          114,
+          10,
+          30
+        ],
+        "39": [
+          971,
+          107,
+          10,
+          30
+        ],
+        "40": [
+          993,
+          103,
+          10,
+          30
+        ],
+        "41": [
+          1016,
+          95,
+          10,
+          30
+        ],
+        "44": [
+          1110,
+          105,
+          10,
+          30
+        ],
+        "45": [
+          1153,
+          100,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "VQHNXX.png",
+      "index": 2,
+      "displayName": "Capture 3",
+      "description": "",
+      "cursorMin": 46,
+      "cursorMax": 78,
+      "playGlowsLeft": {
+        "46": [
+          346,
+          204,
+          10,
+          30
+        ],
+        "48": [
+          385,
+          152,
+          10,
+          30
+        ],
+        "51": [
+          440,
+          224,
+          10,
+          30
+        ],
+        "52": [
+          468,
+          200,
+          10,
+          30
+        ],
+        "54": [
+          506,
+          153,
+          10,
+          30
+        ],
+        "57": [
+          563,
+          220,
+          10,
+          30
+        ],
+        "58": [
+          605,
+          193,
+          10,
+          30
+        ],
+        "60": [
+          644,
+          157,
+          10,
+          30
+        ],
+        "62": [
+          702,
+          222,
+          10,
+          30
+        ],
+        "63": [
+          732,
+          190,
+          10,
+          30
+        ],
+        "64": [
+          759,
+          159,
+          10,
+          30
+        ],
+        "66": [
+          816,
+          239,
+          10,
+          30
+        ],
+        "67": [
+          862,
+          195,
+          10,
+          30
+        ],
+        "78": [
+          1104,
+          213,
+          10,
+          30
+        ],
+        "75": [
+          1038,
+          152,
+          10,
+          30
+        ],
+        "73": [
+          990,
+          189,
+          10,
+          30
+        ],
+        "72": [
+          961,
+          208,
+          10,
+          30
+        ],
+        "69": [
+          902,
+          157,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "47": [
+          365,
+          90,
+          10,
+          30
+        ],
+        "48": [
+          385,
+          86,
+          10,
+          30
+        ],
+        "49": [
+          402,
+          82,
+          10,
+          30
+        ],
+        "50": [
+          423,
+          69,
+          10,
+          30
+        ],
+        "51": [
+          443,
+          76,
+          10,
+          30
+        ],
+        "52": [
+          469,
+          81,
+          10,
+          30
+        ],
+        "53": [
+          488,
+          86,
+          10,
+          30
+        ],
+        "54": [
+          507,
+          89,
+          10,
+          30
+        ],
+        "55": [
+          526,
+          85,
+          10,
+          30
+        ],
+        "56": [
+          544,
+          98,
+          10,
+          30
+        ],
+        "57": [
+          564,
+          95,
+          10,
+          30
+        ],
+        "58": [
+          606,
+          113,
+          10,
+          30
+        ],
+        "59": [
+          625,
+          108,
+          10,
+          30
+        ],
+        "60": [
+          644,
+          98,
+          10,
+          30
+        ],
+        "61": [
+          663,
+          88,
+          10,
+          30
+        ],
+        "65": [
+          780,
+          91,
+          10,
+          30
+        ],
+        "68": [
+          884,
+          97,
+          10,
+          30
+        ],
+        "69": [
+          904,
+          93,
+          10,
+          30
+        ],
+        "70": [
+          923,
+          87,
+          10,
+          30
+        ],
+        "71": [
+          943,
+          75,
+          10,
+          30
+        ],
+        "72": [
+          964,
+          79,
+          10,
+          30
+        ],
+        "73": [
+          993,
+          83,
+          10,
+          30
+        ],
+        "74": [
+          1012,
+          88,
+          10,
+          30
+        ],
+        "75": [
+          1037,
+          94,
+          10,
+          30
+        ],
+        "76": [
+          1060,
+          91,
+          10,
+          30
+        ],
+        "77": [
+          1085,
+          115,
+          10,
+          30
+        ],
+        "78": [
+          1107,
+          113,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "PZQP2B.png",
+      "index": 3,
+      "displayName": "Capture 4",
+      "description": "",
+      "cursorMin": 79,
+      "cursorMax": 114,
+      "playGlowsLeft": {
+        "79": [
+          344,
+          180,
+          10,
+          30
+        ],
+        "85": [
+          464,
+          175,
+          10,
+          30
+        ],
+        "84": [
+          440,
+          207,
+          10,
+          30
+        ],
+        "81": [
+          386,
+          158,
+          10,
+          30
+        ],
+        "87": [
+          511,
+          143,
+          10,
+          30
+        ],
+        "90": [
+          569,
+          223,
+          10,
+          30
+        ],
+        "91": [
+          617,
+          195,
+          10,
+          30
+        ],
+        "92": [
+          652,
+          161,
+          10,
+          30
+        ],
+        "94": [
+          707,
+          225,
+          10,
+          30
+        ],
+        "95": [
+          733,
+          200,
+          10,
+          30
+        ],
+        "97": [
+          768,
+          157,
+          10,
+          30
+        ],
+        "102": [
+          842,
+          225,
+          10,
+          30
+        ],
+        "103": [
+          887,
+          194,
+          10,
+          30
+        ],
+        "104": [
+          914,
+          159,
+          10,
+          30
+        ],
+        "105": [
+          931,
+          203,
+          10,
+          30
+        ],
+        "106": [
+          950,
+          166,
+          10,
+          30
+        ],
+        "108": [
+          992,
+          225,
+          10,
+          30
+        ],
+        "109": [
+          1019,
+          198,
+          10,
+          30
+        ],
+        "110": [
+          1036,
+          155,
+          10,
+          30
+        ],
+        "111": [
+          1053,
+          207,
+          10,
+          30
+        ],
+        "112": [
+          1070,
+          168,
+          10,
+          30
+        ],
+        "114": [
+          1105,
+          195,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "79": [
+          344,
+          107,
+          10,
+          30
+        ],
+        "80": [
+          362,
+          101,
+          10,
+          30
+        ],
+        "81": [
+          387,
+          110,
+          10,
+          30
+        ],
+        "82": [
+          406,
+          108,
+          10,
+          30
+        ],
+        "83": [
+          423,
+          94,
+          10,
+          30
+        ],
+        "84": [
+          440,
+          84,
+          10,
+          30
+        ],
+        "86": [
+          491,
+          91,
+          10,
+          30
+        ],
+        "85": [
+          465,
+          84,
+          10,
+          30
+        ],
+        "87": [
+          509,
+          93,
+          10,
+          30
+        ],
+        "88": [
+          526,
+          90,
+          10,
+          30
+        ],
+        "89": [
+          545,
+          81,
+          10,
+          30
+        ],
+        "90": [
+          570,
+          83,
+          10,
+          30
+        ],
+        "91": [
+          618,
+          96,
+          10,
+          30
+        ],
+        "93": [
+          671,
+          93,
+          10,
+          30
+        ],
+        "94": [
+          708,
+          87,
+          10,
+          30
+        ],
+        "95": [
+          734,
+          100,
+          10,
+          30
+        ],
+        "96": [
+          752,
+          92,
+          10,
+          30
+        ],
+        "97": [
+          769,
+          89,
+          10,
+          30
+        ],
+        "98": [
+          784,
+          83,
+          10,
+          30
+        ],
+        "99": [
+          796,
+          78,
+          10,
+          30
+        ],
+        "100": [
+          806,
+          83,
+          10,
+          30
+        ],
+        "101": [
+          825,
+          89,
+          10,
+          30
+        ],
+        "102": [
+          843,
+          93,
+          10,
+          30
+        ],
+        "103": [
+          888,
+          96,
+          10,
+          30
+        ],
+        "104": [
+          915,
+          79,
+          10,
+          30
+        ],
+        "106": [
+          951,
+          93,
+          10,
+          30
+        ],
+        "107": [
+          974,
+          91,
+          10,
+          30
+        ],
+        "108": [
+          994,
+          85,
+          10,
+          30
+        ],
+        "109": [
+          1019,
+          100,
+          10,
+          30
+        ],
+        "110": [
+          1036,
+          92,
+          10,
+          30
+        ],
+        "111": [
+          1054,
+          88,
+          10,
+          30
+        ],
+        "112": [
+          1070,
+          102,
+          10,
+          30
+        ],
+        "113": [
+          1087,
+          87,
+          10,
+          30
+        ],
+        "114": [
+          1105,
+          91,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "4CM9X9.png",
+      "index": 4,
+      "displayName": "Capture 5",
+      "description": "",
+      "cursorMin": 115,
+      "cursorMax": 128,
+      "playGlowsLeft": {
+        "115": [
+          372,
+          190,
+          10,
+          30
+        ],
+        "116": [
+          389,
+          163,
+          10,
+          30
+        ],
+        "117": [
+          408,
+          197,
+          10,
+          30
+        ],
+        "118": [
+          430,
+          190,
+          10,
+          30
+        ],
+        "119": [
+          448,
+          162,
+          10,
+          30
+        ],
+        "120": [
+          473,
+          203,
+          10,
+          30
+        ],
+        "121": [
+          493,
+          191,
+          10,
+          30
+        ],
+        "122": [
+          512,
+          162,
+          10,
+          30
+        ],
+        "123": [
+          535,
+          205,
+          10,
+          30
+        ],
+        "124": [
+          559,
+          190,
+          10,
+          30
+        ],
+        "125": [
+          577,
+          162,
+          10,
+          30
+        ],
+        "126": [
+          599,
+          210,
+          10,
+          30
+        ],
+        "127": [
+          637,
+          191,
+          10,
+          30
+        ],
+        "128": [
+          654,
+          179,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "115": [
+          373,
+          99,
+          10,
+          30
+        ],
+        "120": [
+          448,
+          105,
+          10,
+          30
+        ],
+        "122": [
+          512,
+          113,
+          10,
+          30
+        ],
+        "123": [
+          535,
+          95,
+          10,
+          30
+        ],
+        "125": [
+          578,
+          101,
+          10,
+          30
+        ],
+        "126": [
+          601,
+          80,
+          10,
+          30
+        ],
+        "127": [
+          638,
+          111,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "ECWU8H.png",
+      "index": 5,
+      "displayName": "Capture 6",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "BVNA5E.png",
+      "index": 6,
+      "displayName": "Capture 7",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "9VVVP4.png",
+      "index": 7,
+      "displayName": "Capture 8",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "DGQKH9.png",
+      "index": 8,
+      "displayName": "Capture 9",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "3M4Q2V.png",
+      "index": 9,
+      "displayName": "Capture 10",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "734QZ9.png",
+      "index": 10,
+      "displayName": "Capture 11",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "TGHPGA.png",
+      "index": 11,
+      "displayName": "Capture 12",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "NCFT74.png",
+      "index": 12,
+      "displayName": "Capture 13",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "Y7TD3W.png",
+      "index": 13,
+      "displayName": "Capture 14",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "Z94386.png",
+      "index": 14,
+      "displayName": "Capture 15",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "6XQ5BW.png",
+      "index": 15,
+      "displayName": "Capture 16",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "XQDAEW.png",
+      "index": 16,
+      "displayName": "Capture 17",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "8X6EZR.png",
+      "index": 17,
+      "displayName": "Capture 18",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "3XBBNG.png",
+      "index": 18,
+      "displayName": "Capture 19",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "HAFAXW.png",
+      "index": 19,
+      "displayName": "Capture 20",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+      "file": "9P9A9T.png",
+      "index": 20,
+      "displayName": "Capture 21",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    }
+  ],
+  "isEmpty": false,
+  "songName": "Scriabin_Impromptu_Op_12_No_2",
+  "songFile": "Scriabin_Impromptu_Op_12_No_2.pr",
+  "jsonName": "Scriabin_Impromptu_Op_12_No_2.json",
+  "jsonFile": "./snaps/Scriabin_Impromptu_Op_12_No_2.json",
+  "depotFolder": "./snaps/db__Scriabin_Impromptu_Op_12_No_2",
+  "hasUnsavedChanges": false
+}

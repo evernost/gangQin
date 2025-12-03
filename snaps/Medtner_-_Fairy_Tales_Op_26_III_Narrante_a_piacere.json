@@ -1,0 +1,1223 @@
+{
+  "nSnapshots": 15,
+  "snapshots": [
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "XM2MR3.png",
+      "index": 0,
+      "displayName": "Capture 1",
+      "description": "",
+      "cursorMin": 0,
+      "cursorMax": 35,
+      "playGlowsLeft": {
+        "1": [
+          470,
+          217,
+          10,
+          30
+        ],
+        "2": [
+          484,
+          202,
+          10,
+          30
+        ],
+        "3": [
+          500,
+          193,
+          10,
+          30
+        ],
+        "4": [
+          516,
+          188,
+          10,
+          30
+        ],
+        "7": [
+          568,
+          190,
+          10,
+          30
+        ],
+        "8": [
+          578,
+          205,
+          10,
+          30
+        ],
+        "9": [
+          597,
+          210,
+          10,
+          30
+        ],
+        "10": [
+          608,
+          212,
+          10,
+          30
+        ],
+        "13": [
+          668,
+          224,
+          10,
+          30
+        ],
+        "14": [
+          680,
+          204,
+          10,
+          30
+        ],
+        "15": [
+          698,
+          191,
+          10,
+          30
+        ],
+        "16": [
+          715,
+          178,
+          10,
+          30
+        ],
+        "19": [
+          770,
+          207,
+          10,
+          30
+        ],
+        "20": [
+          784,
+          222,
+          10,
+          30
+        ],
+        "21": [
+          797,
+          205,
+          10,
+          30
+        ],
+        "22": [
+          813,
+          221,
+          10,
+          30
+        ],
+        "25": [
+          877,
+          209,
+          10,
+          30
+        ],
+        "26": [
+          893,
+          225,
+          10,
+          30
+        ],
+        "27": [
+          903,
+          212,
+          10,
+          30
+        ],
+        "28": [
+          918,
+          236,
+          10,
+          30
+        ],
+        "31": [
+          971,
+          208,
+          10,
+          30
+        ],
+        "32": [
+          984,
+          218,
+          10,
+          30
+        ],
+        "33": [
+          998,
+          208,
+          10,
+          30
+        ],
+        "34": [
+          1015,
+          236,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "0": [
+          457,
+          131,
+          10,
+          30
+        ],
+        "35": [
+          1029,
+          135,
+          10,
+          30
+        ],
+        "3": [
+          501,
+          127,
+          10,
+          30
+        ],
+        "4": [
+          515,
+          129,
+          10,
+          30
+        ],
+        "5": [
+          524,
+          124,
+          10,
+          30
+        ],
+        "6": [
+          554,
+          136,
+          10,
+          30
+        ],
+        "7": [
+          570,
+          143,
+          10,
+          30
+        ],
+        "8": [
+          585,
+          133,
+          10,
+          30
+        ],
+        "9": [
+          598,
+          144,
+          10,
+          30
+        ],
+        "10": [
+          613,
+          140,
+          10,
+          30
+        ],
+        "11": [
+          620,
+          141,
+          10,
+          30
+        ],
+        "12": [
+          656,
+          124,
+          10,
+          30
+        ],
+        "13": [
+          667,
+          127,
+          10,
+          30
+        ],
+        "14": [
+          680,
+          132,
+          10,
+          30
+        ],
+        "17": [
+          728,
+          133,
+          10,
+          30
+        ],
+        "18": [
+          755,
+          137,
+          10,
+          30
+        ],
+        "21": [
+          799,
+          129,
+          10,
+          30
+        ],
+        "22": [
+          811,
+          136,
+          10,
+          30
+        ],
+        "23": [
+          827,
+          135,
+          10,
+          30
+        ],
+        "24": [
+          853,
+          131,
+          10,
+          30
+        ],
+        "25": [
+          878,
+          140,
+          10,
+          30
+        ],
+        "26": [
+          891,
+          131,
+          10,
+          30
+        ],
+        "27": [
+          910,
+          139,
+          10,
+          30
+        ],
+        "28": [
+          919,
+          135,
+          10,
+          30
+        ],
+        "29": [
+          930,
+          137,
+          10,
+          30
+        ],
+        "30": [
+          957,
+          138,
+          10,
+          30
+        ],
+        "31": [
+          972,
+          137,
+          10,
+          30
+        ],
+        "32": [
+          984,
+          141,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "VF5W37.png",
+      "index": 1,
+      "displayName": "Capture 2",
+      "description": "",
+      "cursorMin": 36,
+      "cursorMax": 76,
+      "playGlowsLeft": {
+        "61": [
+          813,
+          178,
+          10,
+          30
+        ],
+        "62": [
+          833,
+          198,
+          10,
+          30
+        ],
+        "63": [
+          850,
+          177,
+          10,
+          30
+        ],
+        "64": [
+          868,
+          195,
+          10,
+          30
+        ],
+        "67": [
+          934,
+          181,
+          10,
+          30
+        ],
+        "68": [
+          959,
+          202,
+          10,
+          30
+        ],
+        "69": [
+          980,
+          182,
+          10,
+          30
+        ],
+        "70": [
+          996,
+          202,
+          10,
+          30
+        ],
+        "72": [
+          1052,
+          217,
+          10,
+          30
+        ],
+        "73": [
+          1070,
+          202,
+          10,
+          30
+        ],
+        "74": [
+          1089,
+          180,
+          10,
+          30
+        ],
+        "75": [
+          1112,
+          181,
+          10,
+          30
+        ],
+        "37": [
+          314,
+          158,
+          10,
+          30
+        ],
+        "38": [
+          333,
+          175,
+          10,
+          30
+        ],
+        "39": [
+          352,
+          159,
+          10,
+          30
+        ],
+        "40": [
+          368,
+          197,
+          10,
+          30
+        ],
+        "43": [
+          439,
+          159,
+          10,
+          30
+        ],
+        "44": [
+          456,
+          185,
+          10,
+          30
+        ],
+        "45": [
+          477,
+          161,
+          10,
+          30
+        ],
+        "46": [
+          504,
+          199,
+          10,
+          30
+        ],
+        "48": [
+          560,
+          167,
+          10,
+          30
+        ],
+        "49": [
+          579,
+          186,
+          10,
+          30
+        ],
+        "50": [
+          601,
+          167,
+          10,
+          30
+        ],
+        "51": [
+          618,
+          206,
+          10,
+          30
+        ],
+        "54": [
+          692,
+          171,
+          10,
+          30
+        ],
+        "55": [
+          711,
+          184,
+          10,
+          30
+        ],
+        "56": [
+          728,
+          171,
+          10,
+          30
+        ],
+        "57": [
+          746,
+          191,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "36": [
+          279,
+          111,
+          10,
+          30
+        ],
+        "37": [
+          312,
+          105,
+          10,
+          30
+        ],
+        "38": [
+          331,
+          100,
+          10,
+          30
+        ],
+        "39": [
+          351,
+          111,
+          10,
+          30
+        ],
+        "40": [
+          367,
+          99,
+          10,
+          30
+        ],
+        "41": [
+          385,
+          111,
+          10,
+          30
+        ],
+        "42": [
+          415,
+          103,
+          10,
+          30
+        ],
+        "43": [
+          435,
+          107,
+          10,
+          30
+        ],
+        "44": [
+          456,
+          113,
+          10,
+          30
+        ],
+        "45": [
+          478,
+          107,
+          10,
+          30
+        ],
+        "46": [
+          506,
+          97,
+          10,
+          30
+        ],
+        "47": [
+          546,
+          105,
+          10,
+          30
+        ],
+        "50": [
+          604,
+          109,
+          10,
+          30
+        ],
+        "51": [
+          618,
+          112,
+          10,
+          30
+        ],
+        "52": [
+          636,
+          117,
+          10,
+          30
+        ],
+        "53": [
+          669,
+          102,
+          10,
+          30
+        ],
+        "54": [
+          692,
+          93,
+          10,
+          30
+        ],
+        "55": [
+          709,
+          102,
+          10,
+          30
+        ],
+        "56": [
+          728,
+          90,
+          10,
+          30
+        ],
+        "57": [
+          746,
+          106,
+          10,
+          30
+        ],
+        "58": [
+          765,
+          101,
+          10,
+          30
+        ],
+        "59": [
+          782,
+          96,
+          10,
+          30
+        ],
+        "60": [
+          796,
+          99,
+          10,
+          30
+        ],
+        "61": [
+          814,
+          101,
+          10,
+          30
+        ],
+        "65": [
+          884,
+          106,
+          10,
+          30
+        ],
+        "66": [
+          919,
+          111,
+          10,
+          30
+        ],
+        "71": [
+          1031,
+          112,
+          10,
+          30
+        ],
+        "75": [
+          1106,
+          105,
+          10,
+          30
+        ],
+        "76": [
+          1129,
+          97,
+          10,
+          30
+        ],
+        "62": [
+          833,
+          114,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "WBDVWM.png",
+      "index": 2,
+      "displayName": "Capture 3",
+      "description": "",
+      "cursorMin": 77,
+      "cursorMax": 111,
+      "playGlowsLeft": {
+        "90": [
+          599,
+          188,
+          10,
+          30
+        ],
+        "91": [
+          622,
+          217,
+          10,
+          30
+        ],
+        "92": [
+          642,
+          191,
+          10,
+          30
+        ],
+        "93": [
+          662,
+          211,
+          10,
+          30
+        ],
+        "78": [
+          300,
+          218,
+          10,
+          30
+        ],
+        "79": [
+          326,
+          195,
+          10,
+          30
+        ],
+        "80": [
+          345,
+          179,
+          10,
+          30
+        ],
+        "81": [
+          368,
+          172,
+          10,
+          30
+        ],
+        "82": [
+          390,
+          179,
+          10,
+          30
+        ],
+        "84": [
+          448,
+          209,
+          10,
+          30
+        ],
+        "85": [
+          463,
+          186,
+          10,
+          30
+        ],
+        "86": [
+          496,
+          174,
+          10,
+          30
+        ],
+        "87": [
+          514,
+          154,
+          10,
+          30
+        ],
+        "95": [
+          737,
+          194,
+          10,
+          30
+        ],
+        "96": [
+          760,
+          217,
+          10,
+          30
+        ],
+        "97": [
+          778,
+          194,
+          10,
+          30
+        ],
+        "98": [
+          801,
+          237,
+          10,
+          30
+        ],
+        "101": [
+          891,
+          174,
+          10,
+          30
+        ],
+        "102": [
+          912,
+          191,
+          10,
+          30
+        ],
+        "103": [
+          936,
+          178,
+          10,
+          30
+        ],
+        "104": [
+          954,
+          197,
+          10,
+          30
+        ],
+        "107": [
+          1043,
+          203,
+          10,
+          30
+        ],
+        "108": [
+          1060,
+          218,
+          10,
+          30
+        ],
+        "109": [
+          1078,
+          196,
+          10,
+          30
+        ],
+        "110": [
+          1093,
+          233,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "77": [
+          279,
+          112,
+          10,
+          30
+        ],
+        "78": [
+          302,
+          120,
+          10,
+          30
+        ],
+        "79": [
+          323,
+          110,
+          10,
+          30
+        ],
+        "80": [
+          346,
+          115,
+          10,
+          30
+        ],
+        "81": [
+          368,
+          110,
+          10,
+          30
+        ],
+        "82": [
+          389,
+          114,
+          10,
+          30
+        ],
+        "83": [
+          423,
+          103,
+          10,
+          30
+        ],
+        "84": [
+          445,
+          97,
+          10,
+          30
+        ],
+        "85": [
+          465,
+          103,
+          10,
+          30
+        ],
+        "88": [
+          540,
+          107,
+          10,
+          30
+        ],
+        "89": [
+          580,
+          108,
+          10,
+          30
+        ],
+        "94": [
+          703,
+          81,
+          10,
+          30
+        ],
+        "95": [
+          743,
+          111,
+          10,
+          30
+        ],
+        "96": [
+          763,
+          130,
+          10,
+          30
+        ],
+        "97": [
+          780,
+          110,
+          10,
+          30
+        ],
+        "98": [
+          800,
+          123,
+          10,
+          30
+        ],
+        "99": [
+          822,
+          114,
+          10,
+          30
+        ],
+        "100": [
+          866,
+          84,
+          10,
+          30
+        ],
+        "101": [
+          898,
+          116,
+          10,
+          30
+        ],
+        "102": [
+          911,
+          119,
+          10,
+          30
+        ],
+        "103": [
+          931,
+          114,
+          10,
+          30
+        ],
+        "104": [
+          953,
+          121,
+          10,
+          30
+        ],
+        "105": [
+          978,
+          112,
+          10,
+          30
+        ],
+        "106": [
+          1008,
+          93,
+          10,
+          30
+        ],
+        "107": [
+          1044,
+          115,
+          10,
+          30
+        ],
+        "108": [
+          1064,
+          108,
+          10,
+          30
+        ],
+        "109": [
+          1085,
+          112,
+          10,
+          30
+        ],
+        "110": [
+          1102,
+          125,
+          10,
+          30
+        ],
+        "111": [
+          1123,
+          97,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "YZCX8M.png",
+      "index": 3,
+      "displayName": "Capture 4",
+      "description": "",
+      "cursorMin": 112,
+      "cursorMax": 115,
+      "playGlowsLeft": {
+        "113": [
+          322,
+          187,
+          10,
+          30
+        ],
+        "114": [
+          349,
+          200,
+          10,
+          30
+        ],
+        "115": [
+          376,
+          187,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "112": [
+          279,
+          90,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "6DVZ7Y.png",
+      "index": 4,
+      "displayName": "Capture 5",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "5CX7T8.png",
+      "index": 5,
+      "displayName": "Capture 6",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "78AE54.png",
+      "index": 6,
+      "displayName": "Capture 7",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "7G532F.png",
+      "index": 7,
+      "displayName": "Capture 8",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "G7AXZZ.png",
+      "index": 8,
+      "displayName": "Capture 9",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "GWT98D.png",
+      "index": 9,
+      "displayName": "Capture 10",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "HH33B7.png",
+      "index": 10,
+      "displayName": "Capture 11",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "GGRGW3.png",
+      "index": 11,
+      "displayName": "Capture 12",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "7AMB5G.png",
+      "index": 12,
+      "displayName": "Capture 13",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "K9XNW4.png",
+      "index": 13,
+      "displayName": "Capture 14",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+      "file": "XBHUAU.png",
+      "index": 14,
+      "displayName": "Capture 15",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    }
+  ],
+  "isEmpty": false,
+  "songName": "Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+  "songFile": "Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere.pr",
+  "jsonName": "Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere.json",
+  "jsonFile": "./snaps/Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere.json",
+  "depotFolder": "./snaps/db__Medtner_-_Fairy_Tales_Op_26_III_Narrante_a_piacere",
+  "hasUnsavedChanges": false
+}

@@ -1,0 +1,1141 @@
+{
+  "nSnapshots": 23,
+  "snapshots": [
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "DQ6WAK.png",
+      "index": 0,
+      "displayName": "Capture 1",
+      "description": "",
+      "cursorMin": 0,
+      "cursorMax": 19,
+      "playGlowsLeft": {
+        "4": [
+          580,
+          236,
+          10,
+          30
+        ],
+        "5": [
+          610,
+          225,
+          10,
+          30
+        ],
+        "6": [
+          629,
+          222,
+          10,
+          30
+        ],
+        "7": [
+          647,
+          220,
+          10,
+          30
+        ],
+        "8": [
+          665,
+          215,
+          10,
+          30
+        ],
+        "9": [
+          686,
+          224,
+          10,
+          30
+        ],
+        "10": [
+          710,
+          226,
+          10,
+          30
+        ],
+        "11": [
+          731,
+          229,
+          10,
+          30
+        ],
+        "12": [
+          754,
+          224,
+          10,
+          30
+        ],
+        "13": [
+          773,
+          226,
+          10,
+          30
+        ],
+        "14": [
+          798,
+          232,
+          10,
+          30
+        ],
+        "15": [
+          818,
+          235,
+          10,
+          30
+        ],
+        "16": [
+          860,
+          231,
+          10,
+          30
+        ],
+        "17": [
+          926,
+          229,
+          10,
+          30
+        ],
+        "18": [
+          955,
+          227,
+          10,
+          30
+        ],
+        "19": [
+          981,
+          239,
+          10,
+          30
+        ],
+        "0": [
+          412,
+          225,
+          10,
+          30
+        ],
+        "1": [
+          477,
+          226,
+          10,
+          30
+        ],
+        "2": [
+          505,
+          236,
+          10,
+          30
+        ],
+        "3": [
+          534,
+          227,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "0": [
+          413,
+          161,
+          10,
+          30
+        ],
+        "1": [
+          478,
+          164,
+          10,
+          30
+        ],
+        "2": [
+          507,
+          169,
+          10,
+          30
+        ],
+        "3": [
+          536,
+          166,
+          10,
+          30
+        ],
+        "4": [
+          581,
+          169,
+          10,
+          30
+        ],
+        "5": [
+          612,
+          170,
+          10,
+          30
+        ],
+        "8": [
+          666,
+          169,
+          10,
+          30
+        ],
+        "19": [
+          983,
+          133,
+          10,
+          30
+        ],
+        "18": [
+          956,
+          137,
+          10,
+          30
+        ],
+        "17": [
+          927,
+          170,
+          10,
+          30
+        ],
+        "16": [
+          859,
+          166,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "3YZXU8.png",
+      "index": 1,
+      "displayName": "Capture 2",
+      "description": "",
+      "cursorMin": 20,
+      "cursorMax": 49,
+      "playGlowsLeft": {
+        "20": [
+          283,
+          224,
+          10,
+          30
+        ],
+        "21": [
+          323,
+          212,
+          10,
+          30
+        ],
+        "22": [
+          340,
+          207,
+          10,
+          30
+        ],
+        "23": [
+          356,
+          205,
+          10,
+          30
+        ],
+        "24": [
+          375,
+          199,
+          10,
+          30
+        ],
+        "25": [
+          402,
+          204,
+          10,
+          30
+        ],
+        "26": [
+          426,
+          208,
+          10,
+          30
+        ],
+        "27": [
+          451,
+          212,
+          10,
+          30
+        ],
+        "28": [
+          477,
+          209,
+          10,
+          30
+        ],
+        "29": [
+          500,
+          213,
+          10,
+          30
+        ],
+        "30": [
+          524,
+          218,
+          10,
+          30
+        ],
+        "31": [
+          553,
+          220,
+          10,
+          30
+        ],
+        "32": [
+          593,
+          216,
+          10,
+          30
+        ],
+        "33": [
+          623,
+          223,
+          10,
+          30
+        ],
+        "36": [
+          707,
+          227,
+          10,
+          30
+        ],
+        "37": [
+          739,
+          235,
+          10,
+          30
+        ],
+        "39": [
+          787,
+          231,
+          10,
+          30
+        ],
+        "41": [
+          851,
+          223,
+          10,
+          30
+        ],
+        "42": [
+          883,
+          220,
+          10,
+          30
+        ],
+        "45": [
+          962,
+          227,
+          10,
+          30
+        ],
+        "46": [
+          998,
+          236,
+          10,
+          30
+        ],
+        "48": [
+          1041,
+          229,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "48": [
+          1045,
+          111,
+          10,
+          30
+        ],
+        "49": [
+          1071,
+          123,
+          10,
+          30
+        ],
+        "20": [
+          285,
+          102,
+          10,
+          30
+        ],
+        "21": [
+          325,
+          102,
+          10,
+          30
+        ],
+        "24": [
+          377,
+          104,
+          10,
+          30
+        ],
+        "32": [
+          591,
+          104,
+          10,
+          30
+        ],
+        "33": [
+          623,
+          100,
+          10,
+          30
+        ],
+        "34": [
+          648,
+          91,
+          10,
+          30
+        ],
+        "35": [
+          674,
+          85,
+          10,
+          30
+        ],
+        "37": [
+          740,
+          113,
+          10,
+          30
+        ],
+        "38": [
+          763,
+          117,
+          10,
+          30
+        ],
+        "41": [
+          851,
+          106,
+          10,
+          30
+        ],
+        "42": [
+          882,
+          103,
+          10,
+          30
+        ],
+        "43": [
+          909,
+          92,
+          10,
+          30
+        ],
+        "44": [
+          933,
+          86,
+          10,
+          30
+        ],
+        "46": [
+          999,
+          114,
+          10,
+          30
+        ],
+        "47": [
+          1024,
+          117,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "2EVFWG.png",
+      "index": 2,
+      "displayName": "Capture 3",
+      "description": "",
+      "cursorMin": 50,
+      "cursorMax": 82,
+      "playGlowsLeft": {
+        "53": [
+          322,
+          189,
+          10,
+          30
+        ],
+        "54": [
+          343,
+          195,
+          10,
+          30
+        ],
+        "55": [
+          366,
+          191,
+          10,
+          30
+        ],
+        "56": [
+          386,
+          193,
+          10,
+          30
+        ],
+        "57": [
+          409,
+          192,
+          10,
+          30
+        ],
+        "58": [
+          431,
+          196,
+          10,
+          30
+        ],
+        "59": [
+          452,
+          199,
+          10,
+          30
+        ],
+        "60": [
+          473,
+          201,
+          10,
+          30
+        ],
+        "61": [
+          508,
+          207,
+          10,
+          30
+        ],
+        "62": [
+          530,
+          213,
+          10,
+          30
+        ],
+        "63": [
+          550,
+          217,
+          10,
+          30
+        ],
+        "65": [
+          592,
+          204,
+          10,
+          30
+        ],
+        "66": [
+          628,
+          187,
+          10,
+          30
+        ],
+        "67": [
+          689,
+          203,
+          10,
+          30
+        ],
+        "68": [
+          759,
+          206,
+          10,
+          30
+        ],
+        "69": [
+          783,
+          197,
+          10,
+          30
+        ],
+        "70": [
+          816,
+          210,
+          10,
+          30
+        ],
+        "71": [
+          862,
+          217,
+          10,
+          30
+        ],
+        "72": [
+          893,
+          206,
+          10,
+          30
+        ],
+        "73": [
+          915,
+          199,
+          10,
+          30
+        ],
+        "74": [
+          937,
+          197,
+          10,
+          30
+        ],
+        "75": [
+          955,
+          192,
+          10,
+          30
+        ],
+        "76": [
+          977,
+          198,
+          10,
+          30
+        ],
+        "77": [
+          999,
+          200,
+          10,
+          30
+        ],
+        "78": [
+          1019,
+          206,
+          10,
+          30
+        ],
+        "79": [
+          1042,
+          201,
+          10,
+          30
+        ],
+        "80": [
+          1067,
+          205,
+          10,
+          30
+        ],
+        "81": [
+          1086,
+          210,
+          10,
+          30
+        ],
+        "82": [
+          1107,
+          217,
+          10,
+          30
+        ],
+        "52": [
+          303,
+          193,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "50": [
+          254,
+          81,
+          10,
+          30
+        ],
+        "51": [
+          279,
+          80,
+          10,
+          30
+        ],
+        "53": [
+          324,
+          77,
+          10,
+          30
+        ],
+        "59": [
+          455,
+          117,
+          10,
+          30
+        ],
+        "61": [
+          509,
+          122,
+          10,
+          30
+        ],
+        "63": [
+          551,
+          122,
+          10,
+          30
+        ],
+        "64": [
+          573,
+          95,
+          10,
+          30
+        ],
+        "65": [
+          593,
+          122,
+          10,
+          30
+        ],
+        "66": [
+          629,
+          120,
+          10,
+          30
+        ],
+        "67": [
+          687,
+          117,
+          10,
+          30
+        ],
+        "68": [
+          759,
+          122,
+          10,
+          30
+        ],
+        "69": [
+          788,
+          127,
+          10,
+          30
+        ],
+        "70": [
+          816,
+          123,
+          10,
+          30
+        ],
+        "71": [
+          863,
+          128,
+          10,
+          30
+        ],
+        "72": [
+          896,
+          128,
+          10,
+          30
+        ],
+        "75": [
+          957,
+          129,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "QU7YDK.png",
+      "index": 3,
+      "displayName": "Capture 4",
+      "description": "",
+      "cursorMin": 83,
+      "cursorMax": 100,
+      "playGlowsLeft": {
+        "83": [
+          279,
+          211,
+          10,
+          30
+        ],
+        "84": [
+          360,
+          210,
+          10,
+          30
+        ],
+        "85": [
+          402,
+          207,
+          10,
+          30
+        ],
+        "86": [
+          434,
+          220,
+          10,
+          30
+        ],
+        "87": [
+          494,
+          229,
+          10,
+          30
+        ],
+        "88": [
+          530,
+          220,
+          10,
+          30
+        ],
+        "89": [
+          546,
+          217,
+          10,
+          30
+        ],
+        "90": [
+          559,
+          216,
+          10,
+          30
+        ],
+        "91": [
+          589,
+          208,
+          10,
+          30
+        ],
+        "92": [
+          613,
+          210,
+          10,
+          30
+        ],
+        "93": [
+          637,
+          214,
+          10,
+          30
+        ],
+        "94": [
+          671,
+          220,
+          10,
+          30
+        ],
+        "95": [
+          698,
+          218,
+          10,
+          30
+        ],
+        "96": [
+          727,
+          212,
+          10,
+          30
+        ],
+        "97": [
+          747,
+          216,
+          10,
+          30
+        ],
+        "98": [
+          776,
+          223,
+          10,
+          30
+        ],
+        "99": [
+          827,
+          223,
+          10,
+          30
+        ],
+        "100": [
+          860,
+          228,
+          10,
+          30
+        ]
+      },
+      "playGlowsRight": {
+        "83": [
+          279,
+          127,
+          10,
+          30
+        ],
+        "84": [
+          360,
+          133,
+          10,
+          30
+        ],
+        "85": [
+          401,
+          91,
+          10,
+          30
+        ]
+      },
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "8CQM5K.png",
+      "index": 4,
+      "displayName": "Capture 5",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "P6NKAP.png",
+      "index": 5,
+      "displayName": "Capture 6",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "5HMC2F.png",
+      "index": 6,
+      "displayName": "Capture 7",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "RHR732.png",
+      "index": 7,
+      "displayName": "Capture 8",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "VDRMXV.png",
+      "index": 8,
+      "displayName": "Capture 9",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "KEMNHW.png",
+      "index": 9,
+      "displayName": "Capture 10",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "R7DG9G.png",
+      "index": 10,
+      "displayName": "Capture 11",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "443EDE.png",
+      "index": 11,
+      "displayName": "Capture 12",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "WTPN7F.png",
+      "index": 12,
+      "displayName": "Capture 13",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "BPDU2D.png",
+      "index": 13,
+      "displayName": "Capture 14",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "DH5MP5.png",
+      "index": 14,
+      "displayName": "Capture 15",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "BNEZZ2.png",
+      "index": 15,
+      "displayName": "Capture 16",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "Q4ZNAP.png",
+      "index": 16,
+      "displayName": "Capture 17",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "MTHZ9Y.png",
+      "index": 17,
+      "displayName": "Capture 18",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "DDZTF5.png",
+      "index": 18,
+      "displayName": "Capture 19",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "BAZ23X.png",
+      "index": 19,
+      "displayName": "Capture 20",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "QD4XGQ.png",
+      "index": 20,
+      "displayName": "Capture 21",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "79C3GB.png",
+      "index": 21,
+      "displayName": "Capture 22",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    },
+    {
+      "dir": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+      "file": "K4GXM9.png",
+      "index": 22,
+      "displayName": "Capture 23",
+      "description": "",
+      "cursorMin": -1,
+      "cursorMax": -1,
+      "playGlowsLeft": {},
+      "playGlowsRight": {},
+      "needsRework": false,
+      "fileMissing": false
+    }
+  ],
+  "isEmpty": false,
+  "songName": "Rachmaninoff_Prelude_Op_23_No_3",
+  "songFile": "Rachmaninoff_Prelude_Op_23_No_3.pr",
+  "jsonName": "Rachmaninoff_Prelude_Op_23_No_3.json",
+  "jsonFile": "./snaps/Rachmaninoff_Prelude_Op_23_No_3.json",
+  "depotFolder": "./snaps/db__Rachmaninoff_Prelude_Op_23_No_3",
+  "hasUnsavedChanges": false
+}

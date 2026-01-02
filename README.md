@@ -90,18 +90,22 @@ Known limitations:
 
 
 
-## Requirements
+## Requirements / Setup
 
+For this, you're going to need:
 - **pygame** (tested with version 2.6)
-- **numpy**
+- **mido** (tested with version 1.3.2)
+- **tkinter** (sudo apt install python3-tk)
 - **shapely** (tested with version 2.0.4)
+- **numpy**
 - **playsound**
   - pip install --upgrade setuptools wheel
   - pip install playsound
-- **mido** (tested with version 1.3.2)
 - **rtmidi** (tested with version 1.5.8)
   - pip install python-rtmidi
 
+To run the app from VSCode, you need to run the code using a launch.json and add this line:
+- "env": {"PYTHONPATH": "${workspaceFolder}"}
 
 ## TODO / Ideas
 - [ ] add a weak arbitration mode

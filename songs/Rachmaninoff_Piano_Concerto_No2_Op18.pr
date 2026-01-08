@@ -2,7 +2,7 @@
   "revision": "v2.1",
   "nStaffs": 2,
   "avgNoteDuration": 287.5864155094184,
-  "cursor": 1386,
+  "cursor": 939,
   "bookmarks": [
     0,
     19,
@@ -61093,7 +61093,7 @@
     {
       "pitch": 46,
       "hand": 1,
-      "finger": 4,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 30,
       "startTime": 214880,
@@ -62713,7 +62713,7 @@
     {
       "pitch": 48,
       "hand": 1,
-      "finger": 2,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 45,
       "startTime": 104091,

@@ -12,10 +12,8 @@
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
 
-
-
 # =============================================================================
-# External libs 
+# EXTERNALS
 # =============================================================================
 import configparser
 import database
@@ -28,9 +26,8 @@ from tkinter import ttk
 
 
 
-
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 # Some high resolution screens (typically 4k) use a scaling factor that messes 
 # with the coordinates of 'Imagegrab'.

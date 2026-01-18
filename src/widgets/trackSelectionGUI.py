@@ -12,7 +12,7 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
 import mido
 import tkinter as tk
@@ -21,89 +21,99 @@ from tkinter import ttk
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 MAX_TRACK_NAME_LENGTH = 10
 
+# Default channel assignment (should work for most MIDI files)
+# When True:
+# - channel 0 -> Right hand
+# - channel 1 -> Left hand
+ASSIGN_DEFAULT = True
+
 
 
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
-def new() :
-  return TrackSelectionGUI()
-
-
-
-class Track :
-  def __init__(self):
-    self.name = ""
-    self.nNotes = 0
-
-
-
 class TrackSelectionGUI :
 
   """
-  TODO
+  TRACK_SELECTION_GUI object
+
+  Self-contained class containing all the necessary functions to show the MIDI
+  Track selection GUI on screen.
+
+  Call the app, it will return a dictionary with the tracks assignment upon
+  exiting.
+
+  See the unit tests for a quick demo.
   """
 
   def __init__(self) :
+    
+    # Initialise attributes
     self.midiFile = ""
-    self.nTracks = 0
-    self.midiTracks = []
+    self.nTracks  = 0
+    self.tracks   = []
     
-    self.leftTrack = -1
-    self.rightTrack = -1
-
+    # Initialise display
     self.root = None
-    
-    
+    self.displayTrackList = []
+
 
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.load(midiFile)
+  # METHOD TrackSelectionGUI.load()
   # ---------------------------------------------------------------------------
-  def load(self, midiFile) :
+  def load(self, midiFile: str) :
     """
     Reads the MIDI file and initialises the GUI.
     """
 
     self.midiFile = midiFile
 
+    # Read content of the MIDI file
     midiObj = mido.MidiFile(midiFile)
     self.nTracks = len(midiObj.tracks)
-    print(f"[INFO] Found tracks: {self.nTracks}")
-
     self.tracks = [Track() for _ in range(self.nTracks)]
 
-    # Loop on the tracks, decode the MIDI messages
-    self.displayTrackList = []
+    # Loop on the tracks
     for (i, track) in enumerate(midiObj.tracks) :
+      
+      # Read and limit the name of the track
+      trackName = track.name.split("\x00")[0]
+      if (len(trackName) == 0) :
+        trackName = "*NO NAME*"
+      elif (len(trackName) > MAX_TRACK_NAME_LENGTH) :
+        trackName = "'" + trackName[0:(MAX_TRACK_NAME_LENGTH-3)] + "...'"
+      else :
+        trackName = "'" + trackName + "'"
 
-      # Read the notes
-      self.tracks[i].nNotes = 0
+      # Count the notes in the track
+      noteCount = 0
       for msg in track :
         if ((msg.type == 'note_on') and (msg.velocity > 0)) :
-          self.tracks[i].nNotes += 1
+          noteCount += 1
 
-      # Read the name of the track
-      sName = track.name.split("\x00")[0]
-      # self.tracks[i].name = track.name.split("\x00")[0]
+      # Assign to the Track
+      self.tracks[i].name = trackName
+      self.tracks[i].noteCount = noteCount
+      self.tracks[i].panning = ""
 
-      if (len(sName) > MAX_TRACK_NAME_LENGTH) :
-        self.tracks[i].name = sName[0:(MAX_TRACK_NAME_LENGTH-3)] + "..."
-      else :
-        self.tracks[i].name = sName
-      
+      if ASSIGN_DEFAULT :
+        if (i == 0) :
+          self.tracks[i].panning = "R"
+        elif (i == 1) :
+          self.tracks[i].panning = "L"
+
       # Add the track to the 'trackList' widget
-      s = f"Track {i} - {self.tracks[i].name} ({self.tracks[i].nNotes} notes)"
-      self.displayTrackList.append(f"{s : <35}{'' : >7}")
+      self.displayTrackList.append(self._generateListboxString(i))
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.show()
+  # METHOD TrackSelectionGUI.show()
   # ---------------------------------------------------------------------------
   def show(self) :
     """
@@ -112,30 +122,30 @@ class TrackSelectionGUI :
     """
     
     self.root = tk.Tk()
-    self.root.title("Track selection")
+    self.root.title("Select tracks")
     self.root.resizable(0, 0)
 
+    # GUI content
     content = ttk.Frame(self.root, padding = 20)
+    
+    lblAvailable = ttk.Label(content, text = "Available tracks:")
+    tmp = tk.StringVar(value = self.displayTrackList)
+    self.lstboxTracks = tk.Listbox(content, listvariable = tmp, width = 50, font = ("Consolas", 10))
 
-    availableLbl = ttk.Label(content, text = "Available tracks:")
-    trackListVar = tk.StringVar(value = self.displayTrackList)
-    self.trackListWidget = tk.Listbox(content, listvariable = trackListVar, width = 50, font = ("Consolas", 10))
+    btnSetLeft  = ttk.Button(content, text = "<- Assign track to Left hand", command = self.CLBK_onLeftKey)
+    btnSetRight = ttk.Button(content, text = "Assign track to Right hand ->", command = self.CLBK_onRightKey)
 
-    setLeftButton = ttk.Button(content, text = "Assign track to Left hand", command = self.CLBK_onLeftKey)
-    setRightButton = ttk.Button(content, text = "Assign track to Right hand", command = self.CLBK_onRightKey)
-
-    generateButton = ttk.Button(content, text = "Generate", command = self.CLBK_onGenerate, default = "active")
-    quitButton = ttk.Button(content, text = "Quit", command = self.CLBK_onQuit)
+    btnGenerate = ttk.Button(content, text = "Generate", command = self.CLBK_onGenerate, default = "active")
+    btnQuit = ttk.Button(content, text = "Quit", command = self.CLBK_onQuit)
 
     content.grid(column = 0, row = 0)
 
-    availableLbl.grid(column = 0, row = 0, columnspan = 3, rowspan = 1, sticky = (tk.W))
-    self.trackListWidget.grid(column = 0, row = 1, columnspan = 3, rowspan = 1)
-    setLeftButton.grid(column = 0, row = 3, sticky = (tk.W, tk.N), pady = (10, 30))
-    setRightButton.grid(column = 2, row = 3, sticky = (tk.E, tk.N), pady = (10, 30))
-    quitButton.grid(column = 0, row = 4, sticky = (tk.W, tk.S))
-    generateButton.grid(column = 2, row = 4, sticky = (tk.E, tk.S))
-
+    lblAvailable.grid(column = 0, row = 0, columnspan = 3, rowspan = 1, sticky = (tk.W))
+    self.lstboxTracks.grid(column = 0, row = 1, columnspan = 3, rowspan = 1)
+    btnSetLeft.grid(column = 0, row = 3, sticky = (tk.W, tk.N), pady = (10, 30))
+    btnSetRight.grid(column = 2, row = 3, sticky = (tk.E, tk.N), pady = (10, 30))
+    btnGenerate.grid(column = 2, row = 4, sticky = (tk.E, tk.S))
+    btnQuit.grid(column = 0, row = 4, sticky = (tk.W, tk.S))
 
     # Bindings
     self.root.bind('<Escape>',  self.CLBK_onQuit)
@@ -145,17 +155,19 @@ class TrackSelectionGUI :
     self.root.bind('<Down>',    self.CLBK_onDownKey)
     self.root.bind('<q>',       self.CLBK_onQuit)
 
-    self.centerWindow()
+    self.root.protocol("WM_DELETE_WINDOW", self.CLBK_onQuit)
+
+    self._centerWindow()
     self.root.mainloop()
 
-    return (self.leftTrack, self.rightTrack)
+    return self.getTrackLinks()
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.centerWindow()
+  # METHOD TrackSelectionGUI._centerWindow()
   # ---------------------------------------------------------------------------
-  def centerWindow(self) :
+  def _centerWindow(self) :
     """
     Centers the GUI on screen.
     """
@@ -176,89 +188,149 @@ class TrackSelectionGUI :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.CLBK_onQuit()
+  # METHOD TrackSelectionGUI.CLBK_onQuit()
   # ---------------------------------------------------------------------------
-  def CLBK_onQuit(self, event = None) :
+  def CLBK_onQuit(self) :
+    print("[INFO] User exit...")
     exit()
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.CLBK_onLeftKey()
+  # METHOD TrackSelectionGUI.CLBK_onLeftKey()
   # ---------------------------------------------------------------------------
   def CLBK_onLeftKey(self, event = None) : 
-    ret = self.trackListWidget.curselection()
-    if (len(ret) > 0) :
-      
-      (sel, *rem) = ret
-      
-      # Edit the 'new' left hand
-      self.trackListWidget.delete(sel)
-      s = f"Track {sel} - {self.tracks[sel].name} ({self.tracks[sel].nNotes} notes)"
-      self.trackListWidget.insert(sel, f"{s : <35}{'[LEFT]' : >7}")
-      self.trackListWidget.selection_set(sel)
-      self.trackListWidget.activate(sel)
-
-      # Edit the previous left hand if it was already assigned
-      if (self.leftTrack != -1) :
-        self.trackListWidget.delete(self.leftTrack)
-        s = f"Track {self.leftTrack} - {self.tracks[self.leftTrack].name} ({self.tracks[self.leftTrack].nNotes} notes)"
-        self.trackListWidget.insert(self.leftTrack, f"{s : <35}{'' : >7}")
-        
-      self.leftTrack = sel
-
-    else : 
-      print(f"Please select a track before assigning.")
+    self._assignActiveTrack(hand = "L")
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.CLBK_onRightKey()
+  # METHOD TrackSelectionGUI.CLBK_onRightKey()
   # ---------------------------------------------------------------------------
   def CLBK_onRightKey(self, event = None) :
-    ret = self.trackListWidget.curselection()
-
-    # If something is selected
-    if (len(ret) > 0) :
-      
-      (sel, *rem) = ret
-      
-      # Edit the 'new' right hand
-      self.trackListWidget.delete(sel)
-      s = f"Track {sel} - {self.tracks[sel].name} ({self.tracks[sel].nNotes} notes)"
-      self.trackListWidget.insert(sel, f"{s : <35}{'[RIGHT]' : >7}")
-      self.trackListWidget.selection_set(sel)
-      self.trackListWidget.activate(sel)
-
-      # Edit the previous right hand if it was already assigned
-      if (self.rightTrack != -1) :
-        self.trackListWidget.delete(self.rightTrack)
-        s = f"Track {self.rightTrack} - {self.tracks[self.rightTrack].name} ({self.tracks[self.rightTrack].nNotes} notes)"
-        self.trackListWidget.insert(self.rightTrack, f"{s : <35}{'' : >7}")
-        
-      self.rightTrack = sel
-
-    else : 
-      print(f"Please select a track before assigning.")
+    self._assignActiveTrack(hand = "R")
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.CLBK_onGenerate()
+  # METHOD TrackSelectionGUI.CLBK_onDownKey()
   # ---------------------------------------------------------------------------
   def CLBK_onDownKey(self, event = None) :
-    if not(self.trackListWidget.curselection()) :
-      self.trackListWidget.selection_set(0)
-      self.trackListWidget.activate(0)
-      self.trackListWidget.focus_set()
+    if not(self.lstboxTracks.curselection()) :
+      self.lstboxTracks.selection_set(0)
+      self.lstboxTracks.activate(0)
+      self.lstboxTracks.focus_set()
 
   # ---------------------------------------------------------------------------
-  # METHOD trackSelectionGUI.CLBK_onGenerate()
+  # METHOD TrackSelectionGUI.CLBK_onGenerate()
   # ---------------------------------------------------------------------------
   def CLBK_onGenerate(self, event = None) :
     self.root.destroy()
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD TrackSelectionGUI._assignActiveTrack()
+  # ---------------------------------------------------------------------------
+  def _assignActiveTrack(self, hand = "L") -> None :
+    """
+    Assigns a hand to the higlighted track in the listbox.
+    """
+
+    lstboxSel = self.lstboxTracks.curselection()
+    
+    # If at least one item is highlighted
+    if (len(lstboxSel) > 0) :
+      sel = lstboxSel[0]
+
+      self.tracks[sel].panning = hand
+
+      # Update the listbox
+      self.lstboxTracks.delete(sel)
+      self.lstboxTracks.insert(sel, self._generateListboxString(sel))
+      self.lstboxTracks.selection_set(sel)
+      self.lstboxTracks.activate(sel)
+
+      # Clear info of any track with the same panning
+      for i in range(self.nTracks) :
+        if (i != sel) :
+          if (self.tracks[i].panning == hand) :
+            self.tracks[i].panning = ""
+            self.lstboxTracks.delete(i)
+            self.lstboxTracks.insert(i, self._generateListboxString(i))
+
+    else : 
+      print(f"[INFO] Please select a track before assigning.")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD TrackSelectionGUI._generateListboxString()
+  # ---------------------------------------------------------------------------
+  def _generateListboxString(self, index: int) -> str :
+    """
+    Generates the content of the string that goes at the given index in the 
+    track selection listbox.
+    """
+    
+    s = f"Track {index} - {self.tracks[index].name} ({self.tracks[index].noteCount} notes)"
+    
+    if (self.tracks[index].panning == "L") :
+      s = f"{s : <35}{'[LEFT]' : >7}"
+    elif (self.tracks[index].panning == "R") : 
+      s = f"{s : <35}{'[RIGHT]' : >7}"
+    else :
+      s = f"{s : <35}{'' : >7}"
+    
+    return s
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD TrackSelectionGUI.getTrackLinks()
+  # ---------------------------------------------------------------------------
+  def getTrackLinks(self) :
+    """
+    Generates a list corresponding to the track selection.
+
+    The output consists in a list that has as many elements as there are 
+    channels.
+    The list is such that 
+    - out[leftChannelIndex]     = 'L'
+    - out[rightChannelIndex]    = 'R'
+    - out[...anything else...]  = ''
+    """
+    
+    out = [T.panning for T in self.tracks]
+    return out
+
+
+
+
 # =============================================================================
-# Unit tests
+# UTILITIES
+# =============================================================================
+class Track :
+
+  """
+  Description is TODO
+  """
+
+  def __init__(self):
+    self.name = ""
+    self.noteCount = 0
+    self.panning = ""
+
+
+
+# Factory function
+def new() :
+  return TrackSelectionGUI()
+
+
+
+# =============================================================================
+# UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
+  
+  print("[INFO] Library 'TrackSelectionGUI' called as main: running unit tests...")
+  
   gui = new()
   gui.load("./songs/Rachmaninoff_Piano_Concerto_No_3_Op_30_1st_Movement.mid")
   midiTracks = gui.show()
-  print(f"MIDI tracks: {midiTracks}")
+  print(f"MIDI tracks selection: {midiTracks}")

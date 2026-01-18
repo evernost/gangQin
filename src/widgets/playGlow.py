@@ -10,19 +10,17 @@
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
 
-
-
 # =============================================================================
 # External libs 
 # =============================================================================
-# None
+# None.
 
 
 
 # =============================================================================
 # Constants pool
 # =============================================================================
-# None
+# None.
 
 
 
@@ -32,7 +30,7 @@
 class PlayGlow :
   
   """
-  Defines the class for the PlayGlow widgets in scoreShot_fusion and gangQin.
+  Class definition for the PlayGlow object used in gangQin and scoreShot_fusion.
   """  
   def __init__(self) :
     

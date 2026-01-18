@@ -12,84 +12,135 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
-# Project specific constants
+# Project libraries
 from src.commons import *
-
 import src.utils as utils
 
+# Standard libraries
+from enum import Enum   # For enumerated types in FSM
+
+
 
 # =============================================================================
-# Guards
+# CONSTANTS
 # =============================================================================
-if (__name__ == "__main__") :
-  print("[WARNING] This lib is not intended to be called as a main.")
+class keyColor(Enum) :
+  WHITE_NOTE = 0
+  BLACK_NOTE = 1
+
+class hand(Enum) :
+  LEFT  = 0
+  RIGHT = 1
 
 
 
+# =============================================================================
+# CLASS DEFINITION
+# =============================================================================
 class Note :
 
-  def __init__(self, pitch, hand = UNDEFINED_HAND, finger = 0, noteIndex = 0, startTime = 0, stopTime = 0, voice = VOICE_DEFAULT, highlight = False) :
+  """
+  NOTE object
+  
+  The Note object is a representation of a musical note with all the properties
+  necessary accross the different objects. 
+  
+  Do not change the pitch afterwards.
+  """
+
+  def __init__(self, pitch) :
     
-    # General common attributes of a note
-    self.pitch = pitch
-    self.hand = hand
-    self.finger = finger
-    self.keyColor = WHITE_KEY if ((pitch % 12) in WHITE_NOTES_CODE_MOD12) else BLACK_KEY
+    # Note general attributes (fields preserved during file import/export)
+    self.pitch    = pitch
+    self.hand     = NOTE_UNDEFINED_HAND
+    self.finger   = NOTE_UNDEFINED_FINGER
+    self.name     = getFriendlyName(pitch)
+    self.voice    = NOTE_VOICE_DEFAULT
+    self.velocity = 0
+
+    # Note database attributes (fields partially preserved during file import/export)
+    self.startTime  = 0                 # Timecode of the key press event
+    self.stopTime   = NOTE_END_UNKNOWN  # Timecode of the key release event
+    self.dbIndex    = -1                # Index of the note in the score database
+    self.id         = -1                # Note unique identifier in the score (might change from a session to the other)
     
-    # Info relative to the pianoroll
-    self.noteIndex = noteIndex      # Index of the note in this pitch
-    self.startTime = startTime
-    self.stopTime = stopTime
-    self.sustained = False          # True if the note is held at a given time (note will be ignored by the arbiter)
-    self.highlight = highlight      # True if its fingersatz is being edited
-    self.inactive = False           # True if the note shall be ignored by the arbiter (single hand practice)
-    self.disabled = False           # True if the note shall be ignored by the arbiter (unplayable note)
-    self.upcoming = False           # True if the note is about to be played soon
-    self.upcomingDistance = 0       # The highest the value, the further the note
-    self.fromKeyboardInput = False  # True if it is a note played by the user from the MIDI input
-    self.voice = voice              # Define the voice the note belongs to, if another is needed on top of the usual left/right voice
-    self.lookAheadDistance = 0      # Define how far away this note is located relative to the current cursor
-    
+    # Note display attributes (fields not preserved during file import/export)
+    self.color      = None
+    self.keyColor   = self._getKeyColor()   # White or Black note
+    self.sustained  = False                 # True if the note is held at a given time
+    self.highlight  = False                 # True if the note fingersatz is being edited
+    self.inactive   = False                 # True if the note shall be ignored by the arbiter (single hand practice)
+    self.upcoming   = False                 # True if the note is about to be played soon
+    self.upcomingDistance = 0               # The higher the value, the further the note in the score from the current location
+    self.fromKeyboardInput  = False         # True if it is a note played by the user from the MIDI input
+
     # Not used anymore?
-    self.name = getFriendlyName(self.pitch)
-    self.id = -1
-    self.visible = False
+    self.visible            = False
+    self.disabled           = False   # True if the note shall be ignored by the arbiter (unplayable note)
+    self.lookAheadDistance  = 0       # Define how far away this note is located relative to the current cursor
     
 
 
   # ---------------------------------------------------------------------------
-  # getNoteColor()
+  # METHOD: Note._getKeyColor()                                       [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _getKeyColor(self) :
+    """
+    Returns the color of the note on a piano keyboard (black or white note)
+    """
+
+    if (self.pitch % 12) in MIDI_CODE_WHITE_NOTES_MOD12 :
+      return keyColor.WHITE_NOTE
+    else :
+      return keyColor.BLACK_NOTE
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Note.getNoteColor()
   # ---------------------------------------------------------------------------
   def getNoteColor(self) :
     """
-    Returns the RGB color (as a 3-tuple) of the note based on its properties.
+    Returns the color of 3 elements of the note:
+    - the rectangle overlay on the keyboard
+    - the outline of the rectangle overlay on the keyboard
+    - the rectangle on the piano roll
+
+    All 3 are a 3-tuples with the RGB values.
     """
 
-
-    if (self.voice != VOICE_DEFAULT) :
+    # 
+    # Non-default voices (unsupported yet)
+    #
+    if (self.voice != NOTE_VOICE_DEFAULT) :
       baseColor = VOICE_COLOR[self.voice]
+    
+    # 
+    # Default voices and notes types
+    #
     else :
-      if (self.hand == LEFT_HAND) :
+      if (self.hand == NOTE_LEFT_HAND) :
         if (self.upcoming) :
           baseColor = utils.adjustHSV((255, 0, 127), 0, -40 - (self.upcomingDistance*20), -10)
         else :
-          baseColor = utils.adjustHSV((255, 0, 0), 0, -20, -10)
+          baseColor = utils.adjustHSV(KEYBOARD_NOTE_COLOR_LEFT_HAND, 0, -20, -10)
 
       else :
         if (self.upcoming) :
           baseColor = utils.adjustHSV((0, 255, 127), 0, -40 - (self.upcomingDistance*20), -20)
         else :
-          baseColor = utils.adjustHSV((0, 255, 0), 0, -20, -20)
-      
+          baseColor = utils.adjustHSV(KEYBOARD_NOTE_COLOR_RIGHT_HAND, 0, -20, -20)
+  
+    #
+    # Disabled note (unplayable, wrong, etc.)
+    #
+    # [DEPRECATED]
+    #if self.disabled :
+    if False :
 
-    # Disabled note (unplayable, wrong, etc.) ---------------------------------
-    # Same color no matter what the voice is.
-    # 'sustained', 'highlight', 'voice', 'lookAheadDistance' attributes are all ignored.
-    if self.disabled :
-
-      if (self.keyColor == WHITE_KEY) :
+      if (self.keyColor == NOTE_WHITE_KEY) :
         (rectColor, rectOutlineColor, pianoRollColor) = ((200, 200, 200), (170, 170, 170), (250, 250, 250))
       
       else :
@@ -97,26 +148,28 @@ class Note :
         
     else :
 
-      # Highlighted note for fingersatz editing -------------------------------
+      #
+      # Highlighted note for fingersatz edition
+      #
       if self.highlight :
 
-        if (self.hand == LEFT_HAND) :
+        if (self.hand == NOTE_LEFT_HAND) :
           hueShift = 30
         else :
           hueShift = 60
 
-        if (self.keyColor == WHITE_KEY) :
+        if (self.keyColor == NOTE_WHITE_KEY) :
           (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, hueShift, 0, 0), utils.adjustHSV(baseColor, hueShift, 0, -50), utils.adjustHSV(baseColor, hueShift, 0, 0))
-
         else :
           (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, hueShift, 0, 0), utils.adjustHSV(baseColor, hueShift, 0, -50), utils.adjustHSV(baseColor, hueShift, 0, 0))
 
-      # Inactive note (single hand practice) ----------------------------------
+      #
+      # Inactive note (single hand practice)
+      #
       elif self.inactive :
 
-        if (self.keyColor == WHITE_KEY) :
+        if (self.keyColor == NOTE_WHITE_KEY) :
           (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -70, 0), (240, 240, 240), utils.adjustHSV(baseColor, 0, -60, 0))
-        
         else :
           (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -70, 0), (170, 170, 170), utils.adjustHSV(baseColor, 0, -60, 0))
             
@@ -124,25 +177,22 @@ class Note :
 
         # Upcoming note -------------------------------------------------------
         if (self.upcoming) :
-          if (self.keyColor == WHITE_KEY) :
+          if (self.keyColor == NOTE_WHITE_KEY) :
             (rectColor, rectOutlineColor, pianoRollColor) = (baseColor, (255, 255, 255), baseColor)
-            
           else :
             (rectColor, rectOutlineColor, pianoRollColor) = (baseColor, (0, 0, 0), baseColor)
 
         # Sustained note ------------------------------------------------------
         if (self.sustained) :
-          if (self.keyColor == WHITE_KEY) :
+          if (self.keyColor == NOTE_WHITE_KEY) :
             (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -60, 0), (160, 160, 160), utils.adjustHSV(baseColor, 0, -60, 0))
-            
           else :
             (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, 0, -30), (80, 80, 80), utils.adjustHSV(baseColor, 0, 0, -30))
 
         # Normal note ---------------------------------------------------------
         else : 
-          if (self.keyColor == WHITE_KEY) :
+          if (self.keyColor == NOTE_WHITE_KEY) :
             (rectColor, rectOutlineColor, pianoRollColor) = (baseColor, (10, 10, 10), baseColor)
-            
           else :
             (rectColor, rectOutlineColor, pianoRollColor) = (baseColor, (80, 80, 80), baseColor)
 
@@ -150,56 +200,162 @@ class Note :
     return (rectColor, rectOutlineColor, pianoRollColor)
 
 
-  
+
   # ---------------------------------------------------------------------------
-  # print() function overloading
+  # METHOD: Note.setPitch()
   # ---------------------------------------------------------------------------
-  def __str__(self) :
-    if (self.hand == RIGHT_HAND) : handStr = "right hand"
-    if (self.hand == LEFT_HAND) : handStr = "left hand"
-    if (self.keyColor == WHITE_KEY) : keyColorStr = "white key"
-    if (self.keyColor == BLACK_KEY) : keyColorStr = "black key"
+  def setPitch(self, newPitch: int) -> None :
+    """
+    Changes the pitch of the note.
+    Do not try to modify the 'pitch' attribute manually as some side attributes
+    would not be up to date anymore.
+    """
+      
+    self.pitch    = newPitch
+    self.name     = getFriendlyName(newPitch)
+    self.keyColor = self._getKeyColor()
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Note.start()
+  # ---------------------------------------------------------------------------
+  def start(self, startTime: int) -> None :
+    """
+    Sets the start time attribute of the note.
+    """
+      
+    self.startTime = startTime
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Note.stop()
+  # ---------------------------------------------------------------------------
+  def stop(self, stopTime: int) -> None :
+    """
+    Sets the stop time attribute of the note.
+    Warning: unlike 'Note.stop()', this method does not overwrite the 'stopTime'
+    attribute but appends a stop time to the list.
+
+    MIDI notation causes inherent ambiguity on the stop time: more than 1 
+    'note on' event can occur on the same hand and pitch before it is even 
+    released. 
+    To let the user choose the proper note duration, all possible stoptime are
+    stored.
+    """
+    
+    self.stopTime = stopTime
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Note.toDict()
+  # ---------------------------------------------------------------------------
+  def toDict(self) :
+    """
+    Generates a dictionary with the attributes that need to be exported 
+    """
+      
+    out = {
+      "pitch"   : self.pitch,
+      "hand"    : self.hand,
+      "finger"  : self.finger,
+      "voice"   : self.voice,
+      "name"    : self.name
+    }
+
+    return out
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Note.__str__() (overloading of the standard 'print')
+  # ---------------------------------------------------------------------------
+  def __str__(self) -> str :
+    """
+    Defines a pretty print formatting for the Note object.
+    """
+    
+    if (self.hand == NOTE_RIGHT_HAND)     : strHand = "right hand"
+    if (self.hand == NOTE_LEFT_HAND)      : strHand = "left hand"
+    if (self.hand == NOTE_UNDEFINED_HAND) : strHand = "undefined"
+
+    if (self.keyColor == keyColor.WHITE_NOTE) : strKeyColor = "white key"
+    if (self.keyColor == keyColor.BLACK_NOTE) : strKeyColor = "black key"
+
+    strFinger = "undefined" if (self.finger == NOTE_UNDEFINED_FINGER) else self.finger
 
     ret = f"""Note object properties
     - pitch:     {self.pitch}
-    - hand:      {self.hand} ({handStr})
-    - finger:    {self.finger}
-    - key color: {keyColorStr}
-    - index:     {self.noteIndex}
+    - name:      {self.name}
+    - hand:      {self.hand} ({strHand})
+    - finger:    {strFinger}
+    - key color: {strKeyColor}
+    - dbIndex:   {self.dbIndex}
     - start:     {self.startTime}
     - stop:      {self.stopTime}
     - visible:   {self.visible}
     - sustained: {self.sustained}
     - highlight: {self.highlight}
-    - name:      {self.name}
     - id:        {self.id}
     """
+    
     return ret
 
 
 
-# -----------------------------------------------------------------------------
-# METHOD: Note.getFriendlyName(pitchList)
-# -----------------------------------------------------------------------------
-def getFriendlyName(midiCode) :
+  # # ---------------------------------------------------------------------------
+  # # METHOD: Note._getFriendlyName()                                   [PRIVATE]
+  # # ---------------------------------------------------------------------------
+  # def _getFriendlyName(self) :
+  #   """
+  #   Converts a MIDI code (integer) to a human understandable note name.
+    
+  #   EXAMPLES
+  #   > Note(60)._getFriendlyName(60) = "C4"
+  #   """
+      
+  #   if ((self.pitch > 0) and (self.pitch < 128)) :
+  #     noteRefs = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
+  #     octave = (self.pitch // 12) - 1
+  #     noteIndex = self.pitch % 12
+
+  #     return f"{noteRefs[noteIndex]}{octave}"
+  #   else :
+  #     return ""
+
+
+# ---------------------------------------------------------------------------
+# UTILITY: getFriendlyName()
+# ---------------------------------------------------------------------------
+def getFriendlyName(pitch) -> str :
   """
   Converts a MIDI code (integer) to a human understandable note name.
   
+  TODO: add an option to choose flats or sharps
+
   EXAMPLES
-  getFriendlyName(60) = "C4"
+  > Note(60)._getFriendlyName(60) = "C4"
   """
     
-  if ((midiCode > 0) and (midiCode < 128)) :
-    # List of note names
+  if ((pitch > 0) and (pitch < 128)) :
     noteRefs = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
+    octave = (pitch // 12) - 1
+    noteIndex = pitch % 12
 
-    # Calculate the octave and note index
-    octave = (midiCode // 12) - 1
-    noteIndex = midiCode % 12
-
-    # Create the note name
     return f"{noteRefs[noteIndex]}{octave}"
-
   else :
     return ""
 
+
+
+# =============================================================================
+# UNIT TESTS
+# =============================================================================
+if (__name__ == "__main__") :
+
+  print("[INFO] Library 'Note' called as main: running unit tests...")
+
+  N = Note(64)
+  print(N)

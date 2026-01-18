@@ -4,7 +4,7 @@
 # Module name   : database
 # File name     : database.py
 # File type     : Python script (Python 3)
-# Purpose       : score capture database class
+# Purpose       : visual database for music scores
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Tuesday, 01 October 2024
 # -----------------------------------------------------------------------------
@@ -12,40 +12,42 @@
 # =============================================================================
 
 # =============================================================================
-# External libs 
+# EXTERNALS
 # =============================================================================
 import src.scoreShot.snapshot as snapshot
 
 import json
-import os
+import os       # For file name manipulation / file existence check
 import random
 
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 # None.
 
 
 
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
 class Database :
 
   """
+  DATABASE object
+  
   Class definition for the snapshot database.
-  This class only manages the snapshots files and their arrangement within 
+  
+  This class manages the snapshots files and their arrangement within 
   the database.
   """
-  def __init__(self, prFile) :
+  def __init__(self, jsonFile = "") :
     
-    self.nSnapshots = 0
-    self.snapshots = []
-    self.isEmpty = True
+    self.nSnapshots = 0             # Number of score snapshots available in the database
+    self.snapshots = []             # List of Snapshot objects
     
-    self.songName     = ""          # Name of the song file
+    self.songName     = ""          # Name of the song
     self.jsonName     = ""          # Name of the database file
     self.jsonFile     = ""          # Full name of the databse file (path + filename)
     self.depotFolder  = ""          # Directory where all the snapshots of the song are stored
@@ -56,85 +58,87 @@ class Database :
     self.hasUnsavedChanges = False  # Turns True if anything has been modified in the database
     self.changeLog = []
 
-    self.indexLastInsertion = -1    # Index where the last snapshot insertion occured
-
+    self.indexLastInsertion = -1    # Index where the last snapshot insertion occured (needed for TODO)
 
     # Initialisation procedures
-    self._loadNames(prFile)
+    self._initFileNames(jsonFile)
     self._loadJSON()
     self._integrityCheck()
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database._loadNames()
+  # METHOD Database._initFileNames()                                  [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _loadNames(self, prFile) :
+  def _initFileNames(self, jsonFile) :
     """
     Generates the various names of files and directories associated with the 
     database.
     """
     
-    # TODO: forbid any whitespace in the name, or dots, commas, etc.
-    
-    (rootDir, rootNameExt) = os.path.split(prFile)
-    (rootName, _) = os.path.splitext(rootNameExt)
-    self.songName     = rootName
-    self.songFile     = rootNameExt
-    self.jsonName     = rootName + ".json"          # Example: "my_song.json"
-    self.jsonFile     = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
-    self.depotFolder  = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
+    if (jsonFile != "") :
+      (_, rootNameExt) = os.path.split(jsonFile)
+      (rootName, _) = os.path.splitext(rootNameExt)
+      self.songName     = rootName
+      self.jsonFile     = jsonFile
+      self.jsonName     = rootName + ".json"          # Example: "my_song.json"
+      self.depotFolder  = f"./snaps/db__{rootName}"   # Example: "./snaps/db__my_song"
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Database._loadJSON()
+  # METHOD Database._loadJSON()                                       [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _loadJSON(self) :
+  def _loadJSON(self) -> None :
     """
     Loads the database file (JSON), creates one if it does not exist.
     
-    NOTE: the JSON and the snapshot folder are seen as inseparable. 
-    If any is missing, it starts over with a new database.
-    We do not want to deal with partial databases, attempt recoveries or any sort
-    of thing. Just don't touch the database files and let the app access and manage it!
-    """
-        
-    # Snapshot folder inexistent: the JSON is discarded for a new one.
-    if not(os.path.exists(self.depotFolder)) :
-      os.makedirs(self.depotFolder)
-
-      # This is where we would eventually initialise the rest of the 
-      # Database attributes. 
-      # But try to avoid it and design the default attributes so that
-      # we don't have to.
-      # Otherwise it creates a double init and that's ugly.
-      # self.nSnapshots = 0
-      # ...
-
-
-    # Snapshot folder exists
-    else :
-      if not(os.path.exists(self.jsonFile)) :
-        print("[DEBUG] The snapshot directory exists, but there is no JSON.")
-        
-        # Rename the current snapshot folder
-        # ...
-        
-
-        # Create a brand new one
-        # ...
-        
-      else : 
-        with open(self.jsonFile, "r") as jsonFile :
-          data = json.load(jsonFile)
-          self.fromDict(data)
-        
-
-
+    NOTE: the 'jsonFile' and the 'depotFolder' are seen as one. 
+    If one of them is missing, it starts over with a new database.
     
+    We do not want to deal with partial databases ('depotFolder' exists but
+    not 'jsonFile', etc.) attempt recoveries or any sort of thing.
+    There is no obvious reason to edit these elements outside the app.
+    
+    Just don't touch the database files and let the app access and manage it!
+    """
+
+    if os.path.exists(self.jsonFile) :
+      if os.path.exists(self.depotFolder) :
+        with open(self.jsonFile, "r") as jsonFile :
+          jsonData = json.load(jsonFile)
+          self._initFromDict(jsonData)
+
+      # The 'jsonFile' exists, but 'depotFolder' doesn't.
+      # Possibly the database was just created
+      else :
+        print("[DEBUG] No depot folder found for the database.")
+        os.makedirs(self.depotFolder)
+
+        # This is where we would eventually initialise the rest of the 
+        # Database attributes. 
+        # But try to avoid it and design the default attributes so that
+        # we don't have to.
+        # Otherwise it creates a double init and that's ugly.
+        # self.nSnapshots = 0
+        # ...
+
+    else :
+      
+      # The 'depotFolder' exists but not the 'jsonFile'.
+      # There is now obvious way to recover from that.
+      if os.path.exists(self.depotFolder) :
+        print("[WARNING] No json associated with the depot folder. Can't load the StaffScope view!")
+        #exit()
+        
+      # Nothing exists: they need to be created
+      else :
+        print("[INFO] Creating new database.")
+
+
+
   # ---------------------------------------------------------------------------
-  # METHOD Database._integrityCheck()
+  # METHOD Database._integrityCheck()                                 [PRIVATE]
   # ---------------------------------------------------------------------------
   def _integrityCheck(self) :
     """
@@ -143,13 +147,52 @@ class Database :
     - checks if cursor ranges are inconsistent
     """
     
-    print("[WARNING] Method 'Database._integrityCheck' is not implemented yet.")
-  
+    if os.path.exists(self.jsonFile) :
+      if os.path.exists(self.depotFolder) :
+        with open(self.jsonFile, "r") as jsonFile :
+          jsonData = json.load(jsonFile)
+          
+          if (self.songName != jsonData["songName"]) :
+            print("[WARNING] Database._integrityCheck(): 'songName' attribute is inconsistent. Possible database corruption.")  
+
+          if (self.jsonName != jsonData["jsonName"]) :
+            print("[WARNING] Database._integrityCheck(): 'jsonName' attribute is inconsistent. Possible database corruption.")
+
+          if (self.jsonFile != jsonData["jsonFile"]) :
+            print("[WARNING] Database._integrityCheck(): 'jsonFile' attribute is inconsistent. Possible database corruption.")
+
+          if (self.depotFolder != jsonData["depotFolder"]) :
+            print("[WARNING] Database._integrityCheck(): 'depotFolder' attribute is inconsistent. Possible database corruption.")
+
+
+    # TODO: check the snapshot attributes
+    # ...
+
+
+
+    # TODO: indicate what percentage of the cursor span has snapshot
+    # associated to them.
+    # ...
+
+
+    # TODO: check if there are overlaps in the snapshots cursor span.
+    # There should be none.
+    # ...
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Database.isEmpty()
+  # ---------------------------------------------------------------------------
+  def isEmpty(self) :
+    """
+    Returns True if the Database contains no snapshot.
+    """
     
+    return (len(self.snapshots) == 0)
 
 
-  
-  
+
   # ---------------------------------------------------------------------------
   # METHOD Database.insert()
   # ---------------------------------------------------------------------------
@@ -160,7 +203,7 @@ class Database :
     
     After the insertion, image will be located at 'self.snapshots[index]'.
 
-    If index = -1 (default) the image is inserted at the end of the list.
+    If index = -1 (default) the image is appened at the end of the list.
     """
     
     # Invalid input detection
@@ -299,27 +342,23 @@ class Database :
     
 
   # ---------------------------------------------------------------------------
-  # METHOD Database.fromDict()
+  # METHOD Database._initFromDict()                                   [PRIVATE]
   # ---------------------------------------------------------------------------
-  def fromDict(self, data) :
+  def _initFromDict(self, jsonData) -> None :
     """
     Loads the content of the Database class from a dictionary for easier 
     serialisation.
     """
     
-    # TODO: iterate over the attributes (except for "snapshots" who's a bit of an oddity)
-    #       instead of manually listing all of them. 
-    #       The list tends to change regularly.
-    self.nSnapshots         = data["nSnapshots"]
-    self.snapshots          = [(s := snapshot.Snapshot()).fromDict(snapData) or s for snapData in data["snapshots"]]
-    self.isEmpty            = data["isEmpty"]
-    self.songName           = data["songName"]
-    self.songFile           = data["songFile"]
-    self.jsonName           = data["jsonName"]
-    self.jsonFile           = data["jsonFile"]
-    self.depotFolder        = data["depotFolder"]
-    self.hasUnsavedChanges  = data["hasUnsavedChanges"]
-    #self.indexLastInsertion = data["indexLastInsertion"]     # No need to retrieve that.
+    self.nSnapshots         = jsonData["nSnapshots"]
+    self.snapshots          = [(s := snapshot.Snapshot()).fromDict(snapData) or s for snapData in jsonData["snapshots"]]
+    # self.songName           = jsonData["songName"]              # Already known
+    # self.songFile           = jsonData["songFile"]              # Already known
+    # self.jsonName           = jsonData["jsonName"]              # Already known
+    # self.jsonFile           = jsonData["jsonFile"]              # Already known
+    # self.depotFolder        = jsonData["depotFolder"]           # Already known
+    # self.hasUnsavedChanges  = jsonData["hasUnsavedChanges"]     # Useless
+    # self.indexLastInsertion = jsonData["indexLastInsertion"]    # Useless
     
 
 
@@ -379,9 +418,15 @@ class Database :
 
 
 # =============================================================================
-# Unit tests
+# UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
+  
+  db = Database("./snaps/Rachmaninoff_Moment_Musical_Op_16_No_4.json")
+  
+  
+  
+  
   db = Database("TEST")
   
   s = db.generateFileName()

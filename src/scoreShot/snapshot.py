@@ -3,31 +3,30 @@
 # Project       : gangQin
 # Module name   : snapshot
 # File name     : snapshot.py
+# File type     : Python script (Python 3)
 # Purpose       : snapshot object definition
-# Author        : QuBi (nitrogenium@hotmail.com)
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Friday, 04 October 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
 
-
-
 # =============================================================================
-# External libs 
+# EXTERNALS
 # =============================================================================
 import src.widgets.playGlow as playGlow
 
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 # None.
 
 
 
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
 class Snapshot :
   def __init__(self) :
@@ -46,7 +45,7 @@ class Snapshot :
     self.playGlowsLeft = {}         # List of tuples with the coordinates of the rectangles highlighting the left hand notes (one per cursor value)
     self.playGlowsRight = {}        # List of tuples with the coordinates of the rectangles highlighting the right hand notes (one per cursor value)
     
-    self.rulerLeftHand = [-1, -1, -1, -1]   
+    self.rulerLeftHand  = [-1, -1, -1, -1]   
     self.rulerRightHand = [-1, -1, -1, -1]
 
     self.needsRework = False        # Set to True if any issue has been reported in the player or in gangQin
@@ -249,7 +248,7 @@ class Snapshot :
 
 
 # =============================================================================
-# Unit tests
+# UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
   print("[INFO] There are no unit tests available for 'snapshot.py'")

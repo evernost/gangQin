@@ -11,111 +11,128 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
 # Project specific constants
 from src.commons import *
+
+import src.widgets.widget as widget
 
 import pygame
 
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
-
-
-
-# =============================================================================
-# Guards
-# =============================================================================
-if (__name__ == "__main__") :
-  print("[WARNING] This library is not intended to be called as a main.")
+# None.
 
 
 
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
+class PianoRoll(widget.Widget) :
 
-class PianoRoll :
+  """
+  PIANOROLL object
+  
+  The PianoRoll class derives from the Widget class.
 
-  # ---------------------------------------------------------------------------
-  # Constructor
-  # ---------------------------------------------------------------------------
-  def __init__(self, x, yTop, yBottom) :
-    # Drawing localisation
-    self.x = x
-    self.yTop = yTop
-    self.yBottom = yBottom
+  It renders a typical vertical 'piano roll' view on the screen, aligned with
+  the keyboard.
+  """
+
+  def __init__(self, top, loc) :
+    
+    # Call the Widget init method
+    super().__init__(top, loc)
+  
+    self.name = "pianoroll"
+
+    # Widget location
+    self.x = loc[0]
+    self.yTop = loc[1]
+    self.yBottom = 300-2
 
     # Defines the amount of notes shown in the piano roll view
     # Units are in timecodes. Use "avgNoteDuration" to use it conveniently
     self.viewSpan = 1000
 
-    self.noteArray = [[] for _ in range(128)]
-    self.nStaffs = 0
-    
+    self.xLines = []
+
+    self.activePitches = []
+
     # Color scheme
-    self.backgroundRGB = (80, 80, 80)         # Background color for the piano roll
-    self.keyLineRGB = (50, 50, 50)            # Color of the lines separating each notes in the piano roll
-    self.leftNoteOutlineRGB = (243, 35, 35)   # Border color for the notes in the piano roll
-    self.rightNoteOutlineRGB = (35, 243, 118)
-    self.leftNoteRGB = (250, 165, 165)        # Color of a left hand note in piano roll
-    self.rightNoteRGB = (165, 250, 200)       # Color of a right hand note in piano roll
+    self.leftNoteOutlineRGB   = PIANOROLL_NOTE_BORDER_COLOR_LEFT
+    self.rightNoteOutlineRGB  = PIANOROLL_NOTE_BORDER_COLOR_RIGHT
     
-    # Shortcuts for the key sizes
-    self.b = WHITE_NOTE_WIDTH
-    self.d = BLACK_NOTE_WIDTH
-    self.e = NOTE_SPACING
 
-    # UI interaction queues
-    self._altPressed = False
-    self.msgQueueIn = []
-    self.msgQueueOut = []
+
+  # ---------------------------------------------------------------------------
+  # METHOD PianoRoll.render()
+  # ---------------------------------------------------------------------------
+  def render(self) :
+    """
+    Draws the pianoroll on screen.
+    This function is called every time the app renders a new frame.
+    """
+
+    # Disable rendering if the staffscope has something to show
+    if (WIDGET_ID_STAFFSCOPE in self.top.widgets) :
+      if self.top.widgets[WIDGET_ID_STAFFSCOPE].isViewEmpty() :
+        self._renderKeyLines()
+        self._renderNotes()
+
+      else :
+        pass
+
+    else :
+      self._renderKeyLines()
+      self._renderNotes()
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <_drawKeyLines> (private)
-  #
-  # Draw the thin lines in-between each note.
+  # METHOD PianoRoll._renderKeyLines()                                [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _drawKeyLines(self, screenInst) :
+  def _renderKeyLines(self) :
+    """
+    Draws the thin lines separating each key on the virtual keyboard.
+    """
 
     # Some shortcuts
     x0 = self.x
-    b = self.b
-    d = self.d
+    wnw = KEYBOARD_WHITE_NOTE_WIDTH
+    bnw = KEYBOARD_BLACK_NOTE_WIDTH
 
     self.xLines = [
-      x0,                 # begin(A0)
-      x0+(1*b)-(d//3),    # begin(Bb0)
-      x0+(1*b)+(2*d//3),  # begin(B0)
+      x0,                     # begin(A0)
+      x0+(1*wnw)-(bnw//3),    # begin(Bb0)
+      x0+(1*wnw)+(2*bnw//3),  # begin(B0)
     ]
-    x0 = x0+(2*b)         # end(B0) = begin(C0)
+    x0 = x0+(2*wnw)           # end(B0) = begin(C0)
     
-    for oct in range(7) :
+    for octave in range(7) :
       self.xLines += [
         x0,
-        x0+(1*b)-(2*d//3),
-        x0+(1*b)+(d//3),
-        x0+(2*b)-(d//3),
-        x0+(2*b)+(2*d//3),
-        x0+(3*b),
-        x0+(4*b)-(2*d//3),
-        x0+(4*b)+(d//3),
-        x0+(5*b)-(d//2),
-        x0+(5*b)+(d//2),
-        x0+(6*b)-(d//3),
-        x0+(6*b)+(2*d//3)
+        x0+(1*wnw)-(2*bnw//3),
+        x0+(1*wnw)+(bnw//3),
+        x0+(2*wnw)-(bnw//3),
+        x0+(2*wnw)+(2*bnw//3),
+        x0+(3*wnw),
+        x0+(4*wnw)-(2*bnw//3),
+        x0+(4*wnw)+(bnw//3),
+        x0+(5*wnw)-(bnw//2),
+        x0+(5*wnw)+(bnw//2),
+        x0+(6*wnw)-(bnw//3),
+        x0+(6*wnw)+(2*bnw//3)
       ]
-
-      x0 += 7*b
+      x0 += 7*wnw
 
     self.xLines += [
       x0,
-      x0+(1*b)
+      x0+(1*wnw)
     ]
 
     # Draw the background rectangle
@@ -125,174 +142,141 @@ class PianoRoll :
       (self.xLines[-1], self.yTop),
       (self.xLines[0], self.yTop)
     ]
-    pygame.draw.polygon(screenInst, self.backgroundRGB, backRect)
+    tmpSurface = pygame.Surface((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT), pygame.SRCALPHA)
+    pygame.draw.polygon(tmpSurface, (*PIANOROLL_BACKGROUND_COLOR, PIANOROLL_TRANSPARENCY), backRect)
+    self.top.screen.blit(tmpSurface, (0, 0))
 
-
-    # Draw the lines
+    # Draw the separation lines
     for x in self.xLines :
-      pygame.draw.line(screenInst, self.keyLineRGB, (x, self.yTop), (x, self.yBottom), 1)
+      pygame.draw.line(self.top.screen, PIANOROLL_NOTE_LINE_SEP_COLOR, (x, self.yTop), (x, self.yBottom), 1)
+    pygame.draw.line(self.top.screen, PIANOROLL_NOTE_LINE_SEP_COLOR, (self.xLines[0], self.yTop), (self.xLines[-1], self.yTop), 1)    # Close the rectangle
 
-    # Close the rectangle
-    pygame.draw.line(screenInst, self.keyLineRGB, (self.xLines[0], self.yTop), (self.xLines[-1], self.yTop), 1)
+    # Show the note played on keyboard
+    for pitch in self.activePitches :
+      rectBottom  = self.yBottom
+      rectTop     = self.yTop
+      
+      # TODO: remove the magic constants
+      sq = [
+        (self.xLines[pitch-21]+2, rectBottom),
+        (self.xLines[pitch-21]+2, rectTop),
+        (self.xLines[pitch+1-21]-2, rectTop),
+        (self.xLines[pitch+1-21]-2, rectBottom)
+      ]
+      
+      # Draw the outline
+      # color = PIANOROLL_NOTE_BORDER_COLOR_LEFT
+      # pygame.draw.line(self.top.screen, color, sq[0], sq[1], 3)
+      # pygame.draw.line(self.top.screen, color, sq[1], sq[2], 3)
+      # pygame.draw.line(self.top.screen, color, sq[2], sq[3], 3)
+      # pygame.draw.line(self.top.screen, color, sq[3], sq[0], 3)
+      
+      # Draw the rectangle
+      # pygame.draw.polygon(self.top.screen, (165, 250, 200), sq)
+
+      tmpSurface = pygame.Surface((GUI_SCREEN_WIDTH, GUI_SCREEN_HEIGHT), pygame.SRCALPHA)
+      pygame.draw.polygon(tmpSurface, (165, 250, 200, PIANOROLL_TRANSPARENCY), sq)
+      self.top.screen.blit(tmpSurface, (0, 0))
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <drawPianoRoll>
-  #
-  # Draw the note content of the piano roll at the current time
+  # METHOD PianoRoll._renderNotes()                                   [PRIVATE]
   # ---------------------------------------------------------------------------
-  def drawPianoRoll(self, screenInst, startTimeCode) :
+  def _renderNotes(self) :
+    """
+    Renders the rectangle symbols for each note.
+    """
     
-    # Draw the background and inner components
-    self._drawKeyLines(screenInst)
+    # Get the current timecode
+    currTimecode = self.top.widgets[WIDGET_ID_SCORE].getTimecode()
 
     # List the notes that intersect the current window
     notesInWindow = []
 
-    # Draw the notes
-    # NOTE: some processing could be avoided here since the notes are sorted by startTime
-    # Once the notes start way after the end of the window, why bother exploring the rest?
-    for (staffIndex, _) in enumerate(self.noteArray) :
-      for pitch in GRAND_PIANO_MIDI_RANGE :
-        for note in self.noteArray[staffIndex][pitch] :
-          
-          # Shortcuts
-          a = startTimeCode; b = startTimeCode + self.viewSpan
-          c = note.startTime; d = note.stopTime
+    for N in self.top.widgets[WIDGET_ID_SCORE].noteList :
+      
+      # Shorcuts
+      winStart  = currTimecode 
+      winEnd    = currTimecode + self.viewSpan
+      noteStart = N.startTime 
+      noteEnd   = N.stopTime
         
-          # Does the note span intersect the current view window?
-          if (((c >= a) and (c < b)) or ((d >= a) and (d < b)) or ((c <= a) and (d >= b))) :
-            notesInWindow.append(note)
+      # Does the note span intersect the current view window?
+      if (
+        ((noteStart >= winStart)  and (noteStart < winEnd)) or    # The note starts in the window
+        ((noteEnd >= winStart)    and (noteEnd < winEnd))   or    # The note ends in the window
+        ((noteStart <= winStart)  and (noteEnd >= winEnd))        # The note starts before the window and ends after the window
+      ) : notesInWindow.append(N)
+
 
     # Sort the notes to display them in a given order.
     # Longest notes are displayed first
-    notesInWindow.sort(key = lambda x : -(x.stopTime-x.startTime))
+    notesInWindow.sort(key = lambda N : -(N.stopTime-N.startTime))
 
     # Draw the notes
-    for note in notesInWindow :
+    for N in notesInWindow :
 
       # Shortcuts
-      a = startTimeCode; b = startTimeCode + self.viewSpan
-      c = note.startTime; d = note.stopTime
+      winStart  = currTimecode
+      winEnd    = currTimecode + self.viewSpan
+      noteStart = N.startTime
+      noteEnd   = N.stopTime
 
-      # Convert the size measured in "time" to a size in pixels
-      rectBottom = -((self.yBottom-self.yTop)*(c-b)/(b-a)) + self.yTop
-      rectTop = -((self.yBottom-self.yTop)*(d-b)/(b-a)) + self.yTop
+      # Convert the size from time units to pixels
+      rectBottom  = self.yTop - ((self.yBottom-self.yTop)*(noteStart-winEnd)/(winEnd-winStart))
+      rectTop     = self.yTop - ((self.yBottom-self.yTop)*(noteEnd-winEnd)/(winEnd-winStart))
       
-      # Trim the rectangle representing the note to the current view
-      rectBottom = max([rectBottom, self.yTop]); rectBottom = min([rectBottom, self.yBottom])
-      rectTop = max([rectTop, self.yTop]); rectTop = min([rectTop, self.yBottom])
+      # Limit the coordinates to the view size
+      rectBottom = max([rectBottom, self.yTop])
+      rectBottom = min([rectBottom, self.yBottom])
+      rectTop = max([rectTop, self.yTop])
+      rectTop = min([rectTop, self.yBottom])
 
-      sq = [(self.xLines[note.pitch-21]+2, rectBottom),
-            (self.xLines[note.pitch-21]+2, rectTop),
-            (self.xLines[note.pitch+1-21]-2, rectTop),
-            (self.xLines[note.pitch+1-21]-2, rectBottom)
-          ]
+      # TODO: remove the magic constants
+      sq = [
+        (self.xLines[N.pitch-21]+2, rectBottom),
+        (self.xLines[N.pitch-21]+2, rectTop),
+        (self.xLines[N.pitch+1-21]-2, rectTop),
+        (self.xLines[N.pitch+1-21]-2, rectBottom)
+      ]
       
+      # Draw the outline
       # TODO: replace with a call to getNoteColor()
-      if (note.hand == LEFT_HAND) :
-        color = self.leftNoteOutlineRGB
+      if (N.hand == NOTE_LEFT_HAND)   : color = PIANOROLL_NOTE_BORDER_COLOR_LEFT
+      if (N.hand == NOTE_RIGHT_HAND)  : color = PIANOROLL_NOTE_BORDER_COLOR_RIGHT
+      pygame.draw.line(self.top.screen, color, sq[0], sq[1], 3)
+      pygame.draw.line(self.top.screen, color, sq[1], sq[2], 3)
+      pygame.draw.line(self.top.screen, color, sq[2], sq[3], 3)
+      pygame.draw.line(self.top.screen, color, sq[3], sq[0], 3)
       
-      if (note.hand == RIGHT_HAND) :
-        color = self.rightNoteOutlineRGB
+      # Draw the rectangle
+      (rectColor, _, _) = N.getNoteColor()
+      pygame.draw.polygon(self.top.screen, rectColor, sq)
 
-      (rectColor, rectOutlineColor, pianoRollColor) = note.getNoteColor()
-      pygame.draw.line(screenInst, color, sq[0], sq[1], 3)
-      pygame.draw.line(screenInst, color, sq[1], sq[2], 3)
-      pygame.draw.line(screenInst, color, sq[2], sq[3], 3)
-      pygame.draw.line(screenInst, color, sq[3], sq[0], 3)
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: PianoRoll.onExternalMidiEvent()
+  # ---------------------------------------------------------------------------
+  def onExternalMidiEvent(self, midiMessage) :
+    """
+    Updates the list of active MIDI notes coming from the keyboard so that 
+    they can be displayed at rendering.
+    """
+
+    if (midiMessage.type == "note_on") :
+      self.activePitches.append(midiMessage.note)
       
-      pygame.draw.polygon(screenInst, rectColor, sq)
-            
+    elif (midiMessage.type == "note_off") :
+      self.activePitches = [pitch for pitch in self.activePitches if (pitch != midiMessage.note)]
 
 
 
-    
+# =============================================================================
+# UNIT TESTS
+# =============================================================================
+if (__name__ == "__main__") :
 
-  # ---------------------------------------------------------------------------
-  # METHOD PianoRoll.loadPianoRoll(noteArray)
-  # ---------------------------------------------------------------------------
-  def loadPianoRoll(self, noteArray) :
-    """
-    TODO
-    """
+  print("[INFO] There are no unit tests available for 'pianoRoll.py'")
 
-    # Use .copy instead of direct assign for safety 
-    # (we don't want the pianoroll widget to mess with the real score)
-    self.noteArray = noteArray.copy()
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD PianoRoll.keyPress(pygameKeys)
-  # ---------------------------------------------------------------------------
-  def keyPress(self, pygameKeys) :
-    """
-    TODO
-    """
-
-    if pygameKeys[pygame.K_LALT] :
-      print("[DEBUG] Keypress: 'ALT'")
-
-    # if pygameKeys[pygame.K_m] :
-
-    #   if not(self.enable) :
-    #     self.enable = True
-    #     self._switched = True
-    #     self.msgQueue.append(MSG_TIMER_ON)
-
-    #   if pygameKeys[pygame.K_KP_PLUS] :
-    #     self._optionMode = True
-    #     self.bpm += 1
-    #     if not(MSG_TEMPO_UPDATE in self.msgQueue) :
-    #       self.msgQueue.append(MSG_TEMPO_UPDATE)
-      
-    #   elif pygameKeys[pygame.K_KP_MINUS] :
-    #     self._optionMode = True
-    #     self.bpm -= 1
-    #     if not(MSG_TEMPO_UPDATE in self.msgQueue) :
-    #       self.msgQueue.append(MSG_TEMPO_UPDATE)
-
-    # else :
-    #   self.switched = False
-    #   self._optionMode = False
-
-
-      
-  # ---------------------------------------------------------------------------
-  # METHOD PianoRoll.keyRelease(pygameKeys)
-  # ---------------------------------------------------------------------------
-  def keyRelease(self, pygameKeys) :
-    """
-    TODO
-    """
-
-    if pygameKeys[pygame.K_LALT] :
-      #print("[DEBUG] Keyrelease: '<'")
-      pass
-
-    # if (key == pygame.K_m) :
-
-    #   if self._switched :
-    #     self._switched = False
-
-    #   else : 
-    #     if self._optionMode :
-    #       self._optionMode = False
-    #     else :
-    #       self.enable = False
-    #       self.counter = 1
-    #       self.msgQueue.append(MSG_TIMER_OFF)
-
-
-
-  def mouseEvent(self, event) :
-    
-    pass
-    #print("[DEBUG] Keyrelease: '<'")
-
-    # if (event.type == pygame.MOUSEBUTTONDOWN) :
-    #   keys    = pygame.key.get_pressed()
-    #   ctrlKey = event.mod & pygame.KMOD_CTRL
-    #   altKey  = event.mod & pygame.KMOD_ALT

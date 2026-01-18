@@ -12,7 +12,7 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
 # Project specific constants
 from commons import *
@@ -25,7 +25,7 @@ import time
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 TICK_INTERVAL_MS = 500                # Deprecated.
 MINIMAL_SESSION_DURATION_SEC = 60*5   # Minimal duration required for a session to have its stats saved
@@ -34,11 +34,13 @@ IDLE_TIME_THRESHOLD_SEC = 20          # After this amount of time without any us
 
 
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
 class Stats :
 
   """
+  STATS Object
+  
   Monitors the activity, right/wrong notes to provide some statistics.
   It gives access to various hindsights relative to the performance on the song like:
   - active time spent learning the score
@@ -235,9 +237,9 @@ class Stats :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats.showIntroSummary()
+  # METHOD Stats.printIntroSummary()
   # ---------------------------------------------------------------------------
-  def showIntroSummary(self) :
+  def printIntroSummary(self) :
     """
     Prints a short summary of the current stats as introduction.
     This is usually called right after loading the practice session.
@@ -252,9 +254,30 @@ class Stats :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats.reportCorrectNote()
+  # METHOD Stats.logUserActivity()
   # ---------------------------------------------------------------------------
-  def reportCorrectNote(self) :
+  def logUserActivity(self) :
+    """
+    Resets the idle timer (inactivity detection) e.g. when there is some activity
+    going on.
+    This function is typically called every time there is MIDI activity.
+    """
+    
+    idleTime = round(time.perf_counter() - self.lastActivity)
+    if (idleTime > IDLE_TIME_THRESHOLD_SEC) :
+      self.totalInactivity_sec += idleTime
+
+    if (idleTime > 180) :
+      print("Welcome back, Sleeping Beauty :)")
+
+    self.lastActivity = time.perf_counter()
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats.logCorrectNote()
+  # ---------------------------------------------------------------------------
+  def logCorrectNote(self) :
     """
     This function must be called every time the user plays a correct input.
     
@@ -276,9 +299,9 @@ class Stats :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats.reportWrongNote()
+  # METHOD Stats.logWrongNote()
   # ---------------------------------------------------------------------------
-  def reportWrongNote(self, cursor) :
+  def logWrongNote(self, cursor) :
     """
     This function must be called every time the user plays an incorrect input.
     
@@ -337,30 +360,9 @@ class Stats :
     duration = self.sessionStopTime - self.sessionStartTime
     duration = int(round(duration.total_seconds()))
     durationStr = f"{duration // 60}min{duration % 60}s"
-    outputStr = self.sessionStartTime.strftime(f"Session {self.sessionCount}: %A, %B %d{daySuffix} at %H:%M. Duration: {durationStr}")
+    outputStr = self.sessionStartTime.strftime(f"Session {self.sessionCount}: %A, %B %d{daySuffix} (%Y) at %H:%M. Duration: {durationStr}")
 
     return outputStr
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Stats.userActivity()
-  # ---------------------------------------------------------------------------
-  def userActivity(self) :
-    """
-    Resets the idle timer (inactivity detection) e.g. when there is some activity
-    going on.
-    This function is typically called every time there is MIDI activity.
-    """
-    
-    idleTime = round(time.perf_counter() - self.lastActivity)
-    if (idleTime > IDLE_TIME_THRESHOLD_SEC) :
-      self.totalInactivity_sec += idleTime
-
-    if (idleTime > 180) :
-      print("Welcome back, Sleeping Beauty :)")
-
-    self.lastActivity = time.perf_counter()
 
 
 
@@ -372,6 +374,7 @@ class Stats :
     Resets the idle timer (inactivity detection) e.g. when activity shows on 
     the input keyboard.
     """
+
     self.cursorIdleTimer = 0
 
 
@@ -460,7 +463,7 @@ class Stats :
 
 
 # =============================================================================
-# Unit tests
+# UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
   print("[INFO] There are no unit tests available for 'stats.py'")

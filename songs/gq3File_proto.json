@@ -1,0 +1,39 @@
+{
+  "revision": "v3.0",
+  "cursor": 0,
+  "bookmarks": [
+    0,
+    99
+  ],
+  "database": [
+    {
+      "pitch": 30,
+      "hand": 0,
+      "finger": 0,
+      "voice": 0,
+      "name": "Gb1"
+    },
+    {
+      "pitch": 34,
+      "hand": 0,
+      "finger": 0,
+      "voice": 0,
+      "name": "??"
+    },
+    {
+      "pitch": 79,
+      "hand": 1,
+      "finger": 0,
+      "keyColor": 0,
+      "noteIndex": 4,
+      "startTime": 66240,
+      "stopTime": 66319,
+      "sustained": false,
+      "inactive": false,
+      "disabled": false,
+      "voice": 0,
+      "name": "G5",
+      "id": 2109
+    }
+  ]
+}

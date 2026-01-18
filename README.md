@@ -1,4 +1,4 @@
-# gangQin v2.1 (STABLE)
+# gangQin v3.0 (ALPHA)
 Piano learning app, for those who struggle with the conventional music scores.
 
 ![image](https://github.com/user-attachments/assets/1cd22e89-eea6-40ad-90cc-525259448a2c)
@@ -109,10 +109,12 @@ To run the app from VSCode, you need to run the code using a launch.json and add
 
 ## TODO / Ideas
 - [ ] add a weak arbitration mode
+- [ ] add a border around the staffscope that turns red when a wrong note is played 
 - [ ] catalog of exercise sessions: add the possibility to save the current location + loop settings + hand practice to a catalog, so that it can be restored later
 - [ ] add a rehearsal mode, where inputs don't trigger anything (i.e. practice without wrong note count)
 - [ ] make the widgets inherit from a parent class containing basic operations, like text display and keyboard interaction
 - [ ] CTRL+ and CTRL- adjust the view span in pianoroll mode.
+- [ ] add a perspective effect to the pianoroll view
 - [ ] terminate properly when the last cursor is reached.
 - [ ] scoreShot-capture: on the capture window, show the snapshot count number.
-- [ ] add a perspective effect to the pianoroll view
+

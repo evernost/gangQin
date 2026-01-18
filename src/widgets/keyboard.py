@@ -1,73 +1,66 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
 # Project       : gangQin
-# Module name   : keyboard
+# Module name   : Keyboard (inherited from Widget)
 # File name     : keyboard.py
-# Purpose       : draws and manages the keyboard displayed on screen.
-# Author        : QuBi (nitrogenium@hotmail.com)
+# File type     : Python script (Python 3)
+# Purpose       : draws the keyboard displayed on screen
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Sunday, 8 Oct 2023
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
-# Project specific constants
 from src.commons import *
-
-import pygame
+import src.note as note
 import src.text as text
-
-# For point in polygon test
-from shapely.geometry import Point, Polygon
-
 import src.utils as utils
+import src.widgets.widget as widget
+
+# Standard libraries
+import pygame
+from shapely.geometry import Point, Polygon   # For point in polygon test
 
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 # None.
 
 
 
 # =============================================================================
-# Guards
+# CLASS DEFINITION
 # =============================================================================
-if (__name__ == "__main__") :
-  print("[WARNING] This library is not intended to be called as a main.")
+class Keyboard(widget.Widget) :
 
+  """
+  KEYBOARD Object
+  
+  The Keyboard object is a Widget representing the keyboard on screen.
 
+  It is in charge of:
+  - drawing the actual keyboard (black and white notes)
+  - highlighting the notes pressed by the user on his external MIDI keyboard
+  - highlighting the notes that have to be played.
 
-# =============================================================================
-# Main code
-# =============================================================================
+  The Keyboard class derives from the Widget class.
+  """
 
-class Keyboard :
-
-  # ---------------------------------------------------------------------------
-  # Constructor
-  # ---------------------------------------------------------------------------
-  def __init__(self, loc) :
-    (self.x, self.y) = loc
+  def __init__(self, top, loc) :
     
-    # -------------
-    # Color palette
-    # -------------
-    
-    # Black and white notes of the keyboard
-    self.whiteNoteRGB = (255, 255, 255)
-    self.blackNoteRGB = (0, 0, 0)
-    
-    # Rectangle indicating a note to play by left hand
-    self.sqWhiteNoteLeftRGB = (200, 10, 0)
-    self.sqBlackNoteLeftRGB = (200, 10, 0)
+    # Call the Widget init method
+    super().__init__(top, loc)
 
-    # Rectangle indicating a note to play by right hand
-    self.sqWhiteNoteRightRGB = (0, 200, 10)
-    self.sqBlackNoteRightRGB = (0, 200, 10)
+    # Name of the widget
+    self.name = "keyboard"
+
+    # Populated after calling "Keyboard._makePolygons()"
+    self.polygons = []
 
     # Rectangle of a note being played by both 
     # - a note to play by left hand
@@ -81,256 +74,98 @@ class Keyboard :
     self.sqWhiteNoteOverlapRightRGB = (140, 255, 146)
     self.sqBlackNoteOverlapRightRGB = (140, 255, 146)
 
-    # Color of the font indicating the finger
-    self.fingerFontBlackNoteRGB = (240, 240, 240)
-    self.fingerFontWhiteNoteRGB = (240, 240, 240)
+    # Define shorthand notations
+    self.c = KEYBOARD_BLACK_NOTE_HEIGHT
+    self.d = KEYBOARD_BLACK_NOTE_WIDTH
+    self.s = KEYBOARD_NOTE_CHANFER
+    self.e = KEYBOARD_NOTE_SPACING
+    self.x = self.loc[0]; self.y = self.loc[1]
 
+    # TODO: add description
     self.litKeysPolygons = []
 
-    # Define the size of the keys
-    self.a = WHITE_NOTE_HEIGHT; self.b = WHITE_NOTE_WIDTH
-    self.c = BLACK_NOTE_HEIGHT; self.d = BLACK_NOTE_WIDTH
-    self.s = NOTE_CHANFER
-    self.e = NOTE_SPACING
-    
-    # Generate polygons for all notes and store them in <keyboardPolygons>
-    self.makeKeyboardPolygons()
+    # Generate polygons for all notes and store them in 'Keyboard.polygons'
+    self._makePolygons()
 
     # List of notes currently pressed
-    self.activeNotes = []
-
-    # Define the current key the song is in
-    self.activeKey = []
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD: Keyboard.makeKeyboardPolygons()
-  # ---------------------------------------------------------------------------
-  def makeKeyboardPolygons(self, grandPianoMode = True) :
-    """
-    Generates the polygons depicting all the notes of a MIDI keyboard (128 notes)
-    For a grand piano, you'd use only polygons indexed from 21 (A0) to 108 (C8)
-    """
-
-    self.keyboardPolygons = []
-
-    # Some shortcuts
-    a = self.a; b = self.b
-    c = self.c; d = self.d
-    s = self.s
-    e = self.e
-    x0 = self.x - (12*b); y0 = self.y
-
-    # Initialise output
-    self.keyboardPolygons = [[] for _ in range(128)]
-
-    # Generate polygons for each note
-    for i in range(0, 128, 12) :
-      
-      # Note C
-      if (grandPianoMode and (i == 108)) :
-        self.keyboardPolygons[i] = [(x0+e, y0)]
-        self.keyboardPolygons[i] += utils.Vector2D(0,a-s)
-        self.keyboardPolygons[i] += utils.Vector2D(s,s)
-        self.keyboardPolygons[i] += utils.Vector2D(b-(2*s)-(2*e),0)
-        self.keyboardPolygons[i] += utils.Vector2D(s,-s)
-        self.keyboardPolygons[i] += utils.Vector2D(0,-(a-s))
-      else :
-        self.keyboardPolygons[i] = [(x0+e, y0)]
-        self.keyboardPolygons[i] += utils.Vector2D(0,a-s)
-        self.keyboardPolygons[i] += utils.Vector2D(s,s)
-        self.keyboardPolygons[i] += utils.Vector2D(b-(2*s)-(2*e),0)
-        self.keyboardPolygons[i] += utils.Vector2D(s,-s)
-        self.keyboardPolygons[i] += utils.Vector2D(0,-(a-c-e-s))
-        self.keyboardPolygons[i] += utils.Vector2D(-2*d//3,0)
-        self.keyboardPolygons[i] += utils.Vector2D(0,-(c+e))
-
-      # Note Db
-      self.keyboardPolygons[i+1] = [(x0+b-(2*d//3)+e, y0)]
-      self.keyboardPolygons[i+1] += utils.Vector2D(0,c-e)
-      self.keyboardPolygons[i+1] += utils.Vector2D(d-(2*e),0)
-      self.keyboardPolygons[i+1] += utils.Vector2D(0,-(c-e))
-
-      # Note D
-      self.keyboardPolygons[i+2] = [(x0+b+(d//3)+e, y0)]
-      self.keyboardPolygons[i+2] += utils.Vector2D(0,c+e)
-      self.keyboardPolygons[i+2] += utils.Vector2D(-d//3,0)
-      self.keyboardPolygons[i+2] += utils.Vector2D(0,a-c-e-s)
-      self.keyboardPolygons[i+2] += utils.Vector2D(s,s)
-      self.keyboardPolygons[i+2] += utils.Vector2D(b-(2*s)-(2*e),0)
-      self.keyboardPolygons[i+2] += utils.Vector2D(s,-s)
-      self.keyboardPolygons[i+2] += utils.Vector2D(0,-(a-c-e-s))
-      self.keyboardPolygons[i+2] += utils.Vector2D(-d//3,0)
-      self.keyboardPolygons[i+2] += utils.Vector2D(0,-(c+e))
-
-      # Note Eb
-      self.keyboardPolygons[i+3] = [(x0+(2*b)-(d//3)+e, y0)]
-      self.keyboardPolygons[i+3] += utils.Vector2D(0,c-e)
-      self.keyboardPolygons[i+3] += utils.Vector2D(d-(2*e),0)
-      self.keyboardPolygons[i+3] += utils.Vector2D(0,-(c-e))
-
-      # Note Eb
-      self.keyboardPolygons[i+4] = [(x0+(2*b)+(2*d//3)+e, y0)]
-      self.keyboardPolygons[i+4] += utils.Vector2D(0,c+e)
-      self.keyboardPolygons[i+4] += utils.Vector2D(-2*d//3,0)
-      self.keyboardPolygons[i+4] += utils.Vector2D(0,a-c-e-s)
-      self.keyboardPolygons[i+4] += utils.Vector2D(s,s)
-      self.keyboardPolygons[i+4] += utils.Vector2D(b-(2*s)-(2*e),0)
-      self.keyboardPolygons[i+4] += utils.Vector2D(s,-s)
-      self.keyboardPolygons[i+4] += utils.Vector2D(0,-(a-s))
-
-      # Note F
-      self.keyboardPolygons[i+5] = [(x0+(3*b)+e, y0)]
-      self.keyboardPolygons[i+5] += utils.Vector2D(0,a-s)
-      self.keyboardPolygons[i+5] += utils.Vector2D(s,s)
-      self.keyboardPolygons[i+5] += utils.Vector2D(b-(2*s)-(2*e),0)
-      self.keyboardPolygons[i+5] += utils.Vector2D(s,-s)
-      self.keyboardPolygons[i+5] += utils.Vector2D(0,-(a-c-e-s))
-      self.keyboardPolygons[i+5] += utils.Vector2D(-2*d//3,0)
-      self.keyboardPolygons[i+5] += utils.Vector2D(0,-(c+e))
-
-      # Note Gb
-      self.keyboardPolygons[i+6] = [(x0+(4*b)-(2*d//3)+e, y0)]
-      self.keyboardPolygons[i+6] += utils.Vector2D(0,c-e)
-      self.keyboardPolygons[i+6] += utils.Vector2D(d-(2*e),0)
-      self.keyboardPolygons[i+6] += utils.Vector2D(0,-(c-e))
-
-      # Note G
-      self.keyboardPolygons[i+7] = [(x0+(4*b)+(d//3)+e, y0)]
-      self.keyboardPolygons[i+7] += utils.Vector2D(0,c+e)
-      self.keyboardPolygons[i+7] += utils.Vector2D(-d//3,0)
-      self.keyboardPolygons[i+7] += utils.Vector2D(0,a-c-e-s)
-      self.keyboardPolygons[i+7] += utils.Vector2D(s,s)
-      self.keyboardPolygons[i+7] += utils.Vector2D(b-(2*s)-(2*e),0)
-      self.keyboardPolygons[i+7] += utils.Vector2D(s,-s)
-      self.keyboardPolygons[i+7] += utils.Vector2D(0,-(a-c-e-s))
-      self.keyboardPolygons[i+7] += utils.Vector2D(-d//2,0)
-      self.keyboardPolygons[i+7] += utils.Vector2D(0,-(c+e))
-
-      if ((i+8) < 127) :
-
-        # Note Ab
-        self.keyboardPolygons[i+8] = [(x0+(5*b)-(d//2)+e, y0)]
-        self.keyboardPolygons[i+8] += utils.Vector2D(0,c-e)
-        self.keyboardPolygons[i+8] += utils.Vector2D(d-(2*e),0)
-        self.keyboardPolygons[i+8] += utils.Vector2D(0,-(c-e))
-
-        # Note A
-        if (grandPianoMode and ((i+9) == 21)) :
-          self.keyboardPolygons[i+9] = [(x0+(5*b)+e, y0)]
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,a-s)
-          self.keyboardPolygons[i+9] += utils.Vector2D(s,s)
-          self.keyboardPolygons[i+9] += utils.Vector2D(b-(2*s)-(2*e),0)
-          self.keyboardPolygons[i+9] += utils.Vector2D(s,-s)
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,-(a-c-e-s))
-          self.keyboardPolygons[i+9] += utils.Vector2D(-d//3,0)
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,-(c+e))
-        else :
-          self.keyboardPolygons[i+9] = [(x0+(5*b)+(d//2)+e, y0)]
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,c+e)
-          self.keyboardPolygons[i+9] += utils.Vector2D(-d//2,0)
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,a-c-e-s)
-          self.keyboardPolygons[i+9] += utils.Vector2D(s,s)
-          self.keyboardPolygons[i+9] += utils.Vector2D(b-(2*s)-(2*e),0)
-          self.keyboardPolygons[i+9] += utils.Vector2D(s,-s)
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,-(a-c-e-s))
-          self.keyboardPolygons[i+9] += utils.Vector2D(-d//3,0)
-          self.keyboardPolygons[i+9] += utils.Vector2D(0,-(c+e))
-
-        # Note Bb
-        self.keyboardPolygons[i+10] = [(x0+(6*b)-(d//3)+e, y0)]
-        self.keyboardPolygons[i+10] += utils.Vector2D(0,c-e)
-        self.keyboardPolygons[i+10] += utils.Vector2D(d-(2*e),0)
-        self.keyboardPolygons[i+10] += utils.Vector2D(0,-(c-e))
-
-        # Note B
-        self.keyboardPolygons[i+11] = [(x0+(6*b)+(2*d//3)+e, y0)]
-        self.keyboardPolygons[i+11] += utils.Vector2D(0,c+e)
-        self.keyboardPolygons[i+11] += utils.Vector2D(-2*d//3,0)
-        self.keyboardPolygons[i+11] += utils.Vector2D(0,a-c-e-s)
-        self.keyboardPolygons[i+11] += utils.Vector2D(s,s)
-        self.keyboardPolygons[i+11] += utils.Vector2D(b-(2*s)-(2*e),0)
-        self.keyboardPolygons[i+11] += utils.Vector2D(s,-s)
-        self.keyboardPolygons[i+11] += utils.Vector2D(0,-(a-s))
-
-      x0 += 7*b
+    #self.activeNotes      = []
+    self.activeNotesMIDI  = []
+    self.activeNotesScore = []
 
 
 
   # ---------------------------------------------------------------------------
   # METHOD: Keyboard.render()
   # ---------------------------------------------------------------------------
-  def render(self, screenInst) :
+  def render(self) -> None :
     """
-    Draw the keyboard using the polygons generated for each note.
-    """
-
-    # Draw keys from MIDI code 21 (A0) to MIDI code 108 (C8) ie notes of a grand piano.
-    
-    if (len(self.activeKey) > 0) :
-      for i in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
-        if ((i % 12) in BLACK_NOTES_CODE_MOD12) :
-          if ((i % 12) in self.activeKey) :
-            pygame.draw.polygon(screenInst, self.blackNoteRGB, self.keyboardPolygons[i])
-          else :
-            pygame.draw.polygon(screenInst, (100, 100, 100), self.keyboardPolygons[i])
-        else :
-          if ((i % 12) in self.activeKey) :
-            pygame.draw.polygon(screenInst, self.whiteNoteRGB, self.keyboardPolygons[i])
-          else :
-            pygame.draw.polygon(screenInst, (220, 220, 220), self.keyboardPolygons[i])
-    
-    
-    else :
-      for i in range(LOW_KEY_MIDI_CODE, HIGH_KEY_MIDI_CODE+1) :
-        if ((i % 12) in [1, 3, 6, 8, 10]) :
-          pygame.draw.polygon(screenInst, self.blackNoteRGB, self.keyboardPolygons[i])
-        else :
-          pygame.draw.polygon(screenInst, self.whiteNoteRGB, self.keyboardPolygons[i])
-
-
-
-  def setKey(self, scaleObj) :
-    if (scaleObj != None) :
-      self.activeKey = scaleObj.activeNotes
-    else :
-      self.activeKey = []
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Keyboard.keyPress
-  # ---------------------------------------------------------------------------
-  def keyPress(self, screenInst, noteList) :
-    """
-    Highlights the notes in <noteList> on the keyboard.
-    
-    Indicates the hand to be used and the required finger if the information is 
-    available.
+    Draws the keyboard using the polygons generated for each note.
+    This function is called every time the app renders a new frame.
     """
 
-    # Preprocess the list so that the earliest notes are drawn first
-    # This avoids the sustained notes to be drawn on top.
-    noteList.sort(key = lambda x: x.startTime)
-
-    # -------------------------------
-    # Filter notes with null duration
-    # -------------------------------
-    # A bit of an oddity. I am still unsure as of why that might happen.
-    newNoteList = []
-    for noteObj in noteList :
-      if not(noteObj.fromKeyboardInput) :
-        if (noteObj.startTime != noteObj.stopTime):
-          newNoteList.append(noteObj)
-        # else :
-        #   print("[WARNING] Null duration note detected")
+    # Render the keyboard
+    for i in MIDI_CODE_GRAND_PIANO_RANGE :
+      if ((i % 12) in MIDI_CODE_BLACK_NOTES_MOD12) :
+        pygame.draw.polygon(self.top.screen, KEYBOARD_BLACK_NOTE_COLOR, self.polygons[i])
       else :
-        newNoteList.append(noteObj)
-    noteList = newNoteList
+        pygame.draw.polygon(self.top.screen, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
+
+    # Render the notes from Score and from the keyboard input
+    if (WIDGET_ID_SCORE in self.top.widgets) :
+      self.litKeysPolygons = []
+      self.activeNotesScore = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
+      self._renderKeyPress(self.activeNotesScore)
+      self._renderKeyPress(self.activeNotesMIDI)
+
+    # Change the mouse cursor appearance when hovering over the notes
+    (mouse_x, mouse_y) = pygame.mouse.get_pos()
+  
+    # TODO: infer hitbox from geometry, delete magic values
+    if ((10 <= mouse_x <= 1310) and (300 <= mouse_y <= 450)) :  
+      
+      # TODO: 'detectedNotes' must contain active notes only (no sustained note)
+      (isNoteHit, _) = self.clickHitTest((mouse_x, mouse_y))
+      if isNoteHit :
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+      else :
+        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+    else:
+      pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Keyboard._renderKeyPress()                                 [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _renderKeyPress(self, notes) -> None :
+    """
+    Renders a keypress on the keyboard.
+    
+    The function takes a list of 'Note' objects as input.
+    The rendering takes the note's attributes into account.
+    """
+
+    # Preprocess the list so that the earliest notes are drawn first.
+    # This avoids the sustained notes to be drawn on top.
+    notes.sort(key = lambda x: x.startTime)
+
+    # # -----------------------------------
+    # # Filter out notes with null duration
+    # # -----------------------------------
+    # # A bit of an oddity. I am still unsure as of why that might happen.
+    # newNoteList = []
+    # for noteObj in notes :
+    #   if not(noteObj.fromKeyboardInput) :
+    #     if (noteObj.startTime != noteObj.stopTime):
+    #       newNoteList.append(noteObj)
+    #     # else :
+    #     #   print("[WARNING] Keyboard._renderKeyPress(): null duration note detected.")
+    #   else :
+    #     newNoteList.append(noteObj)
+    # notes = newNoteList
 
     # -----------------------------
-    # Detect "doubly" pressed notes
+    # Detect "double-pressed" notes
     # -----------------------------
     # Occurs when the score requests to press a key by one finger of each hand.
     # How many fingers are pressing this key is not very important per se
@@ -339,7 +174,7 @@ class Keyboard :
     # If the key is pressed by several fingers of the same hand, there is no
     # special processing to be done. 
     noteListByPitch = [[] for x in range(128)]
-    for (index, noteObj) in enumerate(noteList) :
+    for (index, noteObj) in enumerate(notes) :
       if not(noteObj.sustained) :
         noteListByPitch[noteObj.pitch].append([index, noteObj])
       
@@ -350,16 +185,16 @@ class Keyboard :
         
         # One note is hit by one hand
         noteObj1 = subList[0][1]; noteObj2 = subList[1][1]
-        if ((noteObj1.hand != UNDEFINED_HAND) and (noteObj2.hand != UNDEFINED_HAND)) :
+        if ((noteObj1.hand != NOTE_UNDEFINED_HAND) and (noteObj2.hand != NOTE_UNDEFINED_HAND)) :
           if (noteObj1.hand != noteObj2.hand) :
           
             # White note highlighting
-            if ((noteObj1.pitch % 12) in WHITE_NOTES_CODE_MOD12) :
-              self._doubleHandWhiteKeyPress(screenInst, noteObj1)
+            if ((noteObj1.pitch % 12) in MIDI_CODE_WHITE_NOTES_MOD12) :
+              self._doubleHandWhiteKeyPress(self.top.screen, noteObj1)
 
             # Black note highlighting
-            if ((noteObj1.pitch % 12) in BLACK_NOTES_CODE_MOD12) :
-              self._doubleHandBlackKeyPress(screenInst, noteObj1)
+            if ((noteObj1.pitch % 12) in MIDI_CODE_BLACK_NOTES_MOD12) :
+              self._doubleHandBlackKeyPress(self.top.screen, noteObj1)
 
             # These notes are now displayed, we can remove them from the list
             # and go on with the "normal" notes
@@ -382,26 +217,26 @@ class Keyboard :
     # --------------
     # "Normal" notes
     # --------------
-    for noteObj in noteList :
+    for noteObj in notes :
 
       # White note highlighting
-      if (noteObj.keyColor == WHITE_KEY) :
-        self._singleHandWhiteKeyPress(screenInst, noteObj)
+      if (noteObj.keyColor == note.keyColor.WHITE_NOTE) :
+        self._singleHandWhiteKeyPress(self.top.screen, noteObj)
 
       # Black note highlighting
-      if (noteObj.keyColor == BLACK_KEY) :
-        self._singleHandBlackKeyPress(screenInst, noteObj)
+      if (noteObj.keyColor == note.keyColor.BLACK_NOTE) :
+        self._singleHandBlackKeyPress(self.top.screen, noteObj)
       
       # ------------------------------
       # Note click detection materials
       # ------------------------------
       # Store the polygons associated to the "teacher notes"
-      if ((noteObj.hand == LEFT_HAND) or (noteObj.hand == RIGHT_HAND)) :
+      if ((noteObj.hand == NOTE_LEFT_HAND) or (noteObj.hand == NOTE_RIGHT_HAND)) :
         # This makes the hitbox for click on the lit part of the key only:
         #self.litKeysPolygons.append((sq, pitch))
 
         # This makes the hitbox for click on the entire key:
-        self.litKeysPolygons.append((self.keyboardPolygons[noteObj.pitch], noteObj))
+        self.litKeysPolygons.append((self.polygons[noteObj.pitch], noteObj))
 
 
 
@@ -414,10 +249,10 @@ class Keyboard :
 
     # Build the little rectangle drawn on top of the note, to show that it is pressed
     eps = 3
-    u = [x[0] for x in self.keyboardPolygons[noteObj.pitch]]
+    u = [x[0] for x in self.polygons[noteObj.pitch]]
     x0 = min(u); y0 = self.y + self.c + self.e
-    h = self.a - (self.c + self.e) - (2*eps)
-    w = self.b - (2*self.e) - (2*eps)
+    h = KEYBOARD_WHITE_NOTE_HEIGHT - (self.c + self.e) - (2*eps)
+    w = KEYBOARD_WHITE_NOTE_WIDTH - (2*self.e) - (2*eps)
     rect = [(x0 + eps, y0 + eps)]
     rect += utils.Vector2D(0, h)
     rect += utils.Vector2D(w, 0)
@@ -442,7 +277,7 @@ class Keyboard :
         #text.render(screenInst, str(finger), (x0+10,y0+23), 1, self.fingerFontWhiteNoteRGB)
         
         # Font size 2
-        text.render(screenInst, str(noteObj.finger), (x0+7, y0+19), 2, self.fingerFontWhiteNoteRGB)
+        text.render(screenInst, str(noteObj.finger), (x0+7, y0+19), 2, KEYBOARD_FINGERSATZ_FONT_COLOR_BLACK_NOTE)
 
 
 
@@ -455,7 +290,7 @@ class Keyboard :
 
     # Build the rectangle that will be drawn on top of the note
     eps = 2
-    u = [x[0] for x in self.keyboardPolygons[noteObj.pitch]]
+    u = [x[0] for x in self.polygons[noteObj.pitch]]
     x0 = min(u); y0 = self.y + 50
     h = self.c - self.e - (2*eps) - 50
     w = self.d - (2*self.e) - (2*eps)
@@ -483,7 +318,7 @@ class Keyboard :
         #text.render(screenInst, str(noteObj.finger), (x0+3, y0+23), 1, self.fingerFontBlackNoteRGB)
         
         # Font size 2
-        text.render(screenInst, str(noteObj.finger), (x0+1, y0+19), 2, self.fingerFontBlackNoteRGB)
+        text.render(screenInst, str(noteObj.finger), (x0+1, y0+19), 2, KEYBOARD_FINGERSATZ_FONT_COLOR_WHITE_NOTE)
 
 
 
@@ -496,10 +331,10 @@ class Keyboard :
 
     # Build the rectangle that will be drawn on top of the note
     eps = 3
-    u = [x[0] for x in self.keyboardPolygons[noteObj.pitch]]
+    u = [x[0] for x in self.polygons[noteObj.pitch]]
     x0 = min(u); y0 = self.y + self.c + self.e
-    h = self.a - (self.c + self.e) - (2*eps)
-    w = self.b - (2*self.e) - (2*eps)
+    h = KEYBOARD_WHITE_NOTE_HEIGHT - (self.c + self.e) - (2*eps)
+    w = KEYBOARD_WHITE_NOTE_WIDTH - (2*self.e) - (2*eps)
     
     rectLeft = [(x0 + eps, y0 + eps)]
     rectLeft += utils.Vector2D(0, h)
@@ -512,12 +347,12 @@ class Keyboard :
     if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
       pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapLeftRGB, rectLeft)
     else :
-      pygame.draw.polygon(screenInst, self.sqWhiteNoteLeftRGB, rectLeft)
+      pygame.draw.polygon(screenInst, KEYBOARD_PLAY_RECT_COLOR_LEFT_HAND_WHITE_NOTE, rectLeft)
     
     if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
       pygame.draw.polygon(screenInst, self.sqWhiteNoteOverlapRightRGB, rectRight)
     else :
-      pygame.draw.polygon(screenInst, self.sqWhiteNoteRightRGB, rectRight)
+      pygame.draw.polygon(screenInst, KEYBOARD_PLAY_RECT_COLOR_RIGHT_HAND_WHITE_NOTE, rectRight)
 
     # Show finger number
     # TODO
@@ -533,7 +368,7 @@ class Keyboard :
 
     # Build the rectangle that will be drawn on top of the note
     eps = 3
-    u = [x[0] for x in self.keyboardPolygons[noteObj.pitch]]
+    u = [x[0] for x in self.polygons[noteObj.pitch]]
     x0 = min(u); y0 = self.y + 50
     h = self.c - self.e - (2*eps) - 50
     w = self.d - (2*self.e) - (2*eps)
@@ -549,12 +384,12 @@ class Keyboard :
     if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
       pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapLeftRGB, rectLeft)
     else :
-      pygame.draw.polygon(screenInst, self.sqBlackNoteLeftRGB, rectLeft)
+      pygame.draw.polygon(screenInst, KEYBOARD_PLAY_RECT_COLOR_LEFT_HAND_BLACK_NOTE, rectLeft)
     
     if (noteObj.pitch in [x.pitch for x in self.activeNotes]) :
       pygame.draw.polygon(screenInst, self.sqBlackNoteOverlapRightRGB, rectRight)
     else :
-      pygame.draw.polygon(screenInst, self.sqBlackNoteRightRGB, rectRight)
+      pygame.draw.polygon(screenInst, KEYBOARD_PLAY_RECT_COLOR_RIGHT_HAND_BLACK_NOTE, rectRight)
 
     # Show finger number
     # TODO
@@ -562,49 +397,35 @@ class Keyboard :
 
   
   # ---------------------------------------------------------------------------
-  # METHOD Keyboard.isActiveNoteClicked
+  # METHOD Keyboard.clickHitTest
   # ---------------------------------------------------------------------------
-  def isActiveNoteClicked(self, clickCoord) :
+  def clickHitTest(self, coord) :
     """
-    Given a click coordinates, indicate whether it is an active key (a "lit" key)
-    that has been clicked.
+    Detects if the click's coordinates are in the hitbox of an active note.
+    
+    Returns (status, Note) where 'status' is the test result (True/False) and 
+    'N' the note object hit (or 'None' if nothing is hit)
     """
 
     candidates = []
-    (clickX, clickY) = clickCoord
-
-    for (currLitNotePolygon, currNote) in self.litKeysPolygons :  
-      if Point(clickX, clickY).within(Polygon(currLitNotePolygon)) :        
+    (x,y) = coord
+    for (currLitNotePolygon, currNote) in self.litKeysPolygons :
+      if Point(x, y).within(Polygon(currLitNotePolygon)) :
         candidates.append(currNote)
 
     # Multiple candidates: quite possibly one is pressed, the others are sustained
     # Return the note that was pressed the most recently
     if (len(candidates) > 1) :
       candidates.sort(key = lambda x : -x.startTime)
-      return candidates[0]
+      return (True, candidates[0])
 
     # Only one candidate: return it
     elif (len(candidates) == 1) :
-      return candidates[0]
+      return (True, candidates[0])
     
-    # This click hit none of the polygons shown
+    # The click didn't hit any active note
     else :
-      return None
-
-
-
-  # ---------------------------------------------------------------------------
-  # Method <showScale>
-  # 
-  # Toggles the display of the scale
-  # ---------------------------------------------------------------------------
-  def showScale(self) :
-    print("[INFO] Showing the scale will be available in a future release.")
-
-
-
-
-
+      return (False, None)
 
 
 
@@ -618,5 +439,197 @@ class Keyboard :
   def reset(self) :
     self.activeNotes = []
     self.litKeysPolygons = []
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Keyboard.onExternalMidiEvent()
+  # ---------------------------------------------------------------------------
+  def onExternalMidiEvent(self, midiMessage) :
+    """
+    Updates the list of active MIDI notes coming from the keyboard so that 
+    they can be displayed at rendering.
+    """
+
+    if (midiMessage.type == "note_on") :
+      N = note.Note(midiMessage.note)
+      N.fromKeyboardInput = True
+      self.activeNotesMIDI.append(N)
+      
+    elif (midiMessage.type == "note_off") :
+      self.activeNotesMIDI = [N for N in self.activeNotesMIDI if (N.pitch != midiMessage.note)]
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Keyboard._makePolygons()                                  [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _makePolygons(self, grandPianoMode = True) :
+    """
+    Generates the polygons drawing the notes of a full MIDI keyboard 
+    (i.e. 128 notes)
+    
+    If 'grandPianoMode' is set to True, polygon generation is restricted to 
+    the notes of a grand piano (i.e. from A0 to C8).
+
+    This function populates the attribute 'polygons'. 
+    It is a 128 elements array, such that 'polygons[i]' is an array
+    containing the vertices required to draw the note with MIDI code 'i'.
+
+    This function only needs to be called once at init.
+    """
+
+    # Initialise output
+    self.polygons = [[] for _ in range(128)]
+
+    # Some shortcuts for readability
+    wnh = KEYBOARD_WHITE_NOTE_HEIGHT
+    wnw = KEYBOARD_WHITE_NOTE_WIDTH
+    bnh = KEYBOARD_BLACK_NOTE_HEIGHT 
+    bnw = KEYBOARD_BLACK_NOTE_WIDTH
+    nc = KEYBOARD_NOTE_CHANFER
+    ns = KEYBOARD_NOTE_SPACING
+
+    x0 = self.x - (12*wnw); y0 = self.y
+
+    # Generate polygons for each note
+    for i in range(0, 128, 12) :
+      
+      # Note C
+      if (grandPianoMode and (i == 108)) :
+        self.polygons[i] = [(x0+ns, y0)]
+        self.polygons[i] += utils.Vector2D(0, wnh-nc)
+        self.polygons[i] += utils.Vector2D(nc, nc)
+        self.polygons[i] += utils.Vector2D(wnw-(2*nc)-(2*ns), 0)
+        self.polygons[i] += utils.Vector2D(nc, -nc)
+        self.polygons[i] += utils.Vector2D(0, -(wnh-nc))
+      else :
+        self.polygons[i] = [(x0+ns, y0)]
+        self.polygons[i] += utils.Vector2D(0, wnh-nc)
+        self.polygons[i] += utils.Vector2D(nc, nc)
+        self.polygons[i] += utils.Vector2D(wnw-(2*nc)-(2*ns), 0)
+        self.polygons[i] += utils.Vector2D(nc, -nc)
+        self.polygons[i] += utils.Vector2D(0, -(wnh-bnh-ns-nc))
+        self.polygons[i] += utils.Vector2D(-2*bnw//3, 0)
+        self.polygons[i] += utils.Vector2D(0, -(bnh+ns))
+
+      # Note Db
+      self.polygons[i+1] = [(x0+wnw-(2*bnw//3)+ns, y0)]
+      self.polygons[i+1] += utils.Vector2D(0, bnh-ns)
+      self.polygons[i+1] += utils.Vector2D(bnw-(2*ns), 0)
+      self.polygons[i+1] += utils.Vector2D(0, -(bnh-ns))
+
+      # Note D
+      self.polygons[i+2] = [(x0+wnw+(bnw//3)+ns, y0)]
+      self.polygons[i+2] += utils.Vector2D(0, bnh+ns)
+      self.polygons[i+2] += utils.Vector2D(-bnw//3, 0)
+      self.polygons[i+2] += utils.Vector2D(0, wnh-bnh-ns-nc)
+      self.polygons[i+2] += utils.Vector2D(nc,nc)
+      self.polygons[i+2] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+      self.polygons[i+2] += utils.Vector2D(nc,-nc)
+      self.polygons[i+2] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
+      self.polygons[i+2] += utils.Vector2D(-bnw//3,0)
+      self.polygons[i+2] += utils.Vector2D(0,-(bnh+ns))
+
+      # Note Eb
+      self.polygons[i+3] = [(x0+(2*wnw)-(bnw//3)+ns, y0)]
+      self.polygons[i+3] += utils.Vector2D(0,bnh-ns)
+      self.polygons[i+3] += utils.Vector2D(bnw-(2*ns),0)
+      self.polygons[i+3] += utils.Vector2D(0,-(bnh-ns))
+
+      # Note E
+      self.polygons[i+4] = [(x0+(2*wnw)+(2*bnw//3)+ns, y0)]
+      self.polygons[i+4] += utils.Vector2D(0,bnh+ns)
+      self.polygons[i+4] += utils.Vector2D(-2*bnw//3,0)
+      self.polygons[i+4] += utils.Vector2D(0,wnh-bnh-ns-nc)
+      self.polygons[i+4] += utils.Vector2D(nc,nc)
+      self.polygons[i+4] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+      self.polygons[i+4] += utils.Vector2D(nc,-nc)
+      self.polygons[i+4] += utils.Vector2D(0,-(wnh-nc))
+
+      # Note F
+      self.polygons[i+5] = [(x0+(3*wnw)+ns, y0)]
+      self.polygons[i+5] += utils.Vector2D(0,wnh-nc)
+      self.polygons[i+5] += utils.Vector2D(nc,nc)
+      self.polygons[i+5] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+      self.polygons[i+5] += utils.Vector2D(nc,-nc)
+      self.polygons[i+5] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
+      self.polygons[i+5] += utils.Vector2D(-2*bnw//3,0)
+      self.polygons[i+5] += utils.Vector2D(0,-(bnh+ns))
+
+      # Note Gb
+      self.polygons[i+6] = [(x0+(4*wnw)-(2*bnw//3)+ns, y0)]
+      self.polygons[i+6] += utils.Vector2D(0,bnh-ns)
+      self.polygons[i+6] += utils.Vector2D(bnw-(2*ns),0)
+      self.polygons[i+6] += utils.Vector2D(0,-(bnh-ns))
+
+      # Note G
+      self.polygons[i+7] = [(x0+(4*wnw)+(bnw//3)+ns, y0)]
+      self.polygons[i+7] += utils.Vector2D(0,bnh+ns)
+      self.polygons[i+7] += utils.Vector2D(-bnw//3,0)
+      self.polygons[i+7] += utils.Vector2D(0,wnh-bnh-ns-nc)
+      self.polygons[i+7] += utils.Vector2D(nc,nc)
+      self.polygons[i+7] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+      self.polygons[i+7] += utils.Vector2D(nc,-nc)
+      self.polygons[i+7] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
+      self.polygons[i+7] += utils.Vector2D(-bnw//2,0)
+      self.polygons[i+7] += utils.Vector2D(0,-(bnh+ns))
+
+      if ((i+8) < 127) :
+
+        # Note Ab
+        self.polygons[i+8] = [(x0+(5*wnw)-(bnw//2)+ns, y0)]
+        self.polygons[i+8] += utils.Vector2D(0,bnh-ns)
+        self.polygons[i+8] += utils.Vector2D(bnw-(2*ns),0)
+        self.polygons[i+8] += utils.Vector2D(0,-(bnh-ns))
+
+        # Note A
+        if (grandPianoMode and ((i+9) == 21)) :
+          self.polygons[i+9] = [(x0+(5*wnw)+ns, y0)]
+          self.polygons[i+9] += utils.Vector2D(0,wnh-nc)
+          self.polygons[i+9] += utils.Vector2D(nc,nc)
+          self.polygons[i+9] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+          self.polygons[i+9] += utils.Vector2D(nc,-nc)
+          self.polygons[i+9] += utils.Vector2D(0,-(wnh-bnh-ns-nc))
+          self.polygons[i+9] += utils.Vector2D(-bnw//3,0)
+          self.polygons[i+9] += utils.Vector2D(0,-(bnh+ns))
+        else :
+          self.polygons[i+9] = [(x0+(5*wnw)+(bnw//2)+ns, y0)]
+          self.polygons[i+9] += utils.Vector2D(0, bnh+ns)
+          self.polygons[i+9] += utils.Vector2D(-bnw//2, 0)
+          self.polygons[i+9] += utils.Vector2D(0, wnh-bnh-ns-nc)
+          self.polygons[i+9] += utils.Vector2D(nc,nc)
+          self.polygons[i+9] += utils.Vector2D(wnw-(2*nc)-(2*ns), 0)
+          self.polygons[i+9] += utils.Vector2D(nc, -nc)
+          self.polygons[i+9] += utils.Vector2D(0, -(wnh-bnh-ns-nc))
+          self.polygons[i+9] += utils.Vector2D(-bnw//3, 0)
+          self.polygons[i+9] += utils.Vector2D(0,-(bnh+ns))
+
+        # Note Bb
+        self.polygons[i+10] = [(x0+(6*wnw)-(bnw//3)+ns, y0)]
+        self.polygons[i+10] += utils.Vector2D(0,bnh-ns)
+        self.polygons[i+10] += utils.Vector2D(bnw-(2*ns),0)
+        self.polygons[i+10] += utils.Vector2D(0,-(bnh-ns))
+
+        # Note B
+        self.polygons[i+11] = [(x0+(6*wnw)+(2*bnw//3)+ns, y0)]
+        self.polygons[i+11] += utils.Vector2D(0,bnh+ns)
+        self.polygons[i+11] += utils.Vector2D(-2*bnw//3,0)
+        self.polygons[i+11] += utils.Vector2D(0,wnh-bnh-ns-nc)
+        self.polygons[i+11] += utils.Vector2D(nc,nc)
+        self.polygons[i+11] += utils.Vector2D(wnw-(2*nc)-(2*ns),0)
+        self.polygons[i+11] += utils.Vector2D(nc,-nc)
+        self.polygons[i+11] += utils.Vector2D(0,-(wnh-nc))
+
+      x0 += 7*wnw
+
+
+
+
+# =============================================================================
+# UNIT TESTS
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'keyboard.py'.")
 
 

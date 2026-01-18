@@ -4,7 +4,7 @@
 # Module name   : arbiter
 # File name     : arbiter.py
 # File type     : Python script (Python 3)
-# Purpose       : decision machinery to approve or reject the keyboard input.
+# Purpose       : decision machinery for the gangQin gameplay
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Friday, 26 July 2024
 # -----------------------------------------------------------------------------
@@ -12,30 +12,40 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
-# Project specific constants
+# Project libraries
 from commons import *
+import src.widgets.widget as widget
+
+# Standard libraries
+import enum     # For enumerated types in FSM
 
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
-# Messages returned by the arbiter
-MSG_CURSOR_NEXT = 0
-MSG_RESET_COMBO = 1
+class msg(enum.Enum) :
+  NO_INPUT          = 0
+  INCOMPLETE_INPUT  = 1
+  WRONG_NOTE        = 2
+  VALID_INPUT       = 3
 
 
 
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
-class Arbiter :
+class Arbiter(widget.Widget) :
 
   """
-  Provides all the machinery that determines if the keyboard inputs
-  are valid and whether it allows to progress in the song.
+  ARBITER object
+
+  Class definition for the Arbiter widget.
+  
+  Provides all the machinery that determines if the keyboard inputs are valid 
+  and whether they allows to progress in the song.
 
   It returns the decision, that can be used then:
   - to step to the next cursor
@@ -43,9 +53,12 @@ class Arbiter :
   - play a "fail" sound 
 
   Criteria to allow moving forward in the score are the following:
-  - "exact": won't go further until the expected notes only are pressed, nothing else.
-  - "exactWithSustain": same as "exact", but tolerates the last valid notes to be sustained
-  - "permissive": anything else played alongside the expected notes is ignored
+  - "exact"           : won't go progress until the expected notes only are 
+                        pressed, nothing else.
+  - "exactWithSustain": same as "exact", but tolerates that the last valid notes
+                        are sustained.
+  - "permissive"      : anything else played alongside the expected notes is ignored
+  
   Only the "permissive" mode is used, the others are here for "historical" reasons.
 
   MIDI update:
@@ -60,22 +73,17 @@ class Arbiter :
   - declare what happened on the MIDI interface using 'updateMidiState'
   - indicate the expected notes using 'eval'
 
-
-  NOTES
-  Modes "exact" and "exact with sustain" came up with the very first releases 
-  of gangQin, and have been refined since then because of several flaws.
-  They will be removed in future releases.
   """
   
-  
-  
-  # ---------------------------------------------------------------------------
-  # METHOD: Arbiter.__init__ (constructor)
-  # ---------------------------------------------------------------------------
-  def __init__(self, comparisonMode) :
+  def __init__(self, top) :
     
+    # Call the Widget init method
+    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
+
+    self.name = "arbiter"
+
     self.status = False  
-    self.comparisonMode = comparisonMode
+    self.comparisonMode = "permissive"
     
     self.midiCurr         = [0 for _ in range(128)]
     self.midiSustained    = [0 for _ in range(128)]
@@ -88,9 +96,9 @@ class Arbiter :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: Arbiter.updateMidiState(midiMessage)
+  # METHOD: Arbiter.onExternalMidiEvent()
   # ---------------------------------------------------------------------------
-  def updateMidiState(self, midiMessage) :
+  def onExternalMidiEvent(self, midiMessage) :
     """
     Updates the internal state with the incoming MIDI message.
     """
@@ -119,7 +127,7 @@ class Arbiter :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: Arbiter.suspendReq(pitchList)
+  # METHOD: Arbiter.suspendReq()
   # ---------------------------------------------------------------------------
   def suspendReq(self, queryNotesPitch) :
     """
@@ -135,26 +143,33 @@ class Arbiter :
     
 
   # ---------------------------------------------------------------------------
-  # METHOD: Arbiter.eval(teacherNotes)
+  # METHOD: Arbiter.eval()
   # ---------------------------------------------------------------------------
-  def eval(self, teacherNotes) :
+  def eval(self) :
     """
     Compares the notes currently played on the keyboard ('self.midiCurr') with 
     the notes expected ('teacherNotes') and returns the decision in the 
     message queue 'msgQueue'.
-    Decision can either be
-    - MSG_CURSOR_NEXT: valid input
-    - MSG_RESET_COMBO: invalid input
+    Decision can either be:
+    - NO_INPUT          : waits for user input
+    - INCOMPLETE_INPUT  : the user hasn't pressed all the expected notes 
+    - WRONG_NOTE        : something is wrong in the user input
+    - VALID_INPUT       : the user input is correct
     """
+
+    teacherNotes = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
 
     # Reformat the teacher notes, keep the 'new' notes only
     # (not the sustained ones, not the notes of the inactive hand)
     teacherNotesAsMidiArray = [0 for _ in range(128)]
+    noInput = True
     for noteObj in teacherNotes :
       if ((noteObj.sustained == False) and (noteObj.inactive == False)):
         teacherNotesAsMidiArray[noteObj.pitch] = 1
-    
-    msgQueue = []
+        noInput = False
+
+    if noInput :
+      ret = msg.NO_INPUT
 
     # STRATEGY: PERMISSIVE
     # Progress as long as the expected notes are pressed. 
@@ -162,17 +177,20 @@ class Arbiter :
     # 'Superfluous' notes need to be released and pressed again to be accepted later on.
     if (self.comparisonMode == "permissive") :
       allowProgress = True
-      for pitch in GRAND_PIANO_MIDI_RANGE :
+      
+      for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
 
         # Case 1: a required note is missing.
         if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 0) and (self.midiSuperfluous[pitch] == 0)) :
           allowProgress = False
+          ret = msg.INCOMPLETE_INPUT
 
         # Case 2: a required note is here, but it was hit before (it wasn't even expected)
         # and has been maintained since then. 
         # Therefore, it does not count.
         if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1) and (self.midiSuperfluous[pitch] == 1)) :
           allowProgress = False
+          ret = msg.INCOMPLETE_INPUT
 
         # Case 3: a required note is here, but it was hit before and has been sustained since then.
         # Meanwhile, the score requires this note to be played again.
@@ -190,12 +208,13 @@ class Arbiter :
           # It cannot be used to trigger a new note of the same pitch.
           if not(self.midiAssociatedID[pitch] in expectedIDs) :
             allowProgress = False
+            ret = msg.INCOMPLETE_INPUT
           
         # Case 4: a wrong note is pressed.
         # Since it is permissive, it does not block the progress.
         # But it resets the combo counter and plays a notification.
         if ((teacherNotesAsMidiArray[pitch] == 0) and (self.midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 0)) :
-          msgQueue.append(MSG_RESET_COMBO)
+          ret = msg.WRONG_NOTE
           
       # Case 5: progress is on hold because the "note finding" feature is active.
       # The current notes pressed are 'query' notes and all of them 
@@ -215,10 +234,9 @@ class Arbiter :
 
       # CONCLUSION
       if allowProgress :
-        msgQueue.append(MSG_CURSOR_NEXT)
         
         # Update note status
-        for pitch in GRAND_PIANO_MIDI_RANGE :
+        for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
           
           # Flag the notes played in 'excess'.
           if ((teacherNotesAsMidiArray[pitch] == 0) and (self.midiCurr[pitch] == 1)) :
@@ -237,7 +255,10 @@ class Arbiter :
             self.midiAssociatedID[pitch] = q[0].id
 
 
-    return msgQueue
+        ret = msg.VALID_INPUT
+
+
+    return ret
 
 
 

@@ -3,8 +3,9 @@
 # Project       : gangQin
 # Module name   : handSelector
 # File name     : handSelector.py
-# Purpose       : widget to edit the properties of a given note.
-# Author        : QuBi (nitrogenium@hotmail.com)
+# File type     : Python script (Python 3)
+# Purpose       : 
+# Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Saturday, 09 November 2024
 # -----------------------------------------------------------------------------
 # Best viewed with space indentation (2 spaces)
@@ -17,8 +18,10 @@
 from src.commons import *
 
 import src.text as text
+import src.widgets.widget as widget
 
 from enum import Enum
+import pygame
 
 
 
@@ -34,11 +37,26 @@ class Msg(Enum) :
 # =============================================================================
 # Main code
 # =============================================================================
-class handSelector :
+class HandSelector(widget.Widget) :
 
-  def __init__(self) :
+  """
+  HANDSELECTOR object
+  
+  The HandSelector object shows the widget that selects the active hand.
+  By default, right and left hand are active.
+
+  Using the widget, you can indicate to practice with single hand.
+
+  The HandSelector class derives from the Widget class.
+  """
+
+  def __init__(self, top, loc) :
     
-    self.screen = None
+    # Call the Widget init method
+    super().__init__(top, loc)
+    
+    # Name of the widget
+    self.name = "hand selector"
 
     self.loc = (1312, 470)  # Coordinates of the up right corner 
     self.xMin = self.loc[0] - (5*5*2) - (5*2)   # 5 chars, 5 horiz pixel per char, 1 pixel has size 2
@@ -51,6 +69,55 @@ class handSelector :
 
     self.msgQueueIn = []
     self.msgQueueOut = []
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: HandSelector.uiEvent()
+  # ---------------------------------------------------------------------------
+  def uiEvent(self, pygameEvent) -> None :
+    """
+    This function is called by the top level and passes all the keyboard/mouse
+    interactions to the widget.
+    """
+    
+    # Keyboard events
+    if (pygameEvent.type in (pygame.KEYUP, pygame.KEYDOWN)) :
+      keys      = pygame.key.get_pressed()
+      ctrlKey   = pygameEvent.mod & pygame.KMOD_CTRL
+      altKey    = pygameEvent.mod & pygame.KMOD_ALT
+      shiftKey  = pygameEvent.mod & pygame.KMOD_SHIFT
+      altGrKey  = pygameEvent.mod & pygame.KMOD_META
+      
+      # Simple keypresses (no modifiers)
+      if not(ctrlKey | shiftKey | altKey | altGrKey) :
+        
+        # TAB: highlight the next note above for fingersatz edition
+        if keys[pygame.K_TAB] :
+          print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
+
+
+
+      # Ctrl-modified keypress
+      elif (ctrlKey and not(shiftKey | altKey | altGrKey)) :
+        pass
+
+
+      # Shift-modified keypress
+      elif (shiftKey and not(ctrlKey | altKey | altGrKey)) :
+        
+        # TAB: highlight the next note above for fingersatz edition
+        if keys[pygame.K_TAB] :
+          print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
+
+
+      # -----------------------------------------------
+        # Maj + tab: highlight the note before for editing
+        # -----------------------------------------------
+        if (keys[pygame.K_TAB] and shiftKey) :
+          print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
+          # fingerSelWidget.keyPress(keys)
+
 
 
 

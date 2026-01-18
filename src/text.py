@@ -10,7 +10,7 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
 # Project specific constants
 from src.commons import *
@@ -20,27 +20,17 @@ import pygame
 
 
 # =============================================================================
-# Guards
-# =============================================================================
-if (__name__ == "__main__") :
-  print("[WARNING] This lib is not intended to be called as a main.")
-
-
-
-# =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 LEFT_JUSTIFY = 0
 RIGHT_JUSTIFY = 1
 
-
-# Font design is based on old school calculators LCD
+# Charset definition
+# Font design is based on old school calculators LCD.
 # Example at https://www.dafont.com/fr/pixelmix.font
-
 # This one wouldn't be bad either, but requires some more work: https://www.dafont.com/fr/perfect-dos-vga-437.font
 
 CHAR_POLYGONS = {}
-
 CHAR_POLYGONS["0"] = [
   [0, 1, 1, 1, 0],
   [1, 0, 0, 0, 1],
@@ -546,10 +536,10 @@ CHAR_POLYGONS["]"] = [
 # -----------------------------------------------------------------------------
 def render(screenInst, string, loc, size, col = (40, 50, 60), justify = LEFT_JUSTIFY) :
   """
-  Prints a string on a pygame screen.
-  - "size" (int): each element of charPolygon is drawn as a square of pixel
+  Prints a string on screen.
+  - 'size' (int): each element of charPolygon is drawn as a square of pixel
     This arguments defines the size of each square (in pixels)
-  - "col" = (R,G,B): text color in RGB values
+  - 'col' = (R,G,B): text color in RGB values
   
   In LEFT_JUSTIFY mode, the text starts at the coordinate pointed by 'loc'.
   In RIGHT_JUSTIFY mode, the text ends at the coordinate pointed by 'loc'.
@@ -626,32 +616,7 @@ def renderPlus(screenInst, string, colorSpec, colorDict, formatSpec, loc, size, 
 
 
 # -----------------------------------------------------------------------------
-# FUNCTION showCursor
-# -----------------------------------------------------------------------------
-def showCursor(screen, cursor, scoreLength) :
-  render(screen, f"CURSOR: {cursor+1} / {scoreLength}", (12, 20), 2, GUI_TEXT_COLOR)
-
-
-
-# -----------------------------------------------------------------------------
-# FUNCTION showBookmark
-# -----------------------------------------------------------------------------
-def showBookmark(screen, bookmarkIndex) :
-  if (bookmarkIndex != -1) :
-    render(screen, f"BOOKMARK #{bookmarkIndex}", (10, 470), 2, GUI_TEXT_COLOR)
-
-
-
-# -----------------------------------------------------------------------------
-# FUNCTION showActiveHands
-# -----------------------------------------------------------------------------
-def showActiveHands(screen, activeHands) :
-  render(screen, activeHands, (1288, 470), 2, GUI_TEXT_COLOR)
-
-
-
-# -----------------------------------------------------------------------------
-# FUNCTION showLoop
+# FUNCTION showLoop -> delete and move to 'sequencer.py'
 # -----------------------------------------------------------------------------
 def showLoop(screen, loopEnable, loopStart, loopEnd, cursor) :
   if loopEnable :
@@ -666,7 +631,7 @@ def showLoop(screen, loopEnable, loopStart, loopEnd, cursor) :
 
 
 # -----------------------------------------------------------------------------
-# FUNCTION showCombo
+# FUNCTION showCombo -> delete and move to 'sequencer.py'
 # -----------------------------------------------------------------------------
 def showCombo(screen, comboCount, comboHighestSession, comboHighestAllTime) :
   render(screen, f"COMBO: {comboCount} (MAX: {comboHighestSession} / ALLTIME: {comboHighestAllTime})", (1312, 20), 2, GUI_TEXT_COLOR, justify = RIGHT_JUSTIFY)
@@ -682,3 +647,9 @@ def showMetronome(screen, metronomeObj) :
 
 
 
+
+# =============================================================================
+# Unit tests
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'text.py'")

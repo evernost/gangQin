@@ -254,6 +254,9 @@ class FingerSelector(widget.Widget) :
     Out of range indices are ignored.
     """
 
+    if not(self.visible) :
+      self.visible = True
+
     if ((index >= 0) and (index < len(self.activeNotes))) :
       if (self.editedNote != None) :
         self.editedNote.highlight = False
@@ -278,20 +281,20 @@ class FingerSelector(widget.Widget) :
 
     print("Function is TODO.")
 
+
+
   # ---------------------------------------------------------------------------
   # METHOD: FingerSelector.assign()
   # ---------------------------------------------------------------------------
   def assign(self, finger, hand = NOTE_UNDEFINED_HAND) :
     """
-    
+    Description is TODO.
     """
 
     if self.activeNotes :
-      print("hello")
-
-
-
-
+      print("[DEBUG] Method 'FingerSelector.assign()' just woke up.")
+    else :
+      print("To assign a finger to a note, please select the note you want to edit first.")
 
 
 
@@ -330,15 +333,17 @@ class FingerSelector(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: FingerSelector._setSelector()                             [PRIVATE]
+  # METHOD: FingerSelector._selectorSet()                             [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _setSelector(self, finger, hand) :
+  def _selectorSet(self, finger, hand) :
     """
     Description is TODO.
     """
     
     #self.sel = index
     #finger, hand = (0,0)
+    #self.sel = selectorIndex
+    print(f"[DEBUG] FingerSelector._onMouseEvent(): you hit the selector (index = {index})")
 
     if (hand == NOTE_LEFT_HAND) :
       # Default assignment (hand set, finger unknown)
@@ -353,28 +358,29 @@ class FingerSelector(widget.Widget) :
     
 
 
-  # # ---------------------------------------------------------------------------
-  # # METHOD <_getFingerfromSel> (private)
-  # #
-  # # TODO
-  # # ---------------------------------------------------------------------------
-  # def _getFingerfromSel(self) :
-        
-  #   if (self.currentSel <= 4) :
-  #     return (NOTE_LEFT_HAND, 5-self.currentSel)
+  # ---------------------------------------------------------------------------
+  # METHOD: FingerSelector._selectorGet()                             [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _selectorGet(self, index) :
+    """
+    Returns the (hand, finger) of the current selection on the finger selector.
+    """
+    
+    if (self.currentSel <= 4) :
+      return (NOTE_LEFT_HAND, 5-self.currentSel)
 
-  #   if (self.currentSel == 5) :
-  #     return (NOTE_LEFT_HAND, NOTE_UNDEFINED_FINGER)
-  #     # self.editedNote.hand = ku.LEFT_HAND  => not supported yet
+    if (self.currentSel == 5) :
+      return (NOTE_LEFT_HAND, NOTE_UNDEFINED_FINGER)
+      # self.editedNote.hand = ku.LEFT_HAND  => not supported yet
     
-  #   if (self.currentSel == 6) :
-  #     return (NOTE_RIGHT_HAND, NOTE_UNDEFINED_FINGER)
-  #     # self.editedNote.hand = ku.RIGHT_HAND  => not supported yet
+    if (self.currentSel == 6) :
+      return (NOTE_RIGHT_HAND, NOTE_UNDEFINED_FINGER)
+      # self.editedNote.hand = ku.RIGHT_HAND  => not supported yet
     
-  #   if (self.currentSel >= 7) :
-  #     return (NOTE_RIGHT_HAND, self.currentSel - 6)
+    if (self.currentSel >= 7) :
+      return (NOTE_RIGHT_HAND, self.currentSel - 6)
     
-  #   return (NOTE_UNDEFINED_FINGER, NOTE_UNDEFINED_HAND)
+    return (NOTE_UNDEFINED_FINGER, NOTE_UNDEFINED_HAND)
   
 
 
@@ -397,17 +403,15 @@ class FingerSelector(widget.Widget) :
           self.highlightByObject(noteObj)
         
         # Click on the selector
-        (isSelectorHit, selectorIndex) = self._selectorHitTest(pygame.mouse.get_pos())
-        if isSelectorHit :
-          print(f"[DEBUG] FingerSelector._onMouseEvent(): you hit the selector (index = {selectorIndex})")
-          self.sel = selectorIndex
+        (isHit, index) = self._selectorHitTest(pygame.mouse.get_pos())
+        if isHit :
+          self._selectorSet(index)
 
       elif (button == MOUSE_SCROLL_UP) :
-        print("weeeee up, up, up!!!")
+        pass
 
       elif (button == MOUSE_SCROLL_DOWN) :
-        print("weeeee down, down, down!!!")
-
+        pass
 
 
 
@@ -428,7 +432,7 @@ class FingerSelector(widget.Widget) :
         elif (key == pygame.K_KP_1) :
           self.assign(finger = 1)
         elif (key == pygame.K_KP_2) :
-          print("[NOTE] FingerSelector._onKeyEvent(): caught hit on key 2")
+          self.assign(finger = 2)
         elif (key == pygame.K_TAB) :
           self._highlightNext()
         elif (key == pygame.K_DELETE) :

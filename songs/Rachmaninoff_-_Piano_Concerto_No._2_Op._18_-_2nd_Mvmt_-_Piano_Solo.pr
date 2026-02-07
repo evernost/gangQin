@@ -2,8 +2,9 @@
   "revision": "v2.1",
   "nStaffs": 2,
   "avgNoteDuration": 250.58180894308944,
-  "cursor": 449,
+  "cursor": 2089,
   "bookmarks": [
+    0,
     353,
     437,
     449,
@@ -12,8 +13,10 @@
     2142,
     2178,
     2227,
-    2354,
-    2364
+    2266,
+    2270,
+    2281,
+    2354
   ],
   "activeHands": "LR",
   "pianoRoll": [
@@ -1426,6 +1429,21 @@
       "voice": 0,
       "name": "F3",
       "id": 1329
+    },
+    {
+      "pitch": 53,
+      "hand": 0,
+      "finger": 1,
+      "keyColor": 0,
+      "noteIndex": 49,
+      "startTime": 305760,
+      "stopTime": 306671,
+      "sustained": false,
+      "inactive": false,
+      "disabled": false,
+      "voice": 0,
+      "name": "F3",
+      "id": 3702
     },
     {
       "pitch": 54,
@@ -3125,7 +3143,7 @@
     {
       "pitch": 56,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 64,
       "startTime": 295200,
@@ -3155,7 +3173,7 @@
     {
       "pitch": 56,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 66,
       "startTime": 297120,
@@ -3170,7 +3188,7 @@
     {
       "pitch": 56,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 67,
       "startTime": 298080,
@@ -3185,7 +3203,7 @@
     {
       "pitch": 56,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 68,
       "startTime": 300000,
@@ -3200,7 +3218,7 @@
     {
       "pitch": 56,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 69,
       "startTime": 300960,
@@ -3230,7 +3248,7 @@
     {
       "pitch": 56,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 71,
       "startTime": 301920,
@@ -4385,7 +4403,7 @@
     {
       "pitch": 57,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 71,
       "startTime": 294240,
@@ -4400,7 +4418,7 @@
     {
       "pitch": 57,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 72,
       "startTime": 299040,
@@ -4430,7 +4448,7 @@
     {
       "pitch": 57,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 74,
       "startTime": 302880,
@@ -4985,7 +5003,7 @@
     {
       "pitch": 58,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 29,
       "startTime": 306720,
@@ -6845,7 +6863,7 @@
     {
       "pitch": 59,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 123,
       "startTime": 297280,
@@ -6860,7 +6878,7 @@
     {
       "pitch": 59,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 124,
       "startTime": 297760,
@@ -6875,7 +6893,7 @@
     {
       "pitch": 59,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 125,
       "startTime": 298240,
@@ -6890,7 +6908,7 @@
     {
       "pitch": 59,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 126,
       "startTime": 299680,
@@ -6905,7 +6923,7 @@
     {
       "pitch": 59,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 127,
       "startTime": 300000,
@@ -6950,7 +6968,7 @@
     {
       "pitch": 59,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 130,
       "startTime": 302080,
@@ -6965,7 +6983,7 @@
     {
       "pitch": 59,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 131,
       "startTime": 302560,
@@ -6995,7 +7013,7 @@
     {
       "pitch": 59,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 133,
       "startTime": 304800,
@@ -7025,7 +7043,7 @@
     {
       "pitch": 59,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 135,
       "startTime": 305760,
@@ -7880,7 +7898,7 @@
     {
       "pitch": 60,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 47,
       "startTime": 303840,
@@ -9485,7 +9503,7 @@
     {
       "pitch": 61,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 104,
       "startTime": 294400,
@@ -9515,7 +9533,7 @@
     {
       "pitch": 61,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 106,
       "startTime": 295360,
@@ -9530,7 +9548,7 @@
     {
       "pitch": 61,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 107,
       "startTime": 299040,
@@ -9560,7 +9578,7 @@
     {
       "pitch": 61,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 109,
       "startTime": 303520,
@@ -9590,7 +9608,7 @@
     {
       "pitch": 61,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 111,
       "startTime": 306400,
@@ -11780,7 +11798,7 @@
     {
       "pitch": 63,
       "hand": 0,
-      "finger": 1,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 80,
       "startTime": 288160,
@@ -11795,7 +11813,7 @@
     {
       "pitch": 63,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 81,
       "startTime": 298720,
@@ -11810,7 +11828,7 @@
     {
       "pitch": 63,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 82,
       "startTime": 299200,
@@ -11825,7 +11843,7 @@
     {
       "pitch": 63,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 83,
       "startTime": 304480,
@@ -13430,7 +13448,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 3,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 102,
       "startTime": 268640,
@@ -13475,7 +13493,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 3,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 105,
       "startTime": 275040,
@@ -13490,7 +13508,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 3,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 106,
       "startTime": 276320,
@@ -13550,7 +13568,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 3,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 110,
       "startTime": 284000,
@@ -13565,7 +13583,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 3,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 111,
       "startTime": 284480,
@@ -13580,7 +13598,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 3,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 112,
       "startTime": 284960,
@@ -13610,7 +13628,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 3,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 114,
       "startTime": 286880,
@@ -13625,7 +13643,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 3,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 115,
       "startTime": 287360,
@@ -13640,7 +13658,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 3,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 116,
       "startTime": 288640,
@@ -13745,7 +13763,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 123,
       "startTime": 295520,
@@ -13760,7 +13778,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 124,
       "startTime": 297440,
@@ -13775,7 +13793,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 125,
       "startTime": 297920,
@@ -13790,7 +13808,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 126,
       "startTime": 298400,
@@ -13805,7 +13823,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 127,
       "startTime": 298880,
@@ -13820,7 +13838,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 128,
       "startTime": 300160,
@@ -13835,7 +13853,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 129,
       "startTime": 300640,
@@ -13850,7 +13868,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 130,
       "startTime": 304000,
@@ -13865,7 +13883,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 131,
       "startTime": 304960,
@@ -13880,7 +13898,7 @@
     {
       "pitch": 64,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 132,
       "startTime": 305440,
@@ -14945,7 +14963,7 @@
     {
       "pitch": 65,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 60,
       "startTime": 302720,
@@ -14960,7 +14978,7 @@
     {
       "pitch": 65,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 61,
       "startTime": 306080,
@@ -14975,7 +14993,7 @@
     {
       "pitch": 65,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 62,
       "startTime": 306560,
@@ -16175,7 +16193,7 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 4,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 79,
       "startTime": 275200,
@@ -16295,7 +16313,7 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 87,
       "startTime": 301120,
@@ -16325,7 +16343,7 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 89,
       "startTime": 302240,
@@ -16355,7 +16373,7 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 91,
       "startTime": 303680,
@@ -16370,7 +16388,7 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 92,
       "startTime": 304160,
@@ -16385,7 +16403,7 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 93,
       "startTime": 304640,
@@ -17075,7 +17093,7 @@
     {
       "pitch": 67,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 41,
       "startTime": 294560,
@@ -17090,7 +17108,7 @@
     {
       "pitch": 67,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 42,
       "startTime": 295040,
@@ -17240,7 +17258,7 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "keyColor": 1,
       "noteIndex": 5,
       "startTime": 12640,
@@ -18800,7 +18818,7 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 5,
+      "finger": 4,
       "keyColor": 1,
       "noteIndex": 109,
       "startTime": 288320,
@@ -18815,7 +18833,7 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 4,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 110,
       "startTime": 288800,
@@ -18830,7 +18848,7 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 3,
+      "finger": 4,
       "keyColor": 1,
       "noteIndex": 111,
       "startTime": 289280,
@@ -18875,7 +18893,7 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 114,
       "startTime": 295680,
@@ -18890,7 +18908,7 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "keyColor": 1,
       "noteIndex": 115,
       "startTime": 297600,
@@ -18905,7 +18923,7 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 116,
       "startTime": 300320,
@@ -18920,7 +18938,7 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 117,
       "startTime": 300800,
@@ -18935,7 +18953,7 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 118,
       "startTime": 301280,
@@ -18950,7 +18968,7 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 119,
       "startTime": 305120,
@@ -18965,7 +18983,7 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 120,
       "startTime": 305600,
@@ -20750,7 +20768,7 @@
     {
       "pitch": 69,
       "hand": 0,
-      "finger": 4,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 107,
       "startTime": 285920,
@@ -20810,7 +20828,7 @@
     {
       "pitch": 69,
       "hand": 0,
-      "finger": 3,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 111,
       "startTime": 293600,
@@ -20825,7 +20843,7 @@
     {
       "pitch": 69,
       "hand": 0,
-      "finger": 3,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 112,
       "startTime": 294080,
@@ -20840,7 +20858,7 @@
     {
       "pitch": 69,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 113,
       "startTime": 299360,
@@ -21350,7 +21368,7 @@
     {
       "pitch": 70,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 25,
       "startTime": 296880,
@@ -22985,7 +23003,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 5,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 106,
       "startTime": 286080,
@@ -23030,7 +23048,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 109,
       "startTime": 296400,
@@ -23045,7 +23063,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 110,
       "startTime": 297147,
@@ -23060,7 +23078,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 111,
       "startTime": 298560,
@@ -23075,7 +23093,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 112,
       "startTime": 299520,
@@ -23090,7 +23108,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 113,
       "startTime": 299840,
@@ -23105,7 +23123,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 114,
       "startTime": 300480,
@@ -23120,7 +23138,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 115,
       "startTime": 301440,
@@ -23135,7 +23153,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 116,
       "startTime": 305280,
@@ -23150,7 +23168,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 117,
       "startTime": 306240,
@@ -23210,7 +23228,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 121,
       "startTime": 314400,
@@ -23990,7 +24008,7 @@
     {
       "pitch": 72,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 43,
       "startTime": 295920,
@@ -24005,7 +24023,7 @@
     {
       "pitch": 72,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 44,
       "startTime": 296640,
@@ -24020,7 +24038,7 @@
     {
       "pitch": 72,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 45,
       "startTime": 304320,
@@ -25205,7 +25223,7 @@
     {
       "pitch": 73,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 72,
       "startTime": 296160,
@@ -25220,7 +25238,7 @@
     {
       "pitch": 73,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 73,
       "startTime": 302400,
@@ -25235,7 +25253,7 @@
     {
       "pitch": 73,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 74,
       "startTime": 303360,
@@ -25250,7 +25268,7 @@
     {
       "pitch": 73,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 75,
       "startTime": 310560,
@@ -25265,7 +25283,7 @@
     {
       "pitch": 73,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 76,
       "startTime": 314400,
@@ -30620,7 +30638,7 @@
     {
       "pitch": 80,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 56,
       "startTime": 309120,
@@ -30650,7 +30668,7 @@
     {
       "pitch": 80,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 58,
       "startTime": 310080,
@@ -30665,7 +30683,7 @@
     {
       "pitch": 80,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 59,
       "startTime": 310560,
@@ -30680,7 +30698,7 @@
     {
       "pitch": 80,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 60,
       "startTime": 311040,
@@ -30755,7 +30773,7 @@
     {
       "pitch": 80,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "keyColor": 1,
       "noteIndex": 65,
       "startTime": 314400,
@@ -32330,7 +32348,7 @@
     {
       "pitch": 83,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 30,
       "startTime": 309120,
@@ -32360,7 +32378,7 @@
     {
       "pitch": 83,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 32,
       "startTime": 310080,
@@ -32375,7 +32393,7 @@
     {
       "pitch": 83,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 33,
       "startTime": 310560,
@@ -32390,7 +32408,7 @@
     {
       "pitch": 83,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 34,
       "startTime": 311040,
@@ -32465,7 +32483,7 @@
     {
       "pitch": 83,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 39,
       "startTime": 314400,
@@ -33245,7 +33263,7 @@
     {
       "pitch": 85,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "keyColor": 1,
       "noteIndex": 23,
       "startTime": 310560,
@@ -33260,7 +33278,7 @@
     {
       "pitch": 85,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 24,
       "startTime": 311040,
@@ -33665,7 +33683,7 @@
     {
       "pitch": 87,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 8,
       "startTime": 310080,
@@ -33905,7 +33923,7 @@
     {
       "pitch": 88,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 14,
       "startTime": 309120,
@@ -34385,7 +34403,7 @@
     {
       "pitch": 92,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 13,
       "startTime": 309120,
@@ -34400,7 +34418,7 @@
     {
       "pitch": 92,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 14,
       "startTime": 310080,
@@ -34415,7 +34433,7 @@
     {
       "pitch": 92,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 15,
       "startTime": 311040,
@@ -36305,7 +36323,7 @@
     {
       "pitch": 30,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 2,
       "startTime": 310560,
@@ -36425,7 +36443,7 @@
     {
       "pitch": 33,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 4,
       "startTime": 311520,
@@ -37250,7 +37268,7 @@
     {
       "pitch": 37,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 18,
       "startTime": 301920,
@@ -37880,7 +37898,7 @@
     {
       "pitch": 40,
       "hand": 1,
-      "finger": 4,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 31,
       "startTime": 276000,
@@ -38045,7 +38063,7 @@
     {
       "pitch": 40,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 42,
       "startTime": 295200,
@@ -38060,7 +38078,7 @@
     {
       "pitch": 40,
       "hand": 1,
-      "finger": 0,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 43,
       "startTime": 297120,
@@ -38135,7 +38153,7 @@
     {
       "pitch": 40,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 48,
       "startTime": 309696,
@@ -39035,7 +39053,7 @@
     {
       "pitch": 42,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 27,
       "startTime": 310656,
@@ -40115,7 +40133,7 @@
     {
       "pitch": 45,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 30,
       "startTime": 303840,
@@ -40130,7 +40148,7 @@
     {
       "pitch": 45,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 31,
       "startTime": 311616,
@@ -40850,7 +40868,7 @@
     {
       "pitch": 47,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 42,
       "startTime": 297120,
@@ -40940,7 +40958,7 @@
     {
       "pitch": 47,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 48,
       "startTime": 309792,
@@ -40955,7 +40973,7 @@
     {
       "pitch": 47,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 49,
       "startTime": 310368,
@@ -42185,7 +42203,7 @@
     {
       "pitch": 49,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 38,
       "startTime": 294240,
@@ -42200,7 +42218,7 @@
     {
       "pitch": 49,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 39,
       "startTime": 295200,
@@ -42215,7 +42233,7 @@
     {
       "pitch": 49,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 40,
       "startTime": 301920,
@@ -42260,7 +42278,7 @@
     {
       "pitch": 49,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 43,
       "startTime": 310752,
@@ -42275,7 +42293,7 @@
     {
       "pitch": 49,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 1,
       "noteIndex": 44,
       "startTime": 311424,
@@ -43820,7 +43838,7 @@
     {
       "pitch": 52,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 45,
       "startTime": 303840,
@@ -44782,21 +44800,6 @@
       "hand": 1,
       "finger": 0,
       "keyColor": 0,
-      "noteIndex": 49,
-      "startTime": 305760,
-      "stopTime": 306671,
-      "sustained": false,
-      "inactive": false,
-      "disabled": false,
-      "voice": 0,
-      "name": "F3",
-      "id": 3702
-    },
-    {
-      "pitch": 53,
-      "hand": 1,
-      "finger": 0,
-      "keyColor": 0,
       "noteIndex": 50,
       "startTime": 314592,
       "stopTime": 314682,
@@ -45515,7 +45518,7 @@
     {
       "pitch": 54,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 46,
       "startTime": 303360,
@@ -47270,7 +47273,7 @@
     {
       "pitch": 56,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 55,
       "startTime": 309888,
@@ -47285,7 +47288,7 @@
     {
       "pitch": 56,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 56,
       "startTime": 310272,
@@ -47300,7 +47303,7 @@
     {
       "pitch": 56,
       "hand": 1,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 57,
       "startTime": 310848,
@@ -49070,7 +49073,7 @@
     {
       "pitch": 57,
       "hand": 1,
-      "finger": 1,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 92,
       "startTime": 291200,
@@ -49085,7 +49088,7 @@
     {
       "pitch": 57,
       "hand": 1,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 93,
       "startTime": 311808,
@@ -50735,7 +50738,7 @@
     {
       "pitch": 59,
       "hand": 1,
-      "finger": 5,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 81,
       "startTime": 289440,
@@ -50750,7 +50753,7 @@
     {
       "pitch": 59,
       "hand": 1,
-      "finger": 2,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 82,
       "startTime": 289920,
@@ -50765,7 +50768,7 @@
     {
       "pitch": 59,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 83,
       "startTime": 310944,
@@ -51860,7 +51863,7 @@
     {
       "pitch": 60,
       "hand": 1,
-      "finger": 0,
+      "finger": 4,
       "keyColor": 0,
       "noteIndex": 60,
       "startTime": 296640,
@@ -51875,7 +51878,7 @@
     {
       "pitch": 60,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 61,
       "startTime": 311904,
@@ -52820,7 +52823,7 @@
     {
       "pitch": 61,
       "hand": 1,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 1,
       "noteIndex": 59,
       "startTime": 296160,
@@ -53915,7 +53918,7 @@
     {
       "pitch": 62,
       "hand": 1,
-      "finger": 1,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 61,
       "startTime": 289760,
@@ -54395,7 +54398,7 @@
     {
       "pitch": 63,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 30,
       "startTime": 309984,
@@ -54410,7 +54413,7 @@
     {
       "pitch": 63,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 31,
       "startTime": 310176,
@@ -55400,7 +55403,7 @@
     {
       "pitch": 64,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 62,
       "startTime": 295840,
@@ -55415,7 +55418,7 @@
     {
       "pitch": 64,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 63,
       "startTime": 296320,
@@ -55430,7 +55433,7 @@
     {
       "pitch": 64,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 0,
       "noteIndex": 64,
       "startTime": 296800,
@@ -56525,7 +56528,7 @@
     {
       "pitch": 66,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 40,
       "startTime": 312000,
@@ -57695,7 +57698,7 @@
     {
       "pitch": 68,
       "hand": 1,
-      "finger": 2,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 55,
       "startTime": 289600,
@@ -57710,7 +57713,7 @@
     {
       "pitch": 68,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 56,
       "startTime": 296000,
@@ -57725,7 +57728,7 @@
     {
       "pitch": 68,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 57,
       "startTime": 296480,
@@ -57740,7 +57743,7 @@
     {
       "pitch": 68,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 58,
       "startTime": 296960,
@@ -57770,7 +57773,7 @@
     {
       "pitch": 68,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "keyColor": 1,
       "noteIndex": 60,
       "startTime": 310080,
@@ -57785,7 +57788,7 @@
     {
       "pitch": 68,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 1,
       "noteIndex": 61,
       "startTime": 311040,

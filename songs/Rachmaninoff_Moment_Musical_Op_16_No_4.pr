@@ -2,7 +2,7 @@
   "revision": "v2.1",
   "nStaffs": 2,
   "avgNoteDuration": 141.67146367146367,
-  "cursor": 431,
+  "cursor": 0,
   "bookmarks": [
     0,
     99,
@@ -19976,7 +19976,7 @@
     {
       "pitch": 40,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "keyColor": 0,
       "noteIndex": 12,
       "startTime": 22080,
@@ -22556,7 +22556,7 @@
     {
       "pitch": 47,
       "hand": 1,
-      "finger": 0,
+      "finger": 3,
       "keyColor": 0,
       "noteIndex": 33,
       "startTime": 22160,
@@ -31961,7 +31961,7 @@
     {
       "pitch": 55,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "keyColor": 0,
       "noteIndex": 52,
       "startTime": 22240,

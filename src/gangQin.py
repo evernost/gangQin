@@ -91,6 +91,7 @@ class GangQin :
     self._backgroundInit()
     self.running = False
     self.midiPort = None
+    self.midiTranspose = 0    # Indicate here the transpose state of the input keyboard, so that the app adapts to it.
 
     # Limit the supported key events to avoid unnecessary processing
     pygame.event.set_allowed([
@@ -208,13 +209,43 @@ class GangQin :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD: GangQin._midiInterfaceInit()                              [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _midiInterfaceInit(self, selectedDevice: str) :
+    """
+    Opens the MIDI keyboard interface pointed by the string descriptor in 
+    'selectedDevice'.
+
+    Assigns the callback function that catches the MIDI events.
+
+    NOTE: when no MIDI keyboard is needed, use selectedDevice = "None".
+    """
+
+    if (selectedDevice != "None") :
+      try :
+        self.midiPort = mido.open_input(selectedDevice, callback = self._midiCallback)
+      except Exception as err :
+        print("[WARNING] Failed to open the MIDI device (it is used by another software?): running in navigation mode.")
+        self.midiPort = None  
+    else :
+      print("[NOTE] No MIDI interface selected: running in navigation mode.")
+      self.midiPort = None
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD: GangQin._midiCallback()
   # ---------------------------------------------------------------------------
   def _midiCallback(self, midiMessage) :
     """
-    This function is called on every MIDI event coming from the external MIDI
-    keyboard.
+    This function is triggered for each incoming MIDI event from the external 
+    keyboard and routes the message to all interested widgets.
     """
+
+    # Run some preprocessing on the message
+    # - Filter out unused messages
+    # - apply transpose when activated
+    midiMessage = self._midiPreProcessor(midiMessage)
 
     if (WIDGET_ID_KEYBOARD in self.widgets) :
       self.widgets[WIDGET_ID_KEYBOARD].onExternalMidiEvent(midiMessage)
@@ -230,6 +261,34 @@ class GangQin :
 
     if (WIDGET_ID_STATS in self.widgets) :
       self.widgets[WIDGET_ID_STATS].userActivity()
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: GangQin._midiPreProcessor()
+  # ---------------------------------------------------------------------------
+  def _midiPreProcessor(self, midiMessage) :
+    """
+    Description is TODO.
+    """
+
+    # TRANSPOSED INPUT MODE
+    # The app gives the possibility to play the song while the input keyboard
+    # is actually in a transposed mode:
+    # - either because the user plays a transposed version of the song
+    # - or because the keyboard settings transpose the MIDI messages.
+    # This preprocessing reverts the transposition and makes the notes appear
+    # at their correct location.
+    if (midiMessage.type == "note_on") :
+      midiMessage.note = midiMessage.note - self.midiTranspose
+
+    elif (midiMessage.type == "note_off") :
+      midiMessage.note = midiMessage.note - self.midiTranspose
+
+    else :
+      pass
+    
+    return midiMessage
 
 
 
@@ -356,31 +415,6 @@ class GangQin :
     """
 
     pass
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD: GangQin._midiInterfaceInit()                              [PRIVATE]
-  # ---------------------------------------------------------------------------
-  def _midiInterfaceInit(self, selectedDevice: str) :
-    """
-    Opens the MIDI keyboard interface pointed by the string descriptor in 
-    'selectedDevice'.
-
-    Assigns the callback function that catches the MIDI events.
-
-    NOTE: when no MIDI keyboard is needed, use selectedDevice = "None".
-    """
-
-    if (selectedDevice != "None") :
-      try :
-        self.midiPort = mido.open_input(selectedDevice, callback = self._midiCallback)
-      except Exception as err :
-        print("[WARNING] Failed to open the MIDI device (it is used by another software?): running in navigation mode.")
-        self.midiPort = None  
-    else :
-      print("[NOTE] No MIDI interface selected: running in navigation mode.")
-      self.midiPort = None
 
 
 

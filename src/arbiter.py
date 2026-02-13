@@ -103,14 +103,17 @@ class Arbiter(widget.Widget) :
     Updates the internal state with the incoming MIDI message.
     """
     
-    if (midiMessage.type == 'note_on') :
+    if (midiMessage.type == "note_on") :
       self.midiCurr[midiMessage.note] = 1
 
-    elif (midiMessage.type == 'note_off') :
+    elif (midiMessage.type == "note_off") :
       self.midiCurr[midiMessage.note] = 0
       self.midiSustained[midiMessage.note] = 0
       self.midiSuperfluous[midiMessage.note] = 0
       self.midiAssociatedID[midiMessage.note] = -1
+
+    else :
+      pass
 
 
 

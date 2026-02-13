@@ -291,6 +291,11 @@ class FingerSelector(widget.Widget) :
     Description is TODO.
     """
 
+    # Note: if there is no ambiguity (only one unassigned note left)
+    # The note should be assigned a finger immediately without prior 
+    # actual selection of the note
+
+
     if self.activeNotes :
       print("[DEBUG] Method 'FingerSelector.assign()' just woke up.")
     else :
@@ -326,6 +331,7 @@ class FingerSelector(widget.Widget) :
 
       # If the click is in this current hit box
       if ((clickX >= xMin) and (clickX <= xMax) and (clickY >= yMin) and (clickY <= yMax)) :
+        (finger, hand) = self._selectorGet()
         return (True, i)
         
     return (False, -1)
@@ -361,7 +367,7 @@ class FingerSelector(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD: FingerSelector._selectorGet()                             [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _selectorGet(self, index) :
+  def _selectorGet(self) :
     """
     Returns the (hand, finger) of the current selection on the finger selector.
     """

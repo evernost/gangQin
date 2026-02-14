@@ -220,18 +220,18 @@ class Keyboard(widget.Widget) :
     for noteObj in notes :
 
       # White note highlighting
-      if (noteObj.keyColor == note.keyColor.WHITE_NOTE) :
+      if (noteObj.keyColor == note.keyColor_T.WHITE_NOTE) :
         self._singleHandWhiteKeyPress(self.top.screen, noteObj)
 
       # Black note highlighting
-      if (noteObj.keyColor == note.keyColor.BLACK_NOTE) :
+      if (noteObj.keyColor == note.keyColor_T.BLACK_NOTE) :
         self._singleHandBlackKeyPress(self.top.screen, noteObj)
       
       # ------------------------------
       # Note click detection materials
       # ------------------------------
       # Store the polygons associated to the "teacher notes"
-      if ((noteObj.hand == NOTE_LEFT_HAND) or (noteObj.hand == NOTE_RIGHT_HAND)) :
+      if ((noteObj.hand == note.hand_T.LEFT) or (noteObj.hand == note.hand_T.RIGHT)) :
         # This makes the hitbox for click on the lit part of the key only:
         #self.litKeysPolygons.append((sq, pitch))
 

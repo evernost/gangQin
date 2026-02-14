@@ -347,8 +347,8 @@ class Score(widget.Widget) :
       
       # The track number has been paired with a hand 
       if (midiTracks[i] != "") :
-        if (midiTracks[i] == "R") : trackID = SCORE_RIGHT_HAND_TRACK_ID
-        if (midiTracks[i] == "L") : trackID = SCORE_LEFT_HAND_TRACK_ID
+        if (midiTracks[i] == "R") : trackID = note.hand.RIGHT
+        if (midiTracks[i] == "L") : trackID = note.hand.LEFT
       
         # Loop on the notes within a track
         currTime = 0
@@ -530,8 +530,8 @@ class Score(widget.Widget) :
 
       # Create and edit the note             
       N = note.Note(noteAsDict["pitch"])
-      N.hand      = noteAsDict["hand"]
-      N.finger    = noteAsDict["finger"]
+      N.hand      = note.hand_T(noteAsDict["hand"])
+      N.finger    = note.finger_T(noteAsDict["finger"])
       N.voice     = noteAsDict["voice"]
       N.velocity  = 64                      # Note velocity was introduced in gangQin v3; '.pr' files don't have it.
       N.startTime = noteAsDict["startTime"]
@@ -548,8 +548,8 @@ class Score(widget.Widget) :
       
       # Register this timecode
       self.noteOnTimecodes["LR_full"].append(noteAsDict["startTime"])
-      if (noteAsDict["hand"] == SCORE_LEFT_HAND_TRACK_ID)  : self.noteOnTimecodes["L"].append(noteAsDict["startTime"])
-      if (noteAsDict["hand"] == SCORE_RIGHT_HAND_TRACK_ID) : self.noteOnTimecodes["R"].append(noteAsDict["startTime"])
+      if (noteAsDict["hand"] == note.hand_T.LEFT)  : self.noteOnTimecodes["L"].append(noteAsDict["startTime"])
+      if (noteAsDict["hand"] == note.hand_T.RIGHT) : self.noteOnTimecodes["R"].append(noteAsDict["startTime"])
 
     # Sort notes by ascending keypress timecode
     self.noteList = sorted(noteListTmp, key = lambda noteObj: noteObj.startTime)
@@ -718,7 +718,8 @@ class Score(widget.Widget) :
     *******
     WARNING: '.pr' files have been deprecated since gangQin version 3.
     New files must be saved in '.gq3' format using 'Score.loadGQ3File()'.
-    Do not maintain '.pr' file format.
+    DO NOT use this function.
+    DO NOT maintain '.pr' file format.
     *******
 
     Exports the annotated score and all metadata (finger, hand, comments etc.) in 
@@ -816,8 +817,8 @@ class Score(widget.Widget) :
     for noteObj in L :
       noteAsDict = {
         "pitch"   : noteObj.pitch,
-        "hand"    : noteObj.hand,
-        "finger"  : noteObj.finger,
+        "hand"    : noteObj.hand.value,
+        "finger"  : noteObj.finger.value,
         "voice"   : noteObj.voice,
         "name"    : noteObj.name
       }

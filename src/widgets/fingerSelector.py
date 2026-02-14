@@ -75,8 +75,8 @@ class FingerSelector(widget.Widget) :
     # 11 = right hand, finger 5
     self.sel    = -1
     
-    self.hand   = note.hand.UNDEFINED
-    self.finger = note.finger.UNDEFINED
+    self.hand   = note.hand_T.UNDEFINED
+    self.finger = note.finger_T.UNDEFINED
 
     self.activeNotes = []
     

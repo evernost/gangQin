@@ -26,17 +26,17 @@ from enum import Enum     # For enumerated types
 # =============================================================================
 # CONSTANTS
 # =============================================================================
-class keyColor(Enum) :
+class keyColor_T(Enum) :
   WHITE_NOTE = 0
   BLACK_NOTE = 1
 
-class hand(Enum) :
+class hand_T(Enum) :
   UNDEFINED = -1
   LEFT      = 0
   RIGHT     = 1
 
-class finger(Enum) :
-  UNDEFINED = -1
+class finger_T(Enum) :
+  UNDEFINED = 0
   FINGER_1  = 1
   FINGER_2  = 2
   FINGER_3  = 3
@@ -101,9 +101,9 @@ class Note :
     """
 
     if (self.pitch % 12) in MIDI_CODE_WHITE_NOTES_MOD12 :
-      return keyColor.WHITE_NOTE
+      return keyColor_T.WHITE_NOTE
     else :
-      return keyColor.BLACK_NOTE
+      return keyColor_T.BLACK_NOTE
 
 
 

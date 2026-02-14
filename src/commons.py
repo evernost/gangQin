@@ -126,22 +126,6 @@ FINGERSEL_UNCHANGED     = 0
 FINGERSEL_CHANGED       = 1
 FINGERSEL_HAND_CHANGE   = 3
 
-
-class FingerSel_hand(Enum) :
-  UNDEFINED = -1
-  LEFT      = 0
-  RIGHT     = 1
-
-class FingerSel_finger(Enum) :
-  UNDEFINED = -1
-  FINGER_1  = 1
-  FINGER_2  = 2
-  FINGER_3  = 3
-  FINGER_4  = 4
-  FINGER_5  = 5
-
-FingerSel_finger.UNDEFINED
-
 FINGER_SELECTOR_TEXT_COLOR        = GUI_TEXT_COLOR
 FINGER_SELECTOR_TEXT_COLOR_L      = (145, 7, 0)
 FINGER_SELECTOR_TEXT_COLOR_SEL_L  = (244, 13, 0)

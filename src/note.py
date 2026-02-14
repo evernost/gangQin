@@ -19,7 +19,7 @@ from src.commons import *
 import src.utils as utils
 
 # Standard libraries
-from enum import Enum   # For enumerated types in FSM
+from enum import Enum     # For enumerated types
 
 
 
@@ -31,8 +31,17 @@ class keyColor(Enum) :
   BLACK_NOTE = 1
 
 class hand(Enum) :
-  LEFT  = 0
-  RIGHT = 1
+  UNDEFINED = -1
+  LEFT      = 0
+  RIGHT     = 1
+
+class finger(Enum) :
+  UNDEFINED = -1
+  FINGER_1  = 1
+  FINGER_2  = 2
+  FINGER_3  = 3
+  FINGER_4  = 4
+  FINGER_5  = 5
 
 
 

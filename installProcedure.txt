@@ -7,5 +7,4 @@ python3 -m venv ./venv
 ./venv/bin/pip3 install pygame
 ./venv/bin/pip3 install mido
 ./venv/bin/pip3 install shapely
-./venv/bin/pip3 install playsound=1.2.2
 ./venv/bin/pip3 install python-rtmidi

@@ -98,9 +98,6 @@ For this, you're going to need:
 - **tkinter** (sudo apt install python3-tk)
 - **shapely** (tested with version 2.0.4)
 - **numpy**
-- **playsound**
-  - pip install --upgrade setuptools wheel
-  - pip install playsound
 - **rtmidi** (tested with version 1.5.8)
   - pip install python-rtmidi
 

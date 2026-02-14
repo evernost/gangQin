@@ -16,8 +16,8 @@
 # Project specific constants
 from commons import *
 
-# For wavefile play
-import playsound
+# To play wavefiles
+#import playsound
 
 import random
 
@@ -76,7 +76,7 @@ class Notify :
       if not(self.wrongNoteFlag) :
         file = random.choice(WRONG_SOUND_FILES)
         
-        playsound.playsound(SOUND_DIR + "/" + file, False)
+        #playsound.playsound(SOUND_DIR + "/" + file, False)
       
         # Prevent from repeated plays
         self.wrongNoteFlag = True
@@ -92,7 +92,7 @@ class Notify :
       if not(self.loopPassedFlag) :
         file = random.choice(SUCCESS_SOUND_FILES)
         
-        playsound.playsound(SOUND_DIR + "/" + file, False)
+        #playsound.playsound(SOUND_DIR + "/" + file, False)
       
         # Prevent from repeated plays
         self.loopPassedFlag = True

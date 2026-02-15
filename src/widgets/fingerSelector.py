@@ -420,7 +420,7 @@ class FingerSelector(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD: FingerSelector._onMouseEvent()                          [INHERITED]
   # ---------------------------------------------------------------------------
-  def _onMouseEvent(self, button, type) :
+  def _onMouseEvent(self, event) :
     """
     Mouse event callback.
     
@@ -428,7 +428,7 @@ class FingerSelector(widget.Widget) :
     """
     
     if (type == pygame.MOUSEBUTTONDOWN) :
-      if (button == MOUSE_LEFT_CLICK) :
+      if (event.button == MOUSE_LEFT_CLICK) :
         
         # Click on an active note
         (isNoteHit, noteObj) = self.top.widgets[WIDGET_ID_KEYBOARD].clickHitTest(pygame.mouse.get_pos())
@@ -441,10 +441,10 @@ class FingerSelector(widget.Widget) :
           self._selectorSet(hand, finger)
           self.assign(hand, finger)
 
-      elif (button == MOUSE_SCROLL_UP) :
+      elif (event.button == MOUSE_SCROLL_UP) :
         pass
 
-      elif (button == MOUSE_SCROLL_DOWN) :
+      elif (event.button == MOUSE_SCROLL_DOWN) :
         pass
 
 

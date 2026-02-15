@@ -114,7 +114,7 @@ class Sequencer(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD: Widget._onMouseEvent()                                    [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _onMouseEvent(self, button, type) :
+  def _onMouseEvent(self, event) :
     """
     Function is triggered by a keypress.
     """
@@ -123,14 +123,27 @@ class Sequencer(widget.Widget) :
     keys = pygame.key.get_pressed()
     ctrl = keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]
 
-    if (type == pygame.MOUSEBUTTONDOWN) :
-      if (button == MOUSE_SCROLL_UP) :
+    if (event.type == pygame.MOUSEBUTTONDOWN) :
+      if (event.button == MOUSE_SCROLL_UP) :
         if ctrl :
           self.top.widgets[WIDGET_ID_SCORE].cursorStep(10)
         else :
           self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
 
-      elif (button == MOUSE_SCROLL_DOWN) :
+      elif (event.button == MOUSE_SCROLL_DOWN) :
+        if ctrl :
+          self.top.widgets[WIDGET_ID_SCORE].cursorStep(-10)
+        else :
+          self.top.widgets[WIDGET_ID_SCORE].cursorStep(-1)
+
+    elif (event.type == pygame.MOUSEWHEEL) :
+      if (event.y > 0) :
+        if ctrl :
+          self.top.widgets[WIDGET_ID_SCORE].cursorStep(10)
+        else :
+          self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
+
+      elif (event.y < 0) :
         if ctrl :
           self.top.widgets[WIDGET_ID_SCORE].cursorStep(-10)
         else :

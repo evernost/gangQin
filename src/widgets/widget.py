@@ -93,8 +93,8 @@ class Widget :
 
 
     # MOUSE EVENTS
-    elif (pygameEvent.type in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP]) :
-      self._onMouseEvent(pygameEvent.button, pygameEvent.type)
+    elif (pygameEvent.type in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEWHEEL]) :
+      self._onMouseEvent(pygameEvent)
       
 
 
@@ -135,7 +135,7 @@ class Widget :
   # ---------------------------------------------------------------------------
   # METHOD: Widget._onMouseEvent()                                    [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _onMouseEvent(self, button, type) :
+  def _onMouseEvent(self, event) :
     """
     Function is triggered by a mouse event.
     Mouse events include:

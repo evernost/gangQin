@@ -8,3 +8,7 @@ python3 -m venv ./venv
 ./venv/bin/pip3 install mido
 ./venv/bin/pip3 install shapely
 ./venv/bin/pip3 install python-rtmidi
+
+
+On Fedora:
+sudo dnf install alsa-lib-devel

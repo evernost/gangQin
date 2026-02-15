@@ -17,6 +17,7 @@
 from src.commons import *
 
 import src.widgets.widget as widget
+import src.note as note
 
 import pygame
 
@@ -243,8 +244,8 @@ class PianoRoll(widget.Widget) :
       
       # Draw the outline
       # TODO: replace with a call to getNoteColor()
-      if (N.hand == NOTE_LEFT_HAND)   : color = PIANOROLL_NOTE_BORDER_COLOR_LEFT
-      if (N.hand == NOTE_RIGHT_HAND)  : color = PIANOROLL_NOTE_BORDER_COLOR_RIGHT
+      if (N.hand == note.hand_T.LEFT)   : color = PIANOROLL_NOTE_BORDER_COLOR_LEFT
+      if (N.hand == note.hand_T.RIGHT)  : color = PIANOROLL_NOTE_BORDER_COLOR_RIGHT
       pygame.draw.line(self.top.screen, color, sq[0], sq[1], 3)
       pygame.draw.line(self.top.screen, color, sq[1], sq[2], 3)
       pygame.draw.line(self.top.screen, color, sq[2], sq[3], 3)

@@ -1399,7 +1399,7 @@ class Score(widget.Widget) :
         unassigned = False
       
       if unassigned :
-        print("[ERROR] Score._buildCursorsLR: a note was found with an unlisted time code (INTERNAL ERROR)")
+        print("[ERROR] Score._buildCursorsLR(): a note was found with an unlisted time code (INTERNAL ERROR)")
 
 
 

@@ -1463,7 +1463,7 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score.getTeacherNotes()
   # ---------------------------------------------------------------------------
-  def getTeacherNotes(self, includeSustain = False) :
+  def getTeacherNotes(self, cursor = None, includeSustain = False) :
     """
     Returns a list with all the notes that must be pressed at the current 
     position in the score.
@@ -1473,23 +1473,30 @@ class Score(widget.Widget) :
     cursor) are not included in the list.
     """
     
-    # Cursor hasn't changed since last request: return the cache
-    if (self.getCursor() == self.teacherNotesCursor) :
-      pass
-    
-    # Otherwise: regenerate the cache
+    # No cursor specified: return the notes for the current location (DEFAULT)
+    if cursor is None :
+
+
+      # Cursor hasn't changed since last request: return the cache
+      if (self.getCursor() == self.teacherNotesCursor) :
+        pass
+      
+      # Otherwise: regenerate the cache
+      else :
+        self._calculateTeacherNotes()
+        self.teacherNotesCursor = self.getCursor()
+
+      # Return a copy of the elaborated list.
+      # We do not want the clients to mess with it
+      return self.teacherNotes.copy()
+
+
     else :
-      self._calculateTeacherNotes()
-      self.teacherNotesCursor = self.getCursor()
-
-    # Return a copy of the elaborated list.
-    # We do not want the clients to mess with it
-    return self.teacherNotes.copy()
-
+      return self._calculateActiveNotes(cursor)
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score._updateTeacherNotes()
+  # METHOD Score._calculateTeacherNotes()
   # ---------------------------------------------------------------------------
   def _calculateTeacherNotes(self) :
     """
@@ -1565,6 +1572,92 @@ class Score(widget.Widget) :
       else :
         filteredList.append(N)
     self.teacherNotes = filteredList
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score._calculateActiveNotes()
+  # ---------------------------------------------------------------------------
+  def _calculateActiveNotes(self) :
+    """
+    Almost the same as '_calculateTeacherNotes' but for an arbitrary cursor.
+    
+    This function is used e.g. to duplicate a fingering; in that case, we
+    need to refer to a previous cursor to see what notes were active.
+    """
+    
+    print("The function is TODO!")
+
+    ret = []
+
+    # Use .copy() to avoid returning the original notes objects.
+    return ret.copy()
+
+    # # Reset the play attributes of the previous notes before deleting them.
+    # # Note attributes are used for the display and the arbiter.
+    # for N in self.teacherNotes :
+    #   N.sustained = False
+    #   # noteObj.visible = True
+    #   # noteObj.inactive = False
+
+    # # Reset the cache
+    # self.teacherNotes = []
+    
+    # for N in self.noteList :
+
+    #   # TODO: optimise the 'for' loop. 
+    #   # Notes are stored in chronological order in 'Score.noteList'
+    #   # It is not necessary to explore the entire list at each function call.
+    #   # Beyond a certain point, we know for sure that no more
+    #   # note will be added to 'Score.teacherNotes'.
+
+    #   # CASE 1: a note is pressed at this timecode
+    #   if (N.startTime == self.getTimecode()) :
+        
+    #     # SINGLE HAND PRACTICE
+    #     # Adds the notes with their "inactive" property to "True" 
+    #     # so that it is displayed with the appropriate color.
+    #     if (self.activeHands == SCORE_ACTIVE_HANDS_BOTH) :
+    #       N.inactive = False
+    #       self.teacherNotes.append(N)
+        
+    #     elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
+    #       if (N.hand != NOTE_LEFT_HAND) : 
+    #         N.inactive = True
+    #         self.teacherNotes.append(N)
+
+    #     elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
+    #       if (N.hand != NOTE_RIGHT_HAND) :
+    #         N.inactive = True
+    #         self.teacherNotes.append(N)
+
+    #   # CASE 2: the note is held at this timecode
+    #   elif ((N.startTime < self.getTimecode()) and (N.stopTime >= self.getTimecode())) :
+    #     N.sustained = True
+    #     self.teacherNotes.append(N)
+
+    #   # CASE 3: the note is out of the current window
+    #   else :
+    #     pass
+
+    # # Detect void list of teacher notes
+    # # This is not supposed to happen
+    # if (len(self.teacherNotes) == 0) :
+    #   print(f"[WARNING] Empty list of teacher notes (t = {self.getTimecode()}), possible internal error.")
+
+    # # TODO: filter out notes with 0 duration.
+    # # Still not sure why it happens.
+    # # See https://github.com/evernost/gangQin/issues/22
+    # filteredList = []
+    # for N in self.teacherNotes :
+    #   if not(N.fromKeyboardInput) :
+    #     if (N.startTime != N.stopTime):
+    #       filteredList.append(N)
+    #     else :
+    #       print(f"[DEBUG] Score._calculateTeacherNotes(): null duration note detected (cursor = {self.getCursor()})")
+    #   else :
+    #     filteredList.append(N)
+    # self.teacherNotes = filteredList
 
 
 

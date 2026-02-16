@@ -119,7 +119,7 @@ class Sequencer(widget.Widget) :
     Function is triggered by a keypress.
     """
     
-    # Read the keyboard state
+    # Read eventual keyboard modifiers
     keys = pygame.key.get_pressed()
     ctrl = keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]
 

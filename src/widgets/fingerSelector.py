@@ -476,7 +476,9 @@ class FingerSelector(widget.Widget) :
         elif (key == pygame.K_TAB) :
           self._highlightNext()
         elif (key == pygame.K_DELETE) :
-          print("[NOTE] FingerSelector._onKeyEvent(): delete finger, keep current hand")
+          print("[NOTE] FingerSelector._onKeyEvent(): delete finger, keep current hand (function not implemented yet)")
+        elif (key == pygame.K_d) :
+          print("[NOTE] FingerSelector._onKeyEvent(): duplicate the previous fingering (function not implemented yet)")
 
       # SHIFT + KEYPRESS
       elif (modifier == "shift") :

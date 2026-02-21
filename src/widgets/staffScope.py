@@ -52,10 +52,10 @@ class StaffScope(widget.Widget) :
   The StaffScope class derives from the Widget class.
   """
 
-  def __init__(self, top) :
+  def __init__(self, top, loc) :
     
     # Initialise the parent class (Widget)
-    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
+    super().__init__(top, loc)
 
     # Name of the widget
     self.name = "staffscope"
@@ -132,9 +132,9 @@ class StaffScope(widget.Widget) :
 
     (_, rootNameExt) = os.path.split(songFile)
     (rootName, _) = os.path.splitext(rootNameExt)
-    self.songName     = rootName
-    self.jsonName     = rootName + ".json"          # Example: "my_song.json"
-    self.jsonFile     = f"./snaps/{self.jsonName}"  # Example: "./snaps/my_song.json"
+    self.songName = rootName
+    self.jsonName = rootName + ".json"            # Example: "my_song.json"
+    self.jsonFile = f"./snaps/{self.jsonName}"    # Example: "./snaps/my_song.json"
 
 
 
@@ -401,6 +401,20 @@ class StaffScope(widget.Widget) :
       elif (p.hand == "R") :
         coords = p.toTuple()
         pygame.draw.rect(transparent_surface, (0, 255, 0, alpha), coords)
+
+
+
+    # ----------------------
+    # Render the cursor line
+    # ----------------------
+    if self.playGlows :
+      x = 0
+      for p in self.playGlows :
+        x += (p.coord_xMin + p.coord_xMax)/2
+
+      x = x / len(self.playGlows)
+
+      pygame.draw.line(transparent_surface, (200, 200, 200), (x, self.imgCoordY), (x, self.imgCoordY + (self.imgHeight*self.imgScaling)))
 
 
 

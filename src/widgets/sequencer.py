@@ -123,20 +123,7 @@ class Sequencer(widget.Widget) :
     keys = pygame.key.get_pressed()
     ctrl = keys[pygame.K_LCTRL] or keys[pygame.K_RCTRL]
 
-    if (event.type == pygame.MOUSEBUTTONDOWN) :
-      if (event.button == MOUSE_SCROLL_UP) :
-        if ctrl :
-          self.top.widgets[WIDGET_ID_SCORE].cursorStep(10)
-        else :
-          self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
-
-      elif (event.button == MOUSE_SCROLL_DOWN) :
-        if ctrl :
-          self.top.widgets[WIDGET_ID_SCORE].cursorStep(-10)
-        else :
-          self.top.widgets[WIDGET_ID_SCORE].cursorStep(-1)
-
-    elif (event.type == pygame.MOUSEWHEEL) :
+    if (event.type == pygame.MOUSEWHEEL) :
       if (event.y > 0) :
         if ctrl :
           self.top.widgets[WIDGET_ID_SCORE].cursorStep(10)

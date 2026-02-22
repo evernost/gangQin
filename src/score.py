@@ -523,7 +523,6 @@ class Score(widget.Widget) :
     #self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
     #self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
     noteTracker = NoteTracker()
-    #noteCount = 0
     noteListTmp = []
     masteredNoteCount = 0
     for noteAsDict in importDict["pianoRoll"] :
@@ -539,17 +538,16 @@ class Score(widget.Widget) :
       N.dbIndex   = -1
       N.id        = noteCount
       
-      if (N.finger != 0) :
-        masteredNoteCount += 1
+      if (N.finger != note.finger_T.UNDEFINED) : masteredNoteCount += 1
       
       # Register the note in the database
       noteListTmp.append(N)
       noteCount += 1
       
       # Register this timecode
-      self.noteOnTimecodes["LR_full"].append(noteAsDict["startTime"])
-      if (noteAsDict["hand"] == note.hand_T.LEFT)  : self.noteOnTimecodes["L"].append(noteAsDict["startTime"])
-      if (noteAsDict["hand"] == note.hand_T.RIGHT) : self.noteOnTimecodes["R"].append(noteAsDict["startTime"])
+      self.noteOnTimecodes["LR_full"].append(N.startTime)
+      if (N.hand == note.hand_T.LEFT)  : self.noteOnTimecodes["L"].append(N.startTime)
+      if (N.hand == note.hand_T.RIGHT) : self.noteOnTimecodes["R"].append(N.startTime)
 
     # Sort notes by ascending keypress timecode
     self.noteList = sorted(noteListTmp, key = lambda noteObj: noteObj.startTime)
@@ -557,7 +555,7 @@ class Score(widget.Widget) :
     # TODO: 
     # At the time, MIDI file import had a very different strategy
     # to deal with multiple keypresses on a given note without prior release.
-    # So the following flows:
+    # Therefore, the following procedures:
     # - MIDI import -> '.pr' generation  -> '.pr' import
     # - MIDI import -> '.gq3' generation -> '.gq3' import
     # might produce a slightly different internal database.
@@ -574,9 +572,6 @@ class Score(widget.Widget) :
     # Some processing needs to be done to minimise the differences
     # between the two.
 
-    # Start the tracking on this note
-    # for N in self.noteList :
-    #   noteTracker.keyPress(N, noteAsDict["startTime"])
 
     # Tidy up:
     # - sort the timecodes by ascending values
@@ -1382,7 +1377,7 @@ class Score(widget.Widget) :
     
     This method is usually called after loading a MIDI or .gq3 file, since 
     the information in these fields is redundant and does not bring added
-    value to get stored in the file.
+    value being in the file.
     """
     
     self.cursorsLeft  = []

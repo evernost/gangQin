@@ -180,49 +180,29 @@ class Keyboard(widget.Widget) :
     # Detect "double-pressed" notes
     # -----------------------------
     # Occurs when the score requests to press a key by one finger of each hand.
-    # How many fingers are pressing this key is not very important per se
-    # (you can't hit the key "more") yet it gives info regarding how the 
-    # key should be played.
-    # If the key is pressed by several fingers of the same hand, there is no
-    # special processing to be done. 
-    noteListByPitch = [[] for x in range(128)]
-    for (index, noteObj) in enumerate(notes) :
-      if not(noteObj.sustained) :
-        noteListByPitch[noteObj.pitch].append([index, noteObj])
+    # In this case, only one note is rendered to limit the 'display noise'.
+    # The other note is simply ignored.
+    # TODO: optimise this function. The way it is currently done costs a lot.
+    
+    # noteListByPitch = [[] for _ in range(128)]
+    # for (index, noteObj) in enumerate(notes) :
+    #   if not(noteObj.sustained) :
+    #     noteListByPitch[noteObj.pitch].append((index, noteObj))
       
-    for subList in noteListByPitch :
-      
-      # A given key is hit exactly twice at the same time
-      if (len(subList) == 2) :
+    # for notesInPitch in noteListByPitch :
+
+    #   # Note is hit exactly twice at the same time
+    #   if (len(notesInPitch) == 2) :
         
-        # One note is hit by one hand
-        noteObj1 = subList[0][1]; noteObj2 = subList[1][1]
-        if ((noteObj1.hand != note.hand_T.UNDEFINED) and (noteObj2.hand != note.hand_T.UNDEFINED)) :
-          if (noteObj1.hand != noteObj2.hand) :
-          
-            # White note highlighting
-            if ((noteObj1.pitch % 12) in MIDI_CODE_WHITE_NOTES_MOD12) :
-              self._doubleHandWhiteKeyPress(self.top.screen, noteObj1)
+    #     # noteObj1 = notesInPitch[0][1]
+    #     # noteObj2 = notesInPitch[1][1]
+    #     print("[WARNING] Double pressed note!")
 
-            # Black note highlighting
-            if ((noteObj1.pitch % 12) in MIDI_CODE_BLACK_NOTES_MOD12) :
-              self._doubleHandBlackKeyPress(self.top.screen, noteObj1)
+        
 
-            # These notes are now displayed, we can remove them from the list
-            # and go on with the "normal" notes
-            if subList[0][0] > subList[1][0] :
-              del noteList[subList[0][0]]
-              del noteList[subList[1][0]]
-            else :
-              del noteList[subList[1][0]]
-              del noteList[subList[0][0]]
-
-          # The key is hit twice with the same hand
-          else :
-            del noteList[subList[0][0]]
-
-      if (len(subList) >= 3) :
-        print("[WARNING] Odd score: that's a lot of fingers to press one single note *questionning emoji*")
+    #   # Note is hit more than twice at the same time (!)
+    #   if (len(notesInPitch) >= 3) :
+    #     print("[WARNING] Odd score: that's a lot of fingers to press one single note *questionning emoji*")
 
     
     
@@ -233,26 +213,10 @@ class Keyboard(widget.Widget) :
 
       self._renderSimpleKeyPress(self.top.screen, noteObj)
 
-      # # White note highlighting
-      # if (noteObj.keyColor == note.keyColor_T.WHITE_KEY) :
-      #   self._singleHandWhiteKeyPress(self.top.screen, noteObj)
-
-      # # Black note highlighting
-      # if (noteObj.keyColor == note.keyColor_T.BLACK_KEY) :
-      #   self._singleHandBlackKeyPress(self.top.screen, noteObj)
-      
-      # ------------------------------
-      # Note click detection materials
-      # ------------------------------
       # Store the polygons associated to the "teacher notes"
+      # This makes the hitbox for click on the entire key
       if ((noteObj.hand == note.hand_T.LEFT) or (noteObj.hand == note.hand_T.RIGHT)) :
-        # This makes the hitbox for click on the lit part of the key only:
-        #self.litKeysPolygons.append((sq, pitch))
-
-        # This makes the hitbox for click on the entire key:
         self.litKeysPolygons.append((self.polygons[noteObj.pitch], noteObj))
-
-
 
 
 

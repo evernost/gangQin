@@ -27,13 +27,13 @@ from enum import Enum     # For enumerated types
 # CONSTANTS
 # =============================================================================
 class keyColor_T(Enum) :
-  WHITE_NOTE = 0
-  BLACK_NOTE = 1
+  WHITE_KEY = 0
+  BLACK_KEY = 1
 
 class hand_T(Enum) :
   UNDEFINED = -1
-  LEFT      = 0
-  RIGHT     = 1
+  RIGHT     = 0
+  LEFT      = 1
 
 class finger_T(Enum) :
   UNDEFINED = 0
@@ -63,8 +63,8 @@ class Note :
     
     # Note general attributes (fields preserved during file import/export)
     self.pitch    = pitch
-    self.hand     = NOTE_UNDEFINED_HAND
-    self.finger   = NOTE_UNDEFINED_FINGER
+    self.hand     = hand_T.UNDEFINED
+    self.finger   = finger_T.UNDEFINED
     self.name     = getFriendlyName(pitch)
     self.voice    = NOTE_VOICE_DEFAULT
     self.velocity = 0
@@ -101,9 +101,9 @@ class Note :
     """
 
     if (self.pitch % 12) in MIDI_CODE_WHITE_NOTES_MOD12 :
-      return keyColor_T.WHITE_NOTE
+      return keyColor_T.WHITE_KEY
     else :
-      return keyColor_T.BLACK_NOTE
+      return keyColor_T.BLACK_KEY
 
 
 
@@ -130,7 +130,7 @@ class Note :
     # Default voices and notes types
     #
     else :
-      if (self.hand == NOTE_LEFT_HAND) :
+      if (self.hand == hand_T.LEFT) :
         if (self.upcoming) :
           baseColor = utils.adjustHSV((255, 0, 127), 0, -40 - (self.upcomingDistance*20), -10)
         else :
@@ -162,12 +162,12 @@ class Note :
       #
       if self.highlight :
 
-        if (self.hand == NOTE_LEFT_HAND) :
+        if (self.hand == hand_T.LEFT) :
           hueShift = 30
         else :
           hueShift = 60
 
-        if (self.keyColor == NOTE_WHITE_KEY) :
+        if (self.keyColor == keyColor_T.WHITE_KEY) :
           (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, hueShift, 0, 0), utils.adjustHSV(baseColor, hueShift, 0, -50), utils.adjustHSV(baseColor, hueShift, 0, 0))
         else :
           (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, hueShift, 0, 0), utils.adjustHSV(baseColor, hueShift, 0, -50), utils.adjustHSV(baseColor, hueShift, 0, 0))
@@ -177,7 +177,7 @@ class Note :
       #
       elif self.inactive :
 
-        if (self.keyColor == NOTE_WHITE_KEY) :
+        if (self.keyColor == keyColor_T.WHITE_KEY) :
           (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -70, 0), (240, 240, 240), utils.adjustHSV(baseColor, 0, -60, 0))
         else :
           (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -70, 0), (170, 170, 170), utils.adjustHSV(baseColor, 0, -60, 0))
@@ -186,21 +186,21 @@ class Note :
 
         # Upcoming note -------------------------------------------------------
         if (self.upcoming) :
-          if (self.keyColor == NOTE_WHITE_KEY) :
+          if (self.keyColor == keyColor_T.WHITE_KEY) :
             (rectColor, rectOutlineColor, pianoRollColor) = (baseColor, (255, 255, 255), baseColor)
           else :
             (rectColor, rectOutlineColor, pianoRollColor) = (baseColor, (0, 0, 0), baseColor)
 
         # Sustained note ------------------------------------------------------
         if (self.sustained) :
-          if (self.keyColor == NOTE_WHITE_KEY) :
+          if (self.keyColor == keyColor_T.WHITE_KEY) :
             (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, -60, 0), (160, 160, 160), utils.adjustHSV(baseColor, 0, -60, 0))
           else :
             (rectColor, rectOutlineColor, pianoRollColor) = (utils.adjustHSV(baseColor, 0, 0, -30), (80, 80, 80), utils.adjustHSV(baseColor, 0, 0, -30))
 
         # Normal note ---------------------------------------------------------
         else : 
-          if (self.keyColor == NOTE_WHITE_KEY) :
+          if (self.keyColor == keyColor_T.WHITE_KEY) :
             (rectColor, rectOutlineColor, pianoRollColor) = (baseColor, (10, 10, 10), baseColor)
           else :
             (rectColor, rectOutlineColor, pianoRollColor) = (baseColor, (80, 80, 80), baseColor)
@@ -286,14 +286,14 @@ class Note :
     Defines a pretty print formatting for the Note object.
     """
     
-    if (self.hand == NOTE_RIGHT_HAND)     : strHand = "right hand"
-    if (self.hand == NOTE_LEFT_HAND)      : strHand = "left hand"
-    if (self.hand == NOTE_UNDEFINED_HAND) : strHand = "undefined"
+    if (self.hand == hand_T.RIGHT)     : strHand = "right hand"
+    if (self.hand == hand_T.LEFT)      : strHand = "left hand"
+    if (self.hand == hand_T.UNDEFINED) : strHand = "undefined"
 
-    if (self.keyColor == keyColor.WHITE_NOTE) : strKeyColor = "white key"
-    if (self.keyColor == keyColor.BLACK_NOTE) : strKeyColor = "black key"
+    if (self.keyColor == keyColor_T.WHITE_KEY) : strKeyColor = "white key"
+    if (self.keyColor == keyColor_T.BLACK_KEY) : strKeyColor = "black key"
 
-    strFinger = "undefined" if (self.finger == NOTE_UNDEFINED_FINGER) else self.finger
+    strFinger = "undefined" if (self.finger == finger_T.UNDEFINED) else self.finger
 
     ret = f"""Note object properties
     - pitch:     {self.pitch}
@@ -312,27 +312,6 @@ class Note :
     
     return ret
 
-
-
-  # # ---------------------------------------------------------------------------
-  # # METHOD: Note._getFriendlyName()                                   [PRIVATE]
-  # # ---------------------------------------------------------------------------
-  # def _getFriendlyName(self) :
-  #   """
-  #   Converts a MIDI code (integer) to a human understandable note name.
-    
-  #   EXAMPLES
-  #   > Note(60)._getFriendlyName(60) = "C4"
-  #   """
-      
-  #   if ((self.pitch > 0) and (self.pitch < 128)) :
-  #     noteRefs = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"]
-  #     octave = (self.pitch // 12) - 1
-  #     noteIndex = self.pitch % 12
-
-  #     return f"{noteRefs[noteIndex]}{octave}"
-  #   else :
-  #     return ""
 
 
 # ---------------------------------------------------------------------------

@@ -22,7 +22,7 @@ import src.widgets.widget as widget
 
 # Standard libraries
 import pygame
-from shapely.geometry import Point, Polygon   # For point in polygon test
+from shapely.geometry import Point, Polygon     # For point in polygon test
 
 
 
@@ -110,17 +110,29 @@ class Keyboard(widget.Widget) :
       else :
         pygame.draw.polygon(self.top.screen, KEYBOARD_WHITE_NOTE_COLOR, self.polygons[i])
 
-    # Render the notes from Score and from the keyboard input
+    # Render the notes from the Score and from the keyboard input
     if (WIDGET_ID_SCORE in self.top.widgets) :
       self.litKeysPolygons = []
       self.activeNotesScore = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
       self._renderKeyPress(self.activeNotesScore)
       self._renderKeyPress(self.activeNotesMIDI)
 
-    # Change the mouse cursor appearance when hovering over the notes
+    # Render the mouse cursor
+    self._renderMouseArrow()
+    
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Keyboard._renderMouseArrow()                               [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _renderMouseArrow(self) :
+    """
+    Changes the mouse cursor appearance when hovering over the notes.
+    """
+
     (mouse_x, mouse_y) = pygame.mouse.get_pos()
   
-    # TODO: infer hitbox from geometry, delete magic values
+    # TODO: get rid of the magic values, derive these values directly from the geometry
     if ((10 <= mouse_x <= 1310) and (300 <= mouse_y <= 450)) :  
       
       # TODO: 'detectedNotes' must contain active notes only (no sustained note)
@@ -185,7 +197,7 @@ class Keyboard(widget.Widget) :
         
         # One note is hit by one hand
         noteObj1 = subList[0][1]; noteObj2 = subList[1][1]
-        if ((noteObj1.hand != NOTE_UNDEFINED_HAND) and (noteObj2.hand != NOTE_UNDEFINED_HAND)) :
+        if ((noteObj1.hand != note.hand_T.UNDEFINED) and (noteObj2.hand != note.hand_T.UNDEFINED)) :
           if (noteObj1.hand != noteObj2.hand) :
           
             # White note highlighting
@@ -219,13 +231,15 @@ class Keyboard(widget.Widget) :
     # --------------
     for noteObj in notes :
 
-      # White note highlighting
-      if (noteObj.keyColor == note.keyColor_T.WHITE_NOTE) :
-        self._singleHandWhiteKeyPress(self.top.screen, noteObj)
+      self._renderSimpleKeyPress(self.top.screen, noteObj)
 
-      # Black note highlighting
-      if (noteObj.keyColor == note.keyColor_T.BLACK_NOTE) :
-        self._singleHandBlackKeyPress(self.top.screen, noteObj)
+      # # White note highlighting
+      # if (noteObj.keyColor == note.keyColor_T.WHITE_KEY) :
+      #   self._singleHandWhiteKeyPress(self.top.screen, noteObj)
+
+      # # Black note highlighting
+      # if (noteObj.keyColor == note.keyColor_T.BLACK_KEY) :
+      #   self._singleHandBlackKeyPress(self.top.screen, noteObj)
       
       # ------------------------------
       # Note click detection materials
@@ -240,85 +254,159 @@ class Keyboard(widget.Widget) :
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD <_singleHandWhiteKeyPress> (private)
-  #
-  # Show a given white note on the keyboard as pressed.
-  # ---------------------------------------------------------------------------
-  def _singleHandWhiteKeyPress(self, screenInst, noteObj) :
 
-    # Build the little rectangle drawn on top of the note, to show that it is pressed
-    eps = 3
-    u = [x[0] for x in self.polygons[noteObj.pitch]]
-    x0 = min(u); y0 = self.y + self.c + self.e
-    h = KEYBOARD_WHITE_NOTE_HEIGHT - (self.c + self.e) - (2*eps)
-    w = KEYBOARD_WHITE_NOTE_WIDTH - (2*self.e) - (2*eps)
-    rect = [(x0 + eps, y0 + eps)]
-    rect += utils.Vector2D(0, h)
-    rect += utils.Vector2D(w, 0)
-    rect += utils.Vector2D(0, -h)
+
+  # ---------------------------------------------------------------------------
+  # METHOD Keyboard._renderSimpleKeyPress()                           [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _renderSimpleKeyPress(self, screenInst, noteObj) :
+    """
+    Renders a keypress on a black note.
+
+    Adapts the rendering if the note comes from the score or from the
+    input keyboard ('fromKeyboardInput' attribute)
+    """
+
+    if (noteObj.keyColor == note.keyColor_T.WHITE_KEY) :
+      eps = 3
+      u = [x[0] for x in self.polygons[noteObj.pitch]]
+      x0 = min(u); y0 = self.y + self.c + self.e
+      h = KEYBOARD_WHITE_NOTE_HEIGHT - (self.c + self.e) - (2*eps)
+      w = KEYBOARD_WHITE_NOTE_WIDTH - (2*self.e) - (2*eps)
+      rect = [(x0 + eps, y0 + eps)]
+      rect += utils.Vector2D(0, h)
+      rect += utils.Vector2D(w, 0)
+      rect += utils.Vector2D(0, -h)
+    elif (noteObj.keyColor == note.keyColor_T.BLACK_KEY) :
+      eps = 2
+      u = [x[0] for x in self.polygons[noteObj.pitch]]
+      x0 = min(u); y0 = self.y + 50
+      h = self.c - self.e - (2*eps) - 50
+      w = self.d - (2*self.e) - (2*eps)
+      rect = [(x0 + eps, y0 + eps)]
+      rect += utils.Vector2D(0, h)
+      rect += utils.Vector2D(w,0)
+      rect += utils.Vector2D(0,-h)
+    else :
+      pass
+
+    # Notes played from the MIDI keyboard have a different shape
+    if (noteObj.fromKeyboardInput) :
+      if (noteObj.keyColor == note.keyColor_T.WHITE_KEY) :
+        pygame.draw.circle(screenInst, (10, 10, 10), (x0 + 4 + w/2, y0 + 5 + h/2), 5)
+      elif (noteObj.keyColor == note.keyColor_T.BLACK_KEY) :
+        pygame.draw.circle(screenInst, (200, 200, 200), (x0 + 2 + w/2, y0 + 1 + h/2), 5)
+      else : 
+        pass
+
+    else :
+      (rectColor, rectOutlineColor, _) = noteObj.getNoteColor()
+      pygame.draw.polygon(screenInst, rectColor, rect)
+
+      # Draw the rectangle outline
+      for i in range(4) :
+        pygame.draw.line(screenInst, rectOutlineColor, (rect[i][0], rect[i][1]), (rect[(i+1) % 4][0], rect[(i+1) % 4][1]), 1)
+
+      # Show finger number
+      if (noteObj.finger != note.finger_T.UNDEFINED) :
+        
+        if (noteObj.keyColor == note.keyColor_T.WHITE_KEY) :
+          text.render(screenInst, str(noteObj.finger.value), (x0+7, y0+19), 2, KEYBOARD_FINGERSATZ_FONT_COLOR_BLACK_NOTE)
+        elif (noteObj.keyColor == note.keyColor_T.BLACK_KEY) :
+          text.render(screenInst, str(noteObj.finger.value), (x0+1, y0+19), 2, KEYBOARD_FINGERSATZ_FONT_COLOR_WHITE_NOTE)
+        else :
+          pass
+
+
+  
+  # # ---------------------------------------------------------------------------
+  # # METHOD Keyboard._singleHandWhiteKeyPress()                        [PRIVATE]
+  # # ---------------------------------------------------------------------------
+  # def _singleHandWhiteKeyPress(self, screenInst, noteObj) :
+  #   """
+  #   Renders a keypress on a white note.
+
+  #   Adapts the rendering if the note comes from the score or from the
+  #   input keyboard ('fromKeyboardInput' attribute)
+  #   """
+
+  #   # Build the little rectangle drawn on top of the note, to show that it is 
+  #   # pressed.
+  #   eps = 3
+  #   u = [x[0] for x in self.polygons[noteObj.pitch]]
+  #   x0 = min(u); y0 = self.y + self.c + self.e
+  #   h = KEYBOARD_WHITE_NOTE_HEIGHT - (self.c + self.e) - (2*eps)
+  #   w = KEYBOARD_WHITE_NOTE_WIDTH - (2*self.e) - (2*eps)
+  #   rect = [(x0 + eps, y0 + eps)]
+  #   rect += utils.Vector2D(0, h)
+  #   rect += utils.Vector2D(w, 0)
+  #   rect += utils.Vector2D(0, -h)
     
-    # Notes played from the MIDI keyboard have a different shape
-    if (noteObj.fromKeyboardInput) :
-      #pygame.draw.polygon(screenInst, self.sqWhiteNoteNeutralRGB, sq)
-      pygame.draw.circle(screenInst, (10, 10, 10), (x0 + 4 + w/2, y0 + 5 + h/2), 5)
+  #   # Notes played from the MIDI keyboard have a different shape
+  #   if (noteObj.fromKeyboardInput) :
+  #     #pygame.draw.polygon(screenInst, self.sqWhiteNoteNeutralRGB, sq)
+  #     pygame.draw.circle(screenInst, (10, 10, 10), (x0 + 4 + w/2, y0 + 5 + h/2), 5)
 
-    else :
-      (rectColor, rectOutlineColor, _) = noteObj.getNoteColor()
-      pygame.draw.polygon(screenInst, rectColor, rect)
+  #   else :
+  #     (rectColor, rectOutlineColor, _) = noteObj.getNoteColor()
+  #     pygame.draw.polygon(screenInst, rectColor, rect)
 
-      # Draw the rectangle outline
-      for i in range(4) :
-        pygame.draw.line(screenInst, rectOutlineColor, (rect[i][0], rect[i][1]), (rect[(i+1) % 4][0], rect[(i+1) % 4][1]), 1)
+  #     # Draw the rectangle outline
+  #     for i in range(4) :
+  #       pygame.draw.line(screenInst, rectOutlineColor, (rect[i][0], rect[i][1]), (rect[(i+1) % 4][0], rect[(i+1) % 4][1]), 1)
 
-      # Show finger number
-      if (noteObj.finger in [1,2,3,4,5]) :
-        # Font size 1
-        #text.render(screenInst, str(finger), (x0+10,y0+23), 1, self.fingerFontWhiteNoteRGB)
+  #     # Show finger number
+  #     if (noteObj.finger != note.finger_T.UNDEFINED) :
+  #       # Font size 1
+  #       #text.render(screenInst, str(finger), (x0+10,y0+23), 1, self.fingerFontWhiteNoteRGB)
         
-        # Font size 2
-        text.render(screenInst, str(noteObj.finger), (x0+7, y0+19), 2, KEYBOARD_FINGERSATZ_FONT_COLOR_BLACK_NOTE)
+  #       # Font size 2
+  #       text.render(screenInst, str(noteObj.finger.value), (x0+7, y0+19), 2, KEYBOARD_FINGERSATZ_FONT_COLOR_BLACK_NOTE)
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD <_singleHandBlackKeyPress> (private)
-  #
-  # Show a given black note on the keyboard as pressed.
-  # ---------------------------------------------------------------------------
-  def _singleHandBlackKeyPress(self, screenInst, noteObj) :
+  # # ---------------------------------------------------------------------------
+  # # METHOD Keyboard._singleHandBlackKeyPress()                        [PRIVATE]
+  # # ---------------------------------------------------------------------------
+  # def _singleHandBlackKeyPress(self, screenInst, noteObj) :
+  #   """
+  #   Renders a keypress on a black note.
 
-    # Build the rectangle that will be drawn on top of the note
-    eps = 2
-    u = [x[0] for x in self.polygons[noteObj.pitch]]
-    x0 = min(u); y0 = self.y + 50
-    h = self.c - self.e - (2*eps) - 50
-    w = self.d - (2*self.e) - (2*eps)
-    rect = [(x0 + eps, y0 + eps)]
-    rect += utils.Vector2D(0, h)
-    rect += utils.Vector2D(w,0)
-    rect += utils.Vector2D(0,-h)
+  #   Adapts the rendering if the note comes from the score or from the
+  #   input keyboard ('fromKeyboardInput' attribute)
+  #   """
 
-    # Notes played from the MIDI keyboard have a different shape
-    if (noteObj.fromKeyboardInput) :
-      #pygame.draw.polygon(screenInst, self.sqWhiteNoteNeutralRGB, sq)
-      pygame.draw.circle(screenInst, (200, 200, 200), (x0 + 2 + w/2, y0 + 1 + h/2), 5)
+  #   # Build the rectangle that will be drawn on top of the note
+  #   eps = 2
+  #   u = [x[0] for x in self.polygons[noteObj.pitch]]
+  #   x0 = min(u); y0 = self.y + 50
+  #   h = self.c - self.e - (2*eps) - 50
+  #   w = self.d - (2*self.e) - (2*eps)
+  #   rect = [(x0 + eps, y0 + eps)]
+  #   rect += utils.Vector2D(0, h)
+  #   rect += utils.Vector2D(w,0)
+  #   rect += utils.Vector2D(0,-h)
 
-    else :
-      (rectColor, rectOutlineColor, _) = noteObj.getNoteColor()
-      pygame.draw.polygon(screenInst, rectColor, rect)
+  #   # Notes played from the MIDI keyboard have a different shape
+  #   if (noteObj.fromKeyboardInput) :
+  #     #pygame.draw.polygon(screenInst, self.sqWhiteNoteNeutralRGB, sq)
+  #     pygame.draw.circle(screenInst, (200, 200, 200), (x0 + 2 + w/2, y0 + 1 + h/2), 5)
 
-      # Draw the rectangle outline
-      for i in range(4) :
-        pygame.draw.line(screenInst, rectOutlineColor, (rect[i][0], rect[i][1]), (rect[(i+1) % 4][0], rect[(i+1) % 4][1]), 1)
+  #   else :
+  #     (rectColor, rectOutlineColor, _) = noteObj.getNoteColor()
+  #     pygame.draw.polygon(screenInst, rectColor, rect)
 
-      # Show finger number
-      if (noteObj.finger in [1,2,3,4,5]) :
-        # Font size 1
-        #text.render(screenInst, str(noteObj.finger), (x0+3, y0+23), 1, self.fingerFontBlackNoteRGB)
+  #     # Draw the rectangle outline
+  #     for i in range(4) :
+  #       pygame.draw.line(screenInst, rectOutlineColor, (rect[i][0], rect[i][1]), (rect[(i+1) % 4][0], rect[(i+1) % 4][1]), 1)
+
+  #     # Show finger number
+  #     if (noteObj.finger != note.finger_T.UNDEFINED) :
+  #       # Font size 1
+  #       #text.render(screenInst, str(noteObj.finger), (x0+3, y0+23), 1, self.fingerFontBlackNoteRGB)
         
-        # Font size 2
-        text.render(screenInst, str(noteObj.finger), (x0+1, y0+19), 2, KEYBOARD_FINGERSATZ_FONT_COLOR_WHITE_NOTE)
+  #       # Font size 2
+  #       text.render(screenInst, str(noteObj.finger), (x0+1, y0+19), 2, KEYBOARD_FINGERSATZ_FONT_COLOR_WHITE_NOTE)
 
 
 

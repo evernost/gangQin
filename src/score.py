@@ -671,10 +671,12 @@ class Score(widget.Widget) :
       if (N.finger != 0) :
         annotatedNoteCount += 1
 
-      if (N.hand == NOTE_LEFT_HAND) :
+      if (N.hand == note.hand_T.LEFT) :
         self.noteOnTimecodes["L"].append(N.startTime)
-      elif (N.hand == NOTE_RIGHT_HAND) :
+      elif (N.hand == note.hand_T.RIGHT) :
         self.noteOnTimecodes["R"].append(N.startTime)
+      else :
+        pass
 
       self.noteOnTimecodes["LR_full"].append(N.startTime)
 
@@ -1527,12 +1529,12 @@ class Score(widget.Widget) :
           self.teacherNotes.append(N)
         
         elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
-          if (N.hand != NOTE_LEFT_HAND) : 
+          if (N.hand != note.hand_T.LEFT) : 
             N.inactive = True
             self.teacherNotes.append(N)
 
         elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
-          if (N.hand != NOTE_RIGHT_HAND) :
+          if (N.hand != note.hand_T.RIGHT) :
             N.inactive = True
             self.teacherNotes.append(N)
 
@@ -1600,12 +1602,12 @@ class Score(widget.Widget) :
           self.teacherNotes.append(N)
         
         elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
-          if (N.hand != NOTE_LEFT_HAND) : 
+          if (N.hand != note.hand_T.LEFT) : 
             N.inactive = True
             self.teacherNotes.append(N)
 
         elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
-          if (N.hand != NOTE_RIGHT_HAND) :
+          if (N.hand != note.hand_T.RIGHT) :
             N.inactive = True
             self.teacherNotes.append(N)
 
@@ -1837,11 +1839,13 @@ class Score(widget.Widget) :
     Assigning a note from the left to the right hand has more impact than just 
     editing the 'hand' property of the note object. 
     Among others, the list of cursors must be edited too.
+
+    TODO: THIS FUNCTION IS NEVER CALLED!!!
     """
     
-    if (noteObj.hand == NOTE_LEFT_HAND) :
+    if (noteObj.hand == note.hand_T.LEFT) :
       
-      noteObj.hand = NOTE_RIGHT_HAND
+      noteObj.hand = note.hand_T.RIGHT
 
       if (noteObj.startTime in self.noteOnTimecodes["L"]) :
         
@@ -1858,9 +1862,9 @@ class Score(widget.Widget) :
         print("The timecode of the note you are trying to remove is not in the list of timecodes!")
         exit()
 
-    elif (noteObj.hand == NOTE_RIGHT_HAND) :
+    elif (noteObj.hand == note.hand_T.RIGHT) :
       
-      noteObj.hand = NOTE_LEFT_HAND
+      noteObj.hand = note.hand_T.LEFT
 
       if (noteObj.startTime in self.noteOnTimecodes["R"]) :
         

@@ -264,9 +264,8 @@ class FingerSelector(widget.Widget) :
     if ((index < 0) or (index >= len(self.activeNotes))) :
       return
       
-    # Reset the previous highlighted note
-    if (self.highlightedNote != None) :
-      self.highlightedNote.highlight = False
+    # Reset the attributes of the previous highlighted note
+    self.highlightReset()
   
     # Set the highlight on the new note
     self.highlightedIndex = index
@@ -283,11 +282,11 @@ class FingerSelector(widget.Widget) :
   # ---------------------------------------------------------------------------
   def highlightReset(self) -> None :
     """
-    Turns off the selector Widget
     Sets the 'highlight' attribute of the note to False.
     """
 
-    print("Function is TODO.")
+    if (self.highlightedNote != None) :
+      self.highlightedNote.highlight = False
 
 
 
@@ -314,8 +313,11 @@ class FingerSelector(widget.Widget) :
     """
 
     if self.highlightedNote :
-      if (hand == note.hand.UNDEFINED) :
+      if (hand == note.hand_T.UNDEFINED) :
         print("pouet")
+      else :
+        self.highlightedNote.hand = hand
+        self.highlightedNote.finger = finger
 
     else :
       self._getActiveNotes()
@@ -340,7 +342,7 @@ class FingerSelector(widget.Widget) :
     """
 
     if not(self.visible) :
-      return (False, (note.hand.UNDEFINED, note.finger.UNDEFINED))
+      return (False, (note.hand_T.UNDEFINED, note.finger_T.UNDEFINED))
 
     (locX, locY) = self.loc
 
@@ -359,34 +361,34 @@ class FingerSelector(widget.Widget) :
       # If the click is in this current hit box
       if ((clickX >= xMin) and (clickX <= xMax) and (clickY >= yMin) and (clickY <= yMax)) :
         (finger, hand) = self._selectorIndexToFH(i)
-        return (True, (finger,hand))
+        return (True, (finger, hand))
     
     # Nothing was hit
-    return (False, (note.hand.UNDEFINED, note.finger.UNDEFINED))
+    return (False, (note.hand_T.UNDEFINED, note.finger_T.UNDEFINED))
   
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: FingerSelector._selectorIndexToFH()                        [PRIVATE]
+  # METHOD: FingerSelector._selectorIndexToFH()                       [PRIVATE]
   # ---------------------------------------------------------------------------
   def _selectorIndexToFH(self, index) :
     """
-    Returns the (hand, finger) of the current selection on the finger selector.
+    Returns the (hand, finger) value the finger selector is currently showing.
     """
     
     if (index <= 4) :
-      return (note.hand.LEFT, note.finger(5 - index))
+      return (note.hand_T.LEFT, note.finger_T(5 - index))
 
     if (index == 5) :
-      return (note.hand.LEFT, note.finger.UNDEFINED)
+      return (note.hand_T.LEFT, note.finger_T.UNDEFINED)
     
     if (index == 6) :
-      return (note.hand.RIGHT, note.finger.UNDEFINED)
+      return (note.hand_T.RIGHT, note.finger_T.UNDEFINED)
     
     if (index >= 7) :
-      return (note.hand.RIGHT, note.finger(index - 6))
+      return (note.hand_T.RIGHT, note.finger_T(index - 6))
     
-    return (note.hand.UNDEFINED, note.finger.UNDEFINED)
+    return (note.hand_T.UNDEFINED, note.finger_T.UNDEFINED)
   
 
 
@@ -395,22 +397,22 @@ class FingerSelector(widget.Widget) :
   # ---------------------------------------------------------------------------
   def _selectorSet(self, hand, finger) :
     """
-    Description is TODO.
+    Sets the selector to the position 
 
     NOTE: it only changes the state of the selector. It doesn't affect the 
     state of the highlighted note.
     For that, use 'FingerSelector.highlightBy...()' instead.
     """
     
-    if (hand == note.hand.LEFT) :
+    if (hand == note.hand_T.LEFT) :
       self.sel = 5
-      if (finger.value in [1,2,3,4,5]) :
-        self.sel = 5 - finger
+      if (finger != note.finger_T.UNDEFINED) :
+        self.sel = 5 - finger.value
     
-    elif (hand == note.hand.RIGHT) :
+    elif (hand == note.hand_T.RIGHT) :
       self.sel = 6
-      if (finger.value in [1,2,3,4,5]) :
-        self.sel = finger + 6
+      if (finger.value != note.finger_T.UNDEFINED) :
+        self.sel = finger.value + 6
 
     else :
       pass
@@ -427,25 +429,24 @@ class FingerSelector(widget.Widget) :
     This function is inherited from the Widget class.
     """
     
-    if (type == pygame.MOUSEBUTTONDOWN) :
+    if (event.type == pygame.MOUSEBUTTONDOWN) :
       if (event.button == MOUSE_LEFT_CLICK) :
-        
+
         # Click on an active note
         (isNoteHit, noteObj) = self.top.widgets[WIDGET_ID_KEYBOARD].clickHitTest(pygame.mouse.get_pos())
         if isNoteHit :
           self.highlightByObject(noteObj)
         
         # Click on the selector
-        (isHit, (finger, hand)) = self._selectorHitTest(pygame.mouse.get_pos())
+        (isHit, (hand, finger)) = self._selectorHitTest(pygame.mouse.get_pos())
         if isHit :
           self._selectorSet(hand, finger)
           self.assign(hand, finger)
 
-      elif (event.button == MOUSE_SCROLL_UP) :
-        pass
-
-      elif (event.button == MOUSE_SCROLL_DOWN) :
-        pass
+    elif (event.type == pygame.MOUSEWHEEL) :
+      self.highlightReset()
+      self.visible = False
+      
 
 
 
@@ -484,13 +485,6 @@ class FingerSelector(widget.Widget) :
       elif (modifier == "shift") :
         if (key == pygame.K_TAB) :
           self._highlightPrevious()
-
-
-
-
-
-
-
 
 
 

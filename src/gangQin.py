@@ -24,11 +24,11 @@ import pygame
 import src.widgets.fileSelectionGUI as fileSelectionGUI
 import src.widgets.fingerSelector as fingerSelector
 import src.widgets.keyboard as keyboard
-import src.widgets.notify as notify
 import src.widgets.pianoRoll as pianoRoll
 import src.widgets.trackSelectionGUI as trackSelectionGUI
 import src.widgets.staffScope as staffScope
 import src.widgets.sequencer as sequencer
+import src.widgets.stats as stats
 
 # Utilities
 import arbiter
@@ -109,7 +109,8 @@ class GangQin :
       WIDGET_ID_STAFFSCOPE      : staffScope.StaffScope(self, loc = WIDGET_LOC_UNDEFINED),
       WIDGET_ID_FINGERSELECTOR  : fingerSelector.FingerSelector(self, loc = (490, 470)),
       WIDGET_ID_ARBITER         : arbiter.Arbiter(self),
-      WIDGET_ID_SEQUENCER       : sequencer.Sequencer(self)
+      WIDGET_ID_SEQUENCER       : sequencer.Sequencer(self),
+      WIDGET_ID_STATS           : stats.Stats(self)
       #metronome.Metronome(self),
       #stats.Stats(self),
       #notify.Notify(self)

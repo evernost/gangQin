@@ -15,10 +15,10 @@
 # EXTERNALS
 # =============================================================================
 from src.commons import *
+import src.widgets.widget as widget
 import src.note as note
 import src.text as text
 import src.utils as utils
-import src.widgets.widget as widget
 
 # Standard libraries
 import pygame

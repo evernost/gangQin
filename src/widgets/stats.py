@@ -16,7 +16,9 @@
 # =============================================================================
 # Project specific constants
 from commons import *
+import src.widgets.widget as widget
 
+# Standard libraries
 import datetime
 import json
 import os
@@ -36,7 +38,7 @@ IDLE_TIME_THRESHOLD_SEC = 20          # After this amount of time without any us
 # =============================================================================
 # CLASS DEFINITION
 # =============================================================================
-class Stats :
+class Stats(widget.Widget) :
 
   """
   STATS Object
@@ -50,12 +52,18 @@ class Stats :
 
   All information are stored in a human readable log file in ./logs
 
-  NOTE: all information is stored LOCALLY for the sole purpose of the user ONLY. 
+  NOTE: all information is stored locally for the sole purpose of the user ONLY. 
   Nothing is sent to a server for telemetry mumbo jumbo or any "improving user experience"
   kind of crap.
   """
 
-  def __init__(self) :
+  def __init__(self, top) :
+    
+    # Call the Widget init method
+    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
+   
+    self.name = "stats"
+
     self.logName = ""
     self.logFile = ""
     

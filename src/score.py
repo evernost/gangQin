@@ -16,8 +16,8 @@
 # =============================================================================
 # Project libraries
 from src.commons import *
-import src.note as note
 import src.widgets.widget as widget
+import src.note as note
 import src.text as text
 
 # Standard libraries

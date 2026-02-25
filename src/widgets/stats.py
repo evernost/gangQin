@@ -452,7 +452,8 @@ class Stats(widget.Widget) :
       exportDict["sessionCount"]            = self.sessionCount
       exportDict["sessionLog"]              = self.sessionLog + [self.generateSessionLog()]
       exportDict["sessionAvgPracticeTime"]  = self.sessionAvgPracticeTime
-      exportDict["totalPracticeTimeSec"]    = self.totalPracticeTimeSec + duration
+      exportDict["totalPracticeTime_sec"]   = self.totalPracticeTimeSec + duration
+      exportDict["totalPracticeTime_H:M:S"] = self.totalPracticeTimeSec + duration    # TODO!
       exportDict["cursorHistogram"]         = self.cursorHistogram
       exportDict["cursorWrongNoteCount"]    = self.cursorWrongNoteCount
       exportDict["comboHighestSession"]     = self.comboHighestSession

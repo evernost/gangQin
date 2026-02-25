@@ -148,16 +148,19 @@ class GangQin :
       trackSel.load(selectedFile)
       midiTracks = trackSel.show()
       self.widgets[WIDGET_ID_SCORE].loadMidiFile(selectedFile, midiTracks)
+      self.widgets[WIDGET_ID_STATS].load(selectedFile)
     elif selectedFile.endswith(".pr") :
       self.songType = "pr"
       self.widgets[WIDGET_ID_SCORE].loadPrFile(selectedFile)
       self.widgets[WIDGET_ID_STAFFSCOPE].load(selectedFile)
+      self.widgets[WIDGET_ID_STATS].load(selectedFile)
     elif selectedFile.endswith(".gq3") :
       self.songType = "gq3"
       self.widgets[WIDGET_ID_SCORE].loadGq3File(selectedFile)
       self.widgets[WIDGET_ID_STAFFSCOPE].load(selectedFile)
+      self.widgets[WIDGET_ID_STATS].load(selectedFile)
     else :
-      print("[ERROR] Internal error (unsupported file extension)")
+      print("[ERROR] Internal error (unsupported file extension)")    
 
     # Update the app properties
     pygame.display.set_caption(f"gangQin player - v{REV_MAJOR}.{REV_MINOR} [{REV_TYPE}] ({REV_MONTH} {REV_YEAR}) - Song: {rootNameExt}")

@@ -15,7 +15,7 @@
 # EXTERNALS
 # =============================================================================
 # Project specific constants
-from commons import *
+from src.commons import *
 import src.widgets.widget as widget
 
 # Standard libraries
@@ -77,7 +77,8 @@ class Stats(widget.Widget) :
     self.sessionStopTime = 0
     self.sessionAvgPracticeTime = 0
 
-    self.totalPracticeTimeSec = 0
+    self.totalPracticeTime_sec = 0
+    self.totalPracticeTime_HMS = 0
 
     self.comboCount = 0
     self.comboDrop = 0
@@ -118,19 +119,21 @@ class Stats(widget.Widget) :
   def load(self, songFile) :
     """
     Loads the statistics associated with the input song 'songFile'.
-    The statistics are read from a .log file whose name is automatically 
-    derived from 'songFile'.
 
-    If no .log exists, a new one will be created.
+    'songFile' must be the full path to the song file.
+    The name of the log file is automatically derived from it.
+    EXAMPLE: songFile = './logs/Beethoven_Fuer_Elise.gq3'
+
+    If the .log doesn't exist, a new one will be created.
     """
 
     # Build the name for the log file 
     # File is stored in './logs'
-    (_, rootNameExt) = os.path.split(songFile)
-    (rootName, _) = os.path.splitext(rootNameExt)
-    self.songName   = rootName
-    self.songFile   = rootNameExt
-    self.logName    = rootName + ".log"         # Example: "my_song.log"
+    (_, songNameWithExt) = os.path.split(songFile)
+    (songName, _) = os.path.splitext(songNameWithExt)
+    self.songName   = songName
+    self.songFile   = songNameWithExt
+    self.logName    = songName + ".log"         # Example: "my_song.log"
     self.logFile    = f"./logs/{self.logName}"  # Example: "./logs/my_song.log"
     
     # Log file exists: load it
@@ -156,19 +159,17 @@ class Stats(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Stats._safePopulate(json Object)
   # ---------------------------------------------------------------------------
-  def _safePopulate(self, data = {}) :
+  def _safePopulate(self, data = {}) -> None :
     """
-    Populates the fields of the object from an imported json data structure.
-    If none is given, it is initialised with default values.
+    Populates the stats from a json object.
+    If none is given, it initialises with default values.
 
-    The function adds safety measures to handle missing fields and give them 
-    a default value.
-    The feature is handy to maintain compatibility accross different versions
-    of gangQin, since the stat fields are very likely to evolve.
+    The function handles possible missing fields, since the stats' content may
+    evolve a lot throughout the revisions.
     """
     
     # Define a 'fallback' dictionary, in case some fields do not exist.
-    attributesRef = {
+    fieldsRef = {
       "logName"                 : self.logName,
       "logFile"                 : self.logFile,
       "scoreLength"             : 0,
@@ -191,36 +192,33 @@ class Stats(widget.Widget) :
       "tickInterval_ms"         : 0
     }
 
-    # Try to load each field
-    for attr in attributesRef :
-      if attr in data :
-        attributesRef[attr] = data[attr]
-
+    for field in fieldsRef :
+      if field in data :
+        fieldsRef[field] = data[field]
       else :
-        print(f"[INFO] Stats: field '{attr}' is missing in the log file and will get a default value.")
-
+        print(f"[INFO] Stats._safePopulate(): field '{field}' is doesn't exist in this log file and will get a default value.")
 
     # There might be a cleaner version to do that.
-    self.logName                = attributesRef["logName"]
-    self.logFile                = attributesRef["logFile"]
-    self.scoreLength            = attributesRef["scoreLength"]        
-    self.sessionCount           = attributesRef["sessionCount"]
-    self.sessionLog             = attributesRef["sessionLog"]
-    self.sessionStartTime       = attributesRef["sessionStartTime"]
-    self.sessionStopTime        = attributesRef["sessionStopTime"]
-    self.sessionAvgPracticeTime = attributesRef["sessionAvgPracticeTime"]
-    self.totalPracticeTimeSec   = attributesRef["totalPracticeTimeSec"]
-    self.comboCount             = attributesRef["comboCount"]
-    self.comboDrop              = attributesRef["comboDrop"]
-    self.comboFell              = attributesRef["comboFell"]
-    self.comboHighestSession    = attributesRef["comboHighestSession"]
-    self.comboHighestAllTime    = attributesRef["comboHighestAllTime"]
-    self.cursorHistogram        = attributesRef["cursorHistogram"]
-    self.cursorWrongNoteCount   = attributesRef["cursorWrongNoteCount"]
-    self.cursorIdleTimer        = attributesRef["cursorIdleTimer"]
-    self.playedNotes            = attributesRef["playedNotes"]
-    self.playedNotesValid       = attributesRef["playedNotesValid"]
-    self.tickInterval_ms        = attributesRef["tickInterval_ms"]
+    self.logName                = fieldsRef["logName"]
+    self.logFile                = fieldsRef["logFile"]
+    self.scoreLength            = fieldsRef["scoreLength"]        
+    self.sessionCount           = fieldsRef["sessionCount"]
+    self.sessionLog             = fieldsRef["sessionLog"]
+    #self.sessionStartTime       = fieldsRef["sessionStartTime"]
+    #self.sessionStopTime        = fieldsRef["sessionStopTime"]
+    self.sessionAvgPracticeTime = fieldsRef["sessionAvgPracticeTime"]
+    self.totalPracticeTime_sec  = fieldsRef["totalPracticeTime_sec"]
+    self.comboCount             = fieldsRef["comboCount"]
+    self.comboDrop              = fieldsRef["comboDrop"]
+    self.comboFell              = fieldsRef["comboFell"]
+    self.comboHighestSession    = fieldsRef["comboHighestSession"]
+    self.comboHighestAllTime    = fieldsRef["comboHighestAllTime"]
+    self.cursorHistogram        = fieldsRef["cursorHistogram"]
+    self.cursorWrongNoteCount   = fieldsRef["cursorWrongNoteCount"]
+    self.cursorIdleTimer        = fieldsRef["cursorIdleTimer"]
+    self.playedNotes            = fieldsRef["playedNotes"]
+    self.playedNotesValid       = fieldsRef["playedNotesValid"]
+    self.tickInterval_ms        = fieldsRef["tickInterval_ms"]
 
 
 

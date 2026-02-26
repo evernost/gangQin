@@ -618,11 +618,11 @@ class Score(widget.Widget) :
     # For statistics
     startTime = time.time()
     
-    # Open the file as a JSON
+    # Open the file as a JSON (because that's what it is)
     with open(gq3File, "r") as fileHandler :
       importDict = json.load(fileHandler)
 
-    # Fallback dictionary in case some fields do not exist.
+    # Fallback dictionary in case some fields don't exist.
     safeDict = {
       "appVersion"                : "v0.0",
       "cursor"                    : 0,

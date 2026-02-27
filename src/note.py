@@ -32,7 +32,7 @@ class keyColor_T(Enum) :
 
 class hand_T(Enum) :
   UNDEFINED = -1
-  RIGHT     = 0
+  RIGHT     = 0     # Because it is common for MIDI editors to use index 0 for the right hand.
   LEFT      = 1
 
 class finger_T(Enum) :

@@ -347,8 +347,8 @@ class Score(widget.Widget) :
       
       # The track number has been paired with a hand 
       if (midiTracks[i] != "") :
-        if (midiTracks[i] == "R") : trackID = note.hand.RIGHT
-        if (midiTracks[i] == "L") : trackID = note.hand.LEFT
+        if (midiTracks[i] == "R") : trackID = note.hand_T.RIGHT
+        if (midiTracks[i] == "L") : trackID = note.hand_T.LEFT
       
         # Loop on the notes within a track
         currTime = 0
@@ -379,8 +379,8 @@ class Score(widget.Widget) :
 
             # Register this timecode
             self.noteOnTimecodes["LR_full"].append(currTime)
-            if (trackID == SCORE_LEFT_HAND_TRACK_ID)  : self.noteOnTimecodes["L"].append(currTime)
-            if (trackID == SCORE_RIGHT_HAND_TRACK_ID) : self.noteOnTimecodes["R"].append(currTime)
+            if (trackID == note.hand_T.LEFT)  : self.noteOnTimecodes["L"].append(currTime)
+            if (trackID == note.hand_T.RIGHT) : self.noteOnTimecodes["R"].append(currTime)
             
           # MIDI EVENT: key release
           elif ((msg.type == "note_off") or ((msg.type == "note_on") and (msg.velocity == 0))) : 
@@ -2004,23 +2004,24 @@ class NoteTracker :
 
   The MIDI file format has an intrisic flaw that causes ambiguity on the 
   exact moment a note stops if it is pressed multiple times before being 
-  released. Although you cannot press a note twice, it makes sense in 
-  musical notation, but it translates poorly to a MIDI file. 
+  released. Although you cannot physically press a note twice, it makes sense 
+  in the context of musical notation. A MIDI file fails to transcribe this
+  in a way that makes sense; it's purely note ON/note OFF.
   
   The NoteTracker takes this into account and gives the possibility to 
-  restore the proper way to play based on the information in the MIDI file.
+  restore the proper way to play based on the information in the MIDI file
+  when needed.
 
   Attributes:
   - active: list of note objects that are/have been pressed with 
     an overlap condition
-    Most of the time, there is 1 note in the array per pitch and track.
+    Most of the time, there is 1 element (1 note) in the array per pitch and track.
     For overlapping notes (pressed again without prior release), there can be 2.
-    So far, no MIDI file made this counter go higher than 2.
 
   In case of overlapping notes, it is not possible to tell what note
-  in the overlapping ones is targeted by the note off event.
+  in the overlapping ones is targeted by the 'note OFF' event.
   The strategy for overlapping notes is the following:
-  - a note off message closes the latest note that was pressed
+  - a 'note OFF' message closes the latest note that was pressed
   - the first note to be pressed will be the last one to be closed.
 
   The strategy assumes that some MIDI files could contain 3 or more overlapping
@@ -2048,39 +2049,39 @@ class NoteTracker :
     noteObj.start(timecode)
 
     # Register the keypress
-    self.active[noteObj.hand][noteObj.pitch].append(noteObj)
+    self.active[noteObj.hand.value][noteObj.pitch].append(noteObj)
 
     
 
-  def keyRelease(self, pitch: int, channel: int, timecode: int) -> None :
+  def keyRelease(self, pitch: int, channel: note.hand_T, timecode: int) -> None :
     """
     Declares a note ending in the score.
     """
 
-    if (len(self.active[channel][pitch]) == 0) :
+    if (len(self.active[channel.value][pitch]) == 0) :
       print(f"[WARNING] NoteTracker.keyRelease(): read a 'keyRelease' with no matching 'keyPress'. Note will be ignored (timecode = {timecode})")
     
     else :
       
       # One note is active
-      if (len(self.active[channel][pitch]) == 1) :  
-        self.active[channel][pitch][0].stop(timecode)
-        self.active[channel][pitch] = []
+      if (len(self.active[channel.value][pitch]) == 1) :  
+        self.active[channel.value][pitch][0].stop(timecode)
+        self.active[channel.value][pitch] = []
       
       # More than one note are active
       # Close the latest notes first
       else :
         
-        nNotes = len(self.active[channel][pitch])
+        nNotes = len(self.active[channel.value][pitch])
         if (nNotes > 2) :
           print("[WARNING] NoteTracker: found an unusual number of overlapping keypresses (odd MIDI file)")
 
         # Close the notes    
         for i in range(1, nNotes) :
-          self.active[channel][pitch][i].stop(timecode)
+          self.active[channel.value][pitch][i].stop(timecode)
       
         # Remove them
-        self.active[channel][pitch][1:] = []
+        self.active[channel.value][pitch][1:] = []
 
 
   def checkOnExit(self) -> None :

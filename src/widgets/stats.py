@@ -66,6 +66,7 @@ class Stats(widget.Widget) :
 
     self.logName = ""
     self.logFile = ""
+    self.mdFile = ""                # Path to the report file (Markdown)
     
     self.scoreLength = 0
 
@@ -78,7 +79,7 @@ class Stats(widget.Widget) :
     self.sessionAvgPracticeTime = 0
 
     self.totalPracticeTime_sec = 0
-    self.totalPracticeTime_HMS = 0
+    self.totalPracticeTime_hms = 0
 
     self.comboCount = 0
     self.comboDrop = 0
@@ -178,7 +179,7 @@ class Stats(widget.Widget) :
       "sessionStartTime"        : 0,
       "sessionStopTime"         : 0,
       "sessionAvgPracticeTime"  : 0,
-      "totalPracticeTimeSec"    : 0,
+      "totalPracticeTime_sec"    : 0,
       "comboCount"              : 0,
       "comboDrop"               : 0,
       "comboFell"               : False,
@@ -236,7 +237,7 @@ class Stats(widget.Widget) :
 
     self.sessionCount += 1
     if (self.sessionCount > 1) :
-      self.sessionAvgPracticeTime = round(self.totalPracticeTimeSec/(60*self.sessionCount))
+      self.sessionAvgPracticeTime = round(self.totalPracticeTime_sec/(60*self.sessionCount))
     else :
       self.sessionAvgPracticeTime = 0.0
 
@@ -253,7 +254,7 @@ class Stats(widget.Widget) :
 
     print("")
     print(f"[INFO] Get ready for session #{self.sessionCount}!")
-    print(f"[INFO] Total practice time so far: {round(self.totalPracticeTimeSec/60)} minutes")
+    print(f"[INFO] Total practice time so far: {round(self.totalPracticeTime_sec/60)} minutes")
     if (self.sessionAvgPracticeTime > 0.0) :
       print(f"[INFO] Average session time: {self.sessionAvgPracticeTime} minutes")
 
@@ -461,11 +462,28 @@ class Stats(widget.Widget) :
       
       with open(self.logFile, "w") as jsonFile :
         json.dump(exportDict, jsonFile, indent = 2)
-
       print(f"[INFO] Session stats saved to '{self.logFile}'")
+
+      self._saveMdFile()
     
     else :
       print(f"[INFO] Stats for this session won't be saved (shorter than {MINIMAL_SESSION_DURATION_SEC}s) to keep logs meaningful.")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats._saveMdFile()                                        [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _saveMdFile(self) :
+    """
+    Saves the report (markdown file)
+    """
+
+    with open("notes.md", "w", encoding="utf-8") as fileHandler :
+      fileHandler.write("# Notes\n\n")
+      fileHandler.write("## Tasks\n")
+      fileHandler.write("- [x] Write code\n")
+      fileHandler.write("- [ ] Test program\n")
 
 
 

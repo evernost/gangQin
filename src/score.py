@@ -660,8 +660,8 @@ class Score(widget.Widget) :
     self.noteList = []
     for (i, noteAsDict) in enumerate(safeDict["noteList"]) :
       N = note.Note(noteAsDict["pitch"])
-      N.hand      = noteAsDict["hand"]
-      N.finger    = noteAsDict["finger"]
+      N.hand      = note.hand_T(noteAsDict["hand"])
+      N.finger    = note.finger_T(noteAsDict["finger"])
       N.voice     = noteAsDict["voice"]
       N.startTime = safeDict["timecodeList"][i]["startTime"]
       N.stopTime  = safeDict["timecodeList"][i]["stopTime"]

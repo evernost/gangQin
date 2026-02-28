@@ -133,7 +133,7 @@ class Database :
         
       # Nothing exists: they need to be created
       else :
-        print("[INFO] Creating new database.")
+        print("[INFO] database._loadJSON(): creating new database.")
 
 
 

@@ -264,7 +264,7 @@ class GangQin :
       self.widgets[WIDGET_ID_PIANOROLL].onExternalMidiEvent(midiMessage)
 
     if (WIDGET_ID_STATS in self.widgets) :
-      self.widgets[WIDGET_ID_STATS].userActivity()
+      self.widgets[WIDGET_ID_STATS].onUserActivity()
 
 
 
@@ -392,7 +392,7 @@ class GangQin :
       self.midiPort.close()
 
     if (WIDGET_ID_STATS in self.widgets) :
-      self.widgets[WIDGET_ID_STATS].logUserActivity()
+      self.widgets[WIDGET_ID_STATS].onUserActivity()
       self.widgets[WIDGET_ID_STATS].save()
     
     if (WIDGET_ID_SCORE in self.widgets) :

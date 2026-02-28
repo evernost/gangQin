@@ -256,15 +256,15 @@ class Stats(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats.logUserActivity()
+  # METHOD Stats.onUserActivity()
   # ---------------------------------------------------------------------------
-  def logUserActivity(self) :
+  def onUserActivity(self) :
     """
     Resets the idle timer (inactivity detection) whenever the user shows he's 
     still alive.
     This function is typically called every time there is MIDI activity.
     """
-    
+  
     idleTime = round(time.perf_counter() - self.lastActivity)
     if (idleTime > IDLE_TIME_THRESHOLD_SEC) :
       self.totalInactivity_sec += idleTime
@@ -482,7 +482,7 @@ class Stats(widget.Widget) :
       fileHandler.write(f"- Sessions: {self.sessionCount}\n")
       fileHandler.write(f"- Average practice time: -\n")
       fileHandler.write(f"- Fingered notes: {self.top.widgets[WIDGET_ID_SCORE].fingeredNoteCount}\n")
-      fileHandler.write(f"- Date of first practice: -\n")
+      fileHandler.write(f"- First practiced: -\n")
       fileHandler.write(f"## Session history\n")
       fileHandler.write(f"| Session | Date | Time | Duration |\n")
       fileHandler.write(f"|---------|------|------|----------|\n")

@@ -483,7 +483,7 @@ class Stats(widget.Widget) :
     """
 
     with open(self.mdFile, "w", encoding = "utf-8") as fileHandler :
-      fileHandler.write(f"# _{self.songName.replace("_", " ")}_\n\n")
+      fileHandler.write(f"# _{self.songName.replace('_', ' ')}_\n\n")
       fileHandler.write(f"## In a nutshell\n")
       fileHandler.write(f"- Score length: -\n")
       fileHandler.write(f"- Sessions: -\n")

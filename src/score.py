@@ -88,6 +88,9 @@ class Score(widget.Widget) :
     self.bookmarks    = []
     self.cursorMax    = 0
     self.length       = 0
+    
+    self.noteCount          = 0
+    self.fingeredNoteCount  = 0
 
     # Internal representation
     self.noteList = []
@@ -435,6 +438,9 @@ class Score(widget.Widget) :
     self.length = len(self.noteOnTimecodes["LR"])
     self.cursorMax = self.length-1
     
+    self.noteCount          = noteCount
+    self.fingeredNoteCount  = 0
+    
     print(f"- score length: {self.length} steps")
 
     stopTime = time.time()
@@ -524,7 +530,7 @@ class Score(widget.Widget) :
     #self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
     noteTracker = NoteTracker()
     noteListTmp = []
-    masteredNoteCount = 0
+    fingeredNoteCount = 0
     for noteAsDict in importDict["pianoRoll"] :
 
       # Create and edit the note             
@@ -538,7 +544,7 @@ class Score(widget.Widget) :
       N.dbIndex   = -1
       N.id        = noteCount
       
-      if (N.finger != note.finger_T.UNDEFINED) : masteredNoteCount += 1
+      if (N.finger != note.finger_T.UNDEFINED) : fingeredNoteCount += 1
       
       # Register the note in the database
       noteListTmp.append(N)
@@ -591,12 +597,15 @@ class Score(widget.Widget) :
     self.length = len(self.noteOnTimecodes["LR"])
     self.cursorMax = self.length-1
 
+    self.noteCount          = noteCount
+    self.fingeredNoteCount  = fingeredNoteCount
+
     stopTime = time.time()
     print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
     print(f"[INFO] {noteCount} notes read from .pr file.")
     print(f"[INFO] Score length: {self.length} steps")
     
-    print(f"[INFO] Progress: {masteredNoteCount}/{noteCount} ({100*masteredNoteCount/noteCount:.1f}%)")
+    print(f"[INFO] Progress: {fingeredNoteCount}/{noteCount} ({100*fingeredNoteCount/noteCount:.1f}%)")
 
 
 
@@ -655,7 +664,7 @@ class Score(widget.Widget) :
       exit()
     
     noteCount = 0
-    annotatedNoteCount = 0
+    fingeredNoteCount = 0
     self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
     self.noteList = []
     for (i, noteAsDict) in enumerate(safeDict["noteList"]) :
@@ -669,7 +678,7 @@ class Score(widget.Widget) :
       self.noteList.append(N)
 
       if (N.finger != 0) :
-        annotatedNoteCount += 1
+        fingeredNoteCount += 1
 
       if (N.hand == note.hand_T.LEFT) :
         self.noteOnTimecodes["L"].append(N.startTime)
@@ -697,12 +706,18 @@ class Score(widget.Widget) :
     self.length = len(self.noteOnTimecodes["LR"])
     self.cursorMax = self.length-1
 
+    self.noteCount          = noteCount
+    self.fingeredNoteCount  = fingeredNoteCount
+
+    # TODO: 'checksum': compare the notecount values
+
+
     stopTime = time.time()
     print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
     print(f"[INFO] {noteCount} notes read from .gq3 file.")
     print(f"[INFO] Score length: {self.length} steps")
     
-    print(f"[INFO] Progress: {annotatedNoteCount}/{noteCount} ({100*annotatedNoteCount/noteCount:.1f}%)")
+    print(f"[INFO] Progress: {fingeredNoteCount}/{noteCount} ({100*fingeredNoteCount/noteCount:.1f}%)")
 
 
 
@@ -862,7 +877,7 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score.getCursor()
   # ---------------------------------------------------------------------------
-  def getCursor(self) :
+  def getCursor(self) -> int :
     """
     Returns the value of the cursor at the current location in the score.
     """
@@ -870,6 +885,35 @@ class Score(widget.Widget) :
     return self.cursor
   
 
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getScoreLength()
+  # ---------------------------------------------------------------------------
+  def getScoreLength(self) -> int :
+    """
+    Returns the length of the score (also the max cursor value)
+    """
+    
+    return self.length
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getScoreProgress()
+  # ---------------------------------------------------------------------------
+  def getScoreProgress(self) -> float :
+    """
+    Returns the evaluated user progress in the score.
+    
+    I propose to evaluate progress with the ratio of notes being given 
+    a finger indication vs total number of notes.
+
+    That's the simplest metric I can think of.
+    """
+
+    return self.fingeredNoteCount/self.noteCount
+
+  
 
   # ---------------------------------------------------------------------------
   # METHOD Score.cursorGoto()

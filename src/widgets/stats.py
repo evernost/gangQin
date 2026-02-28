@@ -23,6 +23,7 @@ import datetime
 import json
 import os
 import time
+import re       # For fancy markdown array generation from formatted logs
 
 
 
@@ -77,7 +78,7 @@ class Stats(widget.Widget) :
     self.sessionLog = []            # Each entry is a string with the time, date and duration of the session
     self.sessionStartTime = 0
     self.sessionStopTime = 0
-    self.sessionAvgPracticeTime = 0
+    self.sessionAvgPracticeTime_sec = 0
 
     self.totalPracticeTime_sec = 0
     self.totalPracticeTime_hms = 0
@@ -116,7 +117,7 @@ class Stats(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats.load(<.pr filename string>)
+  # METHOD Stats.load()
   # ---------------------------------------------------------------------------
   def load(self, songFile) :
     """
@@ -133,12 +134,14 @@ class Stats(widget.Widget) :
     # File is stored in './logs'
     (_, songNameWithExt) = os.path.split(songFile)
     (songName, _) = os.path.splitext(songNameWithExt)
-    self.songName   = songName
-    self.songFile   = songNameWithExt
-    self.logName    = songName + ".log"         # Example: "my_song.log"
-    self.logFile    = f"./logs/{self.logName}"  # Example: "./logs/my_song.log"
-    self.mdName     = songName + ".md"          # Example: "my_song.md"
-    self.mdFile     = f"./logs/{self.mdName}"   # Example: "./logs/my_song.md"
+    self.songName     = songName
+    self.songFile     = songNameWithExt
+    self.logName      = songName + ".log"         # Example: "my_song.log"
+    self.logFile      = f"./logs/{self.logName}"  # Example: "./logs/my_song.log"
+    self.mdName       = songName + ".md"          # Example: "my_song.md"
+    self.mdFile       = f"./logs/{self.mdName}"   # Example: "./logs/my_song.md"
+    
+    self.scoreLength  = self.top.widgets[WIDGET_ID_SCORE].getScoreLength()
     
     # Log file exists: load it
     if os.path.isfile(self.logFile) :
@@ -172,28 +175,23 @@ class Stats(widget.Widget) :
     evolve a lot throughout the revisions.
     """
     
-    # Define a 'fallback' dictionary, in case some fields do not exist.
+    # All these fields will be loaded from the file if they exist.
+    # Also, it defines a 'fallback' dictionary in case some fields don't exist.    
     fieldsRef = {
-      "logName"                 : self.logName,
-      "logFile"                 : self.logFile,
-      "scoreLength"             : 0,
-      "sessionCount"            : 0,
-      "sessionLog"              : [],
-      "sessionStartTime"        : 0,
-      "sessionStopTime"         : 0,
-      "sessionAvgPracticeTime"  : 0,
-      "totalPracticeTime_sec"    : 0,
-      "comboCount"              : 0,
-      "comboDrop"               : 0,
-      "comboFell"               : False,
-      "comboHighestSession"     : 0,
-      "comboHighestAllTime"     : 0,
-      "cursorHistogram"         : {},
-      "cursorWrongNoteCount"    : {},
-      "cursorIdleTimer"         : 0,
-      "playedNotes"             : 0,
-      "playedNotesValid"        : 0,
-      "tickInterval_ms"         : 0
+      "sessionCount"                : 0,
+      "sessionLog"                  : [],
+      "sessionAvgPracticeTime_sec"  : 0,
+      "totalPracticeTime_sec"       : 0,
+      "comboCount"                  : 0,
+      "comboDrop"                   : 0,
+      "comboFell"                   : False,
+      "comboHighestAllTime"         : 0,
+      "cursorHistogram"             : {},
+      "cursorWrongNoteCount"        : {},
+      "cursorIdleTimer"             : 0,
+      "playedNotes"                 : 0,
+      "playedNotesValid"            : 0,
+      "tickInterval_ms"             : 0
     }
 
     for field in fieldsRef :
@@ -203,26 +201,20 @@ class Stats(widget.Widget) :
         print(f"[INFO] Stats._safePopulate(): field '{field}' is doesn't exist in this log file and will get a default value.")
 
     # There might be a cleaner version to do that.
-    self.logName                = fieldsRef["logName"]
-    self.logFile                = fieldsRef["logFile"]
-    self.scoreLength            = fieldsRef["scoreLength"]        
-    self.sessionCount           = fieldsRef["sessionCount"]
-    self.sessionLog             = fieldsRef["sessionLog"]
-    #self.sessionStartTime       = fieldsRef["sessionStartTime"]
-    #self.sessionStopTime        = fieldsRef["sessionStopTime"]
-    self.sessionAvgPracticeTime = fieldsRef["sessionAvgPracticeTime"]
-    self.totalPracticeTime_sec  = fieldsRef["totalPracticeTime_sec"]
-    self.comboCount             = fieldsRef["comboCount"]
-    self.comboDrop              = fieldsRef["comboDrop"]
-    self.comboFell              = fieldsRef["comboFell"]
-    self.comboHighestSession    = fieldsRef["comboHighestSession"]
-    self.comboHighestAllTime    = fieldsRef["comboHighestAllTime"]
-    self.cursorHistogram        = fieldsRef["cursorHistogram"]
-    self.cursorWrongNoteCount   = fieldsRef["cursorWrongNoteCount"]
-    self.cursorIdleTimer        = fieldsRef["cursorIdleTimer"]
-    self.playedNotes            = fieldsRef["playedNotes"]
-    self.playedNotesValid       = fieldsRef["playedNotesValid"]
-    self.tickInterval_ms        = fieldsRef["tickInterval_ms"]
+    self.sessionCount               = fieldsRef["sessionCount"]
+    self.sessionLog                 = fieldsRef["sessionLog"]
+    self.sessionAvgPracticeTime_sec = fieldsRef["sessionAvgPracticeTime_sec"]
+    self.totalPracticeTime_sec      = fieldsRef["totalPracticeTime_sec"]
+    self.comboCount                 = fieldsRef["comboCount"]
+    self.comboDrop                  = fieldsRef["comboDrop"]
+    self.comboFell                  = fieldsRef["comboFell"]
+    self.comboHighestAllTime        = fieldsRef["comboHighestAllTime"]
+    self.cursorHistogram            = fieldsRef["cursorHistogram"]
+    self.cursorWrongNoteCount       = fieldsRef["cursorWrongNoteCount"]
+    self.cursorIdleTimer            = fieldsRef["cursorIdleTimer"]
+    self.playedNotes                = fieldsRef["playedNotes"]
+    self.playedNotesValid           = fieldsRef["playedNotesValid"]
+    self.tickInterval_ms            = fieldsRef["tickInterval_ms"]
 
 
 
@@ -268,8 +260,8 @@ class Stats(widget.Widget) :
   # ---------------------------------------------------------------------------
   def logUserActivity(self) :
     """
-    Resets the idle timer (inactivity detection) e.g. when there is some activity
-    going on.
+    Resets the idle timer (inactivity detection) whenever the user shows he's 
+    still alive.
     This function is typically called every time there is MIDI activity.
     """
     
@@ -447,6 +439,7 @@ class Stats(widget.Widget) :
     # Save log only if the session has a decent duration, otherwise it does not 
     # make much sense.
     if (duration > MINIMAL_SESSION_DURATION_SEC) :
+    #if (True) :
       exportDict = {}
       exportDict["logName"]                 = self.logName
       exportDict["logFile"]                 = self.logFile
@@ -467,7 +460,7 @@ class Stats(widget.Widget) :
         json.dump(exportDict, jsonFile, indent = 2)
       print(f"[INFO] Session stats saved to '{self.logFile}'")
 
-      self._saveMdFile()
+      self._saveMarkdownFile()
     
     else :
       print(f"[INFO] Stats for this session won't be saved (shorter than {MINIMAL_SESSION_DURATION_SEC}s) to keep logs meaningful.")
@@ -475,9 +468,9 @@ class Stats(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats._saveMdFile()                                        [PRIVATE]
+  # METHOD Stats._saveMarkdownFile()                                        [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _saveMdFile(self) :
+  def _saveMarkdownFile(self) :
     """
     Generates the report markdown file report.
     """
@@ -485,17 +478,50 @@ class Stats(widget.Widget) :
     with open(self.mdFile, "w", encoding = "utf-8") as fileHandler :
       fileHandler.write(f"# _{self.songName.replace('_', ' ')}_\n\n")
       fileHandler.write(f"## In a nutshell\n")
-      fileHandler.write(f"- Score length: -\n")
-      fileHandler.write(f"- Sessions: -\n")
+      fileHandler.write(f"- Score length: {self.scoreLength}\n")
+      fileHandler.write(f"- Sessions: {self.sessionCount}\n")
       fileHandler.write(f"- Average practice time: -\n")
-      fileHandler.write(f"- Fingered notes: -\n")
+      fileHandler.write(f"- Fingered notes: {self.top.widgets[WIDGET_ID_SCORE].fingeredNoteCount}\n")
       fileHandler.write(f"- Date of first practice: -\n")
       fileHandler.write(f"## Session history\n")
       fileHandler.write(f"| Session | Date | Time | Duration |\n")
       fileHandler.write(f"|---------|------|------|----------|\n")
-      fileHandler.write(f"| 14 | Saturday, December 06th | 15:32 | 8min51 |\n")
-      fileHandler.write(f"| 13 | Saturday, December 06th | 15:32 | 24min51 |\n")
+      fileHandler.write(self._logToMarkdown())
 
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats._saveMdFile()                                        [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _logToMarkdown(self) :
+    """
+    Generates a markdown array from the list of sessions.
+    """
+
+    q = self.sessionLog + [self.generateSessionLog()]
+
+    pattern = re.compile(r"Session (\d+): (.+?) at (\d{2}:\d{2})\. Duration: (\d+min\d+s)")
+
+    rows = []
+
+    for entry in q:
+      match = pattern.search(entry)
+      if match :
+        (session, date, time, duration) = match.groups()
+        rows.append((int(session), date, time, duration))
+
+    # Sort by descending session number
+    rows.sort(reverse = True, key = lambda x: x[0])
+
+    # Build markdown table
+    md = []
+    for session, date, time, duration in rows:
+      md.append(f"| {session} | {date} | {time} | {duration} |")
+
+    return "\n".join(md)
+
+
+ 
 
 
 

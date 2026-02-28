@@ -1,5 +1,5 @@
 # gangQin v3.0 (ALPHA)
-Piano learning app, for those who struggle with the conventional music scores.
+Piano learning app for those who struggle with the conventional music scores.
 
 ![image](https://github.com/user-attachments/assets/1cd22e89-eea6-40ad-90cc-525259448a2c)
 
@@ -7,11 +7,12 @@ Piano learning app, for those who struggle with the conventional music scores.
 Look on the Internet for a MIDI file version of the song you want to learn.
 Copy this file in the `/songs` directory.
 
-Run the `main.py`in a Python interpreter, select you digital keyboard and select you MIDI file. The main app loads.
+Run the `gangQin.py`in a Python interpreter, select your digital keyboard and select your MIDI file. 
 
 The interface shows a virtual keyboard and a pianoroll view. Everything you play on your input keyboard is mirrored on the virtual keyboard.
 
-But most importantly, the virtual keyboard also shows the notes you are supposed to play to follow the song.
+But most importantly, the virtual keyboard also shows the notes you are supposed to play in the song.
+Initially, the first note of the song is displayed. As soon as you press the notes on your keyboard, the app shows the next notes and so on.
 
 ### How to get the StaffScope view
 Instead of showing a pianoroll view, gangQin can also show the **actual score** in the `staffScope view`.

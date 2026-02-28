@@ -293,7 +293,7 @@ class FingerSelector(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD: FingerSelector.assign()
   # ---------------------------------------------------------------------------
-  def assign(self, hand, finger) :
+  def assign(self, hand, finger) -> None :
     """
     Assigns a fingering to a note.
 
@@ -314,7 +314,7 @@ class FingerSelector(widget.Widget) :
 
     if self.highlightedNote :
       if (hand == note.hand_T.UNDEFINED) :
-        print("pouet")
+        self.highlightedNote.finger = finger
       else :
         self.highlightedNote.hand = hand
         self.highlightedNote.finger = finger
@@ -325,7 +325,10 @@ class FingerSelector(widget.Widget) :
       if (len(self.activeNotes) == 1) :
         self.activeNotes[0].finger = finger
       else :
-        print("To assign a finger to a note, please select the note you want to edit first.")
+        self._highlightNext()
+        #self._selectorSet(hand, finger)
+        if (hand == note.hand_T.UNDEFINED) :
+          self.highlightedNote.finger = finger
 
 
 
@@ -465,15 +468,15 @@ class FingerSelector(widget.Widget) :
         if (key == pygame.K_KP_0) :
           print("[NOTE] FingerSelector._onKeyEvent(): delete finger, keep current hand")
         elif (key == pygame.K_KP_1) :
-          self.assign(finger = 1)
+          self.assign(hand = note.hand_T.UNDEFINED, finger = note.finger_T(1))
         elif (key == pygame.K_KP_2) :
-          self.assign(finger = 2)
+          self.assign(hand = note.hand_T.UNDEFINED, finger = note.finger_T(2))
         elif (key == pygame.K_KP_3) :
-          self.assign(finger = 3)
+          self.assign(hand = note.hand_T.UNDEFINED, finger = note.finger_T(3))
         elif (key == pygame.K_KP_4) :
-          self.assign(finger = 4)
+          self.assign(hand = note.hand_T.UNDEFINED, finger = note.finger_T(4))
         elif (key == pygame.K_KP_5) :
-          self.assign(finger = 5)
+          self.assign(hand = note.hand_T.UNDEFINED, finger = note.finger_T(5))
         elif (key == pygame.K_TAB) :
           self._highlightNext()
         elif (key == pygame.K_DELETE) :

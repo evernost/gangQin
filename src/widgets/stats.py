@@ -66,7 +66,8 @@ class Stats(widget.Widget) :
 
     self.logName = ""
     self.logFile = ""
-    self.mdFile = ""                # Path to the report file (Markdown)
+    self.mdName = ""                # Name of the report file (Markdown) e.g. "my_song.md"
+    self.mdFile = ""                # Path to the report file (Markdown) e.g. "./logs/my_song.md"
     
     self.scoreLength = 0
 
@@ -136,6 +137,8 @@ class Stats(widget.Widget) :
     self.songFile   = songNameWithExt
     self.logName    = songName + ".log"         # Example: "my_song.log"
     self.logFile    = f"./logs/{self.logName}"  # Example: "./logs/my_song.log"
+    self.mdName     = songName + ".md"          # Example: "my_song.md"
+    self.mdFile     = f"./logs/{self.mdName}"   # Example: "./logs/my_song.md"
     
     # Log file exists: load it
     if os.path.isfile(self.logFile) :
@@ -451,8 +454,8 @@ class Stats(widget.Widget) :
       exportDict["sessionCount"]            = self.sessionCount
       exportDict["sessionLog"]              = self.sessionLog + [self.generateSessionLog()]
       exportDict["sessionAvgPracticeTime"]  = self.sessionAvgPracticeTime
-      exportDict["totalPracticeTime_sec"]   = self.totalPracticeTimeSec + duration
-      exportDict["totalPracticeTime_H:M:S"] = self.totalPracticeTimeSec + duration    # TODO!
+      exportDict["totalPracticeTime_sec"]   = self.totalPracticeTime_sec + duration
+      exportDict["totalPracticeTime_hms"]   = self.totalPracticeTime_sec + duration    # TODO!
       exportDict["cursorHistogram"]         = self.cursorHistogram
       exportDict["cursorWrongNoteCount"]    = self.cursorWrongNoteCount
       exportDict["comboHighestSession"]     = self.comboHighestSession
@@ -476,14 +479,23 @@ class Stats(widget.Widget) :
   # ---------------------------------------------------------------------------
   def _saveMdFile(self) :
     """
-    Saves the report (markdown file)
+    Generates the report markdown file report.
     """
 
-    with open("notes.md", "w", encoding="utf-8") as fileHandler :
-      fileHandler.write("# Notes\n\n")
-      fileHandler.write("## Tasks\n")
-      fileHandler.write("- [x] Write code\n")
-      fileHandler.write("- [ ] Test program\n")
+    with open(self.mdFile, "w", encoding = "utf-8") as fileHandler :
+      fileHandler.write(f"# _{self.songName.replace("_", " ")}_\n\n")
+      fileHandler.write(f"## In a nutshell\n")
+      fileHandler.write(f"- Score length: -\n")
+      fileHandler.write(f"- Sessions: -\n")
+      fileHandler.write(f"- Average practice time: -\n")
+      fileHandler.write(f"- Fingered notes: -\n")
+      fileHandler.write(f"- Date of first practice: -\n")
+      fileHandler.write(f"## Session history\n")
+      fileHandler.write(f"| Session | Date | Time | Duration |\n")
+      fileHandler.write(f"|---------|------|------|----------|\n")
+      fileHandler.write(f"| 14 | Saturday, December 06th | 15:32 | 8min51 |\n")
+      fileHandler.write(f"| 13 | Saturday, December 06th | 15:32 | 24min51 |\n")
+
 
 
 

@@ -392,9 +392,8 @@ class GangQin :
       self.midiPort.close()
 
     if (WIDGET_ID_STATS in self.widgets) :
-      pass
-      #statsObj.userActivity()
-      #statsObj.save()
+      self.widgets[WIDGET_ID_STATS].logUserActivity()
+      self.widgets[WIDGET_ID_STATS].save()
     
     if (WIDGET_ID_SCORE in self.widgets) :
       self.widgets[WIDGET_ID_SCORE].save(backup = True)

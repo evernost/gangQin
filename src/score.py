@@ -123,6 +123,9 @@ class Score(widget.Widget) :
     self.hasUnsavedChanges = False
     self.avgNoteDuration = 0
 
+    # TODO
+    self.newWeakArbitrationSection = [-1,-1]
+
 
 
   # ---------------------------------------------------------------------------
@@ -1943,11 +1946,12 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD <getCurrentKey>
-  #
-  # Return the current key the song is in, if any has been set.
+  # METHOD Score.getCurrentKey()
   # ---------------------------------------------------------------------------
   def getCurrentKey(self) :
+    """
+    Returns the current key the song is in, if any has been set.
+    """
     
     # No key in the score
     if (len(self.keyList) == 0) :
@@ -1987,10 +1991,40 @@ class Score(widget.Widget) :
     you like in this section.
 
     Call this function to declare the boundaries of a section with weak 
-    arbitration. 
+    arbitration.
     """
 
-    print("[WARNING] 'setWeakArbitration' is TODO")
+    # If the section is already under weak arbitration, it means the user
+    # wants to edit the current one, so we remove it.
+    if self.isUnderWeakArbitration() :
+      self.sectionWeakArbitration = [x for x in self.sectionWeakArbitration if ((self.getCursor() >= x[0]) and (self.getCursor() <= x[1]))]
+          
+    if (self.newWeakArbitrationSection[0] == -1) :
+      self.newWeakArbitrationSection[0] = self.getCursor()
+      print(f"[INFO] New section under weak arbitration; start point = {self.getCursor()}")
+    elif (self.newWeakArbitrationSection[1] == -1) :
+      self.newWeakArbitrationSection[1] = self.getCursor()
+      print(f"[INFO] New section under weak arbitration; end point = {self.getCursor()}")
+      self.sectionWeakArbitration.append(self.newWeakArbitrationSection)
+      self.newWeakArbitrationSection = [-1,-1]
+      print(f"[INFO] Section declared.")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Score.isUnderWeakArbitration()
+  # ---------------------------------------------------------------------------
+  def isUnderWeakArbitration(self) :
+    """
+    Indicate if the current cursor is under weak arbitration.
+    """
+
+    for I in self.sectionWeakArbitration :
+      (a,b) = I
+      if ((self.getCursor() >= a) and (self.getCursor() <= b)) :
+        return True
+        
+    return False
 
 
 
@@ -2013,6 +2047,10 @@ class Score(widget.Widget) :
     # Display the active hands
     text.render(self.top.screen, self.activeHands, (1288, 470), 2, GUI_TEXT_COLOR)
 
+    # Display weak arbitration information
+    if self.isUnderWeakArbitration() :
+      text.render(self.top.screen, "W", (400, 20), 2, GUI_TEXT_COLOR)
+
 
 
   # ---------------------------------------------------------------------------
@@ -2032,8 +2070,11 @@ class Score(widget.Widget) :
         if (key == pygame.K_b) :
           self.bookmarkToggle()
 
-        
+        # W: declare section with weak arbitration
+        if (key == pygame.K_w) :
+          self.setWeakArbitration()
 
+        
 
 # ---------------------------------------------------------------------------
 # NOTE_TRACKER CLASS (helper class for the MIDI import)

@@ -130,8 +130,7 @@ class Stats(widget.Widget) :
     If the .log doesn't exist, a new one will be created.
     """
 
-    # Build the name for the log file 
-    # File is stored in './logs'
+    # Build the name for the log file
     (_, songNameWithExt) = os.path.split(songFile)
     (songName, _) = os.path.splitext(songNameWithExt)
     self.songName     = songName
@@ -198,7 +197,17 @@ class Stats(widget.Widget) :
       if field in data :
         fieldsRef[field] = data[field]
       else :
-        print(f"[INFO] Stats._safePopulate(): field '{field}' is doesn't exist in this log file and will get a default value.")
+        # Try to rescue old formats
+        if ((field == "sessionAvgPracticeTime_sec") and ("sessionAvgPracticeTime" in data)) :
+          fieldsRef["sessionAvgPracticeTime_sec"] = data["sessionAvgPracticeTime"]*60
+          print("[DEBUG] Successfully retrieved old format field 'sessionAvgPracticeTime'")
+
+        elif ((field == "totalPracticeTime_sec") and ("totalPracticeTimeSec" in data)) :
+          fieldsRef["totalPracticeTime_sec"] = data["totalPracticeTimeSec"]
+          print("[DEBUG] Successfully retrieved old format field 'totalPracticeTimeSec'")
+
+        else :
+          print(f"[INFO] Stats._safePopulate(): field '{field}' is doesn't exist in this log file and will get a default value.")
 
     # There might be a cleaner version to do that.
     self.sessionCount               = fieldsRef["sessionCount"]
@@ -232,9 +241,9 @@ class Stats(widget.Widget) :
 
     self.sessionCount += 1
     if (self.sessionCount > 1) :
-      self.sessionAvgPracticeTime = round(self.totalPracticeTime_sec/(60*self.sessionCount))
+      self.sessionAvgPracticeTime_sec = round(self.totalPracticeTime_sec/(60*self.sessionCount))
     else :
-      self.sessionAvgPracticeTime = 0.0
+      self.sessionAvgPracticeTime_sec = 0.0
 
 
 
@@ -250,8 +259,8 @@ class Stats(widget.Widget) :
     print("")
     print(f"[INFO] Get ready for session #{self.sessionCount}!")
     print(f"[INFO] Total practice time so far: {round(self.totalPracticeTime_sec/60)} minutes")
-    if (self.sessionAvgPracticeTime > 0.0) :
-      print(f"[INFO] Average session time: {self.sessionAvgPracticeTime} minutes")
+    if (self.sessionAvgPracticeTime_sec > 0.0) :
+      print(f"[INFO] Average session time: {self.sessionAvgPracticeTime_sec} minutes")
 
 
 
@@ -265,9 +274,9 @@ class Stats(widget.Widget) :
     This function is typically called every time there is MIDI activity.
     """
   
-    idleTime = round(time.perf_counter() - self.lastActivity)
+    idleTime = time.perf_counter() - self.lastActivity
     if (idleTime > IDLE_TIME_THRESHOLD_SEC) :
-      self.totalInactivity_sec += idleTime
+      self.totalInactivity_sec += round(idleTime)
 
     if (idleTime > 180) :
       print("Welcome back, Sleeping Beauty :)")
@@ -446,7 +455,7 @@ class Stats(widget.Widget) :
       exportDict["scoreLength"]             = self.scoreLength
       exportDict["sessionCount"]            = self.sessionCount
       exportDict["sessionLog"]              = self.sessionLog + [self.generateSessionLog()]
-      exportDict["sessionAvgPracticeTime"]  = self.sessionAvgPracticeTime
+      exportDict["sessionAvgPracticeTime_sec"]  = self.sessionAvgPracticeTime_sec
       exportDict["totalPracticeTime_sec"]   = self.totalPracticeTime_sec + duration
       exportDict["totalPracticeTime_hms"]   = self.totalPracticeTime_sec + duration    # TODO!
       exportDict["cursorHistogram"]         = self.cursorHistogram

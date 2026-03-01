@@ -680,8 +680,7 @@ class Score(widget.Widget) :
       N.id        = i
       self.noteList.append(N)
 
-      if (N.finger != 0) :
-        fingeredNoteCount += 1
+      if (N.finger != note.finger_T.UNDEFINED) : fingeredNoteCount += 1
 
       if (N.hand == note.hand_T.LEFT) :
         self.noteOnTimecodes["L"].append(N.startTime)

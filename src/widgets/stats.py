@@ -30,9 +30,9 @@ import re       # For fancy markdown array generation from formatted logs
 # =============================================================================
 # CONSTANTS
 # =============================================================================
-TICK_INTERVAL_MS = 500                # Deprecated.
-MINIMAL_SESSION_DURATION_SEC = 60*5   # Minimal duration required for a session to have its stats saved
-IDLE_TIME_THRESHOLD_SEC = 20          # After this amount of time without any user activity, the inactivity time is deduced from the session time
+TICK_INTERVAL_MS              = 500       # Deprecated.
+MINIMAL_SESSION_DURATION_SEC  = 60*5      # Minimal duration required for a session to have its stats saved
+IDLE_TIME_THRESHOLD_SEC       = 20        # After this amount of time without any user activity, the inactivity time is deduced from the session time
 
 
 
@@ -110,10 +110,6 @@ class Stats(widget.Widget) :
     self.lastActivity = time.perf_counter()
     self.totalInactivity_sec = 0
 
-    # UI interaction queues
-    self.msgQueueIn = []
-    self.msgQueueOut = []
-
 
 
   # ---------------------------------------------------------------------------
@@ -160,6 +156,9 @@ class Stats(widget.Widget) :
     # Initialise the fields of this new session
     self._sessionInit()
 
+    # Say Hello
+    self.printIntroSummary()
+
 
 
   # ---------------------------------------------------------------------------
@@ -181,9 +180,6 @@ class Stats(widget.Widget) :
       "sessionLog"                  : [],
       "sessionAvgPracticeTime_sec"  : 0,
       "totalPracticeTime_sec"       : 0,
-      "comboCount"                  : 0,
-      "comboDrop"                   : 0,
-      "comboFell"                   : False,
       "comboHighestAllTime"         : 0,
       "cursorHistogram"             : {},
       "cursorWrongNoteCount"        : {},
@@ -207,16 +203,14 @@ class Stats(widget.Widget) :
           print("[DEBUG] Successfully retrieved old format field 'totalPracticeTimeSec'")
 
         else :
-          print(f"[INFO] Stats._safePopulate(): field '{field}' is doesn't exist in this log file and will get a default value.")
+          if not(self.isEmpty) :
+            print(f"[INFO] Stats._safePopulate(): field '{field}' doesn't exist in log file and will get a default value.")
 
     # There might be a cleaner version to do that.
     self.sessionCount               = fieldsRef["sessionCount"]
     self.sessionLog                 = fieldsRef["sessionLog"]
     self.sessionAvgPracticeTime_sec = fieldsRef["sessionAvgPracticeTime_sec"]
     self.totalPracticeTime_sec      = fieldsRef["totalPracticeTime_sec"]
-    self.comboCount                 = fieldsRef["comboCount"]
-    self.comboDrop                  = fieldsRef["comboDrop"]
-    self.comboFell                  = fieldsRef["comboFell"]
     self.comboHighestAllTime        = fieldsRef["comboHighestAllTime"]
     self.cursorHistogram            = fieldsRef["cursorHistogram"]
     self.cursorWrongNoteCount       = fieldsRef["cursorWrongNoteCount"]
@@ -312,7 +306,7 @@ class Stats(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Stats.logWrongNote()
   # ---------------------------------------------------------------------------
-  def logWrongNote(self, cursor) :
+  def logWrongNote(self) :
     """
     This function must be called every time the user plays an incorrect input.
     
@@ -320,6 +314,8 @@ class Stats(widget.Widget) :
     - reset the combo counter
     - update the wrong note counter at this cursor
     """
+
+    cursor = self.top.widgets[WIDGET_ID_SCORE].getCursor()
 
     self.isComboBroken = (self.comboCount != 0)
     self.comboCount = 0
@@ -448,22 +444,19 @@ class Stats(widget.Widget) :
     # Save log only if the session has a decent duration, otherwise it does not 
     # make much sense.
     if (duration > MINIMAL_SESSION_DURATION_SEC) :
-    #if (True) :
       exportDict = {}
-      exportDict["logName"]                 = self.logName
-      exportDict["logFile"]                 = self.logFile
-      exportDict["scoreLength"]             = self.scoreLength
-      exportDict["sessionCount"]            = self.sessionCount
-      exportDict["sessionLog"]              = self.sessionLog + [self.generateSessionLog()]
+      exportDict["logName"]                     = self.logName
+      exportDict["logFile"]                     = self.logFile
+      exportDict["scoreLength"]                 = self.scoreLength
+      exportDict["sessionCount"]                = self.sessionCount
+      exportDict["sessionLog"]                  = self.sessionLog + [self.generateSessionLog()]
       exportDict["sessionAvgPracticeTime_sec"]  = self.sessionAvgPracticeTime_sec
-      exportDict["totalPracticeTime_sec"]   = self.totalPracticeTime_sec + duration
-      exportDict["totalPracticeTime_hms"]   = self.totalPracticeTime_sec + duration    # TODO!
-      exportDict["cursorHistogram"]         = self.cursorHistogram
-      exportDict["cursorWrongNoteCount"]    = self.cursorWrongNoteCount
-      exportDict["comboHighestSession"]     = self.comboHighestSession
-      exportDict["comboHighestAllTime"]     = self.comboHighestAllTime
-      exportDict["playedNotes"]             = self.playedNotes
-      exportDict["playedNotesValid"]        = self.playedNotesValid
+      exportDict["totalPracticeTime_sec"]       = self.totalPracticeTime_sec + duration
+      exportDict["cursorHistogram"]             = self.cursorHistogram
+      exportDict["cursorWrongNoteCount"]        = self.cursorWrongNoteCount
+      exportDict["comboHighestAllTime"]         = self.comboHighestAllTime
+      exportDict["playedNotes"]                 = self.playedNotes
+      exportDict["playedNotesValid"]            = self.playedNotesValid
       
       with open(self.logFile, "w") as jsonFile :
         json.dump(exportDict, jsonFile, indent = 2)

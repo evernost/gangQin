@@ -175,7 +175,7 @@ class Sequencer(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD: Sequencer.onExternalMidiEvent()
   # ---------------------------------------------------------------------------
-  def onExternalMidiEvent(self, midiMessage) :
+  def onExternalMidiEvent(self, midiMessage) -> None :
     """
     Updates the Sequencer machinery in case of an external MIDI input.
     """
@@ -191,6 +191,10 @@ class Sequencer(widget.Widget) :
 
     if (decision == arbiter.msg.VALID_INPUT) :
       self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
+      self.top.widgets[WIDGET_ID_STATS].logCorrectNote()
+    
+    elif (decision == arbiter.msg.WRONG_NOTE) :
+      self.top.widgets[WIDGET_ID_STATS].logWrongNote()
 
 
 

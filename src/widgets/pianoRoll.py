@@ -192,17 +192,27 @@ class PianoRoll(widget.Widget) :
     # Get the current timecode
     currTimecode = self.top.widgets[WIDGET_ID_SCORE].getTimecode()
 
+    # Shorcuts
+    winStart  = currTimecode
+    winEnd    = currTimecode + self.viewSpan
+
     # List the notes that intersect the current window
     notesInWindow = []
 
     for N in self.top.widgets[WIDGET_ID_SCORE].noteList :
       
       # Shorcuts
-      winStart  = currTimecode 
-      winEnd    = currTimecode + self.viewSpan
       noteStart = N.startTime 
       noteEnd   = N.stopTime
-        
+      
+      # Don't bother analysing past the visible window
+      if (noteStart > winEnd) :
+        break
+
+      # Ignore notes with 0-duration
+      if (noteEnd == noteStart) : 
+        continue
+
       # Does the note span intersect the current view window?
       if (
         ((noteStart >= winStart)  and (noteStart < winEnd)) or    # The note starts in the window

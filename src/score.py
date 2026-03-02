@@ -1997,16 +1997,17 @@ class Score(widget.Widget) :
     # wants to edit the current one, so we remove it.
     if self.isUnderWeakArbitration() :
       self.sectionWeakArbitration = [x for x in self.sectionWeakArbitration if ((self.getCursor() >= x[0]) and (self.getCursor() <= x[1]))]
-          
-    if (self.newWeakArbitrationSection[0] == -1) :
-      self.newWeakArbitrationSection[0] = self.getCursor()
-      print(f"[INFO] New section under weak arbitration; start point = {self.getCursor()}")
-    elif (self.newWeakArbitrationSection[1] == -1) :
-      self.newWeakArbitrationSection[1] = self.getCursor()
-      print(f"[INFO] New section under weak arbitration; end point = {self.getCursor()}")
-      self.sectionWeakArbitration.append(self.newWeakArbitrationSection)
-      self.newWeakArbitrationSection = [-1,-1]
-      print(f"[INFO] Section declared.")
+      print("[INFO] Section with weak arbitration was removed.")
+    else :
+      if (self.newWeakArbitrationSection[0] == -1) :
+        self.newWeakArbitrationSection[0] = self.getCursor()
+        print(f"[INFO] New section under weak arbitration; start point = {self.getCursor()}")
+      elif (self.newWeakArbitrationSection[1] == -1) :
+        self.newWeakArbitrationSection[1] = self.getCursor()
+        print(f"[INFO] New section under weak arbitration; end point = {self.getCursor()}")
+        self.sectionWeakArbitration.append(self.newWeakArbitrationSection)
+        self.newWeakArbitrationSection = [-1,-1]
+        print(f"[INFO] Section declared.")
 
 
 

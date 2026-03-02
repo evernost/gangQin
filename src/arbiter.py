@@ -148,7 +148,7 @@ class Arbiter(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD: Arbiter.eval()
   # ---------------------------------------------------------------------------
-  def eval(self) :
+  def eval(self) -> msg :
     """
     Compares the notes currently played on the keyboard ('self.midiCurr') with 
     the notes expected ('teacherNotes') and returns the decision in the 
@@ -172,7 +172,9 @@ class Arbiter(widget.Widget) :
         noInput = False
 
     if noInput :
-      ret = msg.NO_INPUT
+      return msg.NO_INPUT
+
+    # ret = []
 
     # STRATEGY: PERMISSIVE
     # Progress as long as the expected notes are pressed. 
@@ -191,7 +193,7 @@ class Arbiter(widget.Widget) :
         # Case 2: a required note is here, but it was hit before (it wasn't even expected)
         # and has been maintained since then. 
         # Therefore, it does not count.
-        if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1) and (self.midiSuperfluous[pitch] == 1)) :
+        elif ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1) and (self.midiSuperfluous[pitch] == 1)) :
           allowProgress = False
           ret = msg.INCOMPLETE_INPUT
 
@@ -201,7 +203,7 @@ class Arbiter(widget.Widget) :
         # Every time a note is valid, we bind its pitch to the unique ID of the note in the score, and
         # the binding lasts for as long as the note is sustained on the keyboard.
         # Later on, the score requires this note. The note is pressed, but a binding exists: the note is rejected.
-        if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 1)) :
+        elif ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 1)) :
           
           # Read the ID of the current note
           expectedIDs = [x.id for x in teacherNotes if ((x.pitch == pitch) and (x.sustained == False) and (x.inactive == False))]
@@ -216,8 +218,12 @@ class Arbiter(widget.Widget) :
         # Case 4: a wrong note is pressed.
         # Since it is permissive, it does not block the progress.
         # But it resets the combo counter and plays a notification.
-        if ((teacherNotesAsMidiArray[pitch] == 0) and (self.midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 0)) :
-          ret = msg.WRONG_NOTE
+        elif ((teacherNotesAsMidiArray[pitch] == 0) and (self.midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 0)) :
+          return msg.WRONG_NOTE
+        
+        # Case ???
+        else :
+          pass
           
       # Case 5: progress is on hold because the "note finding" feature is active.
       # The current notes pressed are 'query' notes and all of them 

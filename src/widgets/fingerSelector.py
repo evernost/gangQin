@@ -234,6 +234,7 @@ class FingerSelector(widget.Widget) :
     """
     
     self._getActiveNotes()
+
     for (i, N) in enumerate(self.activeNotes) :
       if (noteObj.id == N.id) :
         self.highlightByIndex(i)

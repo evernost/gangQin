@@ -29,6 +29,9 @@ import os         # for filename manipulation
 import pygame
 import time
 
+from itertools import groupby
+from bisect import bisect_left, bisect_right
+
 
 
 # =============================================================================
@@ -379,6 +382,7 @@ class Score(widget.Widget) :
             N.hand      = trackID
             N.dbIndex   = insertIndex
             N.velocity  = msg.velocity
+            N.id        = insertIndex
             
             # Register the note in the database
             self.noteList.append(N)
@@ -772,7 +776,7 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score._buildNotesByCursor()                                [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _buildNotesByCursor(self) :
+  def _buildNotesByCursor(self) -> None :
     """
     Populates the fields 'Score.notesByCursor_XXX' from the 
     list of timecodes of all note on events ('Score.noteOnTimeCodes' dictionary).
@@ -782,31 +786,9 @@ class Score(widget.Widget) :
     value being in the file.
     """
 
-    tmp = {}
-
-    for N in self.noteList :
-      if not(N.startTime in tmp.keys()) :
-        tmp[N.startTime] = [N]
-      else :
-        tmp[N.startTime].append(N)
-
-    self.notesByCursor_pressed = []
-    for key in sorted(tmp) :
-      self.notesByCursor_pressed.append(tmp[key])
-
-    self.notesByCursor_pressed  = []
-    self.notesByCursor_active   = []
-
-    for (index, timecode) in enumerate(self.noteOnTimecodes["LR"]) :
-      tmp = []
-      for N in self.noteList :
-        if (N.startTime == timecode) :
-          tmp.append(N)
-
-      self.notesByCursor_active.append(tmp)
-      
-      
-    print()
+    noteListSorted = sorted(self.noteList, key = lambda x: x.startTime)
+    
+    self.notesByCursor_pressed = [list(group) for _, group in groupby(noteListSorted, key = lambda x: x.startTime)]
 
 
 

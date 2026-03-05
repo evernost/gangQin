@@ -68,6 +68,7 @@ class PianoRoll(widget.Widget) :
     self.leftNoteOutlineRGB   = PIANOROLL_NOTE_BORDER_COLOR_LEFT
     self.rightNoteOutlineRGB  = PIANOROLL_NOTE_BORDER_COLOR_RIGHT
 
+    self.notesInWindow = []
     self.cursorCache = -1
     
 
@@ -193,45 +194,48 @@ class PianoRoll(widget.Widget) :
     
     # Get the current cursor
     cursor = self.top.widgets[WIDGET_ID_SCORE].getCursor()
+    currTimecode = self.top.widgets[WIDGET_ID_SCORE].notesByCursor_pressed[cursor][0].startTime
 
     if (cursor == self.cursorCache) : return
 
     # Shorcuts
-    winStart  = currTimecode
-    winEnd    = currTimecode + self.viewSpan
+    winStart  = self.top.widgets[WIDGET_ID_SCORE].notesByCursor_pressed[cursor][0].startTime
+    winEnd    = self.top.widgets[WIDGET_ID_SCORE].notesByCursor_pressed[cursor][0].startTime + self.viewSpan
 
     # List the notes that intersect the current window
-    notesInWindow = []
+    self.notesInWindow = []
 
-    for N in self.top.widgets[WIDGET_ID_SCORE].noteList :
-      
-      # Shorcuts
-      noteStart = N.startTime 
-      noteEnd   = N.stopTime
+    for notesAtCursor in self.top.widgets[WIDGET_ID_SCORE].notesByCursor_pressed[cursor:] :
       
       # Don't bother analysing past the visible window 
       # (note are sorted with ascending timecodes)
-      if (noteStart > winEnd) :
+      if (notesAtCursor[0].startTime > winEnd) :
         break
+      
+      for N in notesAtCursor :
 
-      # Ignore notes with 0-duration
-      if (noteEnd == noteStart) : 
-        continue
+        # Shorcuts
+        noteStart = N.startTime 
+        noteEnd   = N.stopTime
+      
+        # Ignore notes with 0-duration
+        if (noteEnd == noteStart) : 
+          continue
 
-      # Does the note span intersect the current view window?
-      if (
-        ((noteStart >= winStart)  and (noteStart < winEnd)) or    # The note starts in the window
-        ((noteEnd >= winStart)    and (noteEnd < winEnd))   or    # The note ends in the window
-        ((noteStart <= winStart)  and (noteEnd >= winEnd))        # The note starts before the window and ends after the window
-      ) : notesInWindow.append(N)
+        # Does the note span intersect the current view window?
+        if (
+          ((noteStart >= winStart)  and (noteStart < winEnd)) or    # The note starts in the window
+          ((noteEnd >= winStart)    and (noteEnd < winEnd))   or    # The note ends in the window
+          ((noteStart <= winStart)  and (noteEnd >= winEnd))        # The note starts before the window and ends after the window
+        ) : self.notesInWindow.append(N)
 
 
     # Sort the notes to display them in a given order.
     # Longest notes are displayed first
-    notesInWindow.sort(key = lambda N : -(N.stopTime-N.startTime))
+    self.notesInWindow.sort(key = lambda N : -(N.stopTime-N.startTime))
 
     # Draw the notes
-    for N in notesInWindow :
+    for N in self.notesInWindow :
 
       # Shortcuts
       winStart  = currTimecode

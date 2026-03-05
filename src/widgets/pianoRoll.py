@@ -67,6 +67,8 @@ class PianoRoll(widget.Widget) :
     # Color scheme
     self.leftNoteOutlineRGB   = PIANOROLL_NOTE_BORDER_COLOR_LEFT
     self.rightNoteOutlineRGB  = PIANOROLL_NOTE_BORDER_COLOR_RIGHT
+
+    self.cursorCache = -1
     
 
 
@@ -189,8 +191,10 @@ class PianoRoll(widget.Widget) :
     Renders the rectangle symbols for each note.
     """
     
-    # Get the current timecode
-    currTimecode = self.top.widgets[WIDGET_ID_SCORE].getTimecode()
+    # Get the current cursor
+    cursor = self.top.widgets[WIDGET_ID_SCORE].getCursor()
+
+    if (cursor == self.cursorCache) : return
 
     # Shorcuts
     winStart  = currTimecode
@@ -205,7 +209,8 @@ class PianoRoll(widget.Widget) :
       noteStart = N.startTime 
       noteEnd   = N.stopTime
       
-      # Don't bother analysing past the visible window
+      # Don't bother analysing past the visible window 
+      # (note are sorted with ascending timecodes)
       if (noteStart > winEnd) :
         break
 

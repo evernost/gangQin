@@ -93,8 +93,10 @@ class Score(widget.Widget) :
     self.fingeredNoteCount  = 0
 
     # Internal representation
-    self.noteList = []
-    self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]   # Cursed old school format (DEPRECATED)
+    self.noteList = []                  # Full list of all notes (no particular ordering)
+    self.notesByCursor_pressed = []     # List of notes pressed at a given cursor. Each entry is a cursor value.
+    self.notesByCursor_active = []      # List of notes active (i.e. pressed or sustained) at a given cursor. Each entry is a cursor value.
+    self.noteByTimecode = []
     self.noteOnTimecodes = {
       "L"       : [],   # Timecodes for the left hand keypresses
       "R"       : [],   # Timecodes for the right hand keypresses
@@ -348,6 +350,9 @@ class Score(widget.Widget) :
     insertIndex = 0
     noteTracker = NoteTracker()
 
+    tmpNotesByTimecodeList = {}
+    tmpIndex = 0
+
     # Loop on the tracks
     for (i, track) in enumerate(midiData.tracks) :
       
@@ -374,10 +379,10 @@ class Score(widget.Widget) :
             N.hand      = trackID
             N.dbIndex   = insertIndex
             N.velocity  = msg.velocity
-            insertIndex += 1
             
             # Register the note in the database
             self.noteList.append(N)
+            insertIndex += 1
             noteCount += 1
             
             # Start the tracking on this note
@@ -387,6 +392,13 @@ class Score(widget.Widget) :
             self.noteOnTimecodes["LR_full"].append(currTime)
             if (trackID == note.hand_T.LEFT)  : self.noteOnTimecodes["L"].append(currTime)
             if (trackID == note.hand_T.RIGHT) : self.noteOnTimecodes["R"].append(currTime)
+
+            # TEST CODE
+            if not(currTime in tmpNotesByTimecodeList.keys()) :
+              tmpNotesByTimecodeList[currTime] = [N]
+            else :
+              tmpNotesByTimecodeList[currTime].append(N)
+
             
           # MIDI EVENT: key release
           elif ((msg.type == "note_off") or ((msg.type == "note_on") and (msg.velocity == 0))) : 
@@ -394,12 +406,12 @@ class Score(widget.Widget) :
 
           # MIDI EVENT: time signature change
           elif (msg.type == 'time_signature') :
-            print(f"- read time signature: {msg.numerator}/{msg.denominator} (timecode = {currTime})")
+            print(f"- Track {i}, read time signature: {msg.numerator}/{msg.denominator} (timecode = {currTime})")
             #eventTime = mido.tick2second(current_time, ticks_per_beat, tempo) for a display in seconds
 
           # MIDI EVENT: key signature change
           elif (msg.type == 'key_signature') :
-            print(f"- read key signature: {msg.key} (timecode = {currTime})")
+            print(f"- Track {i}, read key signature: {msg.key} (timecode = {currTime})")
 
           # MIDI EVENT: tempo change (IGNORED: too verbose)
           elif (msg.type == 'set_tempo') :
@@ -433,6 +445,9 @@ class Score(widget.Widget) :
 
     # Build the 'cursorsLeft' and 'cursorsRight' attributes
     self._buildCursorsLR()
+
+    # Build the 'notesByCursor_XXX' attributes
+    self._buildNotesByCursor()
 
     # Estimate average note duration (needed for the pianoroll display)
     #self.avgNoteDuration = noteDuration/noteCount
@@ -724,6 +739,78 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD Score._buildCursorsLR()                                    [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _buildCursorsLR(self) :
+    """
+    Populates the fields 'Score.cursorsLeft' and 'Score.cursorsRight' from the 
+    list of timecodes of all note on events ('Score.noteOnTimeCodes' dictionary).
+    
+    This method is usually called after loading a MIDI or .gq3 file, since 
+    the information in these fields is redundant and does not bring added
+    value being in the file.
+    """
+    
+    self.cursorsLeft  = []
+    self.cursorsRight = []
+
+    for (index, timecode) in enumerate(self.noteOnTimecodes["LR"]) :
+      unassigned = True
+      if (timecode in self.noteOnTimecodes["L"]) :
+        self.cursorsLeft.append(index)
+        unassigned = False
+
+      if (timecode in self.noteOnTimecodes["R"]) :
+        self.cursorsRight.append(index)
+        unassigned = False
+      
+      if unassigned :
+        print("[ERROR] Score._buildCursorsLR(): a note was found with an unlisted time code (INTERNAL ERROR)")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score._buildNotesByCursor()                                [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _buildNotesByCursor(self) :
+    """
+    Populates the fields 'Score.notesByCursor_XXX' from the 
+    list of timecodes of all note on events ('Score.noteOnTimeCodes' dictionary).
+    
+    This method is usually called after loading a MIDI or .gq3 file, since 
+    the information in these fields is redundant and does not bring added
+    value being in the file.
+    """
+
+    tmp = {}
+
+    for N in self.noteList :
+      if not(N.startTime in tmp.keys()) :
+        tmp[N.startTime] = [N]
+      else :
+        tmp[N.startTime].append(N)
+
+    self.notesByCursor_pressed = []
+    for key in sorted(tmp) :
+      self.notesByCursor_pressed.append(tmp[key])
+
+    self.notesByCursor_pressed  = []
+    self.notesByCursor_active   = []
+
+    for (index, timecode) in enumerate(self.noteOnTimecodes["LR"]) :
+      tmp = []
+      for N in self.noteList :
+        if (N.startTime == timecode) :
+          tmp.append(N)
+
+      self.notesByCursor_active.append(tmp)
+      
+      
+    print()
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD Score.exportToPrFile_DEPRECATED()
   # ---------------------------------------------------------------------------
   def exportToPrFile_DEPRECATED(self, prFile: str, backup = False) -> None :
@@ -822,8 +909,9 @@ class Score(widget.Widget) :
     output["noteList"]      = []
     output["timecodeList"]  = []
     
-    # Create a copy, we don't want the sorting operations to affect
-    # the order in 'self.noteList'.
+    # Sort all notes by increasing timecodes so that they are
+    # transcribed linearly in the .gq3 file and therefore easier track changes.
+    # Sorting is done on a copy to avoid any issue.
     L = self.noteList.copy()
     L.sort(key = lambda obj: obj.startTime)
 
@@ -1412,37 +1500,6 @@ class Score(widget.Widget) :
 
         print(f"[DEBUG] Requested cursor: {cursorReq}, closest: {minIndex}")
         return minIndex
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score._buildCursorsLR()                                    [PRIVATE]
-  # ---------------------------------------------------------------------------
-  def _buildCursorsLR(self) :
-    """
-    Populates the fields 'Score.cursorsLeft' and 'Score.cursorsRight' from the 
-    list of timecodes of all note on events ('Score.noteOnTimeCodes' dictionary).
-    
-    This method is usually called after loading a MIDI or .gq3 file, since 
-    the information in these fields is redundant and does not bring added
-    value being in the file.
-    """
-    
-    self.cursorsLeft  = []
-    self.cursorsRight = []
-
-    for (index, timecode) in enumerate(self.noteOnTimecodes["LR"]) :
-      unassigned = True
-      if (timecode in self.noteOnTimecodes["L"]) :
-        self.cursorsLeft.append(index)
-        unassigned = False
-
-      if (timecode in self.noteOnTimecodes["R"]) :
-        self.cursorsRight.append(index)
-        unassigned = False
-      
-      if unassigned :
-        print("[ERROR] Score._buildCursorsLR(): a note was found with an unlisted time code (INTERNAL ERROR)")
 
 
 
@@ -2182,7 +2239,7 @@ class NoteTracker :
           isValid = False
 
     if isValid :
-      print("[INFO] NoteTracker: check OK (no pending notes)")
+      print("[DEBUG] NoteTracker.checkOnExit(): check OK (no pending notes)")
     else :
       print("[WARNING] NoteTracker: MIDI file processing is done, but some notes were pressed and never released (odd MIDI file)")
 

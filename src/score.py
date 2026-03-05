@@ -616,6 +616,9 @@ class Score(widget.Widget) :
     # either on the left (cursorsLeft) or right hand (cursorsRight)
     self._buildCursorsLR()
 
+    # Build the 'notesByCursor_XXX' attributes
+    self._buildNotesByCursor()
+
     self.length = len(self.noteOnTimecodes["LR"])
     self.cursorMax = self.length-1
 
@@ -722,7 +725,13 @@ class Score(widget.Widget) :
     self.noteOnTimecodes["LR"] = list(self.noteOnTimecodes["LR"])
     self.noteOnTimecodes["LR"].sort()
 
+    # Build "cursorsLeft" and "cursorsRight" arrays.
+    # Each one is a list of all cursors where something has to be played 
+    # either on the left (cursorsLeft) or right hand (cursorsRight)
     self._buildCursorsLR()
+
+    # Build the 'notesByCursor_XXX' attributes
+    self._buildNotesByCursor()
 
     self.length = len(self.noteOnTimecodes["LR"])
     self.cursorMax = self.length-1

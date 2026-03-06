@@ -477,14 +477,18 @@ class Stats(widget.Widget) :
     Generates the report markdown file report.
     """
 
+    # Shortcuts
+    noteCount         = self.top.widgets[WIDGET_ID_SCORE].noteCount
+    fingeredNoteCount = self.top.widgets[WIDGET_ID_SCORE].fingeredNoteCount
+
     with open(self.mdFile, "w", encoding = "utf-8") as fileHandler :
       fileHandler.write(f"# _{self.songName.replace('_', ' ')}_\n\n")
       fileHandler.write(f"## In a nutshell\n")
-      fileHandler.write(f"- Score length: {self.scoreLength}\n")
+      fileHandler.write(f"- Date of first practice: -\n")
       fileHandler.write(f"- Sessions: {self.sessionCount}\n")
-      fileHandler.write(f"- Average practice time: -\n")
-      fileHandler.write(f"- Fingered notes: {self.top.widgets[WIDGET_ID_SCORE].fingeredNoteCount}\n")
-      fileHandler.write(f"- First practiced: -\n")
+      fileHandler.write(f"- Score length: {self.scoreLength}\n")
+      fileHandler.write(f"- Average practice time: {self._AvgPracticeTimeToMarkdown()}\n")
+      fileHandler.write(f"- Fingered notes: {fingeredNoteCount}/{noteCount} (progress: {100*fingeredNoteCount/noteCount:.1f}%)\n")
       fileHandler.write(f"## Session history\n")
       fileHandler.write(f"| Session | Date | Time | Duration |\n")
       fileHandler.write(f"|---------|------|------|----------|\n")
@@ -493,20 +497,34 @@ class Stats(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats._saveMdFile()                                        [PRIVATE]
+  # METHOD Stats._AvgPracticeTimeToMarkdown()                         [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _logToMarkdown(self) :
+  def _AvgPracticeTimeToMarkdown(self) -> str :
+    """
+    Description is TODO.
+    """
+    
+    (hours, rem) = divmod(self.sessionAvgPracticeTime_sec, 3600)
+    (minutes, secs) = divmod(rem, 60)
+    return f"{hours}:{minutes:02}:{secs:02}"
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats._logToMarkdown()                                     [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _logToMarkdown(self) -> str :
     """
     Generates a markdown array from the list of sessions.
     """
 
-    q = self.sessionLog + [self.generateSessionLog()]
+    sessionLogStr = self.sessionLog + [self.generateSessionLog()]
 
     pattern = re.compile(r"Session (\d+): (.+?) at (\d{2}:\d{2})\. Duration: (\d+min\d+s)")
 
     rows = []
 
-    for entry in q:
+    for entry in sessionLogStr :
       match = pattern.search(entry)
       if match :
         (session, date, time, duration) = match.groups()
@@ -517,7 +535,7 @@ class Stats(widget.Widget) :
 
     # Build markdown table
     md = []
-    for session, date, time, duration in rows:
+    for (session, date, time, duration) in rows :
       md.append(f"| {session} | {date} | {time} | {duration} |")
 
     return "\n".join(md)

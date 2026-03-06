@@ -273,7 +273,8 @@ class GangQin :
   # ---------------------------------------------------------------------------
   def _midiPreProcessor(self, midiMessage) :
     """
-    Description is TODO.
+    Applies various processing on the incoming MIDI messages before 
+    dispatching to the widgets.
     """
 
     # TRANSPOSED INPUT MODE
@@ -283,6 +284,8 @@ class GangQin :
     # - or because the keyboard settings transpose the MIDI messages.
     # This preprocessing reverts the transposition and makes the notes appear
     # at their correct location.
+    #
+    # Transpose mode is managed from the Arbiter widget.
     if (midiMessage.type == "note_on") :
       midiMessage.note = midiMessage.note - self.midiTranspose
 

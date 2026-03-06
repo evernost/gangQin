@@ -433,8 +433,7 @@ class Stats(widget.Widget) :
     the info.
     """
 
-    print("[INFO] Exporting stats...")
-
+    print(f"[INFO] Exporting stats...")
     print(f"[INFO] Inactivity time: {self.totalInactivity_sec}s")
 
     self.sessionStopTime = datetime.datetime.now()
@@ -444,14 +443,21 @@ class Stats(widget.Widget) :
     # Save log only if the session has a decent duration, otherwise it does not 
     # make much sense.
     if (duration > MINIMAL_SESSION_DURATION_SEC) :
+      
+      # Update the fields
+      self.sessionCount               += 0                               # Already incremented at startup
+      self.sessionLog                 += [self.generateSessionLog()]
+      self.totalPracticeTime_sec      += duration
+      self.sessionAvgPracticeTime_sec = round(self.totalPracticeTime_sec / self.sessionCount)
+      
       exportDict = {}
       exportDict["logName"]                     = self.logName
       exportDict["logFile"]                     = self.logFile
       exportDict["scoreLength"]                 = self.scoreLength
       exportDict["sessionCount"]                = self.sessionCount
-      exportDict["sessionLog"]                  = self.sessionLog + [self.generateSessionLog()]
+      exportDict["sessionLog"]                  = self.sessionLog
       exportDict["sessionAvgPracticeTime_sec"]  = self.sessionAvgPracticeTime_sec
-      exportDict["totalPracticeTime_sec"]       = self.totalPracticeTime_sec + duration
+      exportDict["totalPracticeTime_sec"]       = self.totalPracticeTime_sec
       exportDict["cursorHistogram"]             = self.cursorHistogram
       exportDict["cursorWrongNoteCount"]        = self.cursorWrongNoteCount
       exportDict["comboHighestAllTime"]         = self.comboHighestAllTime

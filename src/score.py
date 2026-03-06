@@ -21,16 +21,15 @@ import src.note as note
 import src.text as text
 
 # Standard libraries
-import copy       # mostly used in deprecated functions
+import copy                       # mostly used in deprecated functions
 import datetime
-import json       # for .gq3 file database import/export
-import mido       # for MIDI file manipulation
-import os         # for filename manipulation
+from itertools import groupby     # for fast database manipulation
+import json                       # for .gq3 file database import/export
+import mido                       # for MIDI file manipulation
+import os                         # for filename manipulation
 import pygame
 import time
 
-from itertools import groupby
-from bisect import bisect_left, bisect_right
 
 
 

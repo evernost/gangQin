@@ -17,9 +17,11 @@
 # Project libraries
 from commons import *
 import src.widgets.widget as widget
+import src.text as text
 
 # Standard libraries
 import enum     # For enumerated types in FSM
+import pygame
 
 
 
@@ -268,6 +270,47 @@ class Arbiter(widget.Widget) :
 
 
     return ret
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Sequencer._onKeyEvent()                                  [INHERITED]
+  # ---------------------------------------------------------------------------
+  def _onKeyEvent(self, key, type, modifier = "") :
+    """
+    Function is triggered by a keypress.
+    """
+    
+    if (type == pygame.KEYDOWN) :
+      
+      # Simple keypresses (no modifiers)
+      if (modifier == "") :
+        
+        if (key == pygame.K_t) :
+          self.top.midiTranspose += 1
+          if (self.top.midiTranspose >= 0) :
+            print(f"Transpose: +{self.top.midiTranspose}")
+          else :
+            print(f"Transpose: {self.top.midiTranspose}")
+        
+
+
+
+      # Ctrl-modified keypress
+      elif (modifier == "ctrl")  :
+
+        if (key == pygame.K_t) :
+          self.top.midiTranspose -= 1
+          if (self.top.midiTranspose >= 0) :
+            print(f"Transpose: +{self.top.midiTranspose}")
+          else :
+            print(f"Transpose: {self.top.midiTranspose}")
+
+
+
+
+
+
 
 
 

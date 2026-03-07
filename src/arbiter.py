@@ -288,9 +288,6 @@ class Arbiter(widget.Widget) :
             print(f"Transpose: +{self.top.midiTranspose}")
           else :
             print(f"Transpose: {self.top.midiTranspose}")
-        
-
-
 
       # Ctrl-modified keypress
       elif (modifier == "ctrl")  :
@@ -301,12 +298,6 @@ class Arbiter(widget.Widget) :
             print(f"Transpose: +{self.top.midiTranspose}")
           else :
             print(f"Transpose: {self.top.midiTranspose}")
-
-
-
-
-
-
 
 
 

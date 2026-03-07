@@ -1014,6 +1014,7 @@ class Score(widget.Widget) :
     The need for this option is yet to be confirmed.
     """
 
+    # Clamp illegal values
     if (value < 0) :
       cursorNew = 0
     elif (value > self.cursorMax) :
@@ -1035,7 +1036,10 @@ class Score(widget.Widget) :
       else :
         print("[ERROR] Score.cursorGoto(): unknown active hand specification (possible internal error)")
 
-    
+    # Reset the finger selector
+    self.top.widgets[WIDGET_ID_FINGERSELECTOR].highlightReset()
+
+
 
   # ---------------------------------------------------------------------------
   # METHOD Score.cursorBegin()

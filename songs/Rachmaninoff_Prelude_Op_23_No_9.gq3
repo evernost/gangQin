@@ -449,7 +449,7 @@
     {
       "pitch": 62,
       "hand": 1,
-      "finger": 2,
+      "finger": 0,
       "voice": 0,
       "name": "D4"
     },
@@ -484,7 +484,7 @@
     {
       "pitch": 58,
       "hand": 1,
-      "finger": 1,
+      "finger": 0,
       "voice": 0,
       "name": "Bb3"
     },
@@ -519,7 +519,7 @@
     {
       "pitch": 46,
       "hand": 1,
-      "finger": 3,
+      "finger": 0,
       "voice": 0,
       "name": "Bb2"
     },
@@ -554,7 +554,7 @@
     {
       "pitch": 39,
       "hand": 1,
-      "finger": 5,
+      "finger": 0,
       "voice": 0,
       "name": "Eb2"
     },

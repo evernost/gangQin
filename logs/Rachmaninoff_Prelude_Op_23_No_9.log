@@ -1,0 +1,37 @@
+{
+  "logName": "Rachmaninoff_Prelude_Op_23_No_9.log",
+  "logFile": "./logs/Rachmaninoff_Prelude_Op_23_No_9.log",
+  "scoreLength": 758,
+  "sessionCount": 3,
+  "sessionLog": [
+    "Session 1: Saturday, February 28th (2026) at 13:44. Duration: 8min2s",
+    "Session 2: Saturday, February 28th (2026) at 15:40. Duration: 7min29s",
+    "Session 3: Monday, March 02nd (2026) at 23:32. Duration: 5min28s"
+  ],
+  "sessionAvgPracticeTime_sec": 5,
+  "totalPracticeTime_sec": 1259,
+  "cursorHistogram": {},
+  "cursorWrongNoteCount": {
+    "11": 4,
+    "15": 4,
+    "1": 8,
+    "3": 2,
+    "5": 3,
+    "9": 2,
+    "18": 2,
+    "19": 2,
+    "12": 1,
+    "4": 1,
+    "2": 1,
+    "20": 2,
+    "13": 1,
+    "14": 1,
+    "8": 1,
+    "29": 1,
+    "17": 2,
+    "16": 1
+  },
+  "comboHighestAllTime": 36,
+  "playedNotes": 0,
+  "playedNotesValid": 0
+}

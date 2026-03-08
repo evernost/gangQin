@@ -30,7 +30,6 @@ import re       # For fancy markdown array generation from formatted logs
 # =============================================================================
 # CONSTANTS
 # =============================================================================
-TICK_INTERVAL_MS              = 500       # Deprecated.
 MINIMAL_SESSION_DURATION_SEC  = 60*5      # Minimal duration required for a session to have its stats saved
 IDLE_TIME_THRESHOLD_SEC       = 20        # After this amount of time without any user activity, the inactivity time is deduced from the session time
 
@@ -69,9 +68,7 @@ class Stats(widget.Widget) :
     self.logFile = ""
     self.mdName = ""                # Name of the report file (Markdown) e.g. "my_song.md"
     self.mdFile = ""                # Path to the report file (Markdown) e.g. "./logs/my_song.md"
-    
-    self.scoreLength = 0
-
+  
     self.isEmpty = True             # True if a new statistics file has been created
 
     self.sessionCount = 0           # Session counter, incremented at the beginning of the session.
@@ -92,20 +89,17 @@ class Stats(widget.Widget) :
 
     self.cursorHistogram = {}       # For a given cursor: how many times this location was hit
     self.cursorWrongNoteCount = {}  # For a given cursor: how many times a wrong note was played
-    self.cursorIdleTimer = 0        # Timer detecting a session on idle (user does not play anymore)
     self.cursorLastWrongReport = -1
     
     self.playedNotes = 0            # Total number of correct notes played, regardless of the arbiter's decision
     self.playedNotesValid = 0       # Total number of correct notes played i.e. valid keyboard input that incremented the cursor
 
-    self.tickInterval_ms = 0
-
-    self.intervalStartTime = -1
-    self.intervalStartTimecode = -1
-    self.intervalTimerTicking = False
-    self.intervalMeasureCount = 0
-    self.intervalRatioSum = 0
-    self.intervalRatioAvg = 0
+    self.intervalStartTime = -1         # | Deprecated feature
+    self.intervalStartTimecode = -1     # | 
+    self.intervalTimerTicking = False   # | 
+    self.intervalMeasureCount = 0       # | 
+    self.intervalRatioSum = 0           # | 
+    self.intervalRatioAvg = 0           # | 
 
     self.lastActivity = time.perf_counter()
     self.totalInactivity_sec = 0
@@ -136,21 +130,19 @@ class Stats(widget.Widget) :
     self.mdName       = songName + ".md"          # Example: "my_song.md"
     self.mdFile       = f"./logs/{self.mdName}"   # Example: "./logs/my_song.md"
     
-    self.scoreLength  = self.top.widgets[WIDGET_ID_SCORE].getScoreLength()
-    
     # Log file exists: load it
     if os.path.isfile(self.logFile) :
       print(f"[DEBUG] Stats: reading from '{self.logName}'...")
       with open(self.logFile, "r") as jsonFile :
         data = json.load(jsonFile)
  
-      self._safePopulate(data)
+      self._loadSafePopulate(data)
       self.isEmpty = False
 
     # Log file does not exist: create it
     else :
       print("[INFO] Stats: no log file found. A new one will be created.")
-      self._safePopulate()
+      self._loadSafePopulate()
       self.isEmpty = True
 
     # Initialise the fields of this new session
@@ -162,9 +154,9 @@ class Stats(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats._safePopulate(json Object)
+  # METHOD Stats._loadSafePopulate()                                  [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _safePopulate(self, data = {}) -> None :
+  def _loadSafePopulate(self, data = {}) -> None :
     """
     Populates the stats from a json object.
     If none is given, it initialises with default values.
@@ -178,27 +170,20 @@ class Stats(widget.Widget) :
     fieldsRef = {
       "sessionCount"                : 0,
       "sessionLog"                  : [],
-      "sessionAvgPracticeTime_sec"  : 0,
       "totalPracticeTime_sec"       : 0,
       "comboHighestAllTime"         : 0,
       "cursorHistogram"             : {},
       "cursorWrongNoteCount"        : {},
-      "cursorIdleTimer"             : 0,
       "playedNotes"                 : 0,
-      "playedNotesValid"            : 0,
-      "tickInterval_ms"             : 0
+      "playedNotesValid"            : 0
     }
 
     for field in fieldsRef :
       if field in data :
         fieldsRef[field] = data[field]
       else :
-        # Try to rescue old formats
-        if ((field == "sessionAvgPracticeTime_sec") and ("sessionAvgPracticeTime" in data)) :
-          fieldsRef["sessionAvgPracticeTime_sec"] = data["sessionAvgPracticeTime"]*60
-          print("[DEBUG] Successfully retrieved old format field 'sessionAvgPracticeTime'")
-
-        elif ((field == "totalPracticeTime_sec") and ("totalPracticeTimeSec" in data)) :
+        # Try to rescue old log files with a different formatting
+        if ((field == "totalPracticeTime_sec") and ("totalPracticeTimeSec" in data)) :
           fieldsRef["totalPracticeTime_sec"] = data["totalPracticeTimeSec"]
           print("[DEBUG] Successfully retrieved old format field 'totalPracticeTimeSec'")
 
@@ -209,15 +194,12 @@ class Stats(widget.Widget) :
     # There might be a cleaner version to do that.
     self.sessionCount               = fieldsRef["sessionCount"]
     self.sessionLog                 = fieldsRef["sessionLog"]
-    self.sessionAvgPracticeTime_sec = fieldsRef["sessionAvgPracticeTime_sec"]
     self.totalPracticeTime_sec      = fieldsRef["totalPracticeTime_sec"]
     self.comboHighestAllTime        = fieldsRef["comboHighestAllTime"]
     self.cursorHistogram            = fieldsRef["cursorHistogram"]
     self.cursorWrongNoteCount       = fieldsRef["cursorWrongNoteCount"]
-    self.cursorIdleTimer            = fieldsRef["cursorIdleTimer"]
     self.playedNotes                = fieldsRef["playedNotes"]
     self.playedNotesValid           = fieldsRef["playedNotesValid"]
-    self.tickInterval_ms            = fieldsRef["tickInterval_ms"]
 
 
 
@@ -230,15 +212,19 @@ class Stats(widget.Widget) :
     This function must be called at the app start-up (new session)
     """
     
+    # Initialise the session's start/stop time
     self.sessionStartTime = datetime.datetime.now()
     self.sessionStopTime = -1
 
-    self.sessionCount += 1
-    if (self.sessionCount > 1) :
-      self.sessionAvgPracticeTime_sec = round(self.totalPracticeTime_sec/(60*self.sessionCount))
+    # Calculate the average practice time accumulated so far
+    if (self.sessionCount >= 1) :
+      self.sessionAvgPracticeTime_sec = round(self.totalPracticeTime_sec/self.sessionCount)
     else :
       self.sessionAvgPracticeTime_sec = 0.0
 
+    # A new session is about to commence
+    self.sessionCount += 1
+    
 
 
   # ---------------------------------------------------------------------------
@@ -252,9 +238,9 @@ class Stats(widget.Widget) :
 
     print("")
     print(f"[INFO] Get ready for session #{self.sessionCount}!")
-    print(f"[INFO] Total practice time so far: {round(self.totalPracticeTime_sec/60)} minutes")
-    if (self.sessionAvgPracticeTime_sec > 0.0) :
-      print(f"[INFO] Average session time: {self.sessionAvgPracticeTime_sec} minutes")
+    print(f"[INFO] Cumulated practice time: {round(self.totalPracticeTime_sec/60)} minutes")
+    if (self.sessionCount >= 2) :
+      print(f"[INFO] Average session time: {round(self.sessionAvgPracticeTime_sec/60)} minutes")
 
 
 
@@ -328,24 +314,6 @@ class Stats(widget.Widget) :
       
       self.cursorLastWrongReport = cursor
       print(f"[DEBUG] Wrong note! Total count: {self.cursorWrongNoteCount[cursor]}")
-    
-    
-
-  # ---------------------------------------------------------------------------
-  # METHOD Stats.tick()
-  # ---------------------------------------------------------------------------
-  def tick(self) :
-    """
-    Updates the statistics.
-    This function needs to be called by the main app periodically, at the rate 
-    defined by 'TICK_INTERVAL_MS'.
-
-    The function is used to detect inactivity periods, measure time spent in a 
-    given section etc.
-    """
-
-    #print("tictoc!")
-    pass
 
 
 
@@ -370,19 +338,6 @@ class Stats(widget.Widget) :
     outputStr = self.sessionStartTime.strftime(f"Session {self.sessionCount}: %A, %B %d{daySuffix} (%Y) at %H:%M. Duration: {durationStr}")
 
     return outputStr
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Stats.resetIdleTimer()
-  # ---------------------------------------------------------------------------
-  def resetIdleTimer(self) :
-    """
-    Resets the idle timer (inactivity detection) e.g. when activity shows on 
-    the input keyboard.
-    """
-
-    self.cursorIdleTimer = 0
 
 
 
@@ -428,7 +383,7 @@ class Stats(widget.Widget) :
   # ---------------------------------------------------------------------------
   def save(self) :
     """
-    Saves the new statistics.
+    Saves the updated statistics.
     The saving process updates the underlying .log file (json) that stores all 
     the info.
     """
@@ -438,25 +393,23 @@ class Stats(widget.Widget) :
 
     self.sessionStopTime = datetime.datetime.now()
     delta = self.sessionStopTime - self.sessionStartTime
-    duration = round(delta.total_seconds())
+    sessionDuration_sec = round(delta.total_seconds())
     
     # Save log only if the session has a decent duration, otherwise it does not 
     # make much sense.
-    if (duration > MINIMAL_SESSION_DURATION_SEC) :
+    if (sessionDuration_sec > MINIMAL_SESSION_DURATION_SEC) :
       
       # Update the fields
       self.sessionCount               += 0                               # Already incremented at startup
       self.sessionLog                 += [self.generateSessionLog()]
-      self.totalPracticeTime_sec      += duration
-      self.sessionAvgPracticeTime_sec = round(self.totalPracticeTime_sec / self.sessionCount)
+      self.totalPracticeTime_sec      += sessionDuration_sec
       
       exportDict = {}
       exportDict["logName"]                     = self.logName
       exportDict["logFile"]                     = self.logFile
-      exportDict["scoreLength"]                 = self.scoreLength
+      exportDict["scoreLength"]                 = self.top.widgets[WIDGET_ID_SCORE].getScoreLength()
       exportDict["sessionCount"]                = self.sessionCount
       exportDict["sessionLog"]                  = self.sessionLog
-      exportDict["sessionAvgPracticeTime_sec"]  = self.sessionAvgPracticeTime_sec
       exportDict["totalPracticeTime_sec"]       = self.totalPracticeTime_sec
       exportDict["cursorHistogram"]             = self.cursorHistogram
       exportDict["cursorWrongNoteCount"]        = self.cursorWrongNoteCount
@@ -492,7 +445,7 @@ class Stats(widget.Widget) :
       fileHandler.write(f"## In a nutshell\n")
       fileHandler.write(f"- Date of first practice: -\n")
       fileHandler.write(f"- Sessions: {self.sessionCount}\n")
-      fileHandler.write(f"- Score length: {self.scoreLength}\n")
+      fileHandler.write(f"- Score length: {self.top.widgets[WIDGET_ID_SCORE].getScoreLength()}\n")
       fileHandler.write(f"- Average practice time: {self._AvgPracticeTimeToMarkdown()}\n")
       fileHandler.write(f"- Fingered notes: {fingeredNoteCount}/{noteCount} (progress: {100*fingeredNoteCount/noteCount:.1f}%)\n")
       fileHandler.write(f"## Session history\n")
@@ -512,7 +465,7 @@ class Stats(widget.Widget) :
     
     (hours, rem) = divmod(self.sessionAvgPracticeTime_sec, 3600)
     (minutes, secs) = divmod(rem, 60)
-    return f"{hours}:{minutes:02}:{secs:02}"
+    return f"{hours}h{minutes:02}min{secs:02}s"
 
 
 
@@ -524,13 +477,11 @@ class Stats(widget.Widget) :
     Generates a markdown array from the list of sessions.
     """
 
-    sessionLogStr = self.sessionLog + [self.generateSessionLog()]
-
     pattern = re.compile(r"Session (\d+): (.+?) at (\d{2}:\d{2})\. Duration: (\d+min\d+s)")
 
     rows = []
 
-    for entry in sessionLogStr :
+    for entry in self.sessionLog :
       match = pattern.search(entry)
       if match :
         (session, date, time, duration) = match.groups()
@@ -547,13 +498,11 @@ class Stats(widget.Widget) :
     return "\n".join(md)
 
 
- 
-
-
 
 # =============================================================================
 # UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
   print("[INFO] There are no unit tests available for 'stats.py'")
+
 

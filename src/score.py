@@ -27,6 +27,7 @@ from itertools import groupby     # for fast database manipulation
 import json                       # for .gq3 file database import/export
 import mido                       # for MIDI file manipulation
 import os                         # for filename manipulation
+from pathlib import Path          # for path/filename/extensions manipulation
 import pygame
 import time
 
@@ -934,8 +935,10 @@ class Score(widget.Widget) :
       gq3File = self.songFile
     
     if backup :
-      (root, _) = os.path.splitext(gq3File)
-      exportFile = root + ".bak"
+      p = Path(gq3File)
+      timestamp = datetime.datetime.now().strftime('%d_%B_%HH%MM%SS')
+      exportFile = Path('./backup') / (f"{p.stem}___{timestamp}" + '.bak')
+      exportFile.parent.mkdir(parents = True, exist_ok = True)
     else :
       (root, _) = os.path.splitext(gq3File)
       exportFile = root + ".gq3"

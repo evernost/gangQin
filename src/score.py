@@ -1734,7 +1734,8 @@ class Score(widget.Widget) :
         if (N.startTime != N.stopTime):
           filteredList.append(N)
         else :
-          print(f"[DEBUG] Score._calculateTeacherNotes(): null duration note detected (cursor = {self.getCursor()})")
+          pass
+          #print(f"[DEBUG] Score._calculateTeacherNotes(): null duration note detected (cursor = {self.getCursor()})")
       else :
         filteredList.append(N)
     self.teacherNotes = filteredList

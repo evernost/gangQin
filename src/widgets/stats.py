@@ -445,8 +445,9 @@ class Stats(widget.Widget) :
       fileHandler.write(f"## In a nutshell\n")
       fileHandler.write(f"- Date of first practice: -\n")
       fileHandler.write(f"- Sessions: {self.sessionCount}\n")
+      fileHandler.write(f"- Total practice time: {self._totalPracticeTimeToMarkdown()}\n")
+      fileHandler.write(f"- Average practice time: {self._avgPracticeTimeToMarkdown()}\n")
       fileHandler.write(f"- Score length: {self.top.widgets[WIDGET_ID_SCORE].getScoreLength()}\n")
-      fileHandler.write(f"- Average practice time: {self._AvgPracticeTimeToMarkdown()}\n")
       fileHandler.write(f"- Fingered notes: {fingeredNoteCount}/{noteCount} (progress: {100*fingeredNoteCount/noteCount:.1f}%)\n")
       fileHandler.write(f"## Session history\n")
       fileHandler.write(f"| Session | Date | Time | Duration |\n")
@@ -456,9 +457,23 @@ class Stats(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats._AvgPracticeTimeToMarkdown()                         [PRIVATE]
+  # METHOD Stats._totalPracticeTimeToMarkdown()                       [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _AvgPracticeTimeToMarkdown(self) -> str :
+  def _totalPracticeTimeToMarkdown(self) -> str :
+    """
+    Description is TODO.
+    """
+    
+    (hours, rem) = divmod(self.totalPracticeTime_sec, 3600)
+    (minutes, secs) = divmod(rem, 60)
+    return f"{hours}h{minutes:02}min{secs:02}s"
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Stats._avgPracticeTimeToMarkdown()                         [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _avgPracticeTimeToMarkdown(self) -> str :
     """
     Description is TODO.
     """
@@ -466,7 +481,6 @@ class Stats(widget.Widget) :
     (hours, rem) = divmod(self.sessionAvgPracticeTime_sec, 3600)
     (minutes, secs) = divmod(rem, 60)
     return f"{hours}h{minutes:02}min{secs:02}s"
-
 
 
   # ---------------------------------------------------------------------------

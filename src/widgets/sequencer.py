@@ -20,6 +20,7 @@ import src.widgets.widget as widget
 import arbiter
 
 # Standard libraries
+import datetime
 import pygame       # For keyboard/mouse interactions
 
 
@@ -189,12 +190,19 @@ class Sequencer(widget.Widget) :
 
     decision = self.top.widgets[WIDGET_ID_ARBITER].eval()
 
-    if (decision == arbiter.msg.VALID_INPUT) :
+    now = datetime.datetime.now()
+    print(f"[DEBUG] {now.strftime('%H:%M:%S')} {decision}")
+
+    if (arbiter.arbiterStatus.VALID_INPUT in decision) :
       self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
-      self.top.widgets[WIDGET_ID_STATS].logCorrectNote()
+
+
+    # if (decision == arbiter.msg.VALID_INPUT) :
+    #   self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
+    #   self.top.widgets[WIDGET_ID_STATS].logCorrectNote()
     
-    elif (decision == arbiter.msg.WRONG_NOTE) :
-      self.top.widgets[WIDGET_ID_STATS].logWrongNote()
+    # elif (decision == arbiter.msg.WRONG_NOTE) :
+    #   self.top.widgets[WIDGET_ID_STATS].logWrongNote()
 
 
 

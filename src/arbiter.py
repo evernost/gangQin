@@ -28,11 +28,20 @@ import pygame
 # =============================================================================
 # CONSTANTS
 # =============================================================================
-class msg(enum.Enum) :
-  NO_INPUT          = 0
-  INCOMPLETE_INPUT  = 1
-  WRONG_NOTE        = 2
-  VALID_INPUT       = 3
+
+# NOTE: the following statuses can be combined to fully depict the state.
+class arbiterStatus(enum.Enum) :
+  NO_INPUT          = 0       # Nothing played by the user
+  INCOMPLETE_INPUT  = 1       # Some notes in the score are missing 
+  EXCESS_NOTE       = 2       # At least one note that is played is not expected in the score
+  STALE_EXCESS_NOTE = 3       # At least one note has been held (but not requested in the score) yet the score expects it to be played again
+  STALE_VALID_NOTE  = 4       # At least one note has been held since its last occurence in the score, yet the score expects it to be played again
+  VALID_INPUT       = 5       # 
+
+class arbiterDecision(enum.Enum) :
+  WAITING_VALID_INPUT = 0
+  PROGRESS_ALLOWED    = 1
+  WRONG_INPUT         = 2
 
 
 
@@ -53,15 +62,6 @@ class Arbiter(widget.Widget) :
   - to step to the next cursor
   - update the combo counter ("how many good notes in a row")
   - play a "fail" sound 
-
-  Criteria to allow moving forward in the score are the following:
-  - "exact"           : won't go progress until the expected notes only are 
-                        pressed, nothing else.
-  - "exactWithSustain": same as "exact", but tolerates that the last valid notes
-                        are sustained.
-  - "permissive"      : anything else played alongside the expected notes is ignored
-  
-  Only the "permissive" mode is used, the others are here for "historical" reasons.
 
   MIDI update:
   - midiCurr        : state of all the notes on the MIDI keyboard
@@ -84,8 +84,7 @@ class Arbiter(widget.Widget) :
 
     self.name = "arbiter"
 
-    self.status = False  
-    self.comparisonMode = "permissive"
+    self.status = False
     
     self.midiCurr         = [0 for _ in range(128)]
     self.midiSustained    = [0 for _ in range(128)]
@@ -150,119 +149,115 @@ class Arbiter(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD: Arbiter.eval()
   # ---------------------------------------------------------------------------
-  def eval(self) -> msg :
+  def eval(self) -> arbiterStatus :
     """
     Compares the notes currently played on the keyboard ('self.midiCurr') with 
-    the notes expected ('teacherNotes') and returns the decision in the 
-    message queue 'msgQueue'.
-    Decision can either be:
+    the notes expected ('teacherNotes') and returns the decision.
+
+    Decision is one of the following:
     - NO_INPUT          : waits for user input
     - INCOMPLETE_INPUT  : the user hasn't pressed all the expected notes 
     - WRONG_NOTE        : something is wrong in the user input
     - VALID_INPUT       : the user input is correct
     """
 
+    # Read the teacher notes in the score
     teacherNotes = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
 
-    # Reformat the teacher notes, keep the 'new' notes only
-    # (not the sustained ones, not the notes of the inactive hand)
+    # Reformat the teacher notes
+    # Filter out the sustained notes
     teacherNotesAsMidiArray = [0 for _ in range(128)]
-    noInput = True
     for noteObj in teacherNotes :
       if ((noteObj.sustained == False) and (noteObj.inactive == False)):
         teacherNotesAsMidiArray[noteObj.pitch] = 1
-        noInput = False
-
-    if noInput :
-      return msg.NO_INPUT
-
-    # ret = []
 
     # STRATEGY: PERMISSIVE
-    # Progress as long as the expected notes are pressed. 
-    # The rest is ignored, but flagged as 'superfluous'.
+    # Progress in the score is allowed as long as the expected notes are pressed.
+    # All the other notes are ignored and flagged as 'superfluous'.
     # 'Superfluous' notes need to be released and pressed again to be accepted later on.
-    if (self.comparisonMode == "permissive") :
-      allowProgress = True
-      
-      for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
+    allowProgress = True
+    
+    # Cumulate the different statuses
+    ret = []
+    
+    for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
 
-        # Case 1: a required note is missing.
-        if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 0) and (self.midiSuperfluous[pitch] == 0)) :
-          allowProgress = False
-          ret = msg.INCOMPLETE_INPUT
+      # Case 1: a note in the score is not played
+      if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 0) and (self.midiSuperfluous[pitch] == 0)) :
+        allowProgress = False
+        if not(arbiterStatus.INCOMPLETE_INPUT in ret) : ret.append(arbiterStatus.INCOMPLETE_INPUT)
 
-        # Case 2: a required note is here, but it was hit before (it wasn't even expected)
-        # and has been maintained since then. 
-        # Therefore, it does not count.
-        if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1) and (self.midiSuperfluous[pitch] == 1)) :
-          allowProgress = False
-          ret = msg.INCOMPLETE_INPUT
+      # Case 2: a note in the score is played, but it was hit before (it wasn't expected then) and held since.
+      # Therefore, the played note cannot count.
+      if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1) and (self.midiSuperfluous[pitch] == 1)) :
+        allowProgress = False
+        if not(arbiterStatus.STALE_EXCESS_NOTE in ret) : ret.append(arbiterStatus.STALE_EXCESS_NOTE)
 
-        # Case 3: a required note is here, but it was hit before and has been sustained since then.
-        # Meanwhile, the score requires this note to be played again.
-        # This case is detected as follows:
-        # Every time a note is valid, we bind its pitch to the unique ID of the note in the score, and
-        # the binding lasts for as long as the note is sustained on the keyboard.
-        # Later on, the score requires this note. The note is pressed, but a binding exists: the note is rejected.
-        if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 1)) :
-          
-          # Read the ID of the current note
-          expectedIDs = [x.id for x in teacherNotes if ((x.pitch == pitch) and (x.sustained == False) and (x.inactive == False))]
-          
-          # The expected ID does not match with the ID of the sustained note.:
-          # The note being played on the keyboard right now is a previous valid note being sustained.
-          # It cannot be used to trigger a new note of the same pitch.
-          if not(self.midiAssociatedID[pitch] in expectedIDs) :
-            allowProgress = False
-            ret = msg.INCOMPLETE_INPUT
-          
-        # Case 4: a wrong note is pressed.
-        # Since it is permissive, it does not block the progress.
-        # But it resets the combo counter and plays a notification.
-        if ((teacherNotesAsMidiArray[pitch] == 0) and (self.midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 0)) :
-          return msg.WRONG_NOTE
-          
-      # Case 5: progress is on hold because the "note finding" feature is active.
-      # The current notes pressed are 'query' notes and all of them 
-      # must be released before reenabling the arbiter.
-      if (self.suspended) :
-        allDown = True
-        for x in self.queryNotesPitch :
-          if (self.midiCurr[x] == 1) :
-            allDown = False
-
-        if allDown :
-          self.suspended = False
-        else :
-          allowProgress = False
-
-
-
-      # CONCLUSION
-      if allowProgress :
+      # Case 3: a note in the score is played, but it was hit before (as requested by the score) and held since.
+      # Therefore, the played note cannot count.
+      #
+      # This case is detected as follows:
+      # Every time a note is valid, we bind its pitch to the unique ID of the note in the score, and
+      # the binding lasts for as long as the note is sustained on the keyboard.
+      # Later on when the score requires this note, if binding exists then the played note is rejected.
+      if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 1)) :
         
-        # Update note status
-        for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
+        # Read the ID of the current note
+        expectedIDs = [x.id for x in teacherNotes if ((x.pitch == pitch) and (x.sustained == False) and (x.inactive == False))]
+        
+        # The expected ID doesn't match the ID of the sustained note:
+        # The note being played on the keyboard right now is a previous valid note being sustained.
+        # It cannot be used to trigger a new note of the same pitch.
+        if not(self.midiAssociatedID[pitch] in expectedIDs) :
+          allowProgress = False
+          if not(arbiterStatus.STALE_VALID_NOTE in ret) : ret.append(arbiterStatus.STALE_VALID_NOTE)
+        
+      # Case 4: a wrong note is pressed.
+      # Since it is permissive, it does not block the progress.
+      # But it resets the combo counter and plays a notification.
+      if ((teacherNotesAsMidiArray[pitch] == 0) and (self.midiCurr[pitch] == 1) and (self.midiSustained[pitch] == 0)) :
+        if not(arbiterStatus.EXCESS_NOTE in ret) : ret.append(arbiterStatus.EXCESS_NOTE)
+              
+    # Case 6: progress is on hold because the "note finding" feature is active.
+    # The current notes pressed are 'query' notes and all of them 
+    # must be released before reenabling the arbiter.
+    if (self.suspended) :
+      allDown = True
+      for x in self.queryNotesPitch :
+        if (self.midiCurr[x] == 1) :
+          allDown = False
+
+      if allDown :
+        self.suspended = False
+      else :
+        allowProgress = False
+
+
+
+    # CONCLUSION
+    if allowProgress :
+      
+      # Update note status
+      for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
+        
+        # Flag the notes played in 'excess'
+        if ((teacherNotesAsMidiArray[pitch] == 0) and (self.midiCurr[pitch] == 1)) :
+          self.midiSuperfluous[pitch] = 1
+
+        # Flag the sustained notes
+        # Any note that was valid becomes flagged as 'sustained' for as long as it's held.
+        # The ID of the associated teacher note is stored in an array,
+        # so that this keypress cannot validate another note of the same pitch later on.
+        if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1)) :
+          self.midiSustained[pitch] = 1
           
-          # Flag the notes played in 'excess'.
-          if ((teacherNotesAsMidiArray[pitch] == 0) and (self.midiCurr[pitch] == 1)) :
-            self.midiSuperfluous[pitch] = 1
-
-          # Flag the sustained notes.
-          # Any note that was valid becomes flagged as 'sustained' as long as it's held.
-          # The ID of the associated teacher note is stored in an array,
-          # so that this keypress cannot validate another note of the same pitch.
-          if ((teacherNotesAsMidiArray[pitch] == 1) and (self.midiCurr[pitch] == 1)) :
-            self.midiSustained[pitch] = 1
-            
-            # Get the ID of the correct note
-            # TODO: is it really always the first one that needs to be taken?
-            q = [x for x in teacherNotes if (x.pitch == pitch)]
-            self.midiAssociatedID[pitch] = q[0].id
+          # Get the ID of the correct note
+          # TODO: is it really always the first one that needs to be taken?
+          q = [x for x in teacherNotes if (x.pitch == pitch)]
+          self.midiAssociatedID[pitch] = q[0].id
 
 
-        ret = msg.VALID_INPUT
+      if not(arbiterStatus.VALID_INPUT in ret) : ret.append(arbiterStatus.VALID_INPUT)
 
 
     return ret

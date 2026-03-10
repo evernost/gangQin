@@ -2,8 +2,7 @@
   "appVersion": "v3.0",
   "cursor": 0,
   "bookmarks": [
-    0,
-    64
+    0
   ],
   "noteList": [
     {
@@ -128,7 +127,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "B4"
     },
@@ -149,14 +148,14 @@
     {
       "pitch": 72,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "C5"
     },
     {
       "pitch": 74,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "D5"
     },

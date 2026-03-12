@@ -56,7 +56,7 @@ class Sequencer(widget.Widget) :
 
     self.name = "sequencer"
 
-    # Internal attributes
+    # Internal attributes (not much yet)
     # ...
 
 

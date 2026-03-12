@@ -15,7 +15,9 @@
 # =============================================================================
 # Project specific constants
 from commons import *
+import src.widgets.widget as widget
 
+# Standard libraries
 import numpy as np
 import pygame
 
@@ -38,13 +40,26 @@ if (__name__ == "__main__") :
 
 
 
-class Metronome :
+class Metronome(widget.Widget)  :
   """
-  todo!
+  METRONOME object
+
+  Class definition for the Metronome widget.
+  
+  
+  
+  The Metronome class derives from the Widget class.
 
 
   """
-  def __init__(self, bpm = 120, num = 4, denom = 4) :
+
+  def __init__(self, top, bpm = 120, num = 4, denom = 4) :
+    
+    # Call the Widget init method
+    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
+
+    self.name = "metronome"
+
     self.enable = False
         
     self.bpm = bpm
@@ -142,6 +157,45 @@ class Metronome :
           self.counter = 1
           self.msgQueue.append(MSG_TIMER_OFF)
         
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Sequencer._onKeyEvent()                                  [INHERITED]
+  # ---------------------------------------------------------------------------
+  def _onKeyEvent(self, key, type, modifier = "") :
+    """
+    Function is triggered by a keypress.
+    """
+    
+    if (type == pygame.KEYDOWN) :
+      
+      # Simple keypresses (no modifiers)
+      if (modifier == "") :
+        
+        if (key == pygame.K_m) :
+          print("m!")
+          if not(self.enable) :
+            self.enable = True
+            self._switched = True
+            self.msgQueue.append(MSG_TIMER_ON)
+
+        if (key == pygame.K_KP_PLUS) :
+          self._optionMode = True
+          self.bpm += 1
+          if not(MSG_TEMPO_UPDATE in self.msgQueue) :
+            self.msgQueue.append(MSG_TEMPO_UPDATE)
+        
+        if (key == pygame.K_KP_MINUS) :
+          self._optionMode = True
+          self.bpm -= 1
+          if not(MSG_TEMPO_UPDATE in self.msgQueue) :
+            self.msgQueue.append(MSG_TEMPO_UPDATE)
+
+        else :
+          self.switched = False
+          self._optionMode = False
+
+
 
 
   # ---------------------------------------------------------------------------

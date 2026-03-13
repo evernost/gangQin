@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
 # Project specific constants
 from commons import *
@@ -24,7 +24,7 @@ import pygame
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 MSG_TEMPO_UPDATE = 1
 MSG_TIMER_ON = 2
@@ -33,24 +33,16 @@ MSG_TIMER_OFF = 3
 
 
 # =============================================================================
-# Unit tests
+# CLASS DEFINITION
 # =============================================================================
-if (__name__ == "__main__") :
-  print("[INFO] There are no unit tests available for 'metronome.py'")
-
-
-
 class Metronome(widget.Widget)  :
   """
   METRONOME object
 
   Class definition for the Metronome widget.
-  
-  
+  Provides a simple metronome feature to the main application.
   
   The Metronome class derives from the Widget class.
-
-
   """
 
   def __init__(self, top, bpm = 120, num = 4, denom = 4) :
@@ -74,16 +66,50 @@ class Metronome(widget.Widget)  :
     self.tickDuration = 0.2
     self.tickVolume = 0.3
     
+    self.tickInterval_ms = 1000
+
+    self.METRONOME_TASK = pygame.USEREVENT + 1
+
     self.msgQueue = []
 
-    # Prepare the samples array that make the 'tic' sound of the metronome
+    self._prepareWaves()
+    self._init()
+
+
+    
+    
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Metronome._prepareWaves()
+  # ---------------------------------------------------------------------------
+  def _prepareWaves(self) :
+    """
+    Creates the sound waveforms for the 'tick' and 'tock'.
+    """
+    
     t = np.linspace(0, self.tickDuration, int(44100 * self.tickDuration), endpoint = False)
-    tickHigh = np.int16(32767 * self.tickVolume * np.sin(2 * np.pi * 880.0 * t) * np.exp(-t/(self.tickDuration/3)))
-    tickLow = np.int16(32767 * self.tickVolume * np.sin(2 * np.pi * 440.0 * t) * np.exp(-t/(self.tickDuration/3)))
-    tickHigh = tickHigh.tobytes()
-    tickLow = tickLow.tobytes()
+    tickHigh  = np.int16(32767 * self.tickVolume * np.sin(2 * np.pi * 880.0 * t) * np.exp(-t/(self.tickDuration/3)))
+    tickLow   = np.int16(32767 * self.tickVolume * np.sin(2 * np.pi * 440.0 * t) * np.exp(-t/(self.tickDuration/3)))
+    tickHigh  = tickHigh.tobytes()
+    tickLow   = tickLow.tobytes()
     self.tickHighSound = pygame.mixer.Sound(buffer = tickHigh)
     self.tickLowSound = pygame.mixer.Sound(buffer = tickLow)
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Metronome._init()
+  # ---------------------------------------------------------------------------
+  def _init(self) :
+    """
+    Description is TODO.
+    """
+    
+    pygame.time.set_timer(self.METRONOME_TASK, self.getInterval_ms())
+    pygame.mixer.init(frequency = 44100, size = -16, channels = 1, buffer = 512)
+
 
 
 
@@ -99,63 +125,63 @@ class Metronome(widget.Widget)  :
   
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD Metronome.keyPress(pygameKeys)
-  # ---------------------------------------------------------------------------
-  def keyPress(self, pygameKeys) :
-    """
-    Updates the metronome object status (ON, OFF, increase tempo, etc.) 
-    based on the keys that have been pressed.
+  # # ---------------------------------------------------------------------------
+  # # METHOD Metronome.keyPress(pygameKeys)
+  # # ---------------------------------------------------------------------------
+  # def keyPress(self, pygameKeys) :
+  #   """
+  #   Updates the metronome object status (ON, OFF, increase tempo, etc.) 
+  #   based on the keys that have been pressed.
 
-    TODO: 'm' and '↑' increase the number of beats per bar.
-    """
+  #   TODO: 'm' and '↑' increase the number of beats per bar.
+  #   """
 
-    if pygameKeys[pygame.K_m] :
+  #   if pygameKeys[pygame.K_m] :
 
-      if not(self.enable) :
-        self.enable = True
-        self._switched = True
-        self.msgQueue.append(MSG_TIMER_ON)
+  #     if not(self.enable) :
+  #       self.enable = True
+  #       self._switched = True
+  #       self.msgQueue.append(MSG_TIMER_ON)
 
-      if pygameKeys[pygame.K_KP_PLUS] :
-        self._optionMode = True
-        self.bpm += 1
-        if not(MSG_TEMPO_UPDATE in self.msgQueue) :
-          self.msgQueue.append(MSG_TEMPO_UPDATE)
+  #     if pygameKeys[pygame.K_KP_PLUS] :
+  #       self._optionMode = True
+  #       self.bpm += 1
+  #       if not(MSG_TEMPO_UPDATE in self.msgQueue) :
+  #         self.msgQueue.append(MSG_TEMPO_UPDATE)
       
-      elif pygameKeys[pygame.K_KP_MINUS] :
-        self._optionMode = True
-        self.bpm -= 1
-        if not(MSG_TEMPO_UPDATE in self.msgQueue) :
-          self.msgQueue.append(MSG_TEMPO_UPDATE)
+  #     elif pygameKeys[pygame.K_KP_MINUS] :
+  #       self._optionMode = True
+  #       self.bpm -= 1
+  #       if not(MSG_TEMPO_UPDATE in self.msgQueue) :
+  #         self.msgQueue.append(MSG_TEMPO_UPDATE)
 
-    else :
-      self.switched = False
-      self._optionMode = False
+  #   else :
+  #     self.switched = False
+  #     self._optionMode = False
 
 
       
-  # ---------------------------------------------------------------------------
-  # METHOD Metronome.keyRelease(pygameKeys)
-  # ---------------------------------------------------------------------------
-  def keyRelease(self, key) :
-    """
-    Updates the metronome object status (ON, OFF, increase tempo, etc.) 
-    based on the keys that have been released.
-    """
+  # # ---------------------------------------------------------------------------
+  # # METHOD Metronome.keyRelease(pygameKeys)
+  # # ---------------------------------------------------------------------------
+  # def keyRelease(self, key) :
+  #   """
+  #   Updates the metronome object status (ON, OFF, increase tempo, etc.) 
+  #   based on the keys that have been released.
+  #   """
 
-    if (key == pygame.K_m) :
+  #   if (key == pygame.K_m) :
 
-      if self._switched :
-        self._switched = False
+  #     if self._switched :
+  #       self._switched = False
 
-      else : 
-        if self._optionMode :
-          self._optionMode = False
-        else :
-          self.enable = False
-          self.counter = 1
-          self.msgQueue.append(MSG_TIMER_OFF)
+  #     else : 
+  #       if self._optionMode :
+  #         self._optionMode = False
+  #       else :
+  #         self.enable = False
+  #         self.counter = 1
+  #         self.msgQueue.append(MSG_TIMER_OFF)
         
 
 
@@ -173,7 +199,7 @@ class Metronome(widget.Widget)  :
       if (modifier == "") :
         
         if (key == pygame.K_m) :
-          print("m!")
+          print("'M' is down")
           if not(self.enable) :
             self.enable = True
             self._switched = True
@@ -195,13 +221,44 @@ class Metronome(widget.Widget)  :
           self.switched = False
           self._optionMode = False
 
+    elif (type == pygame.KEYUP) :
+
+      # Simple keypresses (no modifiers)
+      if (modifier == "") :
+
+        if (key == pygame.K_m) :
+          print("'M' is up")
+
+          if self._switched :
+            self._switched = False
+
+          else : 
+            if self._optionMode :
+              self._optionMode = False
+            else :
+              self.enable = False
+              self.counter = 1
+              self.msgQueue.append(MSG_TIMER_OFF)
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Metronome.playTick()
+  # METHOD Sequencer._onOtherEvent()                                [INHERITED]
   # ---------------------------------------------------------------------------
-  def playTick(self) :
+  def _onOtherEvent(self, event) :
+    """
+    Function is triggered by a keypress.
+    """
+    
+    if (event.type == self.METRONOME_TASK) :
+      self._playTick()
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Metronome._playTick()                                      [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _playTick(self) :
     """
     Plays the metronome 'tic' sound.
     """
@@ -225,3 +282,11 @@ class Metronome(widget.Widget)  :
     self.msgQueue = []
 
 
+
+
+
+# =============================================================================
+# UNIT TESTS
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'metronome.py'")

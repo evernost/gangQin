@@ -113,7 +113,6 @@ class GangQin :
       WIDGET_ID_SEQUENCER       : sequencer.Sequencer(self),
       WIDGET_ID_STATS           : stats.Stats(self),
       WIDGET_ID_METRONOME       : metronome.Metronome(self)
-      #notify.Notify(self)
     }
     
 
@@ -185,6 +184,7 @@ class GangQin :
       # Fill background screen
       self.screen.blit(self.background, (0, 0))
     
+      # 'main' app event catching
       for event in pygame.event.get() :
         if (event.type == pygame.KEYDOWN) :
           if (event.key == pygame.K_q) :
@@ -194,7 +194,7 @@ class GangQin :
         elif (event.type == pygame.QUIT) :
           self._onExit()
 
-        # Pass keyboard/click messages to the widgets
+        # Pass keyboard/mouse messages to the widgets
         for widget in self.widgets.values() :
           widget.uiEvent(event)
 

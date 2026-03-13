@@ -72,51 +72,47 @@ class HandSelector(widget.Widget) :
 
 
 
-  # ---------------------------------------------------------------------------
-  # METHOD: HandSelector.uiEvent()
-  # ---------------------------------------------------------------------------
-  def uiEvent(self, pygameEvent) -> None :
-    """
-    This function is called by the top level and passes all the keyboard/mouse
-    interactions to the widget.
-    """
+  # # ---------------------------------------------------------------------------
+  # # METHOD: HandSelector.uiEvent()
+  # # ---------------------------------------------------------------------------
+  # def uiEvent(self, pygameEvent) -> None :
+  #   """
+  #   TODO: needs rework. That's not the correct inherited function to edit
+  #   """
     
-    # Keyboard events
-    if (pygameEvent.type in (pygame.KEYUP, pygame.KEYDOWN)) :
-      keys      = pygame.key.get_pressed()
-      ctrlKey   = pygameEvent.mod & pygame.KMOD_CTRL
-      altKey    = pygameEvent.mod & pygame.KMOD_ALT
-      shiftKey  = pygameEvent.mod & pygame.KMOD_SHIFT
-      altGrKey  = pygameEvent.mod & pygame.KMOD_META
+  #   # Keyboard events
+  #   if (pygameEvent.type in (pygame.KEYUP, pygame.KEYDOWN)) :
+  #     keys      = pygame.key.get_pressed()
+  #     ctrlKey   = pygameEvent.mod & pygame.KMOD_CTRL
+  #     altKey    = pygameEvent.mod & pygame.KMOD_ALT
+  #     shiftKey  = pygameEvent.mod & pygame.KMOD_SHIFT
+  #     altGrKey  = pygameEvent.mod & pygame.KMOD_META
       
-      # Simple keypresses (no modifiers)
-      if not(ctrlKey | shiftKey | altKey | altGrKey) :
+  #     # Simple keypresses (no modifiers)
+  #     if not(ctrlKey | shiftKey | altKey | altGrKey) :
         
-        # TAB: highlight the next note above for fingersatz edition
-        if keys[pygame.K_TAB] :
-          print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
+  #       # TAB: highlight the next note above for fingersatz edition
+  #       if keys[pygame.K_TAB] :
+  #         print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
 
+  #     # Ctrl-modified keypress
+  #     elif (ctrlKey and not(shiftKey | altKey | altGrKey)) :
+  #       pass
 
-
-      # Ctrl-modified keypress
-      elif (ctrlKey and not(shiftKey | altKey | altGrKey)) :
-        pass
-
-
-      # Shift-modified keypress
-      elif (shiftKey and not(ctrlKey | altKey | altGrKey)) :
+  #     # Shift-modified keypress
+  #     elif (shiftKey and not(ctrlKey | altKey | altGrKey)) :
         
-        # TAB: highlight the next note above for fingersatz edition
-        if keys[pygame.K_TAB] :
-          print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
+  #       # TAB: highlight the next note above for fingersatz edition
+  #       if keys[pygame.K_TAB] :
+  #         print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
 
 
-      # -----------------------------------------------
-        # Maj + tab: highlight the note before for editing
-        # -----------------------------------------------
-        if (keys[pygame.K_TAB] and shiftKey) :
-          print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
-          # fingerSelWidget.keyPress(keys)
+  #       # -----------------------------------------------
+  #       # Maj + tab: highlight the note before for editing
+  #       # -----------------------------------------------
+  #       if (keys[pygame.K_TAB] and shiftKey) :
+  #         print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
+  #         # fingerSelWidget.keyPress(keys)
 
 
 

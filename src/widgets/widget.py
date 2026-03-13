@@ -95,6 +95,12 @@ class Widget :
     # MOUSE EVENTS
     elif (pygameEvent.type in [pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEWHEEL]) :
       self._onMouseEvent(pygameEvent)
+
+
+
+    # OTHER EVENTS (E.G. TIMER)
+    else :
+      self._onOtherEvent(pygameEvent)
       
 
 
@@ -149,6 +155,20 @@ class Widget :
     # if (type == pygame.MOUSEBUTTONDOWN) :
     #   if (button == MOUSE_SCROLL_UP) :    
     #     print("[DEBUG] Widget._onMouseEvent(): scroll up!")
+
+    pass
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Widget._onOtherEvent()                                    [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _onOtherEvent(self, event) :
+    """
+    Function is triggered by any other event (e.g. a timer)
+    
+    This function must be overriden with the specific code of the widget.
+    """
 
     pass
 

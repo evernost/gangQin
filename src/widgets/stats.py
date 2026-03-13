@@ -23,7 +23,7 @@ import datetime
 import json
 import os
 import time
-import re       # For fancy markdown array generation from formatted logs
+import re       # For .log to formatted string (for fancy markdown files)
 
 
 
@@ -52,7 +52,7 @@ class Stats(widget.Widget) :
 
   All information are stored in a human readable log file in ./logs
 
-  NOTE: all information is stored locally for the sole purpose of the user ONLY. 
+  NOTE: all stats are stored locally for the sole purpose of the user. 
   Nothing is sent to a server for telemetry mumbo jumbo or any "improving user experience"
   kind of crap.
   """

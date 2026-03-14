@@ -190,20 +190,15 @@ class Sequencer(widget.Widget) :
 
     decision = self.top.widgets[WIDGET_ID_ARBITER].eval()
 
-    now = datetime.datetime.now()
-    print(f"[DEBUG] {now.strftime('%H:%M:%S')} {decision}")
+    # now = datetime.datetime.now()
+    # print(f"[DEBUG] {now.strftime('%H:%M:%S')} {decision}")
 
     if (arbiter.arbiterStatus.VALID_INPUT in decision) :
       self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
-
-
-    # if (decision == arbiter.msg.VALID_INPUT) :
-    #   self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
-    #   self.top.widgets[WIDGET_ID_STATS].logCorrectNote()
-    
-    # elif (decision == arbiter.msg.WRONG_NOTE) :
-    #   self.top.widgets[WIDGET_ID_STATS].logWrongNote()
-
+      self.top.widgets[WIDGET_ID_STATS].logCorrectNote()
+    elif (arbiter.arbiterStatus.EXCESS_NOTE in decision) :
+      self.top.widgets[WIDGET_ID_STATS].logWrongNote()
+      
 
 
 # =============================================================================

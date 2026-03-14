@@ -109,7 +109,6 @@ class Metronome(widget.Widget)  :
 
 
 
-
   # ---------------------------------------------------------------------------
   # METHOD Metronome.getInterval_ms()
   # ---------------------------------------------------------------------------
@@ -119,31 +118,7 @@ class Metronome(widget.Widget)  :
     """
     
     return (1000*60//self.bpm)
-  
-
-      
-  # # ---------------------------------------------------------------------------
-  # # METHOD Metronome.keyRelease(pygameKeys)
-  # # ---------------------------------------------------------------------------
-  # def keyRelease(self, key) :
-  #   """
-  #   Updates the metronome object status (ON, OFF, increase tempo, etc.) 
-  #   based on the keys that have been released.
-  #   """
-
-  #   if (key == pygame.K_m) :
-
-  #     if self._switched :
-  #       self._switched = False
-
-  #     else : 
-  #       if self._optionMode :
-  #         self._optionMode = False
-  #       else :
-  #         self.enable = False
-  #         self.counter = 1
-  #         self.msgQueue.append(MSG_TIMER_OFF)
-        
+       
 
 
   # ---------------------------------------------------------------------------
@@ -161,26 +136,21 @@ class Metronome(widget.Widget)  :
         
         if (key == pygame.K_m) :
           if not(self.enable) :
-            self.enable = True
-            self._switched = True
-            # self.msgQueue.append(MSG_TIMER_ON)
+            self.enable     = True
+            self._switched  = True
+            self.counter    = self.num
             pygame.time.set_timer(self.METRONOME_TASK, self.getInterval_ms())
-            self.counter = self.num
             self._playTick()
 
         if (key == pygame.K_KP_PLUS) :
           self._optionMode = True
           self.bpm += 1
           pygame.time.set_timer(self.METRONOME_TASK, self.getInterval_ms())
-          # if not(MSG_TEMPO_UPDATE in self.msgQueue) :
-          #   self.msgQueue.append(MSG_TEMPO_UPDATE)
         
         if (key == pygame.K_KP_MINUS) :
           self._optionMode = True
           self.bpm -= 1
           pygame.time.set_timer(self.METRONOME_TASK, self.getInterval_ms())
-          # if not(MSG_TEMPO_UPDATE in self.msgQueue) :
-          #   self.msgQueue.append(MSG_TEMPO_UPDATE)
 
         else :
           self.switched = False
@@ -236,39 +206,6 @@ class Metronome(widget.Widget)  :
       else :
         self.tickLowSound.play()
         self.counter += 1
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Metronome.getMsg()
-  # ---------------------------------------------------------------------------
-  def clearQueue(self) :
-    self.msgQueue = []
-
-
-
-
-
-
-  # # ----------------
-  # # Metronome widget
-  # # ----------------
-  # # Read metronome messages
-  # if (len(metronomeObj.msgQueue) > 0) :
-  #   for msg in metronomeObj.msgQueue :
-  #     if (msg == metronome.MSG_TEMPO_UPDATE) :
-  #       pygame.time.set_timer(METRONOME_TASK, metronomeObj.getInterval_ms())
-      
-  #     elif (msg == metronome.MSG_TIMER_OFF) :
-  #       pygame.time.set_timer(METRONOME_TASK, 0)
-
-  #     elif (msg == metronome.MSG_TIMER_ON) :
-  #       pygame.time.set_timer(METRONOME_TASK, metronomeObj.getInterval_ms())
-  #       metronomeObj.counter = metronomeObj.num
-  #       metronomeObj.playTick()
-    
-  #   metronomeObj.clearQueue()
-
 
 
 

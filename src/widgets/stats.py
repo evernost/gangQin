@@ -238,7 +238,13 @@ class Stats(widget.Widget) :
 
     print("")
     print(f"[INFO] Get ready for session #{self.sessionCount}!")
-    print(f"[INFO] Cumulated practice time: {round(self.totalPracticeTime_sec/60)} minutes")
+
+    if (self.totalPracticeTime_sec < 3600) :
+      print(f"[INFO] Cumulated practice time: {self.totalPracticeTime_sec // 60} minutes")
+    else :
+      (h,m) = divmod(self.totalPracticeTime_sec // 60, 60)
+      print(f"[INFO] Cumulated practice time: {h} hours {m} minutes")
+    
     if (self.sessionCount >= 2) :
       print(f"[INFO] Average session time: {round(self.sessionAvgPracticeTime_sec/60)} minutes")
 

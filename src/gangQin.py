@@ -35,7 +35,6 @@ import src.widgets.stats as stats
 import arbiter
 import score
 
-
 # MIDI
 import mido
 import mido.backends.rtmidi   # Not used, but necessary for the .exe generation

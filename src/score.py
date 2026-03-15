@@ -1650,7 +1650,7 @@ class Score(widget.Widget) :
     # Detect void list of teacher notes
     # This is not supposed to happen
     if (len(self.teacherNotes) == 0) :
-      print(f"[WARNING] Empty list of teacher notes (t = {self.getTimecode()}), possible internal error.")
+      print(f"[WARNING] Score._calculateTeacherNotes(): empty list of teacher notes (t = {self.getTimecode()}), possible internal error.")
 
     # TODO: filter out notes with 0 duration.
     # Still not sure why it happens.
@@ -1723,7 +1723,7 @@ class Score(widget.Widget) :
     # Detect void list of teacher notes
     # This is not supposed to happen
     if (len(self.teacherNotes) == 0) :
-      print(f"[WARNING] Empty list of teacher notes (t = {self.getTimecode()}), possible internal error.")
+      print(f"[WARNING] Score.getActiveNotes(): empty list of teacher notes (t = {self.getTimecode()}), possible internal error.")
 
     # TODO: filter out notes with 0 duration.
     # Still not sure why it happens.
@@ -2100,7 +2100,7 @@ class Score(widget.Widget) :
       text.render(self.top.screen, f"BOOKMARK #{self.getBookmarkIndex()}", (10, 470), 2, GUI_TEXT_COLOR)
 
     # Display the active hands
-    text.render(self.top.screen, self.activeHands, (1288, 470), 2, GUI_TEXT_COLOR)
+    #text.render(self.top.screen, self.activeHands, (1288, 470), 2, GUI_TEXT_COLOR)
 
     # Display weak arbitration information
     if self.isUnderWeakArbitration() :

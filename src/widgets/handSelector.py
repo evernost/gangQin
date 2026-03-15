@@ -12,21 +12,21 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
 # Project specific constants
 from src.commons import *
-
 import src.text as text
 import src.widgets.widget as widget
 
+# Standard libraries
 from enum import Enum
 import pygame
 
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 class Msg(Enum) :
   SET_TO_LEFT_HAND  = 1
@@ -35,7 +35,7 @@ class Msg(Enum) :
 
 
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
 class HandSelector(widget.Widget) :
 
@@ -58,7 +58,7 @@ class HandSelector(widget.Widget) :
     # Name of the widget
     self.name = "hand selector"
 
-    self.loc = (1312, 470)  # Coordinates of the up right corner 
+    #self.loc = (1312, 470)  # Coordinates of the up right corner 
     self.xMin = self.loc[0] - (5*5*2) - (5*2)   # 5 chars, 5 horiz pixel per char, 1 pixel has size 2
     self.xMax = self.loc[0]
     self.yMin = self.loc[1]
@@ -72,66 +72,8 @@ class HandSelector(widget.Widget) :
 
 
 
-  # # ---------------------------------------------------------------------------
-  # # METHOD: HandSelector.uiEvent()
-  # # ---------------------------------------------------------------------------
-  # def uiEvent(self, pygameEvent) -> None :
-  #   """
-  #   TODO: needs rework. That's not the correct inherited function to edit
-  #   """
-    
-  #   # Keyboard events
-  #   if (pygameEvent.type in (pygame.KEYUP, pygame.KEYDOWN)) :
-  #     keys      = pygame.key.get_pressed()
-  #     ctrlKey   = pygameEvent.mod & pygame.KMOD_CTRL
-  #     altKey    = pygameEvent.mod & pygame.KMOD_ALT
-  #     shiftKey  = pygameEvent.mod & pygame.KMOD_SHIFT
-  #     altGrKey  = pygameEvent.mod & pygame.KMOD_META
-      
-  #     # Simple keypresses (no modifiers)
-  #     if not(ctrlKey | shiftKey | altKey | altGrKey) :
-        
-  #       # TAB: highlight the next note above for fingersatz edition
-  #       if keys[pygame.K_TAB] :
-  #         print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
-
-  #     # Ctrl-modified keypress
-  #     elif (ctrlKey and not(shiftKey | altKey | altGrKey)) :
-  #       pass
-
-  #     # Shift-modified keypress
-  #     elif (shiftKey and not(ctrlKey | altKey | altGrKey)) :
-        
-  #       # TAB: highlight the next note above for fingersatz edition
-  #       if keys[pygame.K_TAB] :
-  #         print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
-
-
-  #       # -----------------------------------------------
-  #       # Maj + tab: highlight the note before for editing
-  #       # -----------------------------------------------
-  #       if (keys[pygame.K_TAB] and shiftKey) :
-  #         print(f"[DEBUG] Fast fingersatz editing with 'tab' will be available soon!")
-  #         # fingerSelWidget.keyPress(keys)
-
-
-
-
   # ---------------------------------------------------------------------------
-  # METHOD Database.setScreen()
-  # ---------------------------------------------------------------------------
-  def setScreen(self, screenObj) :
-    """
-    Creates an internal copy of the Pygame screen parameters.
-    Required to draw and interact with the widget.
-    """
-
-    self.screen = screenObj
-    
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD: FingerSelector.render()
+  # METHOD: HandSelector.render()
   # ---------------------------------------------------------------------------
   def render(self) :
     """
@@ -152,11 +94,11 @@ class HandSelector(widget.Widget) :
         formatSpec = "    _"
 
       text.renderPlus(
-        self.screen, 
+        self.top.screen, 
         "L - R", 
         colorSpec, {"r": R, "g": G, "n": GUI_TEXT_COLOR}, 
         formatSpec,
-        (1312, 470),
+        self.loc,
         2,
         justify = text.RIGHT_JUSTIFY
       )
@@ -171,25 +113,41 @@ class HandSelector(widget.Widget) :
     Handles a click on the widget.
     """
     
-    x = coord[0]; y = coord[1]
+
+
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: HandSelector._onMouseEvent()                            [INHERITED]
+  # ---------------------------------------------------------------------------
+  def _onMouseEvent(self, event) :
+    """
+    Mouse event callback.
     
-    xMin_L = self.xMin - 2
-    xMax_L = self.xMin + (5*2) + 2
-    yMin_L = self.yMin - 2
-    yMax_L = self.yMax + 2
+    This function is inherited from the Widget class.
+    """
+    
+    if (event.type == pygame.MOUSEBUTTONDOWN) :
+      if (event.button == MOUSE_LEFT_CLICK) :
 
-    xMin_R = self.xMax - 2 - (5*2) - 2
-    xMax_R = self.xMax
-    yMin_R = self.yMin - 2
-    yMax_R = self.yMax + 2
+        (x,y) = pygame.mouse.get_pos()
 
-    if ((x >= xMin_L) and (x <= xMax_L) and (y >= yMin_L) and (y <= yMax_L)) :
-      self.sel = "L"
-      self.msgQueueOut.append(Msg.SET_TO_LEFT_HAND)
+        xMin_L = self.xMin - 2
+        xMax_L = self.xMin + (5*2) + 2
+        yMin_L = self.yMin - 2
+        yMax_L = self.yMax + 2
 
-    elif ((x >= xMin_R) and (x <= xMax_R) and (y >= yMin_R) and (y <= yMax_R)) :
-      self.sel = "R"
-      self.msgQueueOut.append(Msg.SET_TO_RIGHT_HAND)
+        xMin_R = self.xMax - 2 - (5*2) - 2
+        xMax_R = self.xMax
+        yMin_R = self.yMin - 2
+        yMax_R = self.yMax + 2
+
+        if ((x >= xMin_L) and (x <= xMax_L) and (y >= yMin_L) and (y <= yMax_L)) :
+          self.sel = "L"
+
+        elif ((x >= xMin_R) and (x <= xMax_R) and (y >= yMin_R) and (y <= yMax_R)) :
+          self.sel = "R"
 
 
 

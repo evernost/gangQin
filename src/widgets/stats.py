@@ -57,10 +57,10 @@ class Stats(widget.Widget) :
   kind of crap.
   """
 
-  def __init__(self, top) :
+  def __init__(self, top, loc = WIDGET_LOC_UNDEFINED) :
     
     # Call the Widget init method
-    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
+    super().__init__(top, loc)
    
     self.name = "stats"
 

@@ -15,7 +15,7 @@
 # EXTERNALS
 # =============================================================================
 # Project libraries
-from commons import *
+from src.commons import *
 import src.widgets.widget as widget
 import src.text as text
 

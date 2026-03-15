@@ -46,18 +46,18 @@ class Metronome(widget.Widget)  :
   The Metronome class derives from the Widget class.
   """
 
-  def __init__(self, top, bpm = 120, num = 4, denom = 4) :
+  def __init__(self, top, loc = WIDGET_LOC_UNDEFINED) :
     
     # Call the Widget init method
-    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
+    super().__init__(top)
 
     self.name = "metronome"
 
-    self.enable = False
+    self.enabled = False
         
-    self.bpm = bpm
-    self.num = num      # Number of beats per measure
-    self.denom = denom  # 1 = whole note, 2 = half note, 4 = quarter note, 8 = eighth note etc.
+    self.bpm    = 120
+    self.num    = 4           # Number of beats per measure
+    self.denom  = 4           # 1 = whole note, 2 = half note, 4 = quarter note, 8 = eighth note etc.
 
     self.counter = 1
 
@@ -65,7 +65,7 @@ class Metronome(widget.Widget)  :
     self._switched = False
 
     self.tickDuration = 0.2
-    self.tickVolume = 0.3
+    self.tickVolume   = 0.3
     
     self.tickInterval_ms = 1000
 
@@ -135,8 +135,8 @@ class Metronome(widget.Widget)  :
       if (modifier == "") :
         
         if (key == pygame.K_m) :
-          if not(self.enable) :
-            self.enable     = True
+          if not(self.enabled) :
+            self.enabled    = True
             self._switched  = True
             self.counter    = self.num
             pygame.time.set_timer(self.METRONOME_TASK, self.getInterval_ms())
@@ -170,7 +170,7 @@ class Metronome(widget.Widget)  :
             if self._optionMode :
               self._optionMode = False
             else :
-              self.enable = False
+              self.enabled = False
               self.counter = 1
               pygame.time.set_timer(self.METRONOME_TASK, 0)
 
@@ -197,7 +197,7 @@ class Metronome(widget.Widget)  :
     Plays the metronome 'tic' sound.
     """
 
-    if self.enable :
+    if self.enabled :
 
       if (self.counter == self.num) :
         self.tickHighSound.play()
@@ -217,7 +217,7 @@ class Metronome(widget.Widget)  :
     Renders the widget on screen.
     """
 
-    if self.enable :
+    if self.enabled :
       text.render(self.top.screen, f"BPM:{self.bpm} - {self.num}/{self.denom} - {self.counter}", (950, 470), 2, GUI_TEXT_COLOR)
   
     

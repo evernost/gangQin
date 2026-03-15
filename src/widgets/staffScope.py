@@ -52,7 +52,7 @@ class StaffScope(widget.Widget) :
   The StaffScope class derives from the Widget class.
   """
 
-  def __init__(self, top, loc) :
+  def __init__(self, top, loc = WIDGET_LOC_UNDEFINED) :
     
     # Initialise the parent class (Widget)
     super().__init__(top, loc)

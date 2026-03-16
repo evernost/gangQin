@@ -2,7 +2,9 @@
   "appVersion": "v3.0",
   "cursor": 0,
   "bookmarks": [
-    0
+    0,
+    62,
+    156
   ],
   "noteList": [
     {
@@ -561,21 +563,21 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Gb4"
     },
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Eb5"
     },
     {
       "pitch": 46,
       "hand": 1,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "Bb2"
     },
@@ -666,14 +668,14 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Gb4"
     },
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Eb5"
     },
@@ -771,14 +773,14 @@
     {
       "pitch": 73,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Db5"
     },
     {
       "pitch": 82,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Bb5"
     },
@@ -792,14 +794,14 @@
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Eb5"
     },
     {
       "pitch": 80,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "Ab5"
     },
@@ -890,21 +892,21 @@
     {
       "pitch": 58,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Bb3"
     },
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Eb5"
     },
     {
       "pitch": 78,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "Gb5"
     },
@@ -932,28 +934,28 @@
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Eb5"
     },
     {
       "pitch": 78,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "Gb5"
     },
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Ab4"
     },
     {
       "pitch": 77,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "F5"
     },
@@ -974,14 +976,14 @@
     {
       "pitch": 67,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "G4"
     },
     {
       "pitch": 74,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "D5"
     },
@@ -995,14 +997,14 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "B4"
     },
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "Eb5"
     },
@@ -1079,14 +1081,14 @@
     {
       "pitch": 70,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Bb4"
     },
     {
       "pitch": 78,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Gb5"
     },
@@ -1100,14 +1102,14 @@
     {
       "pitch": 70,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Bb4"
     },
     {
       "pitch": 78,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Gb5"
     },
@@ -1121,14 +1123,14 @@
     {
       "pitch": 73,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Db5"
     },
     {
       "pitch": 77,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "F5"
     },
@@ -2185,7 +2187,7 @@
     {
       "pitch": 71,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "B4"
     },
@@ -2206,7 +2208,7 @@
     {
       "pitch": 82,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Bb5"
     },

@@ -57,7 +57,7 @@ class Sequencer(widget.Widget) :
     self.name = "sequencer"
 
     # Internal attributes (not much yet)
-    # ...
+    self.isAutoPlaying = False      # True when the sequencer plays the notes automatically
 
 
 
@@ -96,6 +96,10 @@ class Sequencer(widget.Widget) :
         # UP: jump to the next bookmark
         elif (key == pygame.K_UP) :
           self.top.widgets[WIDGET_ID_SCORE].cursorGotoNearestBookmark(direction = 1)
+
+        elif (key == pygame.K_SPACE) :
+          self.isAutoPlaying = not(self.isAutoPlaying)
+          print("Autoplay")
 
 
 

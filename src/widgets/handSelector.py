@@ -172,7 +172,7 @@ class HandSelector(widget.Widget) :
 
     
 # =============================================================================
-# Unit tests
+# UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
   print("[INFO] There are no unit tests available for 'handSelector.py'")

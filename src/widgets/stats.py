@@ -435,7 +435,7 @@ class Stats(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Stats._saveMarkdownFile()                                        [PRIVATE]
+  # METHOD Stats._saveMarkdownFile()                                  [PRIVATE]
   # ---------------------------------------------------------------------------
   def _saveMarkdownFile(self) :
     """

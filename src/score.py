@@ -1778,11 +1778,11 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: Score.setWeakArbitration(cursor)
+  # METHOD: Score.weakArbitrationStart()
   # ---------------------------------------------------------------------------
-  def setWeakArbitration(self) :
+  def weakArbitrationStart(self) -> None :
     """
-    Sends a weak arbitration request starting/ending at the current cursor.
+    Sets a weak arbitration section starting at the current cursor.
     
     'Weak arbitration' mode is when the arbiter, for a specific section, 
     waits for the notes in the section to be played but does care about their
@@ -1791,10 +1791,13 @@ class Score(widget.Widget) :
 
     Call this function to declare the boundaries of a section with weak 
     arbitration.
+
+    Operation:
+    - if the section is not under weak arbitration, a new section is created 
+      with the current cursor as starting point
+    - if the section is already under weak arbitration, it gets deleted.
     """
 
-    # If the section is already under weak arbitration, it means the user
-    # wants to edit the current one, so we remove it.
     if self.isUnderWeakArbitration() :
       self.sectionWeakArbitration = [x for x in self.sectionWeakArbitration if ((self.getCursor() >= x[0]) and (self.getCursor() <= x[1]))]
       print("[INFO] Section with weak arbitration was removed.")
@@ -1808,6 +1811,24 @@ class Score(widget.Widget) :
         self.sectionWeakArbitration.append(self.newWeakArbitrationSection)
         self.newWeakArbitrationSection = [-1,-1]
         print(f"[INFO] Section declared.")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Score.weakArbitrationEnd()
+  # ---------------------------------------------------------------------------
+  def weakArbitrationEnd(self) -> None :
+    """
+    Sets the end of a weak arbitration section at the current cursor.
+    
+    
+    """
+
+    if self.isUnderWeakArbitration() :
+      self.sectionWeakArbitration = [x for x in self.sectionWeakArbitration if ((self.getCursor() >= x[0]) and (self.getCursor() <= x[1]))]
+      
+    else :
+      print("[INFO] Please define the start first.")
 
 
 
@@ -1845,7 +1866,7 @@ class Score(widget.Widget) :
       text.render(self.top.screen, f"BOOKMARK #{self.getBookmarkIndex()}", (10, 470), 2, GUI_TEXT_COLOR)
 
     # Display the active hands
-    #text.render(self.top.screen, self.activeHands, (1288, 470), 2, GUI_TEXT_COLOR)
+    text.render(self.top.screen, self.activeHands, (1288, 470), 2, GUI_TEXT_COLOR)
 
     # Display weak arbitration information
     if self.isUnderWeakArbitration() :
@@ -1870,11 +1891,22 @@ class Score(widget.Widget) :
         if (key == pygame.K_b) :
           self.bookmarkToggle()
 
+        # L: toggle left-hand practice
+        if (key == pygame.K_l) :
+          print("Score._onKeyEvent(): left hand is TODO")
+
+        # L: toggle left-hand practice
+        if (key == pygame.K_r) :
+          print("Score._onKeyEvent(): right hand is TODO")
+
         # W: declare section with weak arbitration
         if (key == pygame.K_w) :
-          self.setWeakArbitration()
+          self.weakArbitrationStart()
 
-        
+      elif (modifier == "ctrl") :
+        self.weakArbitrationEnd()
+
+
 
 # ---------------------------------------------------------------------------
 # NOTE_TRACKER CLASS (helper class for the MIDI import)

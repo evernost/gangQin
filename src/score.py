@@ -134,185 +134,6 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.loadMidiFile_DEPRECATED()
-  # ---------------------------------------------------------------------------
-  def loadMidiFile_DEPRECATED(self, midiFile: str, midiTracks: list[str]) -> None :
-    """
-    *******
-    WARNING: this version generates the old school score database from 
-    a MIDI file.
-    There is no use for this function anymore. DO NOT USE IT.
-    
-    This function will be removed in a future release.
-    *******
-    
-    Loads and initialises the Score object from a MIDI file.
-
-    'midiFile' must be the full path to the file with its extension.
-    Example: './songs/Chopin_Etude_Op_10_No_1.mid'
-    """
-    
-    print("[INFO] Importing MIDI file... ")
-    
-    # For statistics
-    startTime = time.time()
-
-    # Open MIDI file
-    midiData = mido.MidiFile(midiFile)
-
-    # Initialise attributes 
-    self.pianoRoll = [[[] for _ in range(128)] for _ in range(SCORE_N_STAFF)]
-    self.noteOnTimecodes = {"L": [], "R": [], "LR": [], "LR_full": []}
-    noteCount = 0; noteDuration = 0
-    
-    # Assign a unique identifier to each note (simple counter)
-    id = 0
-
-    # Loop on the tracks, decode the MIDI messages
-    for (i, track) in enumerate(midiData.tracks) :
-      
-      # Process the track if it is linked to left or right hand
-      # Ignore it otherwise
-      if (midiTracks[i] != "") :
-        if (midiTracks[i] == "R") : trackID = SCORE_RIGHT_HAND_TRACK_ID
-        if (midiTracks[i] == "L") : trackID = SCORE_LEFT_HAND_TRACK_ID
-      
-        currTime = 0
-        currTempo = 0
-        for msg in track :
-
-          # Update the current time
-          currTime += msg.time
-          
-          # Keypress event
-          if ((msg.type == 'note_on') and (msg.velocity > 0)) :
-            
-            pitch = msg.note
-            
-            # Inspect the previous notes with the same pitch
-            if (len(self.pianoRoll[trackID][pitch]) > 0) :
-              
-              # Detect if among these notes, one is still held
-              for currNote in self.pianoRoll[trackID][pitch] :
-                if (currNote.stopTime < 0) :
-                  print(f"[WARNING] Ambiguous note at t = {currTime} ({note.getFriendlyName(pitch)}): a keypress overlaps a hanging keypress on the same note.")
-
-                  # New note detected: close the previous note.
-                  # That is one strategy, but it might be wrong. It depends on the song.
-                  # User should decide here.
-                  currNote.stopTime = currTime
-                  noteDuration += (currNote.stopTime - currNote.startTime)
-                  noteCount += 1.0
-                  id += 1
-
-              # Append the new note to the list
-              # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
-              insertIndex = len(self.pianoRoll[trackID][pitch])
-              newNote = note.Note(pitch)
-              newNote.hand      = trackID
-              newNote.id        = insertIndex
-              newNote.startTime = currTime
-              newNote.stopTime  = NOTE_END_UNKNOWN
-              self.pianoRoll[trackID][pitch].append(newNote)
-              
-              # Append the timecode of this keypress
-              if (trackID == SCORE_LEFT_HAND_TRACK_ID) :
-                self.noteOnTimecodes["L"].append(currTime)
-              elif (trackID == SCORE_RIGHT_HAND_TRACK_ID) :
-                self.noteOnTimecodes["R"].append(currTime)
-              else :
-                print("[ERROR] Score.loadMIDIFile(): invalid track number (possible internal error)")
-
-              self.noteOnTimecodes["LR_full"].append(currTime)
-            
-            # First note with this pitch
-            else :
-              
-              # Append the new note to the list
-              # Its duration is unknown for now, so set its endtime to NOTE_END_UNKNOWN = -1
-              insertIndex = len(self.pianoRoll[trackID][pitch])
-              newNote = note.Note(pitch)
-              newNote.hand = trackID
-              newNote.id = insertIndex
-              newNote.startTime = currTime
-              newNote.stopTime = NOTE_END_UNKNOWN
-              self.pianoRoll[trackID][pitch].append(newNote)
-              
-              if (trackID == SCORE_LEFT_HAND_TRACK_ID) :
-                self.noteOnTimecodes["L"].append(currTime)
-              elif (trackID == SCORE_RIGHT_HAND_TRACK_ID) :
-                self.noteOnTimecodes["R"].append(currTime)
-              else :
-                print("[ERROR] Score.loadMIDIFile(): invalid track number (possible internal error)")
-
-              self.noteOnTimecodes["LR_full"].append(currTime)
-
-          # Keyrelease event ----------------------------------------------------
-          # NOTE: in some files, 'NOTE OFF' message is mimicked using a 'NOTE ON' with null velocity.
-          elif ((msg.type == 'note_off') or ((msg.type == 'note_on') and (msg.velocity == 0))) :
-            
-            pitch = msg.note
-
-            # Take the latest event in the piano roll for this note
-            if (len(self.pianoRoll[trackID][pitch]) > 0) :
-              noteObj = self.pianoRoll[trackID][pitch][-1]
-              noteObj.stopTime = currTime
-              noteObj.id = id
-              noteDuration += (noteObj.stopTime - noteObj.startTime)
-              noteCount += 1.0
-              id += 1
-            else :
-              print("[WARNING] Score.loadMIDIFile(): read 'note OFF' with no matching 'note ON' event (possible MIDI corruption)")
-            
-            # Quite common apparently. Is that really an error case?
-            # if (noteObj.startTime == noteObj.stopTime) :
-            #   print(f"[WARNING] [MIDI import] MIDI note {pitch} ({note.getFriendlyName(pitch)}) has null duration (start time = stop time = {noteObj.startTime})")
-            #   self.pianoRoll[trackNumber][pitch].pop()
-
-          elif (msg.type == 'time_signature') :
-            print(f"- read time signature: {msg.numerator}/{msg.denominator} (timecode = {currTime})")
-            #eventTime = mido.tick2second(current_time, ticks_per_beat, tempo) for a display in seconds
-
-          elif (msg.type == 'key_signature') :
-            print(f"- read key signature: {msg.key} (timecode = {currTime})")
-
-          elif (msg.type == 'set_tempo') :
-            #print(f"- read new tempo: {msg.tempo} (timecode = {currTime})")
-            currTempo = msg.tempo
-
-          elif (msg.type == 'control_change') :
-            pass
-
-          elif (msg.type == 'program_change') :
-            pass
-
-
-    # Tidy up:
-    # - sort the timecodes by ascending values
-    # - remove duplicate entries
-    self.noteOnTimecodes["L"].sort(); self.noteOnTimecodes["R"].sort()
-    self.noteOnTimecodes["LR_full"].sort()
-
-    self.noteOnTimecodes["LR"] = list(set(self.noteOnTimecodes["LR_full"]))
-    self.noteOnTimecodes["LR"].sort()
-
-    # Build 'cursorsLeft' and 'cursorsRight' attributes
-    self._buildCursorsLR()
-
-    # Estimate average note duration (needed for the pianoroll display)
-    self.avgNoteDuration = noteDuration/noteCount
-    
-    self.length = len(self.noteOnTimecodes["LR"])
-    self.cursorMax = self.length-1
-    
-    print(f"- score length: {self.length} steps")
-
-    stopTime = time.time()
-    print(f"[INFO] Loading time: {stopTime-startTime:.2f}s")
-
-
-
-  # ---------------------------------------------------------------------------
   # METHOD Score.loadMidiFile()
   # ---------------------------------------------------------------------------
   def loadMidiFile(self, midiFile: str, midiTracks: list[str]) -> None :
@@ -798,82 +619,6 @@ class Score(widget.Widget) :
     noteListSorted = sorted(self.noteList, key = lambda x: x.startTime)
     
     self.notesByCursor_pressed = [list(group) for _, group in groupby(noteListSorted, key = lambda x: x.startTime)]
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.exportToPrFile_DEPRECATED()
-  # ---------------------------------------------------------------------------
-  def exportToPrFile_DEPRECATED(self, prFile: str, backup = False) -> None :
-    """
-
-    *******
-    WARNING: '.pr' files have been deprecated since gangQin version 3.
-    New files must be saved in '.gq3' format using 'Score.loadGQ3File()'.
-    DO NOT use this function.
-    DO NOT maintain '.pr' file format.
-    *******
-
-    Exports the annotated score and all metadata (finger, hand, comments etc.) in 
-    a '.pr' file (JSON) that can be imported later to restore the session.
-
-    'prFile' must be the full path to the file.
-
-    Call the function with 'backup = True' to save under a '.bak' extension instead
-    so that the original file is not overwritten (used e.g. for autosave)
-    """
-
-    if backup :
-      print("[INFO] Exporting a backup of the gangQin file...")
-    else :
-      print("[INFO] Exporting gangQin file...")
-
-    # Create the dictionnary containing all the things we want to save
-    exportDict = {}
-
-    # Export "manually" elements of the PianoRoll object to the export dictionary.
-    # Not ideal but does the job for now as there aren't too many properties.
-    exportDict["revision"]        = f"v{REV_MAJOR}.{REV_MINOR}"
-    exportDict["avgNoteDuration"] = self.avgNoteDuration
-    exportDict["cursor"]          = self.getCursor()
-    exportDict["bookmarks"]       = self.bookmarks
-
-    noteCount = 0
-    exportDict["pianoRoll"] = []
-    for notesInTrack in self.pianoRoll :
-      for notesInPitch in notesInTrack :
-        for noteObj in notesInPitch :
-          noteCount += 1
-          
-          noteObjCopy = copy.deepcopy(noteObj)
-          noteExportAttr = noteObjCopy.__dict__
-
-          # Filter out some note attributes that need not to be exported
-          del noteExportAttr["highlight"]
-          del noteExportAttr["upcoming"]
-          del noteExportAttr["upcomingDistance"]
-          del noteExportAttr["fromKeyboardInput"]
-          del noteExportAttr["lookAheadDistance"]
-          del noteExportAttr["visible"]
-
-          exportDict["pianoRoll"].append(noteExportAttr)
-
-    if backup :
-      (root, _) = os.path.splitext(prFile)
-      exportFile = root + ".bak"
-    else :
-      exportFile = prFile
-    
-    with open(exportFile, "w") as fileHandler :
-      json.dump(exportDict, fileHandler, indent = 2)
-
-    currTime = datetime.datetime.now()
-    if backup :
-      print(f"[INFO] Saved backup to '{exportFile}'")
-    else :
-      currTime = datetime.datetime.now()
-      print(f"[DEBUG] {noteCount} notes written in .pr file.")
-      print(f"[INFO] Saved to '{exportFile}' at {currTime.strftime('%H:%M:%S')}")
 
 
 
@@ -2033,11 +1778,11 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: Score.setWeakArbitration(cursor)
+  # METHOD: Score.weakArbitrationStart()
   # ---------------------------------------------------------------------------
-  def setWeakArbitration(self) :
+  def weakArbitrationStart(self) -> None :
     """
-    Sends a weak arbitration request starting/ending at the current cursor.
+    Sets a weak arbitration section starting at the current cursor.
     
     'Weak arbitration' mode is when the arbiter, for a specific section, 
     waits for the notes in the section to be played but does care about their
@@ -2046,10 +1791,13 @@ class Score(widget.Widget) :
 
     Call this function to declare the boundaries of a section with weak 
     arbitration.
+
+    Operation:
+    - if the section is not under weak arbitration, a new section is created 
+      with the current cursor as starting point
+    - if the section is already under weak arbitration, it gets deleted.
     """
 
-    # If the section is already under weak arbitration, it means the user
-    # wants to edit the current one, so we remove it.
     if self.isUnderWeakArbitration() :
       self.sectionWeakArbitration = [x for x in self.sectionWeakArbitration if ((self.getCursor() >= x[0]) and (self.getCursor() <= x[1]))]
       print("[INFO] Section with weak arbitration was removed.")
@@ -2063,6 +1811,24 @@ class Score(widget.Widget) :
         self.sectionWeakArbitration.append(self.newWeakArbitrationSection)
         self.newWeakArbitrationSection = [-1,-1]
         print(f"[INFO] Section declared.")
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Score.weakArbitrationEnd()
+  # ---------------------------------------------------------------------------
+  def weakArbitrationEnd(self) -> None :
+    """
+    Sets the end of a weak arbitration section at the current cursor.
+    
+    
+    """
+
+    if self.isUnderWeakArbitration() :
+      self.sectionWeakArbitration = [x for x in self.sectionWeakArbitration if ((self.getCursor() >= x[0]) and (self.getCursor() <= x[1]))]
+      
+    else :
+      print("[INFO] Please define the start first.")
 
 
 
@@ -2100,7 +1866,7 @@ class Score(widget.Widget) :
       text.render(self.top.screen, f"BOOKMARK #{self.getBookmarkIndex()}", (10, 470), 2, GUI_TEXT_COLOR)
 
     # Display the active hands
-    #text.render(self.top.screen, self.activeHands, (1288, 470), 2, GUI_TEXT_COLOR)
+    text.render(self.top.screen, self.activeHands, (1288, 470), 2, GUI_TEXT_COLOR)
 
     # Display weak arbitration information
     if self.isUnderWeakArbitration() :
@@ -2125,11 +1891,22 @@ class Score(widget.Widget) :
         if (key == pygame.K_b) :
           self.bookmarkToggle()
 
+        # L: toggle left-hand practice
+        if (key == pygame.K_l) :
+          print("Score._onKeyEvent(): left hand is TODO")
+
+        # L: toggle left-hand practice
+        if (key == pygame.K_r) :
+          print("Score._onKeyEvent(): right hand is TODO")
+
         # W: declare section with weak arbitration
         if (key == pygame.K_w) :
-          self.setWeakArbitration()
+          self.weakArbitrationStart()
 
-        
+      elif (modifier == "ctrl") :
+        self.weakArbitrationEnd()
+
+
 
 # ---------------------------------------------------------------------------
 # NOTE_TRACKER CLASS (helper class for the MIDI import)

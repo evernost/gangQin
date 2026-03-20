@@ -3,7 +3,8 @@
 # Project       : gangQin
 # Module name   : ProgressBar
 # File name     : ProgressBar.py
-# Purpose       : provides a progress bar widget
+# File type     : Python script (Python 3)
+# Purpose       : represents the current location in the score visually
 # Author        : QuBi (nitrogenium@hotmail.com)
 # Creation date : Sunday, 8 Oct 2023
 # -----------------------------------------------------------------------------
@@ -11,46 +12,66 @@
 # =============================================================================
 
 # =============================================================================
-# External libs
+# EXTERNALS
 # =============================================================================
 # Project specific constants
-from commons import *
+from src.commons import *
+import src.text as text
+import src.widgets.widget as widget
 
+# Standard libraries
+from enum import Enum
 import pygame
 
 
 
-
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
-PROGRESSBAR_MODE_BAR = 0
-PROGRESSBAR_MODE_DOT = 1
-
-
-
-# =============================================================================
-# Guards
-# =============================================================================
-if (__name__ == "__main__") :
-  print("[WARNING] This library is not intended to be called as a main.")
+class Mode(Enum) :
+  BAR = 0
+  DOT = 1
 
 
 
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
+class ProgressBar(widget.Widget) :
 
-class ProgressBar :
+  """
+  PROGRESS_BAR object
+  
+  Description is TODO.
 
-  def __init__(self, loc, size, thickness = 2) :
-    (self.locX, self.locY) = loc
-    (self.sizeX, self.sizeY) = size
-    self.visible = False
+  The ProgressBar class derives from the Widget class.
+  """
+
+  def __init__(self, top) :
     
-    self.mode = PROGRESSBAR_MODE_BAR
+    # Call the Widget init method
+    super().__init__(top, loc = WIDGET_LOC_UNDEFINED)
     
-    self.thickness = thickness
+    # Name of the widget
+    self.name = "progress bar"
+    
+    self.enabled = False
+
+  
+  
+  # ---------------------------------------------------------------------------
+  # METHOD: Keyboard.render()
+  # ---------------------------------------------------------------------------
+  def render(self) -> None :
+    """
+    Renders the widget on screen.
+    """
+
+    if self.enabled :
+      text.render(self.top.screen, f"BPM:{self.bpm} - {self.num}/{self.denom} - {self.counter}", (950, 470), 2, GUI_TEXT_COLOR)
+  
+    
+
 
 
 
@@ -79,3 +100,9 @@ class LoopProgressBar(ProgressBar) :
     self.loopEndCursor = -1
 
 
+
+# =============================================================================
+# UNIT TESTS
+# =============================================================================
+if (__name__ == "__main__") :
+  print("[INFO] There are no unit tests available for 'handSelector.py'")

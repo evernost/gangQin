@@ -4,7 +4,7 @@
 # Module name   : handSelector
 # File name     : handSelector.py
 # File type     : Python script (Python 3)
-# Purpose       : 
+# Purpose       : shows the hand selector for the StaffScope editor
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Saturday, 09 November 2024
 # -----------------------------------------------------------------------------
@@ -172,7 +172,7 @@ class HandSelector(widget.Widget) :
 
     
 # =============================================================================
-# Unit tests
+# UNIT TESTS
 # =============================================================================
 if (__name__ == "__main__") :
   print("[INFO] There are no unit tests available for 'handSelector.py'")

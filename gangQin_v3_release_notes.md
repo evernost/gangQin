@@ -1,4 +1,4 @@
-# gangQin v3.0 - Release notes (June 2025)
+# gangQin v3.0 - Release notes (March 2026)
 
 ## What's New
 ### gangQin Player
@@ -8,13 +8,13 @@
 - [ ] bookmarks visible in staffscope
 - [ ] edit notes with wrong pitch directly from the app (no more manual file edition)
 - [ ] added a rehearsal mode
-- [ ] added a transposed mode (either transposed input, or transposed output)
-- [ ] added a weak arbitration mode
+- [X] added a transposed mode (either transposed input, or transposed output)
+- [ ] added an arpeggio mode
 - [ ] added a versatile metronome
 - [ ] status bar indicating various kind of messages (errors in the score, warnings, etc.)
 
 ## Improvements
-- [ ] major code refactor, more modular, overall code more coherent and less duplicates
+- [X] major code refactor, more modular, overall code more coherent and less duplicates
 - [X] constants centralised and reorganised in 'commons.py'
 
 ### gangQin Player

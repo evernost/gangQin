@@ -116,7 +116,7 @@ class Score(widget.Widget) :
     # Sections in the score
     self.sectionLoop = []
     self.sectionKey = []
-    self.sectionWeakArbitration = []
+    self.sectionArpeggio = []
     self.sectionTempo = []
     
     # Settings for the interaction with the cursor
@@ -127,9 +127,6 @@ class Score(widget.Widget) :
     # Custom attributes (not organised yet)
     self.hasUnsavedChanges = False
     self.avgNoteDuration = 0
-
-    # TODO
-    self.newWeakArbitrationSection = [-1,-1]
 
 
 
@@ -1778,69 +1775,75 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: Score.weakArbitrationStart()
+  # METHOD: Score.arpeggioSectionSet()
   # ---------------------------------------------------------------------------
-  def weakArbitrationStart(self) -> None :
+  def arpeggioSectionSet(self) -> None :
     """
-    Sets a weak arbitration section starting at the current cursor.
+    Sets a section in arpeggio mode at the current cursor.
     
-    'Weak arbitration' mode is when the arbiter, for a specific section, 
-    waits for the notes in the section to be played but does care about their
-    sequencing or timing anymore. In short, notes can be played in any order
-    you like in this section.
+    'Arpeggio' mode is when the arbiter waits for the notes in the section 
+    to be played but does care about their sequencing or timing anymore. 
+    In short, notes can be played in any order you like in this section.
 
-    Call this function to declare the boundaries of a section with weak 
-    arbitration.
-
-    Operation:
-    - if the section is not under weak arbitration, a new section is created 
+    Mode of operation:
+    - if the section is not under arpeggio, a new section is created 
       with the current cursor as starting point
-    - if the section is already under weak arbitration, it gets deleted.
+    - if the section is already an arpeggio, it gets deleted.
+
+    By default, the section only lasts for 1 cursor.
     """
 
-    if self.isUnderWeakArbitration() :
-      self.sectionWeakArbitration = [x for x in self.sectionWeakArbitration if ((self.getCursor() >= x[0]) and (self.getCursor() <= x[1]))]
-      print("[INFO] Section with weak arbitration was removed.")
+    # The section is already in arpeggio mode.
+    # There's nothing to start; so we assume that a hit on 'w' means
+    # you want to erase this section.
+    if self.isArpeggioSection() :
+      self.sectionArpeggio = [x for x in self.sectionArpeggio if ((self.getCursor() < x[0]) or (self.getCursor() > x[1]))]
+      print("[INFO] Arpeggio section was removed.")
+
+    # The section has no arpeggio indication: the user wants to start
+    # one here.
+    # We assume the section's extent = 1. 
+    # If the user wants to make it longer, he has to extend it by pressing 'ctrl + w'
+    # at the end location.
     else :
-      if (self.newWeakArbitrationSection[0] == -1) :
-        self.newWeakArbitrationSection[0] = self.getCursor()
-        print(f"[INFO] New section under weak arbitration; start point = {self.getCursor()}")
-      elif (self.newWeakArbitrationSection[1] == -1) :
-        self.newWeakArbitrationSection[1] = self.getCursor()
-        print(f"[INFO] New section under weak arbitration; end point = {self.getCursor()}")
-        self.sectionWeakArbitration.append(self.newWeakArbitrationSection)
-        self.newWeakArbitrationSection = [-1,-1]
-        print(f"[INFO] Section declared.")
+      self.sectionArpeggio.append([self.getCursor(), self.getCursor()])
+      print(f"[INFO] New arpeggio section; start point = {self.getCursor()}")
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: Score.weakArbitrationEnd()
+  # METHOD: Score.arpeggioSectionExtend()
   # ---------------------------------------------------------------------------
-  def weakArbitrationEnd(self) -> None :
+  def arpeggioSectionExtend(self) -> None :
     """
     Sets the end of a weak arbitration section at the current cursor.
-    
-    
     """
 
-    if self.isUnderWeakArbitration() :
-      self.sectionWeakArbitration = [x for x in self.sectionWeakArbitration if ((self.getCursor() >= x[0]) and (self.getCursor() <= x[1]))]
+    if self.isArpeggioSection() :
+      print("[DEBUG] Score(): CTRL + w behavior is undefined within an arpeggiated section.")
       
     else :
-      print("[INFO] Please define the start first.")
+      tmp = [x for x in self.sectionArpeggio if x[1] < self.getCursor()]
+
+      # Sort by ascending start point
+      # ...
+      
+      # Take the last one, change its end term
+      # ...
+
+      
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: Score.isUnderWeakArbitration()
+  # METHOD: Score.isArpeggioSection()
   # ---------------------------------------------------------------------------
-  def isUnderWeakArbitration(self) :
+  def isArpeggioSection(self) :
     """
-    Indicate if the current cursor is under weak arbitration.
+    Indicate if the current cursor belongs to an 'arpeggio' mode section.
     """
 
-    for I in self.sectionWeakArbitration :
+    for I in self.sectionArpeggio :
       (a,b) = I
       if ((self.getCursor() >= a) and (self.getCursor() <= b)) :
         return True
@@ -1869,7 +1872,7 @@ class Score(widget.Widget) :
     text.render(self.top.screen, self.activeHands, (1288, 470), 2, GUI_TEXT_COLOR)
 
     # Display weak arbitration information
-    if self.isUnderWeakArbitration() :
+    if self.isArpeggioSection() :
       text.render(self.top.screen, "W", (400, 20), 2, GUI_TEXT_COLOR)
 
 
@@ -1901,11 +1904,14 @@ class Score(widget.Widget) :
 
         # W: declare section with weak arbitration
         if (key == pygame.K_w) :
-          self.weakArbitrationStart()
+          self.arpeggioSectionSet()
 
       elif (modifier == "ctrl") :
-        self.weakArbitrationEnd()
-
+        
+        # CTRL + W: extend a region under weak arbitration
+        if (key == pygame.K_w) :
+          self.arpeggioSectionExtend()
+        
 
 
 # ---------------------------------------------------------------------------

@@ -75,14 +75,16 @@ Known limitations:
 | →             |Next cursor     |
 | ↑             |Next bookmark   |
 | ↓             |Previous bookmark|
-| S             |Save to .pr file|
-| B             |Bookmark the current cursor|
+| S             |Save to .gq3 file|
+| B             |Toggle bookmark on the current cursor|
 | L             |Toggle ON/OFF left hand practice|
 | R             |Toggle ON/OFF right hand practice|
-| M             |Toggle ON/OFF the metronome|
+| M             |Metronome ON/OFF|
 | M+            |Increase metronome tempo|
 | M-            |Decrease metronome tempo|
 | V             |Toggle pianoroll/staffscope view|
+| W             |Sets the current cursor in arpeggio mode|
+| CTRL + W      |TODO|
 | F2            |Increase lookahead distance|
 | F3            |Toggle 'strict' mode in looped practice|
 | F9            |Set the beginning of the loop at the current cursor|
@@ -106,7 +108,7 @@ To run the app from VSCode, you need to run the code using a launch.json and add
 - "env": {"PYTHONPATH": "${workspaceFolder}"}
 
 ## TODO / Ideas
-- [ ] add a weak arbitration mode
+- [ ] add a an _arpeggio_ mode that better arbitrates arpeggiated inputs
 - [ ] add a border around the staffscope that turns red when a wrong note is played 
 - [ ] catalog of exercise sessions: add the possibility to save the current location + loop settings + hand practice to a catalog, so that it can be restored later
 - [ ] add a rehearsal mode, where inputs don't trigger anything (i.e. practice without wrong note count)

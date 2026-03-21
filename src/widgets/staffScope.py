@@ -348,12 +348,6 @@ class StaffScope(widget.Widget) :
     A color scheme helps distinguish the active/inactive playglows.
     """
     
-    # In the v2.0 main:
-    # if staffScopeWidget.isStaffAvailable(userScore.getCursor()) :
-    #   staffScopeWidget.loadCursor(userScore.getCursor())
-    #   staffScopeWidget.declareStats(statsObj.cursorWrongNoteCount)
-    #   staffScopeWidget.render()
-    
     # Ask the current cursor from the Score object
     scoreCursor = self.top.widgets[WIDGET_ID_SCORE].getCursor()
 
@@ -407,14 +401,14 @@ class StaffScope(widget.Widget) :
     # ----------------------
     # Render the cursor line
     # ----------------------
-    if self.playGlows :
-      x = 0
-      for p in self.playGlows :
-        x += (p.coord_xMin + p.coord_xMax)/2
+    # if self.playGlows :
+    #   x = 0
+    #   for p in self.playGlows :
+    #     x += (p.coord_xMin + p.coord_xMax)/2
 
-      x = x / len(self.playGlows)
+    #   x = x / len(self.playGlows)
 
-      pygame.draw.line(transparent_surface, (200, 200, 200), (x, self.imgCoordY), (x, self.imgCoordY + (self.imgHeight*self.imgScaling)))
+    #   pygame.draw.line(transparent_surface, (200, 200, 200), (x, self.imgCoordY), (x, self.imgCoordY + (self.imgHeight*self.imgScaling)))
 
 
 

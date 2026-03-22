@@ -476,13 +476,13 @@ class Score(widget.Widget) :
 
     # Fallback dictionary in case some fields don't exist.
     safeDict = {
-      "appVersion"                : "v0.0",
-      "cursor"                    : 0,
-      "bookmarks"                 : [],
-      "noteList"                  : [],
-      "timecodeList"              : [],
-      "tempoSections"             : [(1, 120)],
-      "weakArbitrationSections"   : []
+      "appVersion"        : "v0.0",
+      "cursor"            : 0,
+      "bookmarks"         : [],
+      "noteList"          : [],
+      "timecodeList"      : [],
+      "tempoSections"     : [(1, 120)],
+      "arpeggioSections"  : []
     }
 
     # Read the revision
@@ -499,8 +499,10 @@ class Score(widget.Widget) :
         safeDict[currKey] = importDict[currKey]
 
     # Initialize the object
-    self.cursor     = safeDict["cursor"]
-    self.bookmarks  = safeDict["bookmarks"]
+    self.cursor           = safeDict["cursor"]
+    self.bookmarks        = safeDict["bookmarks"]
+    self.sectionTempo     = safeDict["tempoSections"]
+    self.sectionArpeggio  = safeDict["arpeggioSections"]
     
     if (len(safeDict["noteList"]) != len(safeDict["timecodeList"])) :
       print("[ERROR] Lengths do not match.")
@@ -667,10 +669,9 @@ class Score(widget.Widget) :
 
       noteCount += 1
 
-    # TODO
     # Written at the end of the JSON to simplify diff/merges
-    output["tempoSections"] = []
-    output["weakArbitrationSections"] = []
+    output["tempoSections"]     = self.sectionTempo
+    output["arpeggioSections"]  = self.sectionArpeggio
 
     # By default, save under the same directory
     if (gq3File == "") :
@@ -1823,17 +1824,21 @@ class Score(widget.Widget) :
       print("[DEBUG] Score(): CTRL + w behavior is undefined within an arpeggiated section.")
       
     else :
-      tmp = [x for x in self.sectionArpeggio if x[1] < self.getCursor()]
 
-      # Sort by ascending start point
-      # ...
+      arpeggioBeforeCursor = [(i, section) for (i, section) in enumerate(self.sectionArpeggio) if section[1] < self.getCursor()]
+
+      if arpeggioBeforeCursor :
+
+        # Sort by ascending start point
+        arpeggioBeforeCursor.sort(key = lambda x : x[1][1])
+        
+        (index, lastSection) = arpeggioBeforeCursor[-1]
+
+        if (lastSection[0] == lastSection[1]) :
+          self.sectionArpeggio[index][1] = self.getCursor()
+          print(f"[INFO] Arpeggio section at cursor = {lastSection[0]} extended up to cursor = {self.getCursor()}")
+        
       
-      # Take the last one, change its end term
-      # ...
-
-      
-
-
 
   # ---------------------------------------------------------------------------
   # METHOD: Score.isArpeggioSection()

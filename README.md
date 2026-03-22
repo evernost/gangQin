@@ -84,7 +84,7 @@ Known limitations:
 | M-            |Decrease metronome tempo|
 | V             |Toggle pianoroll/staffscope view|
 | W             |Sets the current cursor in arpeggio mode|
-| CTRL + W      |TODO|
+| CTRL + W      |Extend the last arpeggio section to the current cursor|
 | F2            |Increase lookahead distance|
 | F3            |Toggle 'strict' mode in looped practice|
 | F9            |Set the beginning of the loop at the current cursor|

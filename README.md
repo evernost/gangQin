@@ -1,7 +1,7 @@
 # gangQin v3.0 (ALPHA)
 Piano learning app for those who struggle with the conventional music scores.
 
-![image](https://github.com/user-attachments/assets/1cd22e89-eea6-40ad-90cc-525259448a2c)
+<img width="1348" height="566" alt="image" src="https://github.com/user-attachments/assets/fab49627-0b58-403b-a5f4-460338457004" />
 
 ## Principle
 Look on the Internet for a MIDI file version of the song you want to learn.

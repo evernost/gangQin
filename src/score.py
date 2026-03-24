@@ -1841,6 +1841,18 @@ class Score(widget.Widget) :
       
 
   # ---------------------------------------------------------------------------
+  # METHOD: Score.arpeggioGetNotesInSection()
+  # ---------------------------------------------------------------------------
+  def arpeggioGetNotesInSection(self) :
+    """
+    Returns all the notes in the current arpeggio section.
+    """
+
+    pass
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD: Score.isArpeggioSection()
   # ---------------------------------------------------------------------------
   def isArpeggioSection(self) :
@@ -1854,7 +1866,6 @@ class Score(widget.Widget) :
         return True
         
     return False
-
 
 
   # ---------------------------------------------------------------------------

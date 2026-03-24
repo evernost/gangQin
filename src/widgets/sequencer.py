@@ -185,17 +185,7 @@ class Sequencer(widget.Widget) :
     Updates the Sequencer machinery in case of an external MIDI input.
     """
 
-    # TODO 
-    # In "normal" gameplay mode:
-    # - call the arbiter
-    # - ask his opinion about the user MIDI input
-    # In "automatic" gameplay mode:
-    # MIDI inputs are ignored.
-
     decision = self.top.widgets[WIDGET_ID_ARBITER].eval()
-
-    # now = datetime.datetime.now()
-    # print(f"[DEBUG] {now.strftime('%H:%M:%S')} {decision}")
 
     if (arbiter.arbiterStatus.VALID_INPUT in decision) :
       self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)

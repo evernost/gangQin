@@ -109,6 +109,7 @@ To run the app from VSCode, you need to run the code using a launch.json and add
 
 ## TODO / Ideas
 - [ ] add a an _arpeggio_ mode that better arbitrates arpeggiated inputs
+- [ ] add a _coarse_ arbitration: the user doesn't have to play exactly what the score says; roughly is enough. As long as it is close enough, input is validated. This encourages to develop the gestures before focusing too much on the actual notes
 - [ ] add a border around the staffscope that turns red when a wrong note is played 
 - [ ] catalog of exercise sessions: add the possibility to save the current location + loop settings + hand practice to a catalog, so that it can be restored later
 - [ ] add a rehearsal mode, where inputs don't trigger anything (i.e. practice without wrong note count)

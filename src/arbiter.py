@@ -91,6 +91,8 @@ class Arbiter(widget.Widget) :
     self.midiSuperfluous  = [0 for _ in range(128)]
     self.midiAssociatedID = [-1 for _ in range(128)]
 
+    self.arpeggioBuffer = []
+
     self.suspended = False
     self.queryNotesPitch = []
 
@@ -154,11 +156,26 @@ class Arbiter(widget.Widget) :
     Compares the notes currently played on the keyboard ('self.midiCurr') with 
     the notes expected ('teacherNotes') and returns the decision.
 
-    Decision is one of the following:
-    - NO_INPUT          : waits for user input
-    - INCOMPLETE_INPUT  : the user hasn't pressed all the expected notes 
-    - WRONG_NOTE        : something is wrong in the user input
-    - VALID_INPUT       : the user input is correct
+    The decision is returned as an array containing one or several elements of 
+    type 'arbiterStatus'.
+    """
+
+    if self.top.widgets[WIDGET_ID_SCORE].isArpeggioSection() :
+      return self._evalArpeggio()
+    else :
+      return self._evalStandard()
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Arbiter._evalStandard()                                   [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _evalStandard(self) :
+    """
+    Compares the user input vs the score with a standard arbitration.
+
+    Basically, you must press what's written in the scores up to a few 
+    exceptions.
     """
 
     # Read the teacher notes in the score
@@ -168,7 +185,7 @@ class Arbiter(widget.Widget) :
     # Filter out the sustained notes
     teacherNotesAsMidiArray = [0 for _ in range(128)]
     for noteObj in teacherNotes :
-      if ((noteObj.sustained == False) and (noteObj.inactive == False)):
+      if ((noteObj.sustained == False) and (noteObj.inactive == False)) :
         teacherNotesAsMidiArray[noteObj.pitch] = 1
 
     # STRATEGY: PERMISSIVE
@@ -264,6 +281,21 @@ class Arbiter(widget.Widget) :
 
 
 
+  # ---------------------------------------------------------------------------
+  # METHOD: Arbiter._evalArpeggio()                                   [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _evalArpeggio(self) :
+    """
+    Compares the user input vs the score with an arpeggio arbitration.
+    
+    In arpeggio arbitration, the order in which the notes are pressed do not
+    matter anymore.
+    """
+
+    expectedNotes = self.top.widgets[WIDGET_ID_SCORE].arpeggioGetNotesInSection()
+
+    
+    
   # ---------------------------------------------------------------------------
   # METHOD Sequencer._onKeyEvent()                                  [INHERITED]
   # ---------------------------------------------------------------------------

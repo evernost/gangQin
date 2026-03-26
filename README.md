@@ -60,36 +60,37 @@ A piano keyboard with MIDI output, plugged into a computer running your favorite
 
 ## Development status 
 - the gameplay has been tested extensively for 50+ hours on various songs
-  - arbitration process (what is a good/wrong input) is tested and reliable, but can fail for arpegios. Upcoming updates in March 2025 will fix this
+  - arbitration process (what is a good/wrong input) is tested and reliable, but can fail for arpegios. Upcoming updates in March 2026 will fix this
   - no *fatal flaw* (crash with loss of information) has been reported since a few updates
 
 Known limitations:
 - Edition of the internal score representation (.pr file) is limited to pitch adjustment
 - MIDI import interface allows to select the tracks but is not fully operational yet
 
-## Software shortcuts
+## Keyboard shortcuts
 
 | Key           | Function      |
 |:------------- |:-------------|
-| ←             |Previous cursor|
-| →             |Next cursor     |
-| ↑             |Next bookmark   |
-| ↓             |Previous bookmark|
-| S             |Save to .gq3 file|
-| B             |Toggle bookmark on the current cursor|
-| L             |Toggle ON/OFF left hand practice|
-| R             |Toggle ON/OFF right hand practice|
-| M             |Metronome ON/OFF|
-| M+            |Increase metronome tempo|
-| M-            |Decrease metronome tempo|
-| V             |Toggle pianoroll/staffscope view|
-| W             |Sets the current cursor in arpeggio mode|
-| CTRL + W      |Extend the last arpeggio section to the current cursor|
-| F2            |Increase lookahead distance|
-| F3            |Toggle 'strict' mode in looped practice|
-| F9            |Set the beginning of the loop at the current cursor|
-| F10           |Set the end of the loop at the current cursor|
-| F11           |Erase loop information|
+| `←`           |Previous cursor|
+| `→`           |Next cursor|
+| `↑`           |Next bookmark|
+| `↓`           |Previous bookmark|
+| `s`           |Save the current progress to an internal file (.gq3)|
+| `b`           |Toggle bookmark on the current cursor|
+| `l`           |Toggle ON/OFF left hand practice|
+| `r`           |Toggle ON/OFF right hand practice|
+| `m`           |Metronome ON/OFF|
+| `m` + `+`     |Increase metronome tempo|
+| `m` + `-`     |Decrease metronome tempo|
+| `t` + `+`     |Transpose the MIDI input by +1 semitone|
+| `v`           |Toggle pianoroll/staffscope view|
+| `w`           |Sets the current cursor in arpeggio mode|
+| `CTRL` + `w`  |Extend the last arpeggio section to the current cursor|
+| `F2`          |Increase lookahead distance|
+| `F3`          |Toggle 'strict' mode in looped practice|
+| `F9`          |Set the beginning of the loop at the current cursor|
+| `F10`         |Set the end of the loop at the current cursor|
+| `F11`         |Erase loop information|
 
 
 

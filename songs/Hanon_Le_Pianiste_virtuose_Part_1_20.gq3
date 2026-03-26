@@ -14505,7 +14505,7 @@
     {
       "pitch": 72,
       "hand": 0,
-      "finger": 5,
+      "finger": 2,
       "voice": 0,
       "name": "C5"
     },
@@ -14519,7 +14519,7 @@
     {
       "pitch": 69,
       "hand": 0,
-      "finger": 2,
+      "finger": 1,
       "voice": 0,
       "name": "A4"
     },
@@ -14533,7 +14533,7 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 1,
+      "finger": 2,
       "voice": 0,
       "name": "B4"
     },

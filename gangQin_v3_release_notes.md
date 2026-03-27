@@ -23,22 +23,22 @@
 - [ ] wrong note counter is disabled in looped practice (so that the counter does not go crazy. See issue #15)
 - [ ] added more shortcuts for the finger selector
 - [ ] improved hand selector for the single hand practice
-- [ ] auto-backup of .gq if overwritten by a new generation from .mid
-- [ ] auto-backup of .gq during practice
+- [ ] auto-backup of .gq3 if overwritten by a new generation from .mid
+- [ ] auto-backup of .gq3 during practice
 - [ ] double key press replaced by an orange note, the user must indicate what hand should play
 - [ ] auto-detection of odd fingersatz in chords
 - [ ] clearer stat cues
-- [ ] playing stats shown in more human readable formats
+- [X] playing stats shown in more human readable formats
 - [X] track selection for MIDI file now fully integrated
 - [X] more robust single hand practice
 - [X] more robust MIDI file import (in particular for keypress overlaps)
 
-### gangQin Fusion
+### gangQin - Fusion
 - [ ] auto-repeat function for the playglows
 - [ ] song selector defaults to the last song
 - [ ] ghost mode on the mouse cursor to help placing the playglow
 
-### gangQin Capture
+### gangQin - Capture
 - [ ] added snapshot counter
 - [ ] added context to the score (page number, capture number within the page, editor's name, etc.)
 

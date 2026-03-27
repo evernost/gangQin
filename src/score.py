@@ -23,6 +23,7 @@ import src.text as text
 # Standard libraries
 import copy                       # mostly used in deprecated functions
 import datetime
+import heapq
 from itertools import groupby     # for fast database manipulation
 import json                       # for .gq3 file database import/export
 import mido                       # for MIDI file manipulation
@@ -99,7 +100,6 @@ class Score(widget.Widget) :
     self.noteList = []                  # Full list of all notes (no particular ordering)
     self.notesByCursor_pressed = []     # List of notes pressed at a given cursor. Each entry is a cursor value.
     self.notesByCursor_active = []      # List of notes active (i.e. pressed or sustained) at a given cursor. Each entry is a cursor value.
-    self.noteByTimecode = []
     self.noteOnTimecodes = {
       "L"       : [],   # Timecodes for the left hand keypresses
       "R"       : [],   # Timecodes for the right hand keypresses
@@ -550,7 +550,7 @@ class Score(widget.Widget) :
     # either on the left (cursorsLeft) or right hand (cursorsRight)
     self._buildCursorsLR()
 
-    # Build the 'notesByCursor_XXX' attributes
+    # Build the 'notesByCursor_pressed' attributes
     self._buildNotesByCursor()
 
     self.length = len(self.noteOnTimecodes["LR"])
@@ -607,17 +607,57 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   def _buildNotesByCursor(self) -> None :
     """
-    Populates the fields 'Score.notesByCursor_XXX' from the 
-    list of timecodes of all note on events ('Score.noteOnTimeCodes' dictionary).
+    Generates the list of all notes pressed at a certain cursor value.
+
+    Output goes to 'Score.notesByCursor_XXX' from the list of all 
+    timecodes of all note on events ('Score.noteOnTimeCodes' dictionary).
     
     This method is usually called after loading a MIDI or .gq3 file, since 
     the information in these fields is redundant and does not bring added
     value being in the file.
+
+    It is also called when the teacherNotes are requested.
     """
 
+    print("[DEBUG] Generating the 'pressed notes' table...", end = " ")
     noteListSorted = sorted(self.noteList, key = lambda x: x.startTime)
     
-    self.notesByCursor_pressed = [list(group) for _, group in groupby(noteListSorted, key = lambda x: x.startTime)]
+    # EXPLANATION
+    # > groupby(..., key = lambda x: x.startTime) 
+    #   Groups together the input elements that have a certain attribute (here: startTime) matching.
+    #   In order to be grouped together, elements with matching attribute MUST be consecutive.
+    #   Therefore the sorting prior to this command.
+    #   It outputs an iterator.
+    self.notesByCursor_pressed = [list(group) for (_, group) in groupby(noteListSorted, key = lambda x: x.startTime)]
+    print("Done")
+
+
+
+    print("[DEBUG] Generating the 'active notes' table...", end = " ")
+    unique_times = sorted(set(n.startTime for n in noteListSorted))
+
+    self.notesByCursor_active = []
+    heap    = []   # min-heap of (stopTime, counter, note)
+    counter = 0    # tiebreaker — avoids comparing Note objects directly
+    ptr     = 0    # rolling index into notes_sorted
+
+    for T in unique_times :
+
+      # Step 1: Admit all notes whose startTime <= T into the active heap
+      while (ptr < len(noteListSorted) and noteListSorted[ptr].startTime <= T) :
+        n = noteListSorted[ptr]
+        heapq.heappush(heap, (n.stopTime, counter, n))
+        counter += 1
+        ptr += 1
+
+      # Step 2: Evict notes that finished strictly before T
+      while heap and heap[0][0] < T:
+        heapq.heappop(heap)
+
+      # Step 3: Everything remaining in the heap is active at T
+      self.notesByCursor_active.append([n for (_, _, n) in heap])
+    print("Done")
+    print()
 
 
 
@@ -1353,13 +1393,8 @@ class Score(widget.Widget) :
     # Reset the cache
     self.teacherNotes = []
     
-    for N in self.noteList :
-
-      # TODO: optimise the 'for' loop. 
-      # Notes are stored in chronological order in 'Score.noteList'
-      # It is not necessary to explore the entire list at each function call.
-      # Beyond a certain point, we know for sure that no more
-      # note will be added to 'Score.teacherNotes'.
+    L = self.notesByCursor_active[self.getCursor()]
+    for N in L :
 
       # CASE 1: a note is pressed at this timecode
       if (N.startTime == self.getTimecode()) :
@@ -1389,6 +1424,44 @@ class Score(widget.Widget) :
       # CASE 3: the note is out of the current window
       else :
         pass
+
+
+    # for N in self.noteList :
+
+    #   # TODO: optimise the 'for' loop. 
+    #   # Notes are stored in chronological order in 'Score.noteList'
+    #   # It is not necessary to explore the entire list at each function call.
+    #   # Beyond a certain point, we know for sure that no more
+    #   # note will be added to 'Score.teacherNotes'.
+
+    #   # CASE 1: a note is pressed at this timecode
+    #   if (N.startTime == self.getTimecode()) :
+        
+    #     # SINGLE HAND PRACTICE
+    #     # Adds the notes with their "inactive" property to "True" 
+    #     # so that it is displayed with the appropriate color.
+    #     if (self.activeHands == SCORE_ACTIVE_HANDS_BOTH) :
+    #       N.inactive = False
+    #       self.teacherNotes.append(N)
+        
+    #     elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
+    #       if (N.hand != note.hand_T.LEFT) : 
+    #         N.inactive = True
+    #         self.teacherNotes.append(N)
+
+    #     elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
+    #       if (N.hand != note.hand_T.RIGHT) :
+    #         N.inactive = True
+    #         self.teacherNotes.append(N)
+
+    #   # CASE 2: the note is held at this timecode
+    #   elif ((N.startTime < self.getTimecode()) and (N.stopTime >= self.getTimecode())) :
+    #     N.sustained = True
+    #     self.teacherNotes.append(N)
+
+    #   # CASE 3: the note is out of the current window
+    #   else :
+    #     pass
 
     # Detect void list of teacher notes
     # This is not supposed to happen
@@ -1412,80 +1485,23 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.getActiveNotes()
+  # METHOD Score.getNotesAtCursor()
   # ---------------------------------------------------------------------------
-  def getActiveNotes(self, cursor) :
+  def getNotesAtCursor(self, cursorBegin = -1, cursorEnd = -1) :
     """
-    Almost the same as 'getTeacherNotes()' but for an arbitrary cursor.
-    
-    This function is used e.g. to duplicate a fingering; in that case, we
-    need to refer to a previous cursor to see what notes were active.
+    Returns the notes pressed at a given cursor.
+
+    If no cursor is given, the function takes the current cursor.
+    If an end cursor is specified, the function returns all notes between 
+    'cursorBegin' and 'cursorEnd' (all included)
     """
     
-    print("The function is TODO!")
+    if (cursorBegin == -1)  : cursorBegin = self.getCursor()
+    if (cursorEnd == -1)    : cursorEnd = self.getCursor()
 
     ret = []
 
-    for N in self.noteList :
-
-      # TODO: optimise the 'for' loop. 
-      # Notes are stored in chronological order in 'Score.noteList'
-      # It is not necessary to explore the entire list at each function call.
-      # Beyond a certain point, we know for sure that no more
-      # note will be added to 'Score.teacherNotes'.
-
-      # CASE 1: a note is pressed at this timecode
-      if (N.startTime == self.getTimecode()) :
-        
-        # SINGLE HAND PRACTICE
-        # Adds the notes with their "inactive" property to "True" 
-        # so that it is displayed with the appropriate color.
-        if (self.activeHands == SCORE_ACTIVE_HANDS_BOTH) :
-          N.inactive = False
-          self.teacherNotes.append(N)
-        
-        elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
-          if (N.hand != note.hand_T.LEFT) : 
-            N.inactive = True
-            self.teacherNotes.append(N)
-
-        elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
-          if (N.hand != note.hand_T.RIGHT) :
-            N.inactive = True
-            self.teacherNotes.append(N)
-
-      # CASE 2: the note is held at this timecode
-      elif ((N.startTime < self.getTimecode()) and (N.stopTime >= self.getTimecode())) :
-        N.sustained = True
-        self.teacherNotes.append(N)
-
-      # CASE 3: the note is out of the current window
-      else :
-        pass
-
-    # Detect void list of teacher notes
-    # This is not supposed to happen
-    if (len(self.teacherNotes) == 0) :
-      print(f"[WARNING] Score.getActiveNotes(): empty list of teacher notes (t = {self.getTimecode()}), possible internal error.")
-
-    # TODO: filter out notes with 0 duration.
-    # Still not sure why it happens.
-    # See https://github.com/evernost/gangQin/issues/22
-    filteredList = []
-    for N in self.teacherNotes :
-      if not(N.fromKeyboardInput) :
-        if (N.startTime != N.stopTime):
-          filteredList.append(N)
-        else :
-          pass
-          #print(f"[DEBUG] Score._calculateTeacherNotes(): null duration note detected (cursor = {self.getCursor()})")
-      else :
-        filteredList.append(N)
-    self.teacherNotes = filteredList
-
-
-    # Use .copy() to avoid returning the original notes objects.
-    return ret.copy()
+    
 
 
 
@@ -1848,8 +1864,22 @@ class Score(widget.Widget) :
     Returns all the notes in the current arpeggio section.
     """
 
-    pass
+    (a,b) = self.arpeggioGetSectionBound()
 
+    L = self.getNotesAtCursor(cursorBegin = a, cursorEnd = b)
+    
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Score.arpeggioGetNotesInSection()
+  # ---------------------------------------------------------------------------
+  def arpeggioGetSectionBound(self) :
+    """
+    Returns the boundaries of the current arpeggio section.
+    """
+
+    return (-1, -1)
+    
 
 
   # ---------------------------------------------------------------------------

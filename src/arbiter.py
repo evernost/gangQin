@@ -92,7 +92,7 @@ class Arbiter(widget.Widget) :
     self.midiAssociatedID = [-1 for _ in range(128)]
 
     self.arpeggioCurrentSectionID = -1
-    self.arpeggioNotesBuffer      = []
+    self.arpeggioPitchesBuffer    = []
     self.arpeggioExpectedNotes    = []
     self.arpeggioExpectedPitches  = []
 
@@ -303,27 +303,35 @@ class Arbiter(widget.Widget) :
     
     # We just arrived in an arpeggio section
     if (self.arpeggioCurrentSectionID != self.top.widgets[WIDGET_ID_SCORE].arpeggioGetSectionID()) :
-      self.arpeggioNotesBuffer      = []
+      self.arpeggioPitchesBuffer    = []
       self.arpeggioExpectedNotes    = self.top.widgets[WIDGET_ID_SCORE].arpeggioGetNotesInSection()
       self.arpeggioExpectedPitches  = [x.pitch for x in self.arpeggioExpectedNotes]
+      self.arpeggioCurrentSectionID = self.top.widgets[WIDGET_ID_SCORE].arpeggioGetSectionID()
     
     for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
 
       if (self.midiCurr[pitch] == 1) :
         
-        if not(pitch in self.arpeggioExpectedNotes) :
+        if not(pitch in self.arpeggioExpectedPitches) :
           if not(arbiterStatus.EXCESS_NOTE in ret) : ret.append(arbiterStatus.EXCESS_NOTE)
         
         else :
-          self.arpeggioNotesBuffer.append(pitch)
-
-
-
-      if len(self.arpeggioNotesBuffer) == len(self.arpeggioExpectedNotes) :
-        ret.append(arbiterStatus.VALID_INPUT)
+          if not(pitch in self.arpeggioPitchesBuffer) :
+            self.arpeggioPitchesBuffer.append(pitch)
+            
+    if (len(self.arpeggioPitchesBuffer) == len(self.arpeggioExpectedPitches)) :
+      ret.append(arbiterStatus.VALID_INPUT)
+      #print(f"[DEBUG] All expected notes were seen, I'm happy.")
+      self.arpeggioCurrentSectionID = -1
+    else :
+      pass
+      #print(f"[DEBUG] Missing {len(self.arpeggioExpectedPitches) - len(self.arpeggioPitchesBuffer)} notes to proceed!")
   
     
-    
+    return ret
+
+
+
   # ---------------------------------------------------------------------------
   # METHOD Sequencer._onKeyEvent()                                  [INHERITED]
   # ---------------------------------------------------------------------------

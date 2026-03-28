@@ -143,40 +143,6 @@ class Sequencer(widget.Widget) :
 
 
 
-#  elif (event.type == pygame.MOUSEBUTTONDOWN) :
-        
-#         pianoRollWidget.mouseEvent(event)
-
-#         # Left click
-#         if (event.button == MOUSE_LEFT_CLICK) :
-#           clickMsg = True
-#           clickCoord = pygame.mouse.get_pos()
-        
-#         # Scroll up
-#         if (event.button == MOUSE_SCROLL_UP) :
-          
-#           # Find feature: go to the next cursor whose active notes match 
-#           # the current notes being pressed.
-#           # Note : use a copy of the MIDI notes list to prevent the 
-#           #        MIDI callback to mess with the function.
-#           if (pianoArbiter.hasActiveMidiInput()) :
-#             print("[INFO] Backward search requested...")
-#             (suspendReq, pitchListHold) = userScore.search(pianoArbiter.midiCurr.copy())
-#             if suspendReq :
-#               pianoArbiter.suspendReq(pitchListHold)
-
-#           elif ctrlKey :
-#             userScore.cursorStep(10)
-#           else :
-#             userScore.cursorStep(1)
-
-#         # Scroll down
-#         if (event.button == MOUSE_SCROLL_DOWN) :
-          
-#           # Find feature
-
-
-
   # ---------------------------------------------------------------------------
   # METHOD: Sequencer.onExternalMidiEvent()
   # ---------------------------------------------------------------------------
@@ -185,10 +151,14 @@ class Sequencer(widget.Widget) :
     Updates the Sequencer machinery in case of an external MIDI input.
     """
 
-    decision = self.top.widgets[WIDGET_ID_ARBITER].eval()
+    (decision, step) = self.top.widgets[WIDGET_ID_ARBITER].eval()
 
     if (arbiter.arbiterStatus.VALID_INPUT in decision) :
-      self.top.widgets[WIDGET_ID_SCORE].cursorNext()
+      if (step == 1) :
+        self.top.widgets[WIDGET_ID_SCORE].cursorNext()
+      else :
+        # TODO: be careful, this could cause issues in loop practice
+        self.top.widgets[WIDGET_ID_SCORE].cursorStep(step)
       self.top.widgets[WIDGET_ID_STATS].logCorrectNote()
 
     elif (arbiter.arbiterStatus.EXCESS_NOTE in decision) :

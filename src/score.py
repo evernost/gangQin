@@ -1911,13 +1911,10 @@ class Score(widget.Widget) :
 
     # Display weak arbitration information
     if self.isArpeggioSection() :
-      (a,b) = self.arpeggioGetSectionBound()
-
-      if (a != b) :
-        c = self.getCursor()
-        text.render(self.top.screen, f"ARP {c-a+1}/{b-a+1}", (400, 20), 2, GUI_TEXT_COLOR)
-      else :
-        text.render(self.top.screen, "ARP", (400, 20), 2, GUI_TEXT_COLOR)
+      
+      (hit, total) = self.top.widgets[WIDGET_ID_ARBITER].evalArpeggioProgress()
+      text.render(self.top.screen, f"ARP {hit}/{total}", (400, 20), 2, GUI_TEXT_COLOR)
+      
 
 
 

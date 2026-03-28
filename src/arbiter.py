@@ -154,13 +154,16 @@ class Arbiter(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD: Arbiter.eval()
   # ---------------------------------------------------------------------------
-  def eval(self) -> arbiterStatus :
+  def eval(self) -> tuple[arbiterStatus, int] :
     """
     Compares the notes currently played on the keyboard ('self.midiCurr') with 
     the notes expected ('teacherNotes') and returns the decision.
 
-    The decision is returned as an array containing one or several elements of 
-    type 'arbiterStatus'.
+    The decision is returned as a tuple:
+    - an array containing one or several elements of type 'arbiterStatus'
+    - an integer indicating by how much we should step in the score.
+
+    Most of the time, we shoudl step by 1
     """
 
     if self.top.widgets[WIDGET_ID_SCORE].isArpeggioSection() :
@@ -198,7 +201,7 @@ class Arbiter(widget.Widget) :
     allowProgress = True
     
     # Cumulate the different statuses
-    ret = []
+    ret = []; step = 0
     
     for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
 
@@ -280,7 +283,10 @@ class Arbiter(widget.Widget) :
       if not(arbiterStatus.VALID_INPUT in ret) : ret.append(arbiterStatus.VALID_INPUT)
 
 
-    return ret
+    if arbiterStatus.VALID_INPUT in ret :
+      step = 1
+    
+    return (ret, step)
 
 
 
@@ -299,7 +305,7 @@ class Arbiter(widget.Widget) :
       print("[ERROR] Arbiter._evalArpeggio(): internal error (trying to evaluate as arpeggio in a section that is not an arpeggio)")
       return []
 
-    ret = []
+    ret = []; step = 0
     
     # We just arrived in an arpeggio section
     if (self.arpeggioCurrentSectionID != self.top.widgets[WIDGET_ID_SCORE].arpeggioGetSectionID()) :
@@ -307,11 +313,19 @@ class Arbiter(widget.Widget) :
       self.arpeggioExpectedNotes    = self.top.widgets[WIDGET_ID_SCORE].arpeggioGetNotesInSection()
       self.arpeggioExpectedPitches  = [x.pitch for x in self.arpeggioExpectedNotes]
       self.arpeggioCurrentSectionID = self.top.widgets[WIDGET_ID_SCORE].arpeggioGetSectionID()
-    
+
+    # TODO: notes/pitches must be counted with their multiplicity
+    # i.e. if the same pitch is hit 2 times within an arpeggio section, the user must 
+    # press it 2 times too.
+
+    # TODO: notes held after entering this section cannot be taken into account.
+    #       They have to be released first.
+
     for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
 
       if (self.midiCurr[pitch] == 1) :
         
+        # The user pressed a note that is not expected in the arpeggio section
         if not(pitch in self.arpeggioExpectedPitches) :
           if not(arbiterStatus.EXCESS_NOTE in ret) : ret.append(arbiterStatus.EXCESS_NOTE)
         
@@ -321,14 +335,32 @@ class Arbiter(widget.Widget) :
             
     if (len(self.arpeggioPitchesBuffer) == len(self.arpeggioExpectedPitches)) :
       ret.append(arbiterStatus.VALID_INPUT)
-      #print(f"[DEBUG] All expected notes were seen, I'm happy.")
       self.arpeggioCurrentSectionID = -1
     else :
       pass
-      #print(f"[DEBUG] Missing {len(self.arpeggioExpectedPitches) - len(self.arpeggioPitchesBuffer)} notes to proceed!")
   
+
+    if arbiterStatus.VALID_INPUT in ret :
+      (_, b) = self.top.widgets[WIDGET_ID_SCORE].arpeggioGetSectionBound()
+      step = b - self.top.widgets[WIDGET_ID_SCORE].getCursor() + 1
     
-    return ret
+    return (ret, step)
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Arbiter.evalArpeggioProgress()                           [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def evalArpeggioProgress(self) -> tuple[int, int] :
+    """
+    Description is TODO.
+    """
+
+    if (self.arpeggioCurrentSectionID == -1) :
+      return (-1, -1)
+    
+    else :
+      return (len(self.arpeggioPitchesBuffer), len(self.arpeggioExpectedPitches))
 
 
 

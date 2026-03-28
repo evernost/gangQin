@@ -131,7 +131,6 @@ class FileSelectionGUI :
     self.guiButtonStart["width"] = 20
     self._setButtonStartStatus()
 
-    #self.buttonQuit = tk.Button(self.root, text = "Quit", command = lambda: exit(0))
     self.buttonQuit = tk.Button(self.root, text = "Quit", command = self.CLBK_onQuit)
     self.buttonQuit.grid(row = 1, column = 0, padx = 10, pady = 20, sticky = "w")
     self.buttonQuit["width"] = 10
@@ -259,10 +258,6 @@ class FileSelectionGUI :
     """
     Exports the current configuration to a .ini file.
     """
-
-    # print("exporting conf...")
-    # print(f"- midi_interface: {self.selectedDevice}")
-    # print(f"- song          : {self.selectedFile}")
 
     self.config["DEFAULT"] = {
       "midi_interface": self.selectedDevice,

@@ -188,8 +188,9 @@ class Sequencer(widget.Widget) :
     decision = self.top.widgets[WIDGET_ID_ARBITER].eval()
 
     if (arbiter.arbiterStatus.VALID_INPUT in decision) :
-      self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
+      self.top.widgets[WIDGET_ID_SCORE].cursorNext()
       self.top.widgets[WIDGET_ID_STATS].logCorrectNote()
+
     elif (arbiter.arbiterStatus.EXCESS_NOTE in decision) :
       self.top.widgets[WIDGET_ID_STATS].logWrongNote()
       

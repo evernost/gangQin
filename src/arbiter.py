@@ -91,7 +91,10 @@ class Arbiter(widget.Widget) :
     self.midiSuperfluous  = [0 for _ in range(128)]
     self.midiAssociatedID = [-1 for _ in range(128)]
 
-    self.arpeggioBuffer = []
+    self.arpeggioCurrentSectionID = -1
+    self.arpeggioNotesBuffer      = []
+    self.arpeggioExpectedNotes    = []
+    self.arpeggioExpectedPitches  = []
 
     self.suspended = False
     self.queryNotesPitch = []
@@ -288,12 +291,37 @@ class Arbiter(widget.Widget) :
     """
     Compares the user input vs the score with an arpeggio arbitration.
     
-    In arpeggio arbitration, the order in which the notes are pressed do not
+    In arpeggio arbitration, the order in which the notes are pressed doesn't
     matter anymore.
     """
 
-    expectedNotes = self.top.widgets[WIDGET_ID_SCORE].arpeggioGetNotesInSection()
+    if (self.top.widgets[WIDGET_ID_SCORE].arpeggioGetSectionID() == -1) :
+      print("[ERROR] Arbiter._evalArpeggio(): internal error (trying to evaluate as arpeggio in a section that is not an arpeggio)")
+      return []
 
+    ret = []
+    
+    # We just arrived in an arpeggio section
+    if (self.arpeggioCurrentSectionID != self.top.widgets[WIDGET_ID_SCORE].arpeggioGetSectionID()) :
+      self.arpeggioNotesBuffer      = []
+      self.arpeggioExpectedNotes    = self.top.widgets[WIDGET_ID_SCORE].arpeggioGetNotesInSection()
+      self.arpeggioExpectedPitches  = [x.pitch for x in self.arpeggioExpectedNotes]
+    
+    for pitch in MIDI_CODE_GRAND_PIANO_RANGE :
+
+      if (self.midiCurr[pitch] == 1) :
+        
+        if not(pitch in self.arpeggioExpectedNotes) :
+          if not(arbiterStatus.EXCESS_NOTE in ret) : ret.append(arbiterStatus.EXCESS_NOTE)
+        
+        else :
+          self.arpeggioNotesBuffer.append(pitch)
+
+
+
+      if len(self.arpeggioNotesBuffer) == len(self.arpeggioExpectedNotes) :
+        ret.append(arbiterStatus.VALID_INPUT)
+  
     
     
   # ---------------------------------------------------------------------------

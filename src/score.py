@@ -131,6 +131,29 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD Score.bookmarkToggle()
+  # ---------------------------------------------------------------------------
+  def bookmarkToggle(self) :
+    """
+    Adds/removes a bookmark at the current cursor.
+    """
+
+    # Is it an existing bookmark?
+    if self.cursor in self.bookmarks :
+      self.bookmarks = [x for x in self.bookmarks if (x != self.cursor)]
+      print(f"[INFO] Bookmark removed at cursor {self.getCursor()+1}")
+    
+    # New bookmark
+    else :
+      print(f"[INFO] Bookmark added at cursor {self.getCursor()+1}")
+      self.bookmarks.append(self.cursor)
+      self.bookmarks.sort()
+
+    self.hasUnsavedChanges = True
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD Score.loadMidiFile()
   # ---------------------------------------------------------------------------
   def loadMidiFile(self, midiFile: str, midiTracks: list[str]) -> None :
@@ -741,47 +764,6 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.getCursor()
-  # ---------------------------------------------------------------------------
-  def getCursor(self) -> int :
-    """
-    Returns the value of the cursor at the current location in the score.
-    """
-    
-    return self.cursor
-  
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.getScoreLength()
-  # ---------------------------------------------------------------------------
-  def getScoreLength(self) -> int :
-    """
-    Returns the length of the score (also the max cursor value)
-    """
-    
-    return self.length
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.getScoreProgress()
-  # ---------------------------------------------------------------------------
-  def getScoreProgress(self) -> float :
-    """
-    Returns the evaluated user progress in the score.
-    
-    I propose to evaluate progress with the ratio of notes being given 
-    a finger indication vs total number of notes.
-
-    That's the simplest metric I can think of.
-    """
-
-    return self.fingeredNoteCount/self.noteCount
-
-  
-
-  # ---------------------------------------------------------------------------
   # METHOD Score.cursorGoto()
   # ---------------------------------------------------------------------------
   def cursorGoto(self, value, force = False) -> None :
@@ -1165,25 +1147,47 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.bookmarkToggle()
+  # METHOD Score.setActiveHands()
   # ---------------------------------------------------------------------------
-  def bookmarkToggle(self) :
+  def setActiveHands(self, left:bool, right:bool) -> None :
     """
-    Adds/removes a bookmark at the current cursor.
-    """
-
-    # Is it an existing bookmark?
-    if self.cursor in self.bookmarks :
-      self.bookmarks = [x for x in self.bookmarks if (x != self.cursor)]
-      print(f"[INFO] Bookmark removed at cursor {self.getCursor()+1}")
+    Sets the hands i.e. the active channels of the score.
     
-    # New bookmark
-    else :
-      print(f"[INFO] Bookmark added at cursor {self.getCursor()+1}")
-      self.bookmarks.append(self.cursor)
-      self.bookmarks.sort()
+    Since gangQin handles piano scores only, it corresponds to the left or 
+    right hand channel. 
+    
+    The active hand attributes restrains the set of possible value the 'cursor'
+    attribute might take.
 
-    self.hasUnsavedChanges = True
+    When the left channel alone is active, the cursor can only take a value
+    among the ones where a note starts on the left hand.
+    Same for the right channel.
+  
+    Single active channels can result in jumps in the cursor values when calling 
+    'Score.cursorStep(+/-1)' or 'Score.cursorNext()'. This is perfectly normal.
+    When both hands are active, the cursor always evolves linearly (no jumps)
+
+    NOTES
+    - at least one channel must be active
+    - changing the active hands attribute is disabled during looped practice
+    """
+    
+    if not(self.loopEnable) :
+      if (not(left) and not(right)) :
+        print("[WARNING] Score.setActiveHands(): at least one hand must be active.")
+      elif left and not(right) :
+        self.activeHands = SCORE_ACTIVE_HANDS_LEFT
+      elif not(left) and right :
+        self.activeHands = SCORE_ACTIVE_HANDS_RIGHT
+      else :
+        self.activeHands = SCORE_ACTIVE_HANDS_BOTH
+    
+      self._cursorAlignWithActiveHand()
+      self._resetCache()
+
+    else :
+      print("[INFO] Score.setActiveHands(): changing the active hand is disabled during looped practice.")
+
 
 
 
@@ -1191,7 +1195,7 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score.getBookmarkIndex()
   # ---------------------------------------------------------------------------
-  def getBookmarkIndex(self) :
+  def getBookmarkIndex(self) -> int :
     """
     Returns the index (i.e. the bookmark number) of the current cursor.
     If the current cursor is not bookmarked, it returns -1.
@@ -1204,7 +1208,40 @@ class Score(widget.Widget) :
       return self.bookmarks.index(self.getCursor()) + 1
     else :
       return -1
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getCurrentKey()
+  # ---------------------------------------------------------------------------
+  def getCurrentKey(self) :
+    """
+    Returns the current key the song is in, if any has been set.
+
+    This function is under construction.
+    """
+    
+    # No key in the score
+    if (len(self.keyList) == 0) :
+      return None
+    
+    # Otherwise, return the latest key applied
+    else :
+      scalesBefore = [x for x in self.keyList if (x.startTime <= self.cursor)]
+      return scalesBefore[-1]
+
   
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getCursor()
+  # ---------------------------------------------------------------------------
+  def getCursor(self) -> int :
+    """
+    Returns the value of the cursor at the current location in the score.
+    """
+    
+    return self.cursor
+
 
 
   # ---------------------------------------------------------------------------
@@ -1284,46 +1321,76 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.setActiveHands()
+  # METHOD Score.getLookaheadNotes()
   # ---------------------------------------------------------------------------
-  def setActiveHands(self, left:bool, right:bool) -> None :
+  def getLookaheadNotes(self) :
     """
-    Sets the hands i.e. the active channels of the score.
-    
-    Since gangQin handles piano scores only, it corresponds to the left or 
-    right hand channel. 
-    
-    The active hand attributes restrains the set of possible value the 'cursor'
-    attribute might take.
-
-    When the left channel alone is active, the cursor can only take a value
-    among the ones where a note starts on the left hand.
-    Same for the right channel.
-  
-    Single active channels can result in jumps in the cursor values when calling 
-    'Score.cursorStep(+/-1)' or 'Score.cursorNext()'. This is perfectly normal.
-    When both hands are active, the cursor always evolves linearly (no jumps)
-
-    NOTES
-    - at least one channel must be active
-    - changing the active hands attribute is disabled during looped practice
+    DEPRECATED
     """
     
-    if not(self.loopEnable) :
-      if (not(left) and not(right)) :
-        print("[WARNING] Score.setActiveHands(): at least one hand must be active.")
-      elif left and not(right) :
-        self.activeHands = SCORE_ACTIVE_HANDS_LEFT
-      elif not(left) and right :
-        self.activeHands = SCORE_ACTIVE_HANDS_RIGHT
-      else :
-        self.activeHands = SCORE_ACTIVE_HANDS_BOTH
+    if (self.cachedCursor == self.cursor) :
+      return self.cachedTeacherNotes
     
-      self._cursorAlignWithActiveHand()
-      self._resetCache()
-
     else :
-      print("[INFO] Score.setActiveHands(): changing the active hand is disabled during looped practice.")
+      self._updateLookaheadNotes()
+      self.cachedCursor = self.cursor
+      self.cachedTeacherNotes = self.teacherNotes
+      
+      return self.teacherNotes
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getNotesAtCursor()
+  # ---------------------------------------------------------------------------
+  def getNotesAtCursor(self, cursorBegin = -1, cursorEnd = -1) -> list[note.Note] :
+    """
+    Returns the notes pressed at a given cursor.
+
+    If no cursor is given, the function takes the current cursor.
+    If an end cursor is specified, the function returns all notes between 
+    'cursorBegin' and 'cursorEnd' (all included)
+    """
+    
+    if (cursorBegin == -1)  : cursorBegin = self.getCursor()
+    if (cursorEnd == -1)    : cursorEnd = self.getCursor()
+
+    # TODO: not super pythonic
+    ret = []
+    for notesAtCursor in self.notesByCursor_pressed[cursorBegin:(cursorEnd+1)] :
+      for N in notesAtCursor :
+        ret.append(N)
+
+    return ret
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getScoreLength()
+  # ---------------------------------------------------------------------------
+  def getScoreLength(self) -> int :
+    """
+    Returns the length of the score (also the max cursor value)
+    """
+    
+    return self.length
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Score.getScoreProgress()
+  # ---------------------------------------------------------------------------
+  def getScoreProgress(self) -> float :
+    """
+    Returns the evaluated user progress in the score.
+    
+    I propose to evaluate progress with the ratio of notes being given 
+    a finger indication vs total number of notes.
+
+    That's the simplest metric I can think of.
+    """
+
+    return self.fingeredNoteCount/self.noteCount
 
 
 
@@ -1383,18 +1450,18 @@ class Score(widget.Widget) :
     attribute.
     """
     
-    # Reset the play attributes of the previous notes before deleting them.
-    # Note attributes are used for the display and the arbiter.
+    # Reset the attributes of the previous teacher notes before deleting them.
     for N in self.teacherNotes :
       N.sustained = False
-      # noteObj.visible = True
-      # noteObj.inactive = False
 
     # Reset the cache
     self.teacherNotes = []
     
-    L = self.notesByCursor_active[self.getCursor()]
-    for N in L :
+    # Request the active notes (pressed + sustained) at this cursor
+    activeNotes = self.notesByCursor_active[self.getCursor()]
+    
+    # Loop over the active notes
+    for N in activeNotes :
 
       # CASE 1: a note is pressed at this timecode
       if (N.startTime == self.getTimecode()) :
@@ -1421,47 +1488,6 @@ class Score(widget.Widget) :
         N.sustained = True
         self.teacherNotes.append(N)
 
-      # CASE 3: the note is out of the current window
-      else :
-        pass
-
-
-    # for N in self.noteList :
-
-    #   # TODO: optimise the 'for' loop. 
-    #   # Notes are stored in chronological order in 'Score.noteList'
-    #   # It is not necessary to explore the entire list at each function call.
-    #   # Beyond a certain point, we know for sure that no more
-    #   # note will be added to 'Score.teacherNotes'.
-
-    #   # CASE 1: a note is pressed at this timecode
-    #   if (N.startTime == self.getTimecode()) :
-        
-    #     # SINGLE HAND PRACTICE
-    #     # Adds the notes with their "inactive" property to "True" 
-    #     # so that it is displayed with the appropriate color.
-    #     if (self.activeHands == SCORE_ACTIVE_HANDS_BOTH) :
-    #       N.inactive = False
-    #       self.teacherNotes.append(N)
-        
-    #     elif (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
-    #       if (N.hand != note.hand_T.LEFT) : 
-    #         N.inactive = True
-    #         self.teacherNotes.append(N)
-
-    #     elif (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
-    #       if (N.hand != note.hand_T.RIGHT) :
-    #         N.inactive = True
-    #         self.teacherNotes.append(N)
-
-    #   # CASE 2: the note is held at this timecode
-    #   elif ((N.startTime < self.getTimecode()) and (N.stopTime >= self.getTimecode())) :
-    #     N.sustained = True
-    #     self.teacherNotes.append(N)
-
-    #   # CASE 3: the note is out of the current window
-    #   else :
-    #     pass
 
     # Detect void list of teacher notes
     # This is not supposed to happen
@@ -1482,29 +1508,7 @@ class Score(widget.Widget) :
         filteredList.append(N)
     self.teacherNotes = filteredList
 
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.getNotesAtCursor()
-  # ---------------------------------------------------------------------------
-  def getNotesAtCursor(self, cursorBegin = -1, cursorEnd = -1) :
-    """
-    Returns the notes pressed at a given cursor.
-
-    If no cursor is given, the function takes the current cursor.
-    If an end cursor is specified, the function returns all notes between 
-    'cursorBegin' and 'cursorEnd' (all included)
-    """
     
-    if (cursorBegin == -1)  : cursorBegin = self.getCursor()
-    if (cursorEnd == -1)    : cursorEnd = self.getCursor()
-
-    ret = []
-
-    
-
-
-
 
   # ---------------------------------------------------------------------------
   # METHOD Score._resetCache()                                        [PRIVATE]
@@ -1523,7 +1527,7 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score.getUpcomingNotes()
   # ---------------------------------------------------------------------------
-  def getUpcomingNotes(self) :
+  def getUpcomingNotes(self) -> list[note.Note] :
     """
     Builds the list of the notes about to come after the current cursor.
 
@@ -1570,26 +1574,6 @@ class Score(widget.Widget) :
     # TODO: instead of showing the notes ahead in a certain window,
     # maybe a sort of "slur" function should be added so that 
     # only the notes in the slur are shown in the lookahead.
-
-
-
-  # ---------------------------------------------------------------------------
-  # METHOD Score.getLookaheadNotes()
-  # ---------------------------------------------------------------------------
-  def getLookaheadNotes(self) :
-    """
-    DEPRECATED
-    """
-    
-    if (self.cachedCursor == self.cursor) :
-      return self.cachedTeacherNotes
-    
-    else :
-      self._updateLookaheadNotes()
-      self.cachedCursor = self.cursor
-      self.cachedTeacherNotes = self.teacherNotes
-      
-      return self.teacherNotes
 
 
 
@@ -1759,25 +1743,6 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Score.getCurrentKey()
-  # ---------------------------------------------------------------------------
-  def getCurrentKey(self) :
-    """
-    Returns the current key the song is in, if any has been set.
-    """
-    
-    # No key in the score
-    if (len(self.keyList) == 0) :
-      return None
-    
-    # Otherwise, return the latest key applied
-    else :
-      scalesBefore = [x for x in self.keyList if (x.startTime <= self.cursor)]
-      return scalesBefore[-1]
-
-  
-
-  # ---------------------------------------------------------------------------
   # METHOD Score.guessScale()
   # ---------------------------------------------------------------------------
   def guessScale(self, startCursor, span = -1) :
@@ -1859,33 +1824,59 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD: Score.arpeggioGetNotesInSection()
   # ---------------------------------------------------------------------------
-  def arpeggioGetNotesInSection(self) :
+  def arpeggioGetNotesInSection(self) -> list[note.Note] :
     """
     Returns all the notes in the current arpeggio section.
     """
 
     (a,b) = self.arpeggioGetSectionBound()
 
-    L = self.getNotesAtCursor(cursorBegin = a, cursorEnd = b)
-    
+    return self.getNotesAtCursor(cursorBegin = a, cursorEnd = b)
+
 
 
   # ---------------------------------------------------------------------------
   # METHOD: Score.arpeggioGetNotesInSection()
   # ---------------------------------------------------------------------------
-  def arpeggioGetSectionBound(self) :
+  def arpeggioGetSectionBound(self) -> tuple[int, int] :
     """
     Returns the boundaries of the current arpeggio section.
     """
 
-    return (-1, -1)
+    for I in self.sectionArpeggio :
+      (a,b) = I
+      if ((self.getCursor() >= a) and (self.getCursor() <= b)) :
+        return (a,b)
     
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Score.arpeggioGetSectionID()
+  # ---------------------------------------------------------------------------
+  def arpeggioGetSectionID(self, cursor = -1) -> int :
+    """
+    Returns the unique identifier of the arpeggio section the given cursor
+    is in.
+
+    If no cursor is given, it takes the current cursor.
+    
+    If the cursor is not located in an arpeggio section, the function
+    returns -1.
+    """
+
+    if (cursor == -1) : cursor = self.getCursor()
+
+    for (index, I) in enumerate(self.sectionArpeggio) :
+      (a,b) = I
+      if ((self.getCursor() >= a) and (self.getCursor() <= b)) :
+        return index
+
 
 
   # ---------------------------------------------------------------------------
   # METHOD: Score.isArpeggioSection()
   # ---------------------------------------------------------------------------
-  def isArpeggioSection(self) :
+  def isArpeggioSection(self) -> bool :
     """
     Indicate if the current cursor belongs to an 'arpeggio' mode section.
     """
@@ -1898,10 +1889,11 @@ class Score(widget.Widget) :
     return False
 
 
+
   # ---------------------------------------------------------------------------
   # METHOD: Score.render()
   # ---------------------------------------------------------------------------
-  def render(self) :
+  def render(self) -> None :
     """
     Renders the widget on screen.
     This function is called at every frame of the top level application.
@@ -1919,14 +1911,20 @@ class Score(widget.Widget) :
 
     # Display weak arbitration information
     if self.isArpeggioSection() :
-      text.render(self.top.screen, "W", (400, 20), 2, GUI_TEXT_COLOR)
+      (a,b) = self.arpeggioGetSectionBound()
+
+      if (a != b) :
+        c = self.getCursor()
+        text.render(self.top.screen, f"ARP {c-a+1}/{b-a+1}", (400, 20), 2, GUI_TEXT_COLOR)
+      else :
+        text.render(self.top.screen, "ARP", (400, 20), 2, GUI_TEXT_COLOR)
 
 
 
   # ---------------------------------------------------------------------------
   # METHOD Score._onKeyEvent()                                      [INHERITED]
   # ---------------------------------------------------------------------------
-  def _onKeyEvent(self, key, type, modifier = "") :
+  def _onKeyEvent(self, key, type, modifier = "") -> None :
     """
     Function triggered by a keypress.
     """

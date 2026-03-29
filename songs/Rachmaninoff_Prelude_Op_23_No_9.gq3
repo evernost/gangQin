@@ -4,8 +4,7 @@
   "bookmarks": [
     0,
     31,
-    62,
-    156
+    62
   ],
   "noteList": [
     {
@@ -599,14 +598,14 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Gb4"
     },
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Eb5"
     },
@@ -620,14 +619,14 @@
     {
       "pitch": 69,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "A4"
     },
     {
       "pitch": 74,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "D5"
     },
@@ -648,21 +647,21 @@
     {
       "pitch": 58,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Bb3"
     },
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Ab4"
     },
     {
       "pitch": 74,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "D5"
     },
@@ -676,14 +675,14 @@
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 5,
+      "finger": 4,
       "voice": 0,
       "name": "Eb5"
     },
     {
       "pitch": 51,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Eb3"
     },
@@ -704,14 +703,14 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Gb4"
     },
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "Eb5"
     },
@@ -725,14 +724,14 @@
     {
       "pitch": 70,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Bb4"
     },
     {
       "pitch": 77,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "F5"
     },
@@ -844,14 +843,14 @@
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "B4"
     },
     {
       "pitch": 79,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "G5"
     },
@@ -865,14 +864,14 @@
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Eb5"
     },
     {
       "pitch": 80,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "Ab5"
     },
@@ -1117,7 +1116,7 @@
     {
       "pitch": 49,
       "hand": 1,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "Db3"
     },
@@ -1138,35 +1137,35 @@
     {
       "pitch": 69,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "A4"
     },
     {
       "pitch": 78,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Gb5"
     },
     {
       "pitch": 60,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "C4"
     },
     {
       "pitch": 72,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "C5"
     },
     {
       "pitch": 77,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "F5"
     },
@@ -1187,7 +1186,7 @@
     {
       "pitch": 61,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Db4"
     },
@@ -1222,91 +1221,91 @@
     {
       "pitch": 73,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Db5"
     },
     {
       "pitch": 77,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "F5"
     },
     {
       "pitch": 70,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Bb4"
     },
     {
       "pitch": 77,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "F5"
     },
     {
       "pitch": 42,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Gb2"
     },
     {
       "pitch": 73,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Db5"
     },
     {
       "pitch": 76,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "E5"
     },
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Ab4"
     },
     {
       "pitch": 77,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "F5"
     },
     {
       "pitch": 44,
       "hand": 1,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "Ab2"
     },
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "B4"
     },
     {
       "pitch": 76,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "E5"
     },
     {
       "pitch": 67,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "G4"
     },
@@ -1320,28 +1319,28 @@
     {
       "pitch": 46,
       "hand": 1,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "Bb2"
     },
     {
       "pitch": 76,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "E5"
     },
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "B4"
     },
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "Eb5"
     },
@@ -1355,21 +1354,21 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Gb4"
     },
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "B4"
     },
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "Eb5"
     },
@@ -1383,28 +1382,28 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Gb4"
     },
     {
       "pitch": 74,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "D5"
     },
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "B4"
     },
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "Eb5"
     },
@@ -1418,14 +1417,14 @@
     {
       "pitch": 65,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "F4"
     },
     {
       "pitch": 74,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "D5"
     },
@@ -1481,7 +1480,7 @@
     {
       "pitch": 59,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "B3"
     },
@@ -1635,7 +1634,7 @@
     {
       "pitch": 63,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Eb4"
     },
@@ -1656,7 +1655,7 @@
     {
       "pitch": 63,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Eb4"
     },

@@ -2,14 +2,15 @@
 
 ## In a nutshell
 - Date of first practice: -
-- Sessions: 12
-- Total practice time: 2h22min20s
-- Average practice time: 0h12min25s
+- Sessions: 13
+- Total practice time: 2h34min57s
+- Average practice time: 0h11min52s
 - Score length: 1091
 - Fingered notes: 256/1885 (progress: 13.6%)
 ## Session history
 | Session | Date | Time | Duration |
 |---------|------|------|----------|
+| 13 | Saturday, March 28th (2026) | 15:11 | 12min37s |
 | 12 | Sunday, March 22nd (2026) | 16:59 | 5min49s |
 | 11 | Thursday, March 19th (2026) | 23:26 | 7min59s |
 | 10 | Monday, March 16th (2026) | 22:32 | 26min6s |

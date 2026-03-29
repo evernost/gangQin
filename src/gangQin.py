@@ -26,6 +26,7 @@ import src.widgets.fingerSelector as fingerSelector
 import src.widgets.keyboard as keyboard
 import src.widgets.metronome as metronome
 import src.widgets.pianoRoll as pianoRoll
+import src.widgets.playback as playback
 import src.widgets.progressBar as progressBar
 import src.widgets.trackSelectionGUI as trackSelectionGUI
 import src.widgets.staffScope as staffScope
@@ -35,6 +36,7 @@ import src.widgets.stats as stats
 # Utilities
 import arbiter
 import score
+import threading
 
 # MIDI
 import mido
@@ -91,7 +93,10 @@ class GangQin :
     
     self._backgroundInit()
     self.running = False
-    self.midiPort = None
+    self.midiInPort = None
+    self.midiOutPort        = None
+    self._midiOutActiveNotes = []       # pitches currently held on MIDI out
+    self._midiOutTimer       = None     # pending note-off timer
     self.midiTranspose = 0    # Indicate here the transpose state of the input keyboard, so that the app adapts to it.
 
     # Limit the supported key events to avoid unnecessary processing
@@ -113,7 +118,8 @@ class GangQin :
       WIDGET_ID_SEQUENCER       : sequencer.Sequencer(self),
       WIDGET_ID_STATS           : stats.Stats(self),
       WIDGET_ID_METRONOME       : metronome.Metronome(self),
-      WIDGET_ID_PROGRESS_BAR    : progressBar.ProgressBar(self)
+      WIDGET_ID_PROGRESS_BAR    : progressBar.ProgressBar(self),
+      WIDGET_ID_PLAYBACK        : playback.Playback(self)
     }
     
 
@@ -216,26 +222,73 @@ class GangQin :
   # ---------------------------------------------------------------------------
   # METHOD: GangQin._midiInterfaceInit()                              [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _midiInterfaceInit(self, selectedDevice: str) :
+  def _midiInterfaceInit(self, deviceName: str) -> None :
     """
     Opens the MIDI keyboard interface pointed by the string descriptor in 
-    'selectedDevice'.
+    'deviceName'.
 
     Assigns the callback function that catches the MIDI events.
 
-    NOTE: when no MIDI keyboard is needed, use selectedDevice = "None".
+    NOTE: when no MIDI keyboard is needed, use deviceName = "None".
     """
 
-    if (selectedDevice != "None") :
+    self._midiInInit(deviceName)
+    self._midiOutInit(deviceName)
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: GangQin._midiInInit()                                     [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _midiInInit(self, deviceName: str) -> None :
+    """
+    Description is TODO.
+    """
+
+    if (deviceName != "None") :
       try :
-        self.midiPort = mido.open_input(selectedDevice, callback = self._midiCallback)
+        self.midiInPort = mido.open_input(deviceName, callback = self._midiCallback)
       except Exception as err :
         print("[WARNING] Failed to open the MIDI device (it is used by another software?): running in navigation mode.")
-        self.midiPort = None  
+        self.midiInPort = None  
     else :
       print("[NOTE] No MIDI interface selected: running in navigation mode.")
-      self.midiPort = None
+      self.midiInPort = None
 
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: GangQin._midiOutInit()                                    [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def _midiOutInit(self, deviceName: str) -> None :
+    """
+    Opens a MIDI output port to preview notes when navigating with arrow keys.
+    Tries the same device as the input first, then falls back to any available output.
+    """
+
+    if (deviceName == "None") :
+      return
+
+    try :
+      self.midiOutPort = mido.open_output(deviceName)
+      print(f"[INFO] MIDI out opened: {deviceName}")
+      return
+    
+    except Exception :
+      pass
+
+    print("[WARNING] No MIDI output ports found. Arrow key preview feature disabled.")
+
+    # Fallback: try any available output port
+    # outputs = mido.get_output_names()
+    # if outputs :
+    #   try :
+    #     self.midiOutPort = mido.open_output(outputs[0])
+    #     print(f"[INFO] MIDI out fallback: {outputs[0]}")
+    #   except Exception:
+    #     print("[WARNING] Could not open any MIDI output port. Arrow key preview disabled.")
+    # else:
+      
 
 
   # ---------------------------------------------------------------------------
@@ -392,8 +445,13 @@ class GangQin :
 
     self.appRunning = False
 
-    if (self.midiPort is not None) :
-      self.midiPort.close()
+    if (self.midiInPort is not None) :
+      self.midiInPort.close()
+
+    if (self.midiOutPort is not None) :
+      for pitch in self._midiOutActiveNotes :
+        self.midiOutPort.send(mido.Message("note_off", note = pitch, velocity = 0))
+      self.midiOutPort.close()
 
     if (WIDGET_ID_STATS in self.widgets) :
       self.widgets[WIDGET_ID_STATS].onUserActivity()

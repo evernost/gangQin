@@ -80,6 +80,7 @@ class Sequencer(widget.Widget) :
         # RIGHT: jump forward (1 step)
         elif (key == pygame.K_RIGHT) :
           self.top.widgets[WIDGET_ID_SCORE].cursorStep(1)
+          self.top.widgets[WIDGET_ID_PLAYBACK].playNotesOnMidiOut()
 
         # HOME: jump to the beginning of the score
         elif (key == pygame.K_HOME) :
@@ -164,6 +165,8 @@ class Sequencer(widget.Widget) :
     elif (arbiter.arbiterStatus.EXCESS_NOTE in decision) :
       self.top.widgets[WIDGET_ID_STATS].logWrongNote()
       
+
+
 
 
 # =============================================================================

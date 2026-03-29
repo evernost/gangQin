@@ -1,10 +1,12 @@
 {
   "appVersion": "v3.0",
-  "cursor": 775,
+  "cursor": 995,
   "bookmarks": [
     775,
     791,
     803,
+    900,
+    944,
     995,
     1079
   ],
@@ -16637,70 +16639,70 @@
     {
       "pitch": 51,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Eb3"
     },
     {
       "pitch": 58,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Bb3"
     },
     {
       "pitch": 61,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Db4"
     },
     {
       "pitch": 65,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "F4"
     },
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "Gb4"
     },
     {
       "pitch": 70,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Bb4"
     },
     {
       "pitch": 53,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "F3"
     },
     {
       "pitch": 51,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Eb3"
     },
     {
       "pitch": 54,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Gb3"
     },
     {
       "pitch": 51,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Eb3"
     },
@@ -16742,7 +16744,7 @@
     {
       "pitch": 44,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Ab2"
     },
@@ -16833,7 +16835,7 @@
     {
       "pitch": 61,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Db4"
     },
@@ -16875,7 +16877,7 @@
     {
       "pitch": 60,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "C4"
     },
@@ -16903,7 +16905,7 @@
     {
       "pitch": 60,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "C4"
     },
@@ -17372,28 +17374,28 @@
     {
       "pitch": 66,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Gb4"
     },
     {
       "pitch": 70,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Bb4"
     },
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "Eb5"
     },
     {
       "pitch": 78,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Gb5"
     },
@@ -78300,5 +78302,5 @@
     }
   ],
   "tempoSections": [],
-  "weakArbitrationSections": []
+  "arpeggioSections": []
 }

@@ -107,11 +107,12 @@ class Playback(widget.Widget) :
     """
     
     if (type == pygame.KEYDOWN) :
-      
-      # Simple keypresses (no modifiers)
       if (modifier == "") :
-
         if (key == pygame.K_p) :
+          if self.enable :
+            print("[INFO] MIDI out playback disabled")
+          else :
+            print("[INFO] MIDI out playback enabled")
           self.enable = not(self.enable)
 
 

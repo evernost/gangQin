@@ -97,10 +97,10 @@ class FingerSelector(widget.Widget) :
     # Hide the widget as soon as the cursor changes
     # The cursor changing is a sign that the finger edition is done.
     if (self.top.widgets[WIDGET_ID_SCORE].getCursor() != self.highlightedCursor) :
-      self.highlightedNote   = None
-      self.highlightedIndex  = -1
-      self.highlightedCursor = -1
-      self.visible      = False
+      self.highlightedNote    = None
+      self.highlightedIndex   = -1
+      self.highlightedCursor  = -1
+      self.visible            = False
 
     if (self.visible) :
       (locX, locY) = self.loc  

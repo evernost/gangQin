@@ -50,7 +50,7 @@ class Playback(widget.Widget) :
    
     self.name = "playback"
 
-    self.enable = True
+    self.enable = False
     self._midiOutActiveNotes = []
     
 

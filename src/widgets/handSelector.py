@@ -4,7 +4,7 @@
 # Module name   : handSelector
 # File name     : handSelector.py
 # File type     : Python script (Python 3)
-# Purpose       : shows the hand selector for the StaffScope editor
+# Purpose       : shows the hand selector for the StaffScope editor tool
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Saturday, 09 November 2024
 # -----------------------------------------------------------------------------

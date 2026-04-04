@@ -528,7 +528,7 @@ class Score(widget.Widget) :
     self.sectionArpeggio  = safeDict["arpeggioSections"]
     
     if (len(safeDict["noteList"]) != len(safeDict["timecodeList"])) :
-      print("[ERROR] Lengths do not match.")
+      print("[ERROR] The list of notes and list of timecodes don't match (internal error or bad manual edition in .gq3 file)")
       exit()
     
     noteCount = 0
@@ -545,6 +545,7 @@ class Score(widget.Widget) :
       N.id        = i
       self.noteList.append(N)
 
+      # Count the number of notes with a finger value attached (~ progress score)
       if (N.finger != note.finger_T.UNDEFINED) : fingeredNoteCount += 1
 
       if (N.hand == note.hand_T.LEFT) :

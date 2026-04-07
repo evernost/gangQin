@@ -11,7 +11,10 @@
     1475,
     1812,
     1924,
-    2261
+    2261,
+    2485,
+    2598,
+    2710
   ],
   "noteList": [
     {
@@ -26953,28 +26956,28 @@
     {
       "pitch": 72,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "C5"
     },
     {
       "pitch": 60,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "C4"
     },
     {
       "pitch": 74,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "D5"
     },
     {
       "pitch": 62,
       "hand": 1,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "D4"
     },

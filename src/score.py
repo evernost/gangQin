@@ -686,6 +686,46 @@ class Score(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD Score.locateNoteInGq3()
+  # ---------------------------------------------------------------------------
+  def locateNoteInGq3(gq3File: str, noteIndex: int) -> int :
+    """
+    Returns the line number (1-based) in the GQ3 file where
+    noteList[noteIndex] begins.
+    Returns -1 if not found.
+    """
+    
+    insideNoteList = False
+    noteCount      = -1
+    depth          = 0   # brace nesting depth inside noteList
+
+    with open(gq3File, "r") as f:
+      for (lineNum, line) in enumerate(f, start=1):
+        stripped = line.strip()
+
+        if not insideNoteList:
+          if '"noteList"' in stripped:
+            insideNoteList = True
+          continue
+
+        # Inside noteList: track opening braces to count note objects
+        if stripped.startswith("{") and depth == 0:
+          noteCount += 1
+          depth = 1
+          if noteCount == noteIndex:
+            return lineNum
+        else:
+          depth += stripped.count("{") - stripped.count("}")
+
+        # Exited noteList array
+        if stripped.startswith("]") and depth == 0:
+          break
+
+    return -1
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD Score.save()
   # ---------------------------------------------------------------------------
   def save(self, gq3File: str = "", backup = False) -> None :
@@ -1501,13 +1541,28 @@ class Score(widget.Widget) :
     filteredList = []
     for N in self.teacherNotes :
       if not(N.fromKeyboardInput) :
-        if (N.startTime != N.stopTime):
+        if (N.startTime != N.stopTime) :
           filteredList.append(N)
         else :
           print(f"[DEBUG] Score._calculateTeacherNotes(): null duration note detected (cursor = {self.getCursor()})")
       else :
         filteredList.append(N)
     self.teacherNotes = filteredList
+
+    # Filter out competing notes (same pitch at the same time)
+    filteredList = {}
+    sustainedList = []
+    for N in self.teacherNotes :
+      if N.sustained :
+        sustainedList.append(N)
+      else :
+        if (N.pitch not in filteredList) : 
+          filteredList[N.pitch] = N
+        elif (N.stopTime > filteredList[N.pitch].stopTime) :
+          print(f"[DEBUG] Score._calculateTeacherNotes(): redundant keypress eliminated (cursor = {self.getCursor()})")
+          filteredList[N.pitch] = N
+        
+    self.teacherNotes = list(filteredList.values()) + sustainedList
 
     
 

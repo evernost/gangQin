@@ -82,6 +82,7 @@ Known limitations:
 | `m`           |Metronome ON/OFF|
 | `m` + `+`     |Increase metronome tempo|
 | `m` + `-`     |Decrease metronome tempo|
+| `p`           |Toggle MIDI output preview|
 | `t` + `+`     |Transpose the MIDI input by +1 semitone|
 | `v`           |Toggle pianoroll/staffscope view|
 | `w`           |Sets the current cursor in arpeggio mode|
@@ -90,7 +91,7 @@ Known limitations:
 | `F3`          |Toggle 'strict' mode in looped practice|
 | `F9`          |Set the beginning of the loop at the current cursor|
 | `F10`         |Set the end of the loop at the current cursor|
-| `F11`         |Erase loop information|
+| `F11`         |Erase current loop information|
 
 
 

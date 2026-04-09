@@ -7,11 +7,11 @@ Piano learning app for those who struggle with the conventional music scores.
 Look on the Internet for a MIDI file version of the song you want to learn.
 Copy this file in the `/songs` directory.
 
-Run the `gangQin.py`in a Python interpreter, select your digital keyboard and select your MIDI file. 
+Run the `gangQin.py` script in a Python interpreter, select your digital keyboard and select your MIDI file when prompted. 
 
 The interface shows a virtual keyboard and a pianoroll view. Everything you play on your input keyboard is mirrored on the virtual keyboard.
 
-But most importantly, the virtual keyboard also shows the notes you are supposed to play in the song.
+But most importantly, the virtual keyboard shows the notes you are supposed to play in the song.
 Initially, the first note of the song is displayed. As soon as you press the notes on your keyboard, the app shows the next notes and so on.
 
 ### How to get the StaffScope view
@@ -20,7 +20,7 @@ Instead of showing a pianoroll view, gangQin can also show the **actual score** 
 This view loads and displays the printed score right at the location where you are playing. 
 
 Of course, the staffScope view requires more than just the MIDI file to be available. 
-But as soon as you have a digital version of the printed score handy, you can import it in the staffScope viewer.
+If you have a version of the printed score handy, you can import it in the staffScope viewer.
 The scoreShot tools will help you to do that import.
 
 > [!NOTE]
@@ -92,8 +92,6 @@ Known limitations:
 | `F9`          |Set the beginning of the loop at the current cursor|
 | `F10`         |Set the end of the loop at the current cursor|
 | `F11`         |Erase current loop information|
-
-
 
 ## Requirements / Setup
 

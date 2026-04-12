@@ -292,6 +292,20 @@ class FingerSelector(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
+  # METHOD: FingerSelector.showNoteProperties()
+  # ---------------------------------------------------------------------------
+  def showNoteProperties(self) -> None :
+    """
+    TODO
+    """
+
+    if self.highlightedNote is not None :
+      print("[DEBUG] ABOUT...")
+      self.top.widgets[WIDGET_ID_SCORE].locateNoteInGq3(self.highlightedNote)
+
+
+
+  # ---------------------------------------------------------------------------
   # METHOD: FingerSelector.assign()
   # ---------------------------------------------------------------------------
   def assign(self, hand, finger) -> None :
@@ -482,6 +496,8 @@ class FingerSelector(widget.Widget) :
           self._highlightNext()
         elif (key == pygame.K_DELETE) :
           print("[NOTE] FingerSelector._onKeyEvent(): delete finger, keep current hand (function not implemented yet)")
+        elif (key == pygame.K_a) :
+          self.showNoteProperties()
         elif (key == pygame.K_d) :
           print("[NOTE] FingerSelector._onKeyEvent(): duplicate the previous fingering (function not implemented yet)")
 

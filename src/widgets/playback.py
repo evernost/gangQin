@@ -76,7 +76,6 @@ class Playback(widget.Widget) :
 
     # Close everything before playing the new cursor
     for pitch in self._midiOutActiveNotes :
-      #print(f"[DEBUG] Closing pitch {pitch}")
       self.top._onMidiOutputCallback(mido.Message("note_off", note = pitch, velocity = 0))
     self._midiOutActiveNotes = []
 
@@ -88,37 +87,13 @@ class Playback(widget.Widget) :
         
         velocity = N.velocity if (N.velocity > 0) else 80
 
-        #print(f"[DEBUG] New pitch: {N.pitch}")
         self.top._onMidiOutputCallback(mido.Message("note_on",  note = N.pitch, velocity = velocity))
         self._midiOutActiveNotes.append(N.pitch)
 
-        # if (N.pitch in self._midiOutActiveNotes) :
-        #   print(f"[DEBUG] Closing pitch {N.pitch} before replay")
-        #   #self.top._onMidiOutputCallback(mido.Message("note_off", note = N.pitch, velocity = 0))
-        #   self.top._onMidiOutputCallback(mido.Message("note_on",  note = N.pitch, velocity = velocity))
 
-        # else :
-        #   print(f"[DEBUG] New pitch: {N.pitch}")
-        #   self.top._onMidiOutputCallback(mido.Message("note_on",  note = N.pitch, velocity = velocity))
-        #   self._midiOutActiveNotes.append(N.pitch)
-
-
-
-
-    # currentlyHeld = set(self._midiOutActiveNotes)
-    # newPitches    = set(newActive.keys())
-
-    # # Stop notes that are no longer in the score at this cursor
-    # for pitch in currentlyHeld - newPitches :
-    #   self.top._onMidiOutputCallback(mido.Message("note_off", note = pitch, velocity = 0))
-
-    # # Start notes that have just appeared (skip sustained ones already sounding)
-    # for pitch in newPitches - currentlyHeld :
-    #   n = newActive[pitch]
-    #   velocity = n.velocity if (n.velocity > 0) else 80
-    #   self.top._onMidiOutputCallback(mido.Message("note_on", note = pitch, velocity = velocity))
-
-    # self._midiOutActiveNotes = list(newPitches)
+    # TODO
+    # Add a timer to clear the active notes after a while or as soon as the user
+    # plays anything.
 
 
 

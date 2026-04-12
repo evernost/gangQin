@@ -688,7 +688,7 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score.locateNoteInGq3()
   # ---------------------------------------------------------------------------
-  def locateNoteInGq3(self, noteIndex: int) -> int :
+  def locateNoteInGq3(self, noteObj) -> int :
     """
     Returns the line number (1-based) in the GQ3 file where the note object is
     defined.
@@ -696,33 +696,78 @@ class Score(widget.Widget) :
     Returns -1 if not found.
     """
     
-    insideNoteList = False
-    noteCount      = -1
-    depth          = 0   # brace nesting depth inside noteList
+    # NOTE: there is a good chance that noteObj.id contains that piece of information
+    # we're looking for here...
+    noteIndex = -1
+    matchCount = 0
+    for (index, N) in enumerate(self.noteList) :
+      if ((N.pitch == noteObj.pitch) and
+          (N.startTime == noteObj.startTime) and 
+          (N.stopTime == noteObj.stopTime)) :
+        matchCount += 1
+        noteIndex = index
+
+    output = {}
+
+    if (matchCount > 1) :
+      print("[DEBUG] WARNING: found more than 1 note matching (possible internal error)")
+    elif (matchCount == 0) :
+      print("[DEBUG] WARNING: no matching note found (possible internal error)")
+      return output
+    elif (noteObj.id != noteIndex) :
+      print("[DEBUG] WARNING: noteObj.id doesn't match with the index. Don't rely on that!!")
+
+    insideNoteList    = False
+    noteCount         = -1
+    depth             = 0
+    targetLine        = -1
+    targetLineSection = False
 
     with open(self.songFile, "r") as f :
       for (lineNum, line) in enumerate(f, start = 1):
-        stripped = line.strip()
+        lineStr = line.strip()
 
-        if not insideNoteList:
-          if '"noteList"' in stripped:
+        # Skip content until the 'noteList' section is reached
+        if not insideNoteList :
+          if ('"noteList"' in lineStr) :
             insideNoteList = True
           continue
 
         # Inside noteList: track opening braces to count note objects
-        if stripped.startswith("{") and depth == 0:
-          noteCount += 1
+        if (lineStr.startswith("{") and depth == 0) :
           depth = 1
-          if noteCount == noteIndex:
-            return lineNum
-        else:
-          depth += stripped.count("{") - stripped.count("}")
+          noteCount += 1
+          
+          if (noteCount == noteIndex) :
+            targetLineSection = True
+            targetLine        = lineNum
+            output["line"]    = lineNum
+            output["content"] = ["{"]
+        
+        else :
+          
+          if ((depth == 1) and targetLineSection) :
+            output["content"].append(lineStr)
+          
+          depth += lineStr.count("{") - lineStr.count("}")
+
+          if (depth == 0) :
+            targetLineSection = False
 
         # Exited noteList array
-        if stripped.startswith("]") and depth == 0:
+        if lineStr.startswith("]") and (depth == 0) :
           break
 
-    return -1
+    print("[INFO] Location in .gq3 file:")
+    print(f"...")
+    for (i,s) in enumerate(output["content"]) :
+      lineNumber = output['line'] + i
+      print(f"- {lineNumber}: {s}")
+    print(f"...")
+      
+    print(noteObj)
+
+    return output
 
 
 

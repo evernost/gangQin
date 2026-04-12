@@ -69,29 +69,30 @@ Known limitations:
 
 ## Keyboard shortcuts
 
-| Key           | Function      |
-|:------------- |:-------------|
-| `←`           |Previous cursor|
-| `→`           |Next cursor|
-| `↑`           |Next bookmark|
-| `↓`           |Previous bookmark|
-| `s`           |Save the current progress to an internal file (.gq3)|
-| `b`           |Toggle bookmark on the current cursor|
-| `l`           |Toggle ON/OFF left hand practice|
-| `r`           |Toggle ON/OFF right hand practice|
-| `m`           |Metronome ON/OFF|
-| `m` + `+`     |Increase metronome tempo|
-| `m` + `-`     |Decrease metronome tempo|
-| `p`           |Toggle MIDI output preview|
-| `t` + `+`     |Transpose the MIDI input by +1 semitone|
-| `v`           |Toggle pianoroll/staffscope view|
-| `w`           |Sets the current cursor in arpeggio mode|
-| `CTRL` + `w`  |Extend the last arpeggio section to the current cursor|
-| `F2`          |Increase lookahead distance|
-| `F3`          |Toggle 'strict' mode in looped practice|
-| `F9`          |Set the beginning of the loop at the current cursor|
-| `F10`         |Set the end of the loop at the current cursor|
-| `F11`         |Erase current loop information|
+| Key           | Function      | Mnemonic |
+|:------------- |:--------------| :------- |
+| `←`           |Previous cursor| - |
+| `→`           |Next cursor| - |
+| `↑`           |Next bookmark| - |
+| `↓`           |Previous bookmark| - |
+| `a`           |Give information about a note currently selected| <u>A</u>bout |
+| `s`           |Save the current progress to an internal file (.gq3)| <u>S</u>ave |
+| `b`           |Toggle bookmark on the current cursor| <u>B</u>ookmark |
+| `l`           |Toggle ON/OFF left hand practice| <u>L</u>eft |
+| `r`           |Toggle ON/OFF right hand practice| <u>R</u>ight |
+| `m`           |Metronome ON/OFF| <u>M</u>etronome |
+| `m` + `+`     |Increase metronome tempo| - |
+| `m` + `-`     |Decrease metronome tempo| - |
+| `p`           |Toggle MIDI output preview| <u>P</u>review |
+| `t` + `+`     |Transpose the MIDI input by +1 semitone| <u>T</u>ranspose |
+| `v`           |Toggle pianoroll/staffscope view| <u>V</u>iew |
+| `w`           |Sets the current cursor in arpeggio mode| - |
+| `CTRL` + `w`  |Extend the last arpeggio section to the current cursor| - |
+| `F2`          |Increase lookahead distance| - |
+| `F3`          |Toggle 'strict' mode in looped practice| - |
+| `F9`          |Set the beginning of the loop at the current cursor| - |
+| `F10`         |Set the end of the loop at the current cursor| - |
+| `F11`         |Erase current loop information| - |
 
 ## Requirements / Setup
 

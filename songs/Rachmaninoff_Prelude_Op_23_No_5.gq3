@@ -1,6 +1,6 @@
 {
   "appVersion": "v3.0",
-  "cursor": 350,
+  "cursor": 591,
   "bookmarks": [
     0,
     23,
@@ -13551,11 +13551,11 @@
       "name": "A5"
     },
     {
-      "pitch": 66,
+      "pitch": 65,
       "hand": 1,
       "finger": 0,
       "voice": 0,
-      "name": "Gb4"
+      "name": "F4"
     },
     {
       "pitch": 60,
@@ -16799,25 +16799,25 @@
       "name": "D4"
     },
     {
-      "pitch": 58,
+      "pitch": 67,
       "hand": 0,
       "finger": 0,
       "voice": 0,
-      "name": "Bb3"
+      "name": "G4"
     },
     {
-      "pitch": 34,
+      "pitch": 43,
       "hand": 1,
       "finger": 0,
       "voice": 0,
-      "name": "Bb1"
+      "name": "G2"
     },
     {
-      "pitch": 46,
+      "pitch": 55,
       "hand": 1,
       "finger": 0,
       "voice": 0,
-      "name": "Bb2"
+      "name": "G3"
     },
     {
       "pitch": 56,

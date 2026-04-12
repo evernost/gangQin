@@ -300,6 +300,10 @@ class GangQin :
     keyboard and routes the message to all interested widgets.
     """
 
+    # Probably not super efficient in a callback
+    # if self.widgets[WIDGET_ID_PLAYBACK].enable :
+    #   self.widgets[WIDGET_ID_PLAYBACK].close()
+
     # Run some preprocessing on the message
     # - Filter out unused messages
     # - apply transpose when activated

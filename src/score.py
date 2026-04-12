@@ -662,7 +662,7 @@ class Score(widget.Widget) :
 
     self.notesByCursor_active = []
     heap    = []   # min-heap of (stopTime, counter, note)
-    counter = 0    # tiebreaker — avoids comparing Note objects directly
+    counter = 0    # tiebreaker (avoids comparing Note objects directly)
     ptr     = 0    # rolling index into notes_sorted
 
     for T in unique_times :
@@ -688,10 +688,11 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score.locateNoteInGq3()
   # ---------------------------------------------------------------------------
-  def locateNoteInGq3(gq3File: str, noteIndex: int) -> int :
+  def locateNoteInGq3(self, noteIndex: int) -> int :
     """
-    Returns the line number (1-based) in the GQ3 file where
-    noteList[noteIndex] begins.
+    Returns the line number (1-based) in the GQ3 file where the note object is
+    defined.
+
     Returns -1 if not found.
     """
     
@@ -699,8 +700,8 @@ class Score(widget.Widget) :
     noteCount      = -1
     depth          = 0   # brace nesting depth inside noteList
 
-    with open(gq3File, "r") as f:
-      for (lineNum, line) in enumerate(f, start=1):
+    with open(self.songFile, "r") as f :
+      for (lineNum, line) in enumerate(f, start = 1):
         stripped = line.strip()
 
         if not insideNoteList:
@@ -1543,8 +1544,8 @@ class Score(widget.Widget) :
       if not(N.fromKeyboardInput) :
         if (N.startTime != N.stopTime) :
           filteredList.append(N)
-        else :
-          print(f"[DEBUG] Score._calculateTeacherNotes(): null duration note detected (cursor = {self.getCursor()})")
+        # else :
+        #   print(f"[DEBUG] Score._calculateTeacherNotes(): null duration note detected (cursor = {self.getCursor()})")
       else :
         filteredList.append(N)
     self.teacherNotes = filteredList
@@ -1559,7 +1560,7 @@ class Score(widget.Widget) :
         if (N.pitch not in filteredList) : 
           filteredList[N.pitch] = N
         elif (N.stopTime > filteredList[N.pitch].stopTime) :
-          print(f"[DEBUG] Score._calculateTeacherNotes(): redundant keypress eliminated (cursor = {self.getCursor()})")
+          #print(f"[DEBUG] Score._calculateTeacherNotes(): redundant keypress eliminated (cursor = {self.getCursor()})")
           filteredList[N.pitch] = N
         
     self.teacherNotes = list(filteredList.values()) + sustainedList
@@ -2102,6 +2103,7 @@ class NoteTracker :
       
         # Remove them
         self.active[channel.value][pitch][1:] = []
+
 
 
   def checkOnExit(self) -> None :

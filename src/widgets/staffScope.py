@@ -110,13 +110,9 @@ class StaffScope(widget.Widget) :
     # Derive the internal file/path names from the 'songFile'
     self._loadInitFileNames(songFile)
 
-    # Load the database containting the snapshots of the score
+    # Load the snapshots database
     self.db = database.Database(self.jsonFile)
     
-    # Is this really necessary?
-    # if not(self.db.isEmpty()) :
-    #   self.loadViewByIndex(0)
-
 
 
   # ---------------------------------------------------------------------------
@@ -703,6 +699,7 @@ class StaffScope(widget.Widget) :
     """
 
     self.cursorWrongNoteCount = cursorWrongNoteCount
+
 
 
 # =============================================================================

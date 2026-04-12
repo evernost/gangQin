@@ -95,8 +95,6 @@ class GangQin :
     self.running = False
     self.midiInPort           = None
     self.midiOutPort          = None
-    self._midiOutActiveNotes  = []        # pitches currently held on MIDI out
-    self._midiOutTimer        = None      # pending note-off timer
     self.midiTranspose        = 0         # Indicates the transpose state of the input keyboard, so that the app adapts to it.
 
     # Limit the supported key events to avoid unnecessary processing
@@ -242,15 +240,18 @@ class GangQin :
   # ---------------------------------------------------------------------------
   def _midiInInit(self, deviceName: str) -> None :
     """
-    Description is TODO.
+    Tries to open the MIDI input port.
+
+    If it fails, it falls back to navigation mode.
     """
 
     if (deviceName != "None") :
       try :
-        self.midiInPort = mido.open_input(deviceName, callback = self._midiCallback)
+        self.midiInPort = mido.open_input(deviceName, callback = self._onMidiInputCallback)
       except Exception as err :
         print("[WARNING] Failed to open the MIDI device (it is used by another software?): running in navigation mode.")
         self.midiInPort = None  
+    
     else :
       print("[NOTE] No MIDI interface selected: running in navigation mode.")
       self.midiInPort = None
@@ -262,8 +263,7 @@ class GangQin :
   # ---------------------------------------------------------------------------
   def _midiOutInit(self, deviceName: str) -> None :
     """
-    Opens a MIDI output port to preview notes when navigating with arrow keys.
-    Tries the same device as the input first, then falls back to any available output.
+    Tries to open the MIDI output port for the audio playback feature.
     """
 
     if (deviceName == "None") :
@@ -292,9 +292,9 @@ class GangQin :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: GangQin._midiCallback()
+  # METHOD: GangQin._onMidiInputCallback()
   # ---------------------------------------------------------------------------
-  def _midiCallback(self, midiMessage) :
+  def _onMidiInputCallback(self, midiMessage) :
     """
     This function is triggered for each incoming MIDI event from the external 
     keyboard and routes the message to all interested widgets.
@@ -303,8 +303,9 @@ class GangQin :
     # Run some preprocessing on the message
     # - Filter out unused messages
     # - apply transpose when activated
-    midiMessage = self._midiPreProcessor(midiMessage)
+    midiMessage = self._midiInputPreProcessor(midiMessage)
 
+    # Broadcast the message to the widgets
     if (WIDGET_ID_KEYBOARD in self.widgets) :
       self.widgets[WIDGET_ID_KEYBOARD].onExternalMidiEvent(midiMessage)
     
@@ -323,21 +324,39 @@ class GangQin :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD: GangQin._midiPreProcessor()
+  # METHOD: GangQin._onMidiOutputCallback()
   # ---------------------------------------------------------------------------
-  def _midiPreProcessor(self, midiMessage) :
+  def _onMidiOutputCallback(self, midiMessage) :
+    """
+    This function is called every time a widget wishes to output something on 
+    the MIDI output playback interface.
+    """
+
+    # Run some preprocessing on the message
+    # - Filter out unused messages
+    # - apply transpose when activated
+    midiMessage = self._midiOutputPreProcessor(midiMessage)
+
+    self.midiOutPort.send(midiMessage)
+    
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: GangQin._midiInputPreProcessor()
+  # ---------------------------------------------------------------------------
+  def _midiInputPreProcessor(self, midiMessage) :
     """
     Applies various processing on the incoming MIDI messages before 
     dispatching to the widgets.
     """
 
-    # TRANSPOSED INPUT MODE
+    # INPUT TRANPOSER
     # The app gives the possibility to play the song while the input keyboard
-    # is actually in a transposed mode:
+    # is in a transposed mode:
     # - either because the user plays a transposed version of the song
     # - or because the keyboard settings transpose the MIDI messages.
     # This preprocessing reverts the transposition and makes the notes appear
-    # at their correct location.
+    # at their correct location which undoes the input transpose.
     #
     # Transpose mode is managed from the Arbiter widget.
     if (midiMessage.type == "note_on") :
@@ -345,6 +364,29 @@ class GangQin :
 
     elif (midiMessage.type == "note_off") :
       midiMessage.note = midiMessage.note - self.midiTranspose
+
+    else :
+      pass
+    
+    return midiMessage
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: GangQin._midiOutputPreProcessor()
+  # ---------------------------------------------------------------------------
+  def _midiOutputPreProcessor(self, midiMessage) :
+    """
+    Applies various processing on the incoming MIDI messages before 
+    dispatching to the widgets.
+    """
+
+    # OUTPUT TRANPOSER
+    if (midiMessage.type == "note_on") :
+      midiMessage.note = midiMessage.note + self.midiTranspose
+
+    elif (midiMessage.type == "note_off") :
+      midiMessage.note = midiMessage.note + self.midiTranspose
 
     else :
       pass
@@ -449,8 +491,7 @@ class GangQin :
       self.midiInPort.close()
 
     if (self.midiOutPort is not None) :
-      for pitch in self._midiOutActiveNotes :
-        self.midiOutPort.send(mido.Message("note_off", note = pitch, velocity = 0))
+      self.widgets[WIDGET_ID_PLAYBACK].close()
       self.midiOutPort.close()
 
     if (WIDGET_ID_STATS in self.widgets) :

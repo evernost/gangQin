@@ -51,15 +51,14 @@ class Playback(widget.Widget) :
     self.name = "playback"
 
     self.enable = False
-    self._midiOutActiveNotes = []
+    self._midiOutActiveNotes = []   # pitches currently held on MIDI out
     
 
 
-
   # ---------------------------------------------------------------------------
-  # METHOD Playback.playNotesOnMidiOut()                              [PRIVATE]
+  # METHOD Playback.play()                                            [PRIVATE]
   # ---------------------------------------------------------------------------
-  def playNotesOnMidiOut(self) -> None :
+  def play(self) -> None :
     """
     Updates MIDI out to reflect the notes at the current cursor.
 
@@ -74,27 +73,68 @@ class Playback(widget.Widget) :
     if (self.top.midiOutPort is None) :
       return
 
+
+    # Close everything before playing the new cursor
+    for pitch in self._midiOutActiveNotes :
+      #print(f"[DEBUG] Closing pitch {pitch}")
+      self.top._onMidiOutputCallback(mido.Message("note_off", note = pitch, velocity = 0))
+    self._midiOutActiveNotes = []
+
+    # Request the current notes
     notes = self.top.widgets[WIDGET_ID_SCORE].getTeacherNotes()
 
-    # Build the set of pitches that should be sounding now.
-    # Include sustained notes — they should keep ringing.
-    # Exclude notes silenced by single-hand practice mode (inactive=True).
-    newActive = {n.pitch: n for n in notes if not n.inactive}
+    for N in notes :
+      if not(N.sustained) :
+        
+        velocity = N.velocity if (N.velocity > 0) else 80
 
-    currentlyHeld = set(self._midiOutActiveNotes)
-    newPitches    = set(newActive.keys())
+        #print(f"[DEBUG] New pitch: {N.pitch}")
+        self.top._onMidiOutputCallback(mido.Message("note_on",  note = N.pitch, velocity = velocity))
+        self._midiOutActiveNotes.append(N.pitch)
 
-    # Stop notes that are no longer in the score at this cursor
-    for pitch in currentlyHeld - newPitches:
-      self.top.midiOutPort.send(mido.Message("note_off", note=pitch, velocity=0))
+        # if (N.pitch in self._midiOutActiveNotes) :
+        #   print(f"[DEBUG] Closing pitch {N.pitch} before replay")
+        #   #self.top._onMidiOutputCallback(mido.Message("note_off", note = N.pitch, velocity = 0))
+        #   self.top._onMidiOutputCallback(mido.Message("note_on",  note = N.pitch, velocity = velocity))
 
-    # Start notes that have just appeared (skip sustained ones already sounding)
-    for pitch in newPitches - currentlyHeld:
-      n = newActive[pitch]
-      velocity = n.velocity if n.velocity > 0 else 80
-      self.top.midiOutPort.send(mido.Message("note_on", note=pitch, velocity=velocity))
+        # else :
+        #   print(f"[DEBUG] New pitch: {N.pitch}")
+        #   self.top._onMidiOutputCallback(mido.Message("note_on",  note = N.pitch, velocity = velocity))
+        #   self._midiOutActiveNotes.append(N.pitch)
 
-    self._midiOutActiveNotes = list(newPitches)
+
+
+
+    # currentlyHeld = set(self._midiOutActiveNotes)
+    # newPitches    = set(newActive.keys())
+
+    # # Stop notes that are no longer in the score at this cursor
+    # for pitch in currentlyHeld - newPitches :
+    #   self.top._onMidiOutputCallback(mido.Message("note_off", note = pitch, velocity = 0))
+
+    # # Start notes that have just appeared (skip sustained ones already sounding)
+    # for pitch in newPitches - currentlyHeld :
+    #   n = newActive[pitch]
+    #   velocity = n.velocity if (n.velocity > 0) else 80
+    #   self.top._onMidiOutputCallback(mido.Message("note_on", note = pitch, velocity = velocity))
+
+    # self._midiOutActiveNotes = list(newPitches)
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Playback.close()                                           [PRIVATE]
+  # ---------------------------------------------------------------------------
+  def close(self) -> None :
+    """
+    Terminates all notes on the MIDI output interface properly.
+    """
+    
+    if (self.top.midiOutPort is None) :
+      return
+    
+    for pitch in self._midiOutActiveNotes :
+      self.top.midiOutPort.send(mido.Message("note_off", note = pitch, velocity = 0))
 
 
 
@@ -114,6 +154,20 @@ class Playback(widget.Widget) :
           else :
             print("[INFO] MIDI out playback enabled")
           self.enable = not(self.enable)
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD: Playback.render()
+  # ---------------------------------------------------------------------------
+  def render(self) -> None :
+    """
+    Renders the widget on screen.
+    This function is called at every frame of the top level application.
+    """
+
+    if self.enable :
+      text.render(self.top.screen, "P", (200, 470), 2, GUI_TEXT_COLOR)
 
 
 

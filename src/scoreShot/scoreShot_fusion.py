@@ -4,7 +4,7 @@
 # Module name   : scoreShot_fusion
 # File name     : scoreShot_fusion.py
 # File type     : Python script (Python 3)
-# Purpose       : score snapshots / MIDI file merging tool
+# Purpose       : binding tool for note database and snapshot database
 # Author        : QuBi (nitrogenium@outlook.fr)
 # Creation date : Saturday, 19 October 2024
 # -----------------------------------------------------------------------------
@@ -12,8 +12,9 @@
 # =============================================================================
 
 # =============================================================================
-# External libs 
+# EXTERNALS
 # =============================================================================
+# Project libraries
 from src.commons import *
 
 import src.widgets.keyboard as keyboard
@@ -26,25 +27,26 @@ import src.scoreShot.fileSelectionGUI as fileSelectionGUI
 import src.score as score
 import src.text as text
 
+# Standard libraries
 import pygame
 import os
 
 
 
 # =============================================================================
-# Constants pool
+# CONSTANTS
 # =============================================================================
 # None.
 
 
 
 # =============================================================================
-# Main code
+# CLASS DEFINITION
 # =============================================================================
 
 # Call the song file selection GUI
 fileSel = fileSelectionGUI.new()
-fileSel.setTitle("ScoreShot (Fusion) - New session")
+fileSel.setTitle("Fusion Tool - New session")
 songFile = fileSel.show()
 
 pygame.init()

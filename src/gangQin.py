@@ -93,11 +93,11 @@ class GangQin :
     
     self._backgroundInit()
     self.running = False
-    self.midiInPort = None
-    self.midiOutPort        = None
-    self._midiOutActiveNotes = []       # pitches currently held on MIDI out
-    self._midiOutTimer       = None     # pending note-off timer
-    self.midiTranspose = 0    # Indicate here the transpose state of the input keyboard, so that the app adapts to it.
+    self.midiInPort           = None
+    self.midiOutPort          = None
+    self._midiOutActiveNotes  = []        # pitches currently held on MIDI out
+    self._midiOutTimer        = None      # pending note-off timer
+    self.midiTranspose        = 0         # Indicates the transpose state of the input keyboard, so that the app adapts to it.
 
     # Limit the supported key events to avoid unnecessary processing
     pygame.event.set_allowed([

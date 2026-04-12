@@ -969,7 +969,7 @@
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 4,
+      "finger": 3,
       "voice": 0,
       "name": "Eb5"
     },
@@ -983,7 +983,7 @@
     {
       "pitch": 74,
       "hand": 0,
-      "finger": 5,
+      "finger": 4,
       "voice": 0,
       "name": "D5"
     },

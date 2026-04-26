@@ -98,7 +98,7 @@ class Playback(widget.Widget) :
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Playback.close()                                           [PRIVATE]
+  # METHOD Playback.close()                                           
   # ---------------------------------------------------------------------------
   def close(self) -> None :
     """
@@ -108,13 +108,28 @@ class Playback(widget.Widget) :
     if (self.top.midiOutPort is None) :
       return
     
-    for pitch in self._midiOutActiveNotes :
-      self.top.midiOutPort.send(mido.Message("note_off", note = pitch, velocity = 0))
+    self.closeOpenNotes()
 
 
 
   # ---------------------------------------------------------------------------
-  # METHOD Playback._onKeyEvent()                                     [PRIVATE]
+  # METHOD Playback.closeOpenNotes()
+  # ---------------------------------------------------------------------------
+  def closeOpenNotes(self) :
+    """
+    Send a note off event to all the notes stored in the midiOutActiveNotes
+    array.
+    """
+    
+    for pitch in self._midiOutActiveNotes :
+      self.top.midiOutPort.send(mido.Message("note_off", note = pitch, velocity = 0))
+
+    self._midiOutActiveNotes = []
+
+
+
+  # ---------------------------------------------------------------------------
+  # METHOD Playback._onKeyEvent()                                   [INHERITED]
   # ---------------------------------------------------------------------------
   def _onKeyEvent(self, key, type, modifier = "") :
     """

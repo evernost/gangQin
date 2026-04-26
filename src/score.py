@@ -1089,7 +1089,7 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   # METHOD Score._cursorAlignWithActiveHand()                         [PRIVATE]
   # ---------------------------------------------------------------------------
-  def _cursorAlignWithActiveHand(self, hand, direction = 0) :
+  def _cursorAlignWithActiveHand(self, direction = 0) :
     """
     Sets the cursor to the closest location that is compatible with the requested
     hand practice mode.
@@ -1181,7 +1181,7 @@ class Score(widget.Widget) :
     the loop practice mode.
     """
     
-    # Loop end is not yet defined
+    # End of the loop is not defined yet
     if (self.loopEnd == -1) :
       self.loopStart = self.getCursor()
       print(f"[INFO] Start of loop set at {self.loopStart+1}")
@@ -1205,7 +1205,7 @@ class Score(widget.Widget) :
     the loop practice mode.
     """
     
-    # Loop start is not yet defined
+    # Beginning of the loop is not defined yet
     if (self.loopStart == -1) :
       self.loopEnd = self.getCursor()
       print(f"[INFO] End of loop set at {self.loopEnd+1}")
@@ -1434,9 +1434,13 @@ class Score(widget.Widget) :
     """
     Returns the notes pressed at a given cursor.
 
-    If no cursor is given, the function takes the current cursor.
-    If an end cursor is specified, the function returns all notes between 
-    'cursorBegin' and 'cursorEnd' (all included)
+    If 'cursorBegin' is not specified the function defaults to the current cursor.
+
+    If 'cursorEnd' is not specified the function returns the notes at 'cursorBegin'
+    only.
+
+    If both 'cursorBegin' and 'cursorEnd' are specified, the function returns 
+    all notes between the 2 cursors (cursors bounds included - no python style)
     """
     
     if (cursorBegin == -1)  : cursorBegin = self.getCursor()
@@ -1867,11 +1871,16 @@ class Score(widget.Widget) :
     
     'Arpeggio' mode is when the arbiter waits for the notes in the section 
     to be played but does care about their sequencing or timing anymore. 
-    In short, notes can be played in any order you like in this section.
+    
+    In other words, notes can be played in any order you like in this section.
+    To get out of the section, all notes must have been played on the keyboard.
+
+    This functions defines such a section in the score.
 
     Mode of operation:
-    - if the section is not under arpeggio, a new section is created 
-      with the current cursor as starting point
+    - if the section is not in arpeggio mode, a new section is created 
+      at the current cursor and lasts only for 1 cursor (you can extend it using 
+      another function)
     - if the section is already an arpeggio, it gets deleted.
 
     By default, the section only lasts for 1 cursor.
@@ -1904,10 +1913,11 @@ class Score(widget.Widget) :
     """
 
     if self.isArpeggioSection() :
-      print("[DEBUG] Score(): CTRL + w behavior is undefined within an arpeggiated section.")
+      print("[DEBUG] Score(): CTRL + w in an arpeggiated section has no defined behavior yet.")
       
     else :
 
+      # Enumerate all arpeggio sections starting strictly before this one
       arpeggioBeforeCursor = [(i, section) for (i, section) in enumerate(self.sectionArpeggio) if section[1] < self.getCursor()]
 
       if arpeggioBeforeCursor :
@@ -1919,7 +1929,10 @@ class Score(widget.Widget) :
 
         if (lastSection[0] == lastSection[1]) :
           self.sectionArpeggio[index][1] = self.getCursor()
-          print(f"[INFO] Arpeggio section at cursor = {lastSection[0]} extended up to cursor = {self.getCursor()}")
+          print(f"[INFO] Arpeggio section starting at cursor = {lastSection[0]} extended up to cursor = {self.getCursor()}")
+
+      else :
+        print(f"[INFO] Arpeggio section: there is no section to extend.")
         
       
 
@@ -1958,12 +1971,12 @@ class Score(widget.Widget) :
   def arpeggioGetSectionID(self, cursor = -1) -> int :
     """
     Returns the unique identifier of the arpeggio section the given cursor
-    is in.
+    belongs to.
 
-    If no cursor is given, it takes the current cursor.
-    
-    If the cursor is not located in an arpeggio section, the function
+    If the cursor doesn't belong to an arpeggio section, the function
     returns -1.
+
+    If no cursor is given it defaults to the current cursor.
     """
 
     if (cursor == -1) : cursor = self.getCursor()
@@ -1980,7 +1993,7 @@ class Score(widget.Widget) :
   # ---------------------------------------------------------------------------
   def isArpeggioSection(self) -> bool :
     """
-    Indicate if the current cursor belongs to an 'arpeggio' mode section.
+    Indicate if the current cursor belongs to an arpeggio section.
     """
 
     for I in self.sectionArpeggio :
@@ -2039,11 +2052,19 @@ class Score(widget.Widget) :
 
         # L: toggle left-hand practice
         if (key == pygame.K_l) :
-          print("Score._onKeyEvent(): left hand is TODO")
+          print("Score._onKeyEvent(): solo left hand practice mode is TODO")
+          if (self.activeHands == SCORE_ACTIVE_HANDS_LEFT) :
+            self.setActiveHands(left = True, right = True)
+          else :
+            self.setActiveHands(left = True, right = False)
 
         # L: toggle left-hand practice
         if (key == pygame.K_r) :
-          print("Score._onKeyEvent(): right hand is TODO")
+          print("Score._onKeyEvent(): solo right hand practice mode is TODO")
+          if (self.activeHands == SCORE_ACTIVE_HANDS_RIGHT) :
+            self.setActiveHands(left = True, right = True)
+          else :
+            self.setActiveHands(left = False, right = True)
 
         # W: declare section with weak arbitration
         if (key == pygame.K_w) :

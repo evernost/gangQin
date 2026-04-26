@@ -301,8 +301,9 @@ class GangQin :
     """
 
     # Probably not super efficient in a callback
-    # if self.widgets[WIDGET_ID_PLAYBACK].enable :
-    #   self.widgets[WIDGET_ID_PLAYBACK].close()
+    if self.widgets[WIDGET_ID_PLAYBACK].enable :
+      self.widgets[WIDGET_ID_PLAYBACK].closeOpenNotes()
+      self.widgets[WIDGET_ID_PLAYBACK].enable = False
 
     # Run some preprocessing on the message
     # - Filter out unused messages

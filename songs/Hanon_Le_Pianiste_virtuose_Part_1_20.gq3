@@ -1,6 +1,6 @@
 {
   "appVersion": "v3.0",
-  "cursor": 0,
+  "cursor": 2710,
   "bookmarks": [
     0,
     465,
@@ -38276,7 +38276,7 @@
     {
       "pitch": 45,
       "hand": 1,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "A2"
     },
@@ -38745,7 +38745,7 @@
     {
       "pitch": 60,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "C4"
     },

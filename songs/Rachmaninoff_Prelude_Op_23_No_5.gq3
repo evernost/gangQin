@@ -1,6 +1,6 @@
 {
   "appVersion": "v3.0",
-  "cursor": 0,
+  "cursor": 350,
   "bookmarks": [
     0,
     23,
@@ -25,6 +25,7 @@
     496,
     520,
     569,
+    619,
     667,
     715,
     789,
@@ -14226,35 +14227,35 @@
     {
       "pitch": 56,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Ab3"
     },
     {
       "pitch": 46,
       "hand": 1,
-      "finger": 1,
+      "finger": 5,
       "voice": 0,
       "name": "Bb2"
     },
     {
       "pitch": 72,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "C5"
     },
     {
       "pitch": 79,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "G5"
     },
     {
       "pitch": 84,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "C6"
     },
@@ -14282,14 +14283,14 @@
     {
       "pitch": 74,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "D5"
     },
     {
       "pitch": 86,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "D6"
     },
@@ -14408,28 +14409,28 @@
     {
       "pitch": 79,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "G5"
     },
     {
       "pitch": 82,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Bb5"
     },
     {
       "pitch": 86,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "D6"
     },
     {
       "pitch": 91,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "G6"
     },
@@ -14443,7 +14444,7 @@
     {
       "pitch": 55,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "G3"
     },
@@ -14464,14 +14465,14 @@
     {
       "pitch": 81,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "A5"
     },
     {
       "pitch": 93,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "A6"
     },
@@ -14534,14 +14535,14 @@
     {
       "pitch": 82,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Bb5"
     },
     {
       "pitch": 94,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Bb6"
     },
@@ -14618,14 +14619,14 @@
     {
       "pitch": 69,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "A4"
     },
     {
       "pitch": 81,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "A5"
     },
@@ -14653,21 +14654,21 @@
     {
       "pitch": 72,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "C5"
     },
     {
       "pitch": 84,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "C6"
     },
     {
       "pitch": 66,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Gb4"
     },
@@ -14730,7 +14731,7 @@
     {
       "pitch": 45,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "A2"
     },
@@ -14744,14 +14745,14 @@
     {
       "pitch": 69,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "A4"
     },
     {
       "pitch": 81,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "A5"
     },
@@ -14814,21 +14815,21 @@
     {
       "pitch": 57,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "A3"
     },
     {
       "pitch": 54,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Gb3"
     },
     {
       "pitch": 45,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "A2"
     },
@@ -14863,70 +14864,70 @@
     {
       "pitch": 54,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Gb3"
     },
     {
       "pitch": 67,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "G4"
     },
     {
       "pitch": 79,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "G5"
     },
     {
       "pitch": 55,
       "hand": 1,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "G3"
     },
     {
       "pitch": 58,
       "hand": 1,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "Bb3"
     },
     {
       "pitch": 63,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Eb4"
     },
     {
       "pitch": 70,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Bb4"
     },
     {
       "pitch": 74,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "D5"
     },
     {
       "pitch": 76,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "E5"
     },
     {
       "pitch": 82,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Bb5"
     },
@@ -14947,7 +14948,7 @@
     {
       "pitch": 58,
       "hand": 1,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "Bb3"
     },
@@ -15094,7 +15095,7 @@
     {
       "pitch": 57,
       "hand": 1,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "A3"
     },
@@ -15115,7 +15116,7 @@
     {
       "pitch": 45,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "A2"
     },
@@ -19119,14 +19120,14 @@
     {
       "pitch": 33,
       "hand": 1,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "A1"
     },
     {
       "pitch": 45,
       "hand": 1,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "A2"
     },

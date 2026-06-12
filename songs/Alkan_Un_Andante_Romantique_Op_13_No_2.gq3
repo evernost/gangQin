@@ -2,20 +2,21 @@
   "appVersion": "v3.0",
   "cursor": 0,
   "bookmarks": [
-    0
+    0,
+    46
   ],
   "noteList": [
     {
       "pitch": 53,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "F3"
     },
     {
       "pitch": 61,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "Db4"
     },

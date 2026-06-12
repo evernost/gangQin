@@ -8,6 +8,7 @@
     900,
     944,
     995,
+    1036,
     1079
   ],
   "noteList": [
@@ -17087,35 +17088,35 @@
     {
       "pitch": 68,
       "hand": 0,
-      "finger": 0,
+      "finger": 1,
       "voice": 0,
       "name": "Ab4"
     },
     {
       "pitch": 71,
       "hand": 0,
-      "finger": 0,
+      "finger": 2,
       "voice": 0,
       "name": "B4"
     },
     {
       "pitch": 75,
       "hand": 0,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "Eb5"
     },
     {
       "pitch": 77,
       "hand": 0,
-      "finger": 0,
+      "finger": 4,
       "voice": 0,
       "name": "F5"
     },
     {
       "pitch": 80,
       "hand": 0,
-      "finger": 0,
+      "finger": 5,
       "voice": 0,
       "name": "Ab5"
     },

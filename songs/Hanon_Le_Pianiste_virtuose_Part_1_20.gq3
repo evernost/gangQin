@@ -1,6 +1,6 @@
 {
   "appVersion": "v3.0",
-  "cursor": 2710,
+  "cursor": 1812,
   "bookmarks": [
     0,
     465,
@@ -37899,7 +37899,7 @@
     {
       "pitch": 40,
       "hand": 1,
-      "finger": 0,
+      "finger": 3,
       "voice": 0,
       "name": "E2"
     },
